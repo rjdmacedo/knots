@@ -865,7 +865,7 @@ export function ExpenseForm({
                             data-id={`${id}/${form.getValues().splitMode}/${
                               group.currency
                             }`}
-                            className="flex flex-wrap gap-y-4 items-center border-t last-of-type:border-b last-of-type:!mb-4 -mx-6 px-6 py-3"
+                            className="flex flex-wrap gap-y-4 items-center border-t last-of-type:border-b last-of-type:mb-4! -mx-6 px-6 py-3"
                           >
                             <FormItem className="flex-1 flex flex-row items-start space-x-3 space-y-0">
                               <FormControl>

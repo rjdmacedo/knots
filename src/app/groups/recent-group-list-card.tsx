@@ -44,7 +44,7 @@ export function RecentGroupListCard({
     <li key={group.id}>
       <Button
         variant="secondary"
-        className="h-fit w-full py-3 rounded-lg border bg-card shadow-sm"
+        className="h-fit w-full py-3 rounded-lg border bg-card shadow-xs"
         asChild
       >
         <div
@@ -59,7 +59,7 @@ export function RecentGroupListCard({
               >
                 {group.name}
               </Link>
-              <span className="flex-shrink-0">
+              <span className="shrink-0">
                 <Button
                   size="icon"
                   variant="ghost"
