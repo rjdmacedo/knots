@@ -87,12 +87,7 @@ function Content({ children }: { children: React.ReactNode }) {
           <div role="navigation" aria-label="Menu" className="flex">
             <ul className="flex items-center text-sm">
               <li>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  asChild
-                  className="-my-3 text-green-600"
-                >
+                <Button variant="ghost" size="sm" asChild className="-my-3">
                   <Link href="/groups">{t('Header.groups')}</Link>
                 </Button>
               </li>
