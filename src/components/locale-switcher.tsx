@@ -16,7 +16,7 @@ export function LocaleSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="-my-3 text-green-600">
+        <Button variant="ghost" size="sm" className="-my-3">
           <span>{localeLabels[locale]}</span>
         </Button>
       </DropdownMenuTrigger>

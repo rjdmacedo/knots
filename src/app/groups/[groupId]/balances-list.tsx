@@ -38,8 +38,8 @@ export function BalancesList({ balances, participants, currency }: Props) {
                   className={cn(
                     'absolute top-1 h-7 z-10',
                     isLeft
-                      ? 'bg-primary left-0 rounded-r-lg border'
-                      : 'bg-destructive right-0 rounded-l-lg border',
+                      ? 'bg-green-700 left-0 rounded-r-lg border'
+                      : 'bg-red-700 right-0 rounded-l-lg border',
                   )}
                   style={{
                     width: (Math.abs(balance) / maxBalance) * 100 + '%',

@@ -41,10 +41,12 @@ function Button({
   variant,
   size,
   asChild = false,
+  ref,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
+    ref?: React.Ref<HTMLButtonElement>
   }) {
   const Comp = asChild ? Slot : "button"
 
@@ -52,9 +54,16 @@ function Button({
     <Comp
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      ref={ref}
       {...props}
     />
   )
 }
+
+export type ButtonProps = React.ComponentProps<"button"> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean
+    ref?: React.Ref<HTMLButtonElement>
+  }
 
 export { Button, buttonVariants }
