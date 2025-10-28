@@ -23,7 +23,7 @@ export function TotalsYourSpendings({
       <div
         className={cn(
           'text-lg',
-          totalParticipantSpendings < 0 ? 'text-green-600' : 'text-red-600',
+          totalParticipantSpendings < 0 ? 'text-green-600' : 'text-destructive',
         )}
       >
         {formatCurrency(currency, Math.abs(totalParticipantSpendings), locale)}

@@ -91,7 +91,7 @@ function Content({ children }: { children: React.ReactNode }) {
                   variant="ghost"
                   size="sm"
                   asChild
-                  className="-my-3 text-primary"
+                  className="-my-3 text-green-600"
                 >
                   <Link href="/groups">{t('Header.groups')}</Link>
                 </Button>
