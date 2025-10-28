@@ -122,7 +122,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <ApplePwaSplash icon="/logo-with-text.png" color="#027756" />
-      <body className="pt-16 min-h-dvh flex flex-col items-stretch bg-slate-50 bg-opacity-30 dark:bg-background">
+      <body className="mt-16 min-h-dvh flex flex-col items-stretch">
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
             attribute="class"
