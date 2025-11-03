@@ -13,8 +13,7 @@ import {
   DialogContent,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { ToastAction } from '@/components/ui/toast'
-import { useToast } from '@/components/ui/use-toast'
+import { toast } from 'sonner'
 import { randomId } from '@/lib/api'
 import { ExpenseFormValues } from '@/lib/schemas'
 import { formatFileSize } from '@/lib/utils'
@@ -36,17 +35,14 @@ export function ExpenseDocumentsInput({ documents, updateDocuments }: Props) {
   const t = useTranslations('ExpenseDocumentsInput')
   const [pending, setPending] = useState(false)
   const { FileInput, openFileDialog, uploadToS3 } = usePresignedUpload() // use presigned uploads to addtionally support providers other than AWS
-  const { toast } = useToast()
 
   const handleFileChange = async (file: File) => {
     if (file.size > MAX_FILE_SIZE) {
-      toast({
-        title: t('TooBigToast.title'),
+      toast.error(t('TooBigToast.title'), {
         description: t('TooBigToast.description', {
           maxSize: formatFileSize(MAX_FILE_SIZE, locale),
           size: formatFileSize(file.size, locale),
         }),
-        variant: 'destructive',
       })
       return
     }
@@ -60,18 +56,12 @@ export function ExpenseDocumentsInput({ documents, updateDocuments }: Props) {
         updateDocuments([...documents, { id: randomId(), url, width, height }])
       } catch (err) {
         console.error(err)
-        toast({
-          title: t('ErrorToast.title'),
+        toast.error(t('ErrorToast.title'), {
           description: t('ErrorToast.description'),
-          variant: 'destructive',
-          action: (
-            <ToastAction
-              altText={t('ErrorToast.retry')}
-              onClick={() => upload()}
-            >
-              {t('ErrorToast.retry')}
-            </ToastAction>
-          ),
+          action: {
+            label: t('ErrorToast.retry'),
+            onClick: () => upload(),
+          },
         })
       } finally {
         setPending(false)

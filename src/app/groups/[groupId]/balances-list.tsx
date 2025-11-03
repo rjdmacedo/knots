@@ -30,7 +30,7 @@ export function BalancesList({ balances, participants, currency }: Props) {
               {participant.name}
             </div>
             <div className={cn('w-1/2 relative', isLeft || 'text-right')}>
-              <div className="absolute inset-0 p-2 z-20">
+              <div className={cn('absolute inset-0 p-2 z-20', isLeft ? 'text-credit-foreground' : 'text-debt-foreground')}>
                 {formatCurrency(currency, balance, locale)}
               </div>
               {balance !== 0 && (
@@ -38,8 +38,8 @@ export function BalancesList({ balances, participants, currency }: Props) {
                   className={cn(
                     'absolute top-1 h-7 z-10',
                     isLeft
-                      ? 'bg-green-700 left-0 rounded-r-lg border'
-                      : 'bg-red-700 right-0 rounded-l-lg border',
+                      ? 'bg-credit left-0 rounded-r-lg border'
+                      : 'bg-debt right-0 rounded-l-lg border',
                   )}
                   style={{
                     width: (Math.abs(balance) / maxBalance) * 100 + '%',
