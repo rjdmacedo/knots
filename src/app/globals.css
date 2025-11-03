@@ -54,6 +54,14 @@
   --credit: oklch(0.7 0.2 142);
   --debt-foreground: oklch(0.98 0 0);
   --credit-foreground: oklch(0.98 0 0);
+  /* font utilities */
+  --font-display-family: ui-rounded, Hiragino Maru Gothic ProN, Quicksand, Comfortaa,
+    Manjari, Arial Rounded MT, Arial Rounded MT Bold, Calibri, source-sans-pro,
+    sans-serif;
+  --font-display-weight: 600;
+  --font-body-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-body-weight: 400;
 }
 
 .dark {
@@ -177,7 +185,7 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+    border-color: currentcolor;
   }
 }
 
