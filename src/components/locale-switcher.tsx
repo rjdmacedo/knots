@@ -10,12 +10,10 @@ import {
 import { Locale, localeLabels } from '@/i18n'
 import { setUserLocale } from '@/lib/locale'
 import { useLocale } from 'next-intl'
-import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 
 export function LocaleSwitcher() {
   const locale = useLocale() as Locale
-  const router = useRouter()
   const [isPending, startTransition] = useTransition()
 
   const handleLocaleChange = async (newLocale: Locale) => {

@@ -74,7 +74,7 @@ export function ExpenseDocumentsInput({ documents, updateDocuments }: Props) {
     <div>
       <FileInput onChange={handleFileChange} accept="image/jpeg,image/png" />
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 **:aspect-square">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 [&_*]:aspect-square">
         {documents.map((doc) => (
           <DocumentThumbnail
             key={doc.id}
@@ -146,7 +146,7 @@ export function DocumentThumbnail({
           />
         </Button>
       </DialogTrigger>
-      <DialogContent className="p-4 w-screen max-w-[100vw] h-dvh max-h-dvh sm:max-w-[calc(100vw-32px)] sm:max-h-[calc(100dvh-32px)] *:last:hidden">
+      <DialogContent className="p-4 w-screen max-w-[100vw] h-dvh max-h-dvh sm:max-w-[calc(100vw-32px)] sm:max-h-[calc(100dvh-32px)] [&>*:last-child]:hidden">
         <div className="flex flex-col gap-4">
           <div className="flex justify-end">
             <Button
