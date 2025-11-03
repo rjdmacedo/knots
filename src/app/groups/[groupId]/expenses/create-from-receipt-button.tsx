@@ -23,7 +23,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer'
-import { toast } from 'sonner'
 import { useMediaQuery } from '@/lib/hooks'
 import {
   formatCurrency,
@@ -38,6 +37,7 @@ import { getImageData, usePresignedUpload } from 'next-s3-upload'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { PropsWithChildren, ReactNode, useState } from 'react'
+import { toast } from 'sonner'
 import { useCurrentGroup } from '../current-group-context'
 
 const MAX_FILE_SIZE = 5 * 1024 ** 2

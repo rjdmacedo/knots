@@ -1,9 +1,9 @@
 'use client'
 
-import { toast } from 'sonner'
 import { trpc } from '@/trpc/client'
 import { useTranslations } from 'next-intl'
 import { PropsWithChildren, useEffect } from 'react'
+import { toast } from 'sonner'
 import { CurrentGroupProvider } from './current-group-context'
 import { GroupHeader } from './group-header'
 import { SaveGroupLocally } from './save-recent-group'
