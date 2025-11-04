@@ -33,6 +33,40 @@ if (process.env.S3_UPLOAD_ENDPOINT) {
   }
 
   remotePatterns.push(pattern)
+
+  // Support additional hostnames/IPs for homelab setups (e.g., local network + Tailscale)
+  // Format: comma-separated list, e.g., "192.168.5.94,100.90.37.91"
+  // Note: This must be set at build time, not runtime
+  if (process.env.IMAGE_ALLOWED_HOSTNAMES) {
+    const additionalHostnames = process.env.IMAGE_ALLOWED_HOSTNAMES.split(
+      ',',
+    ).map((h) => h.trim())
+    additionalHostnames.forEach((hostname) => {
+      if (hostname && hostname !== url.hostname) {
+        const additionalPattern = {
+          hostname,
+        }
+        if (url.protocol === 'http:') {
+          additionalPattern.protocol = 'http'
+        }
+        if (url.port) {
+          additionalPattern.port = url.port
+        }
+        if (url.pathname && url.pathname !== '/') {
+          additionalPattern.pathname = `${url.pathname.replace(/\/$/, '')}/**`
+        }
+        remotePatterns.push(additionalPattern)
+      }
+    })
+  }
+
+  // Log the patterns for debugging (only in development)
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(
+      'Next.js image remote patterns configured:',
+      JSON.stringify(remotePatterns, null, 2),
+    )
+  }
 } else if (process.env.S3_UPLOAD_BUCKET && process.env.S3_UPLOAD_REGION) {
   // default provider
   remotePatterns.push({
