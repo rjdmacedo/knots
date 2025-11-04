@@ -19,15 +19,15 @@ import './globals.css'
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_BASE_URL),
   title: {
-    default: 'Knot · Share Expenses with Friends & Family',
-    template: '%s · Knot',
+    default: 'Knots · Share Expenses with Friends & Family',
+    template: '%s · Knots',
   },
   description:
-    'Knot is a minimalist web application to share expenses with friends and family. No ads, no account, no problem.',
+    'Knots is a minimalist web application to share expenses with friends and family. No ads, no account, no problem.',
   openGraph: {
-    title: 'Knot · Share Expenses with Friends & Family',
+    title: 'Knots · Share Expenses with Friends & Family',
     description:
-      'Knot is a minimalist web application to share expenses with friends and family. No ads, no account, no problem.',
+      'Knots is a minimalist web application to share expenses with friends and family. No ads, no account, no problem.',
     images: `/banner.png`,
     type: 'website',
     url: '/',
@@ -37,15 +37,15 @@ export const metadata: Metadata = {
     creator: '@rjdmacedo',
     site: '@rjdmacedo',
     images: `/banner.png`,
-    title: 'Knot · Share Expenses with Friends & Family',
+    title: 'Knots · Share Expenses with Friends & Family',
     description:
-      'Knot is a minimalist web application to share expenses with friends and family. No ads, no account, no problem.',
+      'Knots is a minimalist web application to share expenses with friends and family. No ads, no account, no problem.',
   },
   appleWebApp: {
     capable: true,
-    title: 'Knot',
+    title: 'Knots',
   },
-  applicationName: 'Knot',
+  applicationName: 'Knots',
   icons: [
     {
       url: '/android-chrome-192x192.png',
@@ -80,7 +80,7 @@ function Content({ children }: { children: React.ReactNode }) {
                 className="m-1 h-auto w-auto"
                 width={(35 * 522) / 180}
                 height={35}
-                alt="Knot"
+                alt="Knots"
               />
             </h1>
           </Link>
