@@ -499,7 +499,14 @@ export function ExpenseForm({
                       type="date"
                       value={formatDate(field.value)}
                       onChange={(event) => {
-                        return field.onChange(new Date(event.target.value))
+                        const value = event.target.value;
+                        if (!value) {
+                          // If the input is cleared, set to null (or handle as appropriate for your schema)
+                          field.onChange(null);
+                        } else if (isValidDateString(value)) {
+                          field.onChange(new Date(value));
+                        }
+                        // If invalid, do not update the field (prevents resetting to today)
                       }}
                       onBlur={field.onBlur}
                     />
