@@ -207,8 +207,7 @@ export function ExpenseForm({
                 : shares / 100
             return {
               participant: participantId,
-              shares:
-                shareValue <= 0 ? 1 : shareValue,
+              shares: shareValue <= 0 ? 1 : shareValue,
               // Defensive NaN check removed: shares comes from DB as number; NaN would indicate data corruption.
             }
           }),
@@ -504,12 +503,12 @@ export function ExpenseForm({
                       type="date"
                       value={formatDate(field.value)}
                       onChange={(event) => {
-                        const value = event.target.value;
+                        const value = event.target.value
                         if (!value) {
                           // If the input is cleared, set to null (or handle as appropriate for your schema)
-                          field.onChange(null);
+                          field.onChange(null)
                         } else if (isValidDateString(value)) {
-                          field.onChange(new Date(value));
+                          field.onChange(new Date(value))
                         }
                         // If invalid, do not update the field (prevents resetting to today)
                       }}
