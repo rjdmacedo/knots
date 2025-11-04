@@ -11,10 +11,27 @@ const remotePatterns = []
 // S3 Storage
 if (process.env.S3_UPLOAD_ENDPOINT) {
   // custom endpoint for providers other than AWS
-  const url = new URL(process.env.S3_UPLOAD_ENDPOINT);
-  remotePatterns.push({
+  const url = new URL(process.env.S3_UPLOAD_ENDPOINT)
+  const pattern = {
     hostname: url.hostname,
-  })
+  }
+
+  // Include protocol if not https (for local storage servers)
+  if (url.protocol === 'http:') {
+    pattern.protocol = 'http'
+  }
+
+  // Include port if specified
+  if (url.port) {
+    pattern.port = url.port
+  }
+
+  // Include pathname pattern for local storage servers
+  if (url.pathname && url.pathname.includes('/knots')) {
+    pattern.pathname = '/knots/**'
+  }
+
+  remotePatterns.push(pattern)
 } else if (process.env.S3_UPLOAD_BUCKET && process.env.S3_UPLOAD_REGION) {
   // default provider
   remotePatterns.push({
@@ -25,14 +42,14 @@ if (process.env.S3_UPLOAD_ENDPOINT) {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    remotePatterns
+    remotePatterns,
   },
   // Required to run in a codespace (see https://github.com/vercel/next.js/issues/58019)
   experimental: {
     serverActions: {
-        allowedOrigins: ['localhost:3000'],
+      allowedOrigins: ['localhost:3000'],
     },
-},
+  },
 }
 
 export default withNextIntl(nextConfig)
