@@ -202,7 +202,8 @@ export function ExpenseForm({
                 : shares / 100
             return {
               participant: participantId,
-              shares: Number.isNaN(shareValue) || shareValue <= 0 ? 1 : shareValue,
+              shares:
+                Number.isNaN(shareValue) || shareValue <= 0 ? 1 : shareValue,
             }
           }),
           splitMode: expense.splitMode,
