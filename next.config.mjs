@@ -26,9 +26,10 @@ if (process.env.S3_UPLOAD_ENDPOINT) {
     pattern.port = url.port
   }
 
-  // Include pathname pattern for local storage servers
-  if (url.pathname && url.pathname.includes('/knots')) {
-    pattern.pathname = '/knots/**'
+  // Include pathname pattern if specified (use wildcard to allow subpaths)
+  if (url.pathname && url.pathname !== '/') {
+    // Use the actual pathname from the URL, ensuring it ends with '/**'
+    pattern.pathname = `${url.pathname.replace(/\/$/, '')}/**`
   }
 
   remotePatterns.push(pattern)
