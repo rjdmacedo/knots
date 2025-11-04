@@ -74,6 +74,11 @@ const enforceCurrencyPattern = (value: string) =>
     .replace(/#/, '.') // change back # to dot
     .replace(/[^-\d.]/g, '') // remove all non-numeric characters
 
+const isValidDateString = (value: string): boolean => {
+  const date = new Date(value)
+  return !isNaN(date.getTime())
+}
+
 const getDefaultSplittingOptions = (
   group: NonNullable<AppRouterOutput['groups']['get']['group']>,
 ) => {
