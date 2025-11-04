@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/popover'
 import { useMediaQuery } from '@/lib/hooks'
 import { Category } from '@prisma/client'
+import { useIsClient } from 'foxact/use-is-client'
 import { useTranslations } from 'next-intl'
 import { forwardRef, useEffect, useState } from 'react'
 
@@ -36,6 +37,7 @@ export function CategorySelector({
 }: Props) {
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState<number>(defaultValue)
+  const isClient = useIsClient()
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   // allow overwriting currently selected category from outside
@@ -47,17 +49,18 @@ export function CategorySelector({
   const selectedCategory =
     categories.find((category) => category.id === value) ?? categories[0]
 
-  if (isDesktop) {
+  // Render Drawer initially to match SSR, then switch after client hydration
+  if (!isClient || !isDesktop) {
     return (
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
+      <Drawer open={open} onOpenChange={setOpen}>
+        <DrawerTrigger asChild>
           <CategoryButton
             category={selectedCategory}
             open={open}
             isLoading={isLoading}
           />
-        </PopoverTrigger>
-        <PopoverContent className="p-0" align="start">
+        </DrawerTrigger>
+        <DrawerContent className="p-0">
           <CategoryCommand
             categories={categories}
             onValueChange={(id) => {
@@ -66,21 +69,21 @@ export function CategorySelector({
               setOpen(false)
             }}
           />
-        </PopoverContent>
-      </Popover>
+        </DrawerContent>
+      </Drawer>
     )
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
         <CategoryButton
           category={selectedCategory}
           open={open}
           isLoading={isLoading}
         />
-      </DrawerTrigger>
-      <DrawerContent className="p-0">
+      </PopoverTrigger>
+      <PopoverContent className="p-0" align="start">
         <CategoryCommand
           categories={categories}
           onValueChange={(id) => {
@@ -89,8 +92,8 @@ export function CategorySelector({
             setOpen(false)
           }}
         />
-      </DrawerContent>
-    </Drawer>
+      </PopoverContent>
+    </Popover>
   )
 }
 

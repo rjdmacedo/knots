@@ -92,6 +92,14 @@ export const expenseFormSchema = z
           shares: z.union([
             z.number(),
             z.string().transform((value, ctx) => {
+              // Handle empty strings as invalid (not as 0)
+              if (value.trim() === '') {
+                ctx.addIssue({
+                  code: z.ZodIssueCode.custom,
+                  message: 'noZeroShares',
+                })
+                return value
+              }
               const normalizedValue = value.replace(/,/g, '.')
               const valueAsNumber = Number(normalizedValue)
               if (Number.isNaN(valueAsNumber))
@@ -106,12 +114,14 @@ export const expenseFormSchema = z
       )
       .min(1, 'paidForMin1')
       .superRefine((paidFor, ctx) => {
-        for (const { shares } of paidFor) {
+        for (let i = 0; i < paidFor.length; i++) {
+          const { shares } = paidFor[i]
           const shareNumber = Number(shares)
-          if (shareNumber <= 0) {
+          if (Number.isNaN(shareNumber) || shareNumber <= 0) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               message: 'noZeroShares',
+              path: ['paidFor', i, 'shares'],
             })
           }
         }

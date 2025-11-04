@@ -12,6 +12,7 @@ import {
   type FieldPath,
   type FieldValues,
 } from "react-hook-form"
+import { useTranslations } from "next-intl"
 
 import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
@@ -137,7 +138,14 @@ function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
 
 function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
   const { error, formMessageId } = useFormField()
-  const body = error ? String(error?.message ?? "") : props.children
+  const t = useTranslations('SchemaErrors')
+  
+  let body: React.ReactNode = props.children
+  if (error) {
+    const errorMessage = error?.message ?? ""
+    // Try to translate the error message if it exists in SchemaErrors
+    body = t(errorMessage as any, { defaultValue: errorMessage })
+  }
 
   if (!body) {
     return null

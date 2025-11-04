@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/popover'
 import { Currency } from '@/lib/currency'
 import { useMediaQuery } from '@/lib/hooks'
+import { useIsClient } from 'foxact/use-is-client'
 import { useTranslations } from 'next-intl'
 import { forwardRef, useEffect, useState } from 'react'
 
@@ -35,6 +36,7 @@ export function CurrencySelector({
 }: Props) {
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState<string>(defaultValue)
+  const isClient = useIsClient()
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   // allow overwriting currently selected currency from outside
@@ -47,50 +49,51 @@ export function CurrencySelector({
     currencies.find((currency) => (currency.code ?? '') === value) ??
     currencies[0]
 
-  if (isDesktop) {
+  // Render Drawer initially to match SSR, then switch after client hydration
+  if (!isClient || !isDesktop) {
     return (
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
+      <Drawer open={open} onOpenChange={setOpen}>
+        <DrawerTrigger asChild>
           <CurrencyButton
             currency={selectedCurrency}
             open={open}
             isLoading={isLoading}
           />
-        </PopoverTrigger>
-        <PopoverContent className="p-0" align="start">
+        </DrawerTrigger>
+        <DrawerContent className="p-0">
           <CurrencyCommand
             currencies={currencies}
-            onValueChange={(code) => {
-              setValue(code)
-              onValueChange(code)
+            onValueChange={(id) => {
+              setValue(id)
+              onValueChange(id)
               setOpen(false)
             }}
           />
-        </PopoverContent>
-      </Popover>
+        </DrawerContent>
+      </Drawer>
     )
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
         <CurrencyButton
           currency={selectedCurrency}
           open={open}
           isLoading={isLoading}
         />
-      </DrawerTrigger>
-      <DrawerContent className="p-0">
+      </PopoverTrigger>
+      <PopoverContent className="p-0" align="start">
         <CurrencyCommand
           currencies={currencies}
-          onValueChange={(id) => {
-            setValue(id)
-            onValueChange(id)
+          onValueChange={(code) => {
+            setValue(code)
+            onValueChange(code)
             setOpen(false)
           }}
         />
-      </DrawerContent>
-    </Drawer>
+      </PopoverContent>
+    </Popover>
   )
 }
 

@@ -74,6 +74,11 @@ const enforceCurrencyPattern = (value: string) =>
     .replace(/#/, '.') // change back # to dot
     .replace(/[^-\d.]/g, '') // remove all non-numeric characters
 
+const isValidDateString = (value: string): boolean => {
+  const date = new Date(value)
+  return !isNaN(date.getTime())
+}
+
 const getDefaultSplittingOptions = (
   group: NonNullable<AppRouterOutput['groups']['get']['group']>,
 ) => {
@@ -195,13 +200,17 @@ export function ExpenseForm({
           conversionRate: expense.conversionRate?.toNumber(),
           category: expense.categoryId,
           paidBy: expense.paidById,
-          paidFor: expense.paidFor.map(({ participantId, shares }) => ({
-            participant: participantId,
-            shares:
+          paidFor: expense.paidFor.map(({ participantId, shares }) => {
+            const shareValue =
               expense.splitMode === 'BY_AMOUNT'
                 ? amountAsDecimal(shares, groupCurrency)
-                : shares / 100,
-          })),
+                : shares / 100
+            return {
+              participant: participantId,
+              shares: shareValue <= 0 ? 1 : shareValue,
+              // Defensive NaN check removed: shares comes from DB as number; NaN would indicate data corruption.
+            }
+          }),
           splitMode: expense.splitMode,
           saveDefaultSplittingOptions: false,
           isReimbursement: expense.isReimbursement,
@@ -492,10 +501,18 @@ export function ExpenseForm({
                     <Input
                       className="date-base"
                       type="date"
-                      defaultValue={formatDate(field.value)}
+                      value={formatDate(field.value)}
                       onChange={(event) => {
-                        return field.onChange(new Date(event.target.value))
+                        const value = event.target.value
+                        if (!value) {
+                          // If the input is cleared, set to null (or handle as appropriate for your schema)
+                          field.onChange(null)
+                        } else if (isValidDateString(value)) {
+                          field.onChange(new Date(value))
+                        }
+                        // If invalid, do not update the field (prevents resetting to today)
                       }}
+                      onBlur={field.onBlur}
                     />
                   </FormControl>
                   <FormDescription>
@@ -1101,7 +1118,7 @@ export function ExpenseForm({
                                                 field.value?.find(
                                                   ({ participant }) =>
                                                     participant === id,
-                                                )?.shares
+                                                )?.shares ?? ''
                                               }
                                               onChange={(event) => {
                                                 field.onChange(
