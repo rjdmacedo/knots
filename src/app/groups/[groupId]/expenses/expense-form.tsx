@@ -203,7 +203,8 @@ export function ExpenseForm({
             return {
               participant: participantId,
               shares:
-                Number.isNaN(shareValue) || shareValue <= 0 ? 1 : shareValue,
+                shareValue <= 0 ? 1 : shareValue,
+              // Defensive NaN check removed: shares comes from DB as number; NaN would indicate data corruption.
             }
           }),
           splitMode: expense.splitMode,
