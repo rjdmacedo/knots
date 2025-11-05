@@ -11,8 +11,10 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden'
 import { randomId } from '@/lib/api'
 import { ExpenseFormValues } from '@/lib/schemas'
 import { formatFileSize } from '@/lib/utils'
@@ -147,6 +149,9 @@ export function DocumentThumbnail({
         </Button>
       </DialogTrigger>
       <DialogContent className="p-4 w-screen max-w-[100vw] h-dvh max-h-dvh sm:max-w-[calc(100vw-32px)] sm:max-h-[calc(100dvh-32px)] [&>*:last-child]:hidden">
+        <VisuallyHidden.Root>
+          <DialogTitle>Document viewer</DialogTitle>
+        </VisuallyHidden.Root>
         <div className="flex flex-col gap-4">
           <div className="flex justify-end">
             <Button
