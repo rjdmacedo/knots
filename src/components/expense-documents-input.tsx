@@ -11,11 +11,13 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { randomId } from '@/lib/api'
 import { ExpenseFormValues } from '@/lib/schemas'
 import { formatFileSize } from '@/lib/utils'
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden'
 import { Loader2, Plus, Trash, X } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { getImageData, usePresignedUpload } from 'next-s3-upload'
@@ -147,6 +149,9 @@ export function DocumentThumbnail({
         </Button>
       </DialogTrigger>
       <DialogContent className="p-4 w-screen max-w-[100vw] h-dvh max-h-dvh sm:max-w-[calc(100vw-32px)] sm:max-h-[calc(100dvh-32px)] [&>*:last-child]:hidden">
+        <VisuallyHidden.Root>
+          <DialogTitle>Document viewer</DialogTitle>
+        </VisuallyHidden.Root>
         <div className="flex flex-col gap-4">
           <div className="flex justify-end">
             <Button
