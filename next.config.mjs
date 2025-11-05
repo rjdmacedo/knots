@@ -51,7 +51,9 @@ const nextConfig = {
     // Disable image optimization for homelab setups with private IPs
     // Next.js blocks private IPs by default for security, so we disable optimization
     // Images will be served directly from MinIO without Next.js optimization
-    unoptimized: process.env.NODE_ENV === 'development' || !!process.env.S3_UPLOAD_ENDPOINT,
+    unoptimized:
+      process.env.NODE_ENV === 'development' ||
+      !!process.env.S3_UPLOAD_ENDPOINT,
   },
   // Required to run in a codespace (see https://github.com/vercel/next.js/issues/58019)
   experimental: {

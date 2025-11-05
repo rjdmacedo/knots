@@ -1,1 +1,17 @@
+# Build outputs
+.next
+out
+build
+dist
+coverage
+
+# Dependencies
+node_modules
+
+# Generated files
+*.tsbuildinfo
+next-env.d.ts
+postgres-data
+
+# Ignore UI components (generated)
 src/components/ui
