@@ -14,6 +14,7 @@ export function delay(ms: number) {
 export type DateTimeStyle = NonNullable<
   ConstructorParameters<typeof Intl.DateTimeFormat>[1]
 >['dateStyle']
+
 export function formatDate(
   date: Date,
   locale: string,
@@ -29,8 +30,11 @@ export function formatCategoryForAIPrompt(category: Category) {
 }
 
 /**
+ * @param currency - Currency information
+ * @param amount - Amount in minor units (e.g. cents)
+ * @param locale - Locale code (e.g. 'en-US')
  * @param fractions Financial values in this app are generally processed in cents (or equivalent).
- * They are are therefore integer representations of the amount (e.g. 100 for USD 1.00).
+ * They are therefore integer representations of the amount (e.g. 100 for USD 1.00).
  * Set this to `true` if you need to pass a value with decimal fractions instead (e.g. 1.00 for USD 1.00).
  */
 export function formatCurrency(
@@ -43,7 +47,7 @@ export function formatCurrency(
     minimumFractionDigits: currency.decimal_digits,
     maximumFractionDigits: currency.decimal_digits,
     style: 'currency',
-    // '€' will be placed in correct position
+    // '€' will be placed in the correct position
     currency: currency.code.length ? currency.code : 'EUR',
   })
   const formatted = format.format(
@@ -75,10 +79,11 @@ export function getCurrencyFromGroup(
 /**
  * Converts monetary amounts in minor units to the corresponding amount in major units in the given currency.
  * e.g.
- *  - 150 "minor units" of euros = 1.5
+ *  - 150 "minor units" of euros = 1.5,
  *  - 1000 "minor units" of yen = 1000 (the yen does not have minor units in practice)
  *
  * @param amount The amount, as the number of minor units of currency (cents for most currencies)
+ * @param currency The currency information
  * @param round Whether to round the amount to the nearest minor unit (e.g.: 1.5612 € => 1.56 €)
  */
 export function amountAsDecimal(

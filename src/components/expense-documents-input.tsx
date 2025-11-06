@@ -15,6 +15,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { randomId } from '@/lib/api'
+import { api } from '@/lib/api-client'
 import { ExpenseFormValues } from '@/lib/schemas'
 import { formatFileSize } from '@/lib/utils'
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden'
@@ -36,7 +37,7 @@ export function ExpenseDocumentsInput({ documents, updateDocuments }: Props) {
   const locale = useLocale()
   const t = useTranslations('ExpenseDocumentsInput')
   const [pending, setPending] = useState(false)
-  const { FileInput, openFileDialog, uploadToS3 } = usePresignedUpload() // use presigned uploads to addtionally support providers other than AWS
+  const { FileInput, openFileDialog, uploadToS3 } = usePresignedUpload() // use presigned uploads to additionally support providers other than AWS
 
   const handleFileChange = async (file: File) => {
     if (file.size > MAX_FILE_SIZE) {
@@ -82,8 +83,18 @@ export function ExpenseDocumentsInput({ documents, updateDocuments }: Props) {
             key={doc.id}
             document={doc}
             documents={documents}
-            deleteDocument={(document) => {
-              updateDocuments(documents.filter((d) => d.id !== document.id))
+            deleteDocument={async (document) => {
+              try {
+                await api.delete('/api/s3-object', {
+                  query: { url: document.url },
+                })
+                updateDocuments(documents.filter((d) => d.id !== document.id))
+              } catch (err) {
+                console.error(err)
+                toast.error(t('ErrorToast.title'), {
+                  description: t('ErrorToast.description'),
+                })
+              }
             }}
           />
         ))}
