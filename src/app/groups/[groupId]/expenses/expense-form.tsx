@@ -1,6 +1,8 @@
 import { CategorySelector } from '@/components/category-selector'
 import { CurrencySelector } from '@/components/currency-selector'
+import { DeletePopup } from '@/components/delete-popup'
 import { ExpenseDocumentsInput } from '@/components/expense-documents-input'
+import { extractCategoryFromTitle } from '@/components/expense-form-actions'
 import { SubmitButton } from '@/components/submit-button'
 import { Button } from '@/components/ui/button'
 import {
@@ -33,6 +35,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 import { Locale } from '@/i18n'
 import { randomId } from '@/lib/api'
 import { defaultCurrencyList, getCurrency } from '@/lib/currency'
@@ -61,14 +64,11 @@ import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { DeletePopup } from '../../../../components/delete-popup'
-import { extractCategoryFromTitle } from '../../../../components/expense-form-actions'
-import { Textarea } from '../../../../components/ui/textarea'
 
 const enforceCurrencyPattern = (value: string) =>
   value
     .replace(/^\s*-/, '_') // replace leading minus with _
-    .replace(/[.,]/, '#') // replace first comma with #
+    .replace(/[.,]/, '#') // replace the first comma with #
     .replace(/[-.,]/g, '') // remove other minus and commas characters
     .replace(/_/, '-') // change back _ to minus
     .replace(/#/, '.') // change back # to dot
@@ -208,7 +208,7 @@ export function ExpenseForm({
             return {
               participant: participantId,
               shares: shareValue <= 0 ? 1 : shareValue,
-              // Defensive NaN check removed: shares comes from DB as number; NaN would indicate data corruption.
+              // Defensive NaN check removed: shares come from DB as number; NaN would indicate data corruption.
             }
           }),
           splitMode: expense.splitMode,
@@ -229,7 +229,7 @@ export function ExpenseForm({
           originalCurrency: group.currencyCode,
           originalAmount: undefined,
           conversionRate: undefined,
-          category: 1, // category with Id 1 is Payment
+          category: 1, // category with id 1 is Payment
           paidBy: searchParams.get('from') ?? undefined,
           paidFor: [
             searchParams.get('to')
@@ -257,7 +257,7 @@ export function ExpenseForm({
           conversionRate: undefined,
           category: searchParams.get('categoryId')
             ? Number(searchParams.get('categoryId'))
-            : 0, // category with Id 0 is General
+            : 0, // category with id 0 is "General"
           // paid for all, split evenly
           paidFor: defaultSplittingOptions.paidFor,
           paidBy: getSelectedPayer(),
@@ -294,7 +294,7 @@ export function ExpenseForm({
           : shares,
     }))
 
-    // Currency should be blank if same as group currency
+    // Currency should be blank if the same as group currency
     if (!conversionRequired) {
       delete values.originalAmount
       delete values.originalCurrency
@@ -326,9 +326,12 @@ export function ExpenseForm({
     originalCurrency.code.length &&
     originalCurrency.code !== group.currencyCode
 
+  const amount = form.watch('amount')
+  const splitMode = form.watch('splitMode')
+
   useEffect(() => {
     setManuallyEditedParticipants(new Set())
-  }, [form.watch('splitMode'), form.watch('amount')])
+  }, [splitMode, amount])
 
   useEffect(() => {
     const splitMode = form.getValues().splitMode
@@ -379,9 +382,11 @@ export function ExpenseForm({
       form.setValue('paidFor', newPaidFor, { shouldValidate: true })
     }
   }, [
+    form,
+    amount,
+    splitMode,
     manuallyEditedParticipants,
-    form.watch('amount'),
-    form.watch('splitMode'),
+    groupCurrency.decimal_digits,
   ])
 
   const [usingCustomConversionRate, setUsingCustomConversionRate] = useState(
@@ -392,16 +397,20 @@ export function ExpenseForm({
     if (!usingCustomConversionRate && exchangeRate.data) {
       form.setValue('conversionRate', exchangeRate.data)
     }
-  }, [exchangeRate.data, usingCustomConversionRate])
+  }, [exchangeRate.data, usingCustomConversionRate, form])
+
+  const originalAmount = form.watch('originalAmount')
+  const conversionRate = form.watch('conversionRate')
+  const originalAmountFieldState = form.getFieldState('originalAmount')
 
   useEffect(() => {
-    if (!form.getFieldState('originalAmount').isTouched) return
-    const originalAmount = form.getValues('originalAmount') ?? 0
-    const conversionRate = form.getValues('conversionRate')
+    if (!originalAmountFieldState.isTouched) return
+    const originalAmountValue = form.getValues('originalAmount') ?? 0
+    const conversionRateValue = form.getValues('conversionRate')
 
-    if (conversionRate && originalAmount) {
-      const rate = Number(conversionRate)
-      const convertedAmount = originalAmount * rate
+    if (conversionRateValue && originalAmountValue) {
+      const rate = Number(conversionRateValue)
+      const convertedAmount = originalAmountValue * rate
       if (!Number.isNaN(convertedAmount)) {
         const v = enforceCurrencyPattern(
           convertedAmount.toFixed(groupCurrency.decimal_digits),
@@ -413,9 +422,11 @@ export function ExpenseForm({
       }
     }
   }, [
-    form.watch('originalAmount'),
-    form.watch('conversionRate'),
-    form.getFieldState('originalAmount').isTouched,
+    form,
+    originalAmount,
+    conversionRate,
+    groupCurrency.decimal_digits,
+    originalAmountFieldState.isTouched,
   ])
 
   let conversionRateMessage = ''
@@ -424,7 +435,7 @@ export function ExpenseForm({
   } else {
     let ratesDisplay = ''
     if (exchangeRate.data) {
-      // non breaking spaces so the rate text is not split with line feeds
+      // non-breaking spaces so the rate text is not split with line feeds
       ratesDisplay = `${form.getValues('originalCurrency')}\xa01\xa0=\xa0${
         group.currencyCode
       }\xa0${exchangeRate.data}`
@@ -510,7 +521,7 @@ export function ExpenseForm({
                         } else if (isValidDateString(value)) {
                           field.onChange(new Date(value))
                         }
-                        // If invalid, do not update the field (prevents resetting to today)
+                        // If invalid, do not update the field (prevents resetting today)
                       }}
                       onBlur={field.onBlur}
                     />
@@ -709,7 +720,7 @@ export function ExpenseForm({
                           onChange(v)
                         }}
                         onFocus={(e) => {
-                          // we're adding a small delay to get around safaris issue with onMouseUp deselecting things again
+                          // we're adding a small delay to get around safari issue with onMouseUp deselecting things again
                           const target = e.currentTarget
                           setTimeout(() => target.select(), 1)
                         }}
@@ -943,7 +954,7 @@ export function ExpenseForm({
                                               shares:
                                                 form.watch('splitMode') ===
                                                 'BY_PERCENTAGE'
-                                                  ? Number(shares) * 100 // Convert percentage to basis points (e.g., 50% -> 5000)
+                                                  ? Number(shares) * 100 // Convert percentage to basis points (e.g. 50% -> 5000)
                                                   : form.watch('splitMode') ===
                                                     'BY_AMOUNT'
                                                   ? amountAsMinorUnits(

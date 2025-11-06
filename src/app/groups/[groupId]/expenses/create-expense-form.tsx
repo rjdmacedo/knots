@@ -9,7 +9,6 @@ export function CreateExpenseForm({
   runtimeFeatureFlags,
 }: {
   groupId: string
-  expenseId?: string
   runtimeFeatureFlags: RuntimeFeatureFlags
 }) {
   const { data: groupData } = trpc.groups.get.useQuery({ groupId })
