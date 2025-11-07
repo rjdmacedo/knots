@@ -23,21 +23,138 @@ import { Loader2, Plus, Trash, X } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { getImageData, usePresignedUpload } from 'next-s3-upload'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
+
+type PendingDocument = {
+  id: string
+  file: File
+  previewUrl: string
+  width: number
+  height: number
+}
 
 type Props = {
   documents: ExpenseFormValues['documents']
   updateDocuments: (documents: ExpenseFormValues['documents']) => void
+  onUploadPending?: (uploadPending: () => Promise<void>) => void
+  onDeletePending?: (deletePending: () => Promise<void>) => void
 }
 
 const MAX_FILE_SIZE = 5 * 1024 ** 2
 
-export function ExpenseDocumentsInput({ documents, updateDocuments }: Props) {
+export function ExpenseDocumentsInput({
+  documents,
+  updateDocuments,
+  onUploadPending,
+  onDeletePending,
+}: Props) {
   const locale = useLocale()
   const t = useTranslations('ExpenseDocumentsInput')
-  const [pending, setPending] = useState(false)
+  const [uploading, setUploading] = useState(false)
+  const [pendingFiles, setPendingFiles] = useState<PendingDocument[]>([])
+  const [documentsToDelete, setDocumentsToDelete] = useState<string[]>([]) // URLs of documents to delete from S3
   const { FileInput, openFileDialog, uploadToS3 } = usePresignedUpload() // use presigned uploads to additionally support providers other than AWS
+
+  // Cleanup object URLs on unmount
+  useEffect(() => {
+    return () => {
+      pendingFiles.forEach((pending) => {
+        URL.revokeObjectURL(pending.previewUrl)
+      })
+    }
+  }, [pendingFiles])
+
+  const uploadPendingFiles = useCallback(async () => {
+    if (pendingFiles.length === 0) return
+
+    setUploading(true)
+    const uploaded: ExpenseFormValues['documents'] = []
+    const errors: PendingDocument[] = []
+
+    for (const pending of pendingFiles) {
+      try {
+        const { url } = await uploadToS3(pending.file)
+        uploaded.push({
+          id: pending.id,
+          url,
+          width: pending.width,
+          height: pending.height,
+        })
+        // Cleanup preview URL
+        URL.revokeObjectURL(pending.previewUrl)
+      } catch (err) {
+        console.error(err)
+        errors.push(pending)
+      }
+    }
+
+    if (errors.length > 0) {
+      toast.error(t('ErrorToast.title'), {
+        description: t('ErrorToast.description'),
+      })
+      // Keep failed uploads in pending
+      setPendingFiles(errors)
+    } else {
+      // All uploaded successfully
+      setPendingFiles([])
+    }
+
+    if (uploaded.length > 0) {
+      updateDocuments([...documents, ...uploaded])
+    }
+
+    setUploading(false)
+
+    if (errors.length > 0) {
+      throw new Error('Some files failed to upload')
+    }
+  }, [pendingFiles, uploadToS3, t, updateDocuments, documents])
+
+  const deletePendingDocuments = useCallback(async () => {
+    if (documentsToDelete.length === 0) return
+
+    const errors: string[] = []
+
+    for (const url of documentsToDelete) {
+      try {
+        await api.delete('/api/s3-object', {
+          query: { url },
+        })
+      } catch (err) {
+        console.error(err)
+        errors.push(url)
+      }
+    }
+
+    if (errors.length > 0) {
+      toast.error(t('ErrorToast.title'), {
+        description: t('ErrorToast.description'),
+      })
+      // Keep failed deletions
+      setDocumentsToDelete(errors)
+    } else {
+      // All deleted successfully
+      setDocumentsToDelete([])
+    }
+
+    if (errors.length > 0) {
+      throw new Error('Some documents failed to delete')
+    }
+  }, [documentsToDelete, t])
+
+  // Expose upload and delete functions to parent
+  useEffect(() => {
+    if (onUploadPending) {
+      onUploadPending(uploadPendingFiles)
+    }
+  }, [uploadPendingFiles, onUploadPending])
+
+  useEffect(() => {
+    if (onDeletePending) {
+      onDeletePending(deletePendingDocuments)
+    }
+  }, [deletePendingDocuments, onDeletePending])
 
   const handleFileChange = async (file: File) => {
     if (file.size > MAX_FILE_SIZE) {
@@ -50,50 +167,64 @@ export function ExpenseDocumentsInput({ documents, updateDocuments }: Props) {
       return
     }
 
-    const upload = async () => {
-      try {
-        setPending(true)
-        const { width, height } = await getImageData(file)
-        if (!width || !height) throw new Error('Cannot get image dimensions')
-        const { url } = await uploadToS3(file)
-        updateDocuments([...documents, { id: randomId(), url, width, height }])
-      } catch (err) {
-        console.error(err)
-        toast.error(t('ErrorToast.title'), {
-          description: t('ErrorToast.description'),
-          action: {
-            label: t('ErrorToast.retry'),
-            onClick: () => upload(),
-          },
-        })
-      } finally {
-        setPending(false)
+    try {
+      const { width, height } = await getImageData(file)
+      if (!width || !height) throw new Error('Cannot get image dimensions')
+
+      const previewUrl = URL.createObjectURL(file)
+      const pendingDoc: PendingDocument = {
+        id: randomId(),
+        file,
+        previewUrl,
+        width,
+        height,
       }
+
+      setPendingFiles([...pendingFiles, pendingDoc])
+    } catch (err) {
+      console.error(err)
+      toast.error(t('ErrorToast.title'), {
+        description: t('ErrorToast.description'),
+      })
     }
-    upload()
   }
+
+  const deletePendingDocument = (id: string) => {
+    const pending = pendingFiles.find((p) => p.id === id)
+    if (pending) {
+      URL.revokeObjectURL(pending.previewUrl)
+      setPendingFiles(pendingFiles.filter((p) => p.id !== id))
+    }
+  }
+
+  const allDocuments = [
+    ...documents.map((doc) => ({ ...doc, isPending: false })),
+    ...pendingFiles.map((pending) => ({
+      id: pending.id,
+      url: pending.previewUrl,
+      width: pending.width,
+      height: pending.height,
+      isPending: true,
+    })),
+  ]
 
   return (
     <div>
       <FileInput onChange={handleFileChange} accept="image/jpeg,image/png" />
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 [&_*]:aspect-square">
-        {documents.map((doc) => (
+        {allDocuments.map((doc) => (
           <DocumentThumbnail
             key={doc.id}
             document={doc}
-            documents={documents}
+            documents={allDocuments}
             deleteDocument={async (document) => {
-              try {
-                await api.delete('/api/s3-object', {
-                  query: { url: document.url },
-                })
+              if (document.isPending) {
+                deletePendingDocument(document.id)
+              } else {
+                // Mark for deletion instead of deleting immediately
+                setDocumentsToDelete([...documentsToDelete, document.url])
                 updateDocuments(documents.filter((d) => d.id !== document.id))
-              } catch (err) {
-                console.error(err)
-                toast.error(t('ErrorToast.title'), {
-                  description: t('ErrorToast.description'),
-                })
               }
             }}
           />
@@ -105,9 +236,9 @@ export function ExpenseDocumentsInput({ documents, updateDocuments }: Props) {
             type="button"
             onClick={openFileDialog}
             className="w-full h-full"
-            disabled={pending}
+            disabled={uploading}
           >
-            {pending ? (
+            {uploading ? (
               <Loader2 className="w-8 h-8 animate-spin" />
             ) : (
               <Plus className="w-8 h-8" />
@@ -119,14 +250,18 @@ export function ExpenseDocumentsInput({ documents, updateDocuments }: Props) {
   )
 }
 
+type DocumentWithPending = ExpenseFormValues['documents'][number] & {
+  isPending?: boolean
+}
+
 export function DocumentThumbnail({
   document,
   documents,
   deleteDocument,
 }: {
-  document: ExpenseFormValues['documents'][number]
-  documents: ExpenseFormValues['documents']
-  deleteDocument: (document: ExpenseFormValues['documents'][number]) => void
+  document: DocumentWithPending
+  documents: DocumentWithPending[]
+  deleteDocument: (document: DocumentWithPending) => void
 }) {
   const [open, setOpen] = useState(false)
   const [api, setApi] = useState<CarouselApi>()
