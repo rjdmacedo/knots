@@ -13,11 +13,10 @@ export function readFromLocalStorage<T>(key: string): T | null {
     const item = window.localStorage.getItem(key)
     return item ? (JSON.parse(item) as T) : null
   } catch (error) {
-    console.error('Error reading from localStorage:', error)
+    console.error('Error reading from localStorage:', key, error)
     return null
   }
 }
-
 /**
  * Writes a value to localStorage as JSON
  * @param key - The localStorage key
@@ -32,6 +31,6 @@ export function writeToLocalStorage<T>(key: string, value: T | null): void {
       window.localStorage.setItem(key, JSON.stringify(value))
     }
   } catch (error) {
-    console.error('Error writing to localStorage:', error)
+    console.error('Error writing to localStorage:', key, value, error)
   }
 }
