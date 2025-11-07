@@ -61,7 +61,7 @@ import { ChevronRight, Save } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 
@@ -280,8 +280,22 @@ export function ExpenseForm({
   })
   const [isCategoryLoading, setCategoryLoading] = useState(false)
   const activeUserId = useActiveUser(group.id)
+  const uploadPendingDocumentsRef = useRef<(() => Promise<void>) | null>(null)
+  const deletePendingDocumentsRef = useRef<(() => Promise<void>) | null>(null)
 
   const submit = async (values: ExpenseFormValues) => {
+    // Upload pending documents before submitting
+    if (uploadPendingDocumentsRef.current) {
+      try {
+        await uploadPendingDocumentsRef.current()
+        // Update values with the latest documents from form state
+        values.documents = form.getValues('documents')
+      } catch (err) {
+        // If upload fails, don't proceed with submission
+        throw err
+      }
+    }
+
     await persistDefaultSplittingOptions(group.id, values)
 
     // Store monetary amounts in minor units (cents)
@@ -299,7 +313,20 @@ export function ExpenseForm({
       delete values.originalAmount
       delete values.originalCurrency
     }
-    return onSubmit(values, activeUserId ?? undefined)
+
+    // Submit the form first
+    await onSubmit(values, activeUserId ?? undefined)
+
+    // Delete marked documents from S3 after successful form submission
+    // We do this after submission so if submission fails, documents aren't deleted
+    if (deletePendingDocumentsRef.current) {
+      try {
+        await deletePendingDocumentsRef.current()
+      } catch (err) {
+        // Log error but don't fail since the form data is already saved
+        console.error('Failed to delete documents from S3:', err)
+      }
+    }
   }
 
   const [isIncome, setIsIncome] = useState(Number(form.getValues().amount) < 0)
@@ -1286,6 +1313,12 @@ export function ExpenseForm({
                   <ExpenseDocumentsInput
                     documents={field.value}
                     updateDocuments={field.onChange}
+                    onUploadPending={(uploadFn) => {
+                      uploadPendingDocumentsRef.current = uploadFn
+                    }}
+                    onDeletePending={(deleteFn) => {
+                      deletePendingDocumentsRef.current = deleteFn
+                    }}
                   />
                 )}
               />
