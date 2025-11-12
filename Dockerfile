@@ -1,8 +1,5 @@
 FROM node:21-alpine AS base
 
-ARG APP_VERSION=dev
-ENV NEXT_PUBLIC_APP_VERSION=${APP_VERSION}
-
 WORKDIR /usr/app
 COPY ./package.json \
      ./package-lock.json \
@@ -23,8 +20,7 @@ COPY ./messages ./messages
 ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY scripts/build.env .env
-RUN echo "Building with NEXT_PUBLIC_APP_VERSION=${NEXT_PUBLIC_APP_VERSION}" && \
-    npm run build
+RUN npm run build
 
 RUN rm -r .next/cache
 
@@ -38,9 +34,6 @@ RUN npm ci --omit=dev --omit=optional --ignore-scripts && \
     npx prisma generate
 
 FROM node:21-alpine AS runner
-
-ARG APP_VERSION=dev
-ENV NEXT_PUBLIC_APP_VERSION=${APP_VERSION}
 
 EXPOSE 3000/tcp
 WORKDIR /usr/app
