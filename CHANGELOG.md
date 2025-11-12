@@ -1,3 +1,11 @@
+## [1.20.1](https://github.com/rjdmacedo/knots/compare/v1.20.0...v1.20.1) (2025-11-12)
+
+
+### Bug Fixes
+
+* remove [skip ci] from semantic-release and add manual workflow dispatch ([#16](https://github.com/rjdmacedo/knots/issues/16)) ([eb5e196](https://github.com/rjdmacedo/knots/commit/eb5e196fe79a9829a79189c76f470f020a395676))
+* update semantic-release workflow to use npx and add manual dispatch ([#17](https://github.com/rjdmacedo/knots/issues/17)) ([2bbda74](https://github.com/rjdmacedo/knots/commit/2bbda74ec9c3f8753953593b5ca4d5cd879bdb60))
+
 # [1.20.0](https://github.com/rjdmacedo/knots/compare/v1.19.8...v1.20.0) (2025-11-12)
 
 ### Bug Fixes
