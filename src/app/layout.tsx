@@ -1,4 +1,5 @@
 import { ApplePwaSplash } from '@/app/apple-pwa-splash'
+import { Footer } from '@/components/footer'
 import { LocaleSwitcher } from '@/components/locale-switcher'
 import { ProgressBar } from '@/components/progress-bar'
 import { ThemeProvider } from '@/components/theme-provider'
@@ -100,7 +101,10 @@ function Content({ children }: { children: React.ReactNode }) {
             </ul>
           </div>
         </header>
-        <div className="flex-1 flex flex-col">{children}</div>
+        <div className="flex flex-col h-full">
+          <div className="flex-1 flex flex-col overflow-y-auto">{children}</div>
+          <Footer />
+        </div>
         <Toaster />
       </TooltipProvider>
     </TRPCProvider>
@@ -117,7 +121,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <ApplePwaSplash icon="/logo-with-text.png" color="#027756" />
-      <body className="mt-16 min-h-dvh flex flex-col items-stretch">
+      <body className="mt-16 h-[calc(100dvh-4rem)] flex flex-col items-stretch overflow-hidden">
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
             attribute="class"
