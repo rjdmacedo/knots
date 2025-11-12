@@ -15,8 +15,7 @@
     "start-container": "docker compose --env-file container.env up",
     "test": "jest",
     "generate-currency-data": "ts-node -T ./src/scripts/generateCurrencyData.ts",
-    "prepare": "husky",
-    "semantic-release": "semantic-release"
+    "prepare": "husky"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.922.0",

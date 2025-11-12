@@ -12,6 +12,3 @@ node_modules
 *.tsbuildinfo
 next-env.d.ts
 postgres-data
-
-# Ignore UI components (generated)
-src/components/ui
