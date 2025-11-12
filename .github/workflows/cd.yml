@@ -33,11 +33,11 @@ jobs:
         run: |
           echo "REPO=${GITHUB_REPOSITORY@L}" >> "${GITHUB_ENV}"
 
-      - name: Extract version from tag
+      - name: Extract version from package.json
         id: version
         run: |
-          TAG="${{ github.ref_name }}"
-          echo "version=$TAG" >> "$GITHUB_OUTPUT"
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Build and push
         uses: docker/build-push-action@v6
@@ -45,10 +45,8 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          build-args: |
-            APP_VERSION=${{ steps.version.outputs.version }}
           tags: |
-            ghcr.io/${{ env.REPO }}:${{ github.ref_name }}
+            ghcr.io/${{ env.REPO }}:${{ steps.version.outputs.version }}
             ghcr.io/${{ env.REPO }}:latest
           provenance: false # Disable provenance to avoid unknown/unknown
           sbom: false # Disable sbom to avoid unknown/unknown
