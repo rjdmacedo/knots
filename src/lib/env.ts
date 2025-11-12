@@ -36,6 +36,7 @@ const envSchema = z
       z.boolean().default(false),
     ),
     OPENAI_API_KEY: z.string().optional(),
+    NEXT_PUBLIC_APP_VERSION: z.string().optional().default('dev'),
   })
   .superRefine((env, ctx) => {
     if (

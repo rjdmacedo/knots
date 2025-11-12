@@ -1,5 +1,8 @@
 FROM node:21-alpine AS base
 
+ARG APP_VERSION
+ENV NEXT_PUBLIC_APP_VERSION=${APP_VERSION}
+
 WORKDIR /usr/app
 COPY ./package.json \
      ./package-lock.json \
