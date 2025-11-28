@@ -1,3 +1,10 @@
+## [1.20.5](https://github.com/rjdmacedo/knots/compare/v1.20.4...v1.20.5) (2025-11-28)
+
+
+### Bug Fixes
+
+* add GH_TOKEN env var to trigger CD workflow step ([#23](https://github.com/rjdmacedo/knots/issues/23)) ([46fb65e](https://github.com/rjdmacedo/knots/commit/46fb65e1ef41a2649e5302023438684d96a24e88))
+
 ## [1.20.4](https://github.com/rjdmacedo/knots/compare/v1.20.3...v1.20.4) (2025-11-28)
 
 
