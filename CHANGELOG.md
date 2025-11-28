@@ -1,3 +1,10 @@
+## [1.20.2](https://github.com/rjdmacedo/knots/compare/v1.20.1...v1.20.2) (2025-11-28)
+
+
+### Bug Fixes
+
+* make activity list subheaders stretch full width ([#18](https://github.com/rjdmacedo/knots/issues/18)) ([8d7aaf2](https://github.com/rjdmacedo/knots/commit/8d7aaf2cac1e032a0457acd20d808d08624cbc39))
+
 ## [1.20.1](https://github.com/rjdmacedo/knots/compare/v1.20.0...v1.20.1) (2025-11-12)
 
 ### Bug Fixes
