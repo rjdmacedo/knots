@@ -8,7 +8,12 @@ import {
   CommandInput,
   CommandItem,
 } from '@/components/ui/command'
-import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer'
+import {
+  Drawer,
+  DrawerContent,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@/components/ui/drawer'
 import {
   Popover,
   PopoverContent,
@@ -42,7 +47,6 @@ export function CurrencySelector({
   // allow overwriting currently selected currency from outside
   useEffect(() => {
     setValue(defaultValue)
-    onValueChange(defaultValue)
   }, [defaultValue])
 
   const selectedCurrency =
@@ -61,6 +65,7 @@ export function CurrencySelector({
           />
         </DrawerTrigger>
         <DrawerContent className="p-0">
+          <DrawerTitle className="sr-only">Select Currency</DrawerTitle>
           <CurrencyCommand
             currencies={currencies}
             onValueChange={(id) => {
