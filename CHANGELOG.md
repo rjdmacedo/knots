@@ -1,3 +1,10 @@
+## [1.20.6](https://github.com/rjdmacedo/knots/compare/v1.20.5...v1.20.6) (2025-11-28)
+
+
+### Bug Fixes
+
+* prepend 'v' to tag when triggering CD workflow ([#24](https://github.com/rjdmacedo/knots/issues/24)) ([18f132d](https://github.com/rjdmacedo/knots/commit/18f132d616994ae39095a6a4168512cbca086250))
+
 ## [1.20.5](https://github.com/rjdmacedo/knots/compare/v1.20.4...v1.20.5) (2025-11-28)
 
 
