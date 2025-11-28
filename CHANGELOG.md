@@ -1,3 +1,10 @@
+## [1.20.4](https://github.com/rjdmacedo/knots/compare/v1.20.3...v1.20.4) (2025-11-28)
+
+
+### Bug Fixes
+
+* use multi-line run to avoid quoting issues in version extraction ([#21](https://github.com/rjdmacedo/knots/issues/21)) ([927f58e](https://github.com/rjdmacedo/knots/commit/927f58e5d6c74cf71b860bf63d09d5ac582a094a))
+
 ## [1.20.3](https://github.com/rjdmacedo/knots/compare/v1.20.2...v1.20.3) (2025-11-28)
 
 ### Bug Fixes
