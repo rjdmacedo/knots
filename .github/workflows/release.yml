@@ -36,7 +36,9 @@ jobs:
 
       - name: Extract version
         id: version
-        run: echo "version=$(node -p \"require('./package.json').version\")" >> $GITHUB_OUTPUT
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Trigger CD workflow
         run: gh workflow run cd.yml -f tag=${{ steps.version.outputs.version }}

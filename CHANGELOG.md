@@ -1,9 +1,8 @@
 ## [1.20.3](https://github.com/rjdmacedo/knots/compare/v1.20.2...v1.20.3) (2025-11-28)
 
-
 ### Bug Fixes
 
-* auto‑trigger CD workflow after semantic‑release (issue [#19](https://github.com/rjdmacedo/knots/issues/19)) ([#20](https://github.com/rjdmacedo/knots/issues/20)) ([cc03884](https://github.com/rjdmacedo/knots/commit/cc03884a64cc822535ee97cd2e52d50de2269b52))
+- auto‑trigger CD workflow after semantic‑release (issue [#19](https://github.com/rjdmacedo/knots/issues/19)) ([#20](https://github.com/rjdmacedo/knots/issues/20)) ([cc03884](https://github.com/rjdmacedo/knots/commit/cc03884a64cc822535ee97cd2e52d50de2269b52))
 
 ## [1.20.2](https://github.com/rjdmacedo/knots/compare/v1.20.1...v1.20.2) (2025-11-28)
 
