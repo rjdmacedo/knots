@@ -72,6 +72,9 @@ export function GroupForm({
       : {
           name: '',
           information: '',
+          currency: getCurrency(
+            process.env.NEXT_PUBLIC_DEFAULT_CURRENCY_CODE || 'USD',
+          ).symbol,
           currencyCode: process.env.NEXT_PUBLIC_DEFAULT_CURRENCY_CODE || 'USD', // TODO: If NEXT_PUBLIC_DEFAULT_CURRENCY_CODE, is not set, determine the default currency code based on locale
           participants: [
             { name: t('Participants.John') },
@@ -126,109 +129,113 @@ export function GroupForm({
           <CardHeader>
             <CardTitle>{t('title')}</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('NameField.label')}</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="text-base"
-                      placeholder={t('NameField.placeholder')}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    {t('NameField.description')}
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="currencyCode"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('CurrencyCodeField.label')}</FormLabel>
-                  <CurrencySelector
-                    currencies={defaultCurrencyList(
-                      locale as Locale,
-                      t('CurrencyCodeField.customOption'),
-                    )}
-                    defaultValue={form.watch(field.name) ?? ''}
-                    onValueChange={(newCurrency) => {
-                      field.onChange(newCurrency)
-                      const currency = getCurrency(newCurrency)
-                      if (
-                        currency.code.length ||
-                        form.getFieldState('currency').isTouched
-                      )
-                        form.setValue('currency', currency.symbol, {
-                          shouldValidate: true,
-                          shouldTouch: true,
-                          shouldDirty: true,
-                        })
-                    }}
-                    isLoading={false}
-                  />
-                  <FormDescription>
-                    {t(
-                      group
-                        ? 'CurrencyCodeField.editDescription'
-                        : 'CurrencyCodeField.createDescription',
-                    )}
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="currency"
-              render={({ field }) => (
-                <FormItem hidden={!!form.watch('currencyCode')?.length}>
-                  <FormLabel>{t('CurrencyField.label')}</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="text-base"
-                      placeholder={t('CurrencyField.placeholder')}
-                      max={5}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    {t('CurrencyField.description')}
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="col-span-2">
+          <CardContent className="flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 flex-wrap sm:items-start">
               <FormField
                 control={form.control}
-                name="information"
+                name="name"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('InformationField.label')}</FormLabel>
+                  <FormItem className="flex-1">
+                    <FormLabel>{t('NameField.label')}</FormLabel>
                     <FormControl>
-                      <Textarea
-                        rows={2}
+                      <Input
                         className="text-base"
+                        placeholder={t('NameField.placeholder')}
                         {...field}
-                        placeholder={t('InformationField.placeholder')}
                       />
                     </FormControl>
+                    <FormDescription>
+                      {t('NameField.description')}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="currencyCode"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>{t('CurrencyCodeField.label')}</FormLabel>
+                    <CurrencySelector
+                      currencies={defaultCurrencyList(
+                        locale as Locale,
+                        t('CurrencyCodeField.customOption'),
+                      )}
+                      defaultValue={form.watch(field.name) ?? ''}
+                      onValueChange={(newCurrency) => {
+                        if (newCurrency === field.value) return
+                        field.onChange(newCurrency)
+                        const currency = getCurrency(newCurrency)
+                        if (
+                          currency.code.length ||
+                          form.getFieldState('currency').isTouched
+                        )
+                          form.setValue('currency', currency.symbol, {
+                            shouldValidate: true,
+                            shouldTouch: true,
+                            shouldDirty: true,
+                          })
+                      }}
+                      isLoading={false}
+                    />
+                    <FormDescription>
+                      {t(
+                        group
+                          ? 'CurrencyCodeField.editDescription'
+                          : 'CurrencyCodeField.createDescription',
+                      )}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="currency"
+                render={({ field }) => (
+                  <FormItem
+                    hidden={!!form.watch('currencyCode')?.length}
+                    className="flex-1"
+                  >
+                    <FormLabel>{t('CurrencyField.label')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="text-base"
+                        placeholder={t('CurrencyField.placeholder')}
+                        maxLength={5}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {t('CurrencyField.description')}
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name="information"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('InformationField.label')}</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      rows={2}
+                      className="text-base"
+                      {...field}
+                      placeholder={t('InformationField.placeholder')}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </CardContent>
         </Card>
 

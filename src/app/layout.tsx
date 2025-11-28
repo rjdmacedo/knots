@@ -102,8 +102,10 @@ function Content({ children }: { children: React.ReactNode }) {
           </div>
         </header>
         <div className="flex flex-col h-full">
-          <div className="flex-1 flex flex-col overflow-y-auto">{children}</div>
-          <Footer />
+          <div className="flex-1 flex flex-col overflow-y-auto">
+            <div className="flex-1">{children}</div>
+            <Footer />
+          </div>
         </div>
         <Toaster />
       </TooltipProvider>
