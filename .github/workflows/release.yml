@@ -41,4 +41,6 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Trigger CD workflow
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh workflow run cd.yml -f tag=${{ steps.version.outputs.version }}
