@@ -1,4 +1,4 @@
-FROM node:21-alpine AS base
+FROM node:20-alpine AS base
 
 WORKDIR /usr/app
 COPY ./package.json \
@@ -24,7 +24,7 @@ RUN npm run build
 
 RUN rm -r .next/cache
 
-FROM node:21-alpine AS runtime-deps
+FROM node:20-alpine AS runtime-deps
 
 WORKDIR /usr/app
 COPY --from=base /usr/app/package.json /usr/app/package-lock.json /usr/app/next.config.mjs ./
@@ -33,7 +33,7 @@ COPY --from=base /usr/app/prisma ./prisma
 RUN npm ci --omit=dev --omit=optional --ignore-scripts && \
     npx prisma generate
 
-FROM node:21-alpine AS runner
+FROM node:20-alpine AS runner
 
 EXPOSE 3000/tcp
 WORKDIR /usr/app
