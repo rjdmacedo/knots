@@ -1,5 +1,6 @@
 import { ApplePwaSplash } from '@/app/apple-pwa-splash'
 import { Footer } from '@/components/footer'
+import { KnotsLogo } from '@/components/knots-logo'
 import { LocaleSwitcher } from '@/components/locale-switcher'
 import { ProgressBar } from '@/components/progress-bar'
 import { ThemeProvider } from '@/components/theme-provider'
@@ -11,7 +12,6 @@ import { TRPCProvider } from '@/trpc/client'
 import type { Metadata, Viewport } from 'next'
 import { NextIntlClientProvider, useTranslations } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
-import Image from 'next/image'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { Toaster } from 'sonner'
@@ -75,15 +75,12 @@ function Content({ children }: { children: React.ReactNode }) {
             className="flex items-center gap-2 hover:scale-105 transition-transform"
             href="/"
           >
-            <h1>
-              <Image
-                src="/logo-with-text.png"
-                className="m-1 h-8 w-auto"
-                width={(35 * 522) / 180}
-                height={35}
-                alt="Knots"
-              />
-            </h1>
+            <span className="flex items-center">
+              <KnotsLogo />
+              <span className="font-semibold text-xl tracking-tight">
+                Knots
+              </span>
+            </span>
           </Link>
           <div role="navigation" aria-label="Menu" className="flex">
             <ul className="flex items-center text-sm">
@@ -101,11 +98,9 @@ function Content({ children }: { children: React.ReactNode }) {
             </ul>
           </div>
         </header>
-        <div className="flex flex-col h-full">
-          <div className="flex-1 flex flex-col overflow-y-auto">
-            <div className="flex-1">{children}</div>
-            <Footer />
-          </div>
+        <div className="flex flex-col min-h-[calc(100dvh-4rem)]">
+          <main className="flex-1 flex flex-col">{children}</main>
+          <Footer />
         </div>
         <Toaster />
       </TooltipProvider>
@@ -123,7 +118,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <ApplePwaSplash icon="/logo-with-text.png" color="#027756" />
-      <body className="mt-16 h-[calc(100dvh-4rem)] flex flex-col items-stretch overflow-hidden">
+      <body className="mt-16 min-h-dvh flex flex-col items-stretch">
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
             attribute="class"

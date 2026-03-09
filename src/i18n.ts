@@ -17,7 +17,7 @@ export const localeLabels = {
   'ua-UA': 'Українська',
   ro: 'Română',
   'tr-TR': 'Türkçe',
-  'pt-BR': 'Português Brasileiro',
+  'pt-PT': 'Português',
   'nl-NL': 'Nederlands',
   ca: 'Català',
   'cs-CZ': 'Česky',
