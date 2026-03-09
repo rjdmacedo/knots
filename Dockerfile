@@ -9,6 +9,9 @@ COPY ./package.json \
      ./postcss.config.js ./
 COPY ./scripts ./scripts
 COPY ./prisma ./prisma
+COPY ./prisma.config.ts ./
+# Provide env for prisma generate (and prisma.config.ts if loaded)
+COPY scripts/build.env .env
 
 RUN apk add --no-cache openssl && \
     npm ci --ignore-scripts && \
@@ -19,7 +22,6 @@ COPY ./messages ./messages
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-COPY scripts/build.env .env
 RUN npm run build
 
 RUN rm -r .next/cache

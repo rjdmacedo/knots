@@ -31,16 +31,19 @@ export function ShareButton({ group }: Props) {
       </PopoverTrigger>
       <PopoverContent align="end" className="[&_p]:text-sm flex flex-col gap-3">
         <p>{t('description')}</p>
-        {url && (
-          <div className="flex gap-2">
-            <Input className="flex-1" defaultValue={url} readOnly />
-            <CopyButton text={url} />
-            <ShareUrlButton
-              text={`Join my group ${group.name} on Knots`}
-              url={url}
-            />
-          </div>
-        )}
+        <div className="flex gap-2">
+          <Input
+            className="flex-1"
+            value={url ?? ''}
+            readOnly
+            placeholder="/groups/…"
+          />
+          <CopyButton text={url ?? ''} />
+          <ShareUrlButton
+            text={`Join my group ${group.name} on Knots`}
+            url={url ?? ''}
+          />
+        </div>
         <p>
           <strong>{t('warning')}</strong> {t('warningHelp')}
         </p>

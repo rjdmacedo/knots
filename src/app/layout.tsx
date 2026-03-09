@@ -70,32 +70,34 @@ function Content({ children }: { children: React.ReactNode }) {
   return (
     <TRPCProvider>
       <TooltipProvider>
-        <header className="fixed top-0 left-0 right-0 h-16 flex justify-between bg-white dark:bg-gray-950 bg-opacity-50 dark:bg-opacity-50 p-2 border-b backdrop-blur-xs z-50">
-          <Link
-            className="flex items-center gap-2 hover:scale-105 transition-transform"
-            href="/"
-          >
-            <span className="flex items-center">
-              <KnotsLogo />
-              <span className="font-semibold text-xl tracking-tight">
-                Knots
+        <header className="flex items-center fixed top-0 left-0 right-0 h-16 bg-background bg-opacity-50 dark:bg-opacity-50 border-b backdrop-blur-xs z-50">
+          <div className="container flex justify-between">
+            <Link
+              className="flex items-center gap-2 hover:scale-105 transition-transform"
+              href="/"
+            >
+              <span className="flex items-center">
+                <KnotsLogo />
+                <span className="ml-2 font-semibold text-xl tracking-tight">
+                  Knots
+                </span>
               </span>
-            </span>
-          </Link>
-          <div role="navigation" aria-label="Menu" className="flex">
-            <ul className="flex items-center text-sm">
-              <li>
-                <Button variant="ghost" size="sm" asChild className="-my-3">
-                  <Link href="/groups">{t('Header.groups')}</Link>
-                </Button>
-              </li>
-              <li>
-                <LocaleSwitcher />
-              </li>
-              <li>
-                <ThemeToggle />
-              </li>
-            </ul>
+            </Link>
+            <div role="navigation" aria-label="Menu" className="flex">
+              <ul className="flex items-center text-sm">
+                <li>
+                  <Button variant="ghost" size="sm" asChild className="-my-3">
+                    <Link href="/groups">{t('Header.groups')}</Link>
+                  </Button>
+                </li>
+                <li>
+                  <LocaleSwitcher />
+                </li>
+                <li>
+                  <ThemeToggle />
+                </li>
+              </ul>
+            </div>
           </div>
         </header>
         <div className="flex flex-col min-h-[calc(100dvh-4rem)]">
