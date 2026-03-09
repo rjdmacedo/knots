@@ -42,14 +42,20 @@ export async function extractCategoryFromTitle(description: string) {
       },
     ],
   }
-  const completion = await openai.chat.completions.create(body)
-  const messageContent = completion.choices.at(0)?.message.content
-  // ensure the returned id actually exists
-  const category = categories.find((category) => {
-    return category.id === Number(messageContent)
-  })
-  // fall back to first category (should be "General") if no category matches the output
-  return { categoryId: category?.id || 0 }
+  try {
+    const completion = await openai.chat.completions.create(body)
+    const messageContent = completion.choices.at(0)?.message.content
+    // ensure the returned id actually exists
+    const category = categories.find((category) => {
+      return category.id === Number(messageContent)
+    })
+    // fall back to first category (should be "General") if no category matches the output
+    return { categoryId: category?.id || 0 }
+  } catch (error) {
+    console.error('extractCategoryFromTitle failed:', error)
+    // On quota errors or any other failure, just keep the current / default category
+    return { categoryId: 0 }
+  }
 }
 
 export type TitleExtractedInfo = Awaited<

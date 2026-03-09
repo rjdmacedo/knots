@@ -88,7 +88,9 @@ export function ExpenseList() {
 
   return (
     <>
-      <SearchBar onValueChange={(value) => setSearchText(value)} />
+      <div className="mb-2 sm:mb-3">
+        <SearchBar onValueChange={(value) => setSearchText(value)} />
+      </div>
       <ExpenseListForSearch
         groupId={groupId}
         searchText={debouncedSearchText}
@@ -159,8 +161,8 @@ const ExpenseListForSearch = ({
         if (!groupExpenses || groupExpenses.length === 0) return null
 
         return (
-          <div key={expenseGroup} className="space-y-4">
-            <div className="text-xs pl-4 sm:pl-6 py-1 font-semibold sticky top-16 bg-background">
+          <div key={expenseGroup}>
+            <div className="text-xs py-1 font-semibold sticky top-16 bg-background px-6">
               {t(`Groups.${expenseGroup}`)}
             </div>
             {groupExpenses.map((expense) => (

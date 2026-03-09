@@ -50,15 +50,18 @@ const fetcher: Fetcher<FrankfurterAPIResponse> = (url: string) =>
   })
 
 export function useCurrencyRate(
-  date: Date,
+  date: Date | null,
   baseCurrency: string,
   targetCurrency: string,
 ) {
-  const dateString = dayjs(date).format('YYYY-MM-DD')
+  const hasValidDate = date instanceof Date && !isNaN(date.getTime())
+  const dateString = hasValidDate
+    ? dayjs(date).format('YYYY-MM-DD')
+    : dayjs().format('YYYY-MM-DD')
 
   // Only send request if both currency codes are given and not the same
   const url =
-    !isNaN(date.getTime()) &&
+    hasValidDate &&
     !!baseCurrency.length &&
     !!targetCurrency.length &&
     baseCurrency !== targetCurrency &&

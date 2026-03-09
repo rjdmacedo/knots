@@ -624,25 +624,35 @@ export function ExpenseForm({
                       </FormControl>
                     </div>
                     <FormDescription>
-                      {isNaN(form.getValues('expenseDate').getTime()) ? (
-                        t('conversionRateState.noDate')
-                      ) : form.getValues('expenseDate') &&
-                        !usingCustomConversionRate ? (
-                        <>
-                          {conversionRateMessage}
-                          {!exchangeRate.isLoading && (
-                            <Button
-                              className="h-auto py-0"
-                              variant="link"
-                              onClick={() => exchangeRate.refresh()}
-                            >
-                              {t('conversionRateState.refresh')}
-                            </Button>
-                          )}
-                        </>
-                      ) : (
-                        t('conversionRateState.customRate')
-                      )}
+                      {(() => {
+                        const expenseDate = form.getValues('expenseDate')
+                        const hasValidDate =
+                          expenseDate instanceof Date &&
+                          !isNaN(expenseDate.getTime())
+
+                        if (!hasValidDate) {
+                          return t('conversionRateState.noDate')
+                        }
+
+                        if (!usingCustomConversionRate) {
+                          return (
+                            <>
+                              {conversionRateMessage}
+                              {!exchangeRate.isLoading && (
+                                <Button
+                                  className="h-auto py-0"
+                                  variant="link"
+                                  onClick={() => exchangeRate.refresh()}
+                                >
+                                  {t('conversionRateState.refresh')}
+                                </Button>
+                              )}
+                            </>
+                          )
+                        }
+
+                        return t('conversionRateState.customRate')
+                      })()}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
