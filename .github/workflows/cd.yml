@@ -51,7 +51,9 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
+          # platforms: linux/amd64,linux/arm64
+          # Single platform: multi-platform (linux/arm64) was causing exit 132 / SIGILL under QEMU
+          platforms: linux/amd64
           push: true
           tags: |
             ghcr.io/${{ env.REPO }}:${{ steps.version.outputs.version }}
