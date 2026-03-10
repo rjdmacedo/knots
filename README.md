@@ -68,6 +68,8 @@ Here is the current state of translation:
 3. Run `npm run start-container` to start the postgres and the knot containers
 4. You can access the app by browsing to http://localhost:3000
 
+To run on a server using the **pre-built image** from GitHub Container Registry (e.g. after a release) and to **update** the app when a new version is released, see **[DEPLOYMENT.md](DEPLOYMENT.md)**.
+
 ## Health check
 
 The application has a health check endpoint that can be used to check if the application is running and if the database is accessible.
