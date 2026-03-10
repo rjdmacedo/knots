@@ -1,3 +1,10 @@
+# [1.21.0](https://github.com/rjdmacedo/knots/compare/v1.20.6...v1.21.0) (2026-03-10)
+
+
+### Features
+
+* update README.md to include deployment instructions ([8e66eea](https://github.com/rjdmacedo/knots/commit/8e66eea38e19770660cd5d5f2288ac59c4c2270e))
+
 ## [1.20.6](https://github.com/rjdmacedo/knots/compare/v1.20.5...v1.20.6) (2025-11-28)
 
 
