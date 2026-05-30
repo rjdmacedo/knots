@@ -2,13 +2,20 @@
 
 import { GroupForm } from '@/components/group-form'
 import { trpc } from '@/trpc/client'
+import { useSpinDelay } from 'spin-delay'
 import { useCurrentGroup } from '../current-group-context'
 
 export const EditGroup = () => {
   const { groupId } = useCurrentGroup()
-  const { data, isLoading } = trpc.groups.getDetails.useQuery({ groupId })
+  const { data, isLoading: queryIsLoading } = trpc.groups.getDetails.useQuery({
+    groupId,
+  })
   const { mutateAsync } = trpc.groups.update.useMutation()
   const utils = trpc.useUtils()
+  const isLoading = useSpinDelay(queryIsLoading, {
+    delay: 200,
+    minDuration: 300,
+  })
 
   if (isLoading) return <></>
 

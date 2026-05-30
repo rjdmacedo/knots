@@ -4,6 +4,7 @@ import { trpc } from '@/trpc/client'
 import { useTranslations } from 'next-intl'
 import { PropsWithChildren, useEffect } from 'react'
 import { toast } from 'sonner'
+import { useSpinDelay } from 'spin-delay'
 import { CurrentGroupProvider } from './current-group-context'
 import { GroupHeader } from './group-header'
 import { SaveGroupLocally } from './save-recent-group'
@@ -12,8 +13,14 @@ export function GroupLayoutClient({
   groupId,
   children,
 }: PropsWithChildren<{ groupId: string }>) {
-  const { data, isLoading } = trpc.groups.get.useQuery({ groupId })
+  const { data, isLoading: queryIsLoading } = trpc.groups.get.useQuery({
+    groupId,
+  })
   const t = useTranslations('Groups.NotFound')
+  const isLoading = useSpinDelay(queryIsLoading, {
+    delay: 200,
+    minDuration: 300,
+  })
 
   useEffect(() => {
     if (data && !data.group) {

@@ -12,18 +12,17 @@ export const GroupHeader = () => {
 
   return (
     <div className="flex flex-col justify-between gap-3">
-      <h1 className="font-bold text-2xl">
-        <Link href={`/groups/${groupId}`}>
-          {isLoading ? (
-            <Skeleton className="mt-1.5 mb-1.5 h-5 w-32" />
-          ) : (
-            <div className="flex">{group.name}</div>
-          )}
-        </Link>
-      </h1>
+      <div className="flex items-center justify-between">
+        <h1 className="font-bold text-2xl">
+          <Link href={`/groups/${groupId}`}>
+            {isLoading ? (
+              <Skeleton className="mt-1.5 mb-1.5 h-5 w-32" />
+            ) : (
+              <div className="flex">{group.name}</div>
+            )}
+          </Link>
+        </h1>
 
-      <div className="flex gap-2 justify-between">
-        <GroupTabs groupId={groupId} />
         <div className="flex items-center gap-1">
           {group && process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && (
             <PushNotificationToggle
@@ -37,6 +36,8 @@ export const GroupHeader = () => {
           {group && <ShareButton group={group} />}
         </div>
       </div>
+
+      <GroupTabs groupId={groupId} />
     </div>
   )
 }

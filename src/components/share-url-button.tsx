@@ -20,7 +20,9 @@ export function ShareUrlButton({ url, text }: Props) {
       type="button"
       onClick={() => {
         if (navigator.share) {
-          navigator.share({ text, url })
+          navigator.share({ text, url }).catch(() => {
+            // User cancelled the share dialog — ignore
+          })
         } else {
           console.log('Sharing is not available', { text, url })
         }

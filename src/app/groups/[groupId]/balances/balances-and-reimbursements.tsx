@@ -14,6 +14,7 @@ import { getCurrencyFromGroup } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { useTranslations } from 'next-intl'
 import { Fragment, useEffect } from 'react'
+import { useSpinDelay } from 'spin-delay'
 import { match } from 'ts-pattern'
 import { useCurrentGroup } from '../current-group-context'
 
@@ -32,7 +33,13 @@ export default function BalancesAndReimbursements() {
     utils.groups.balances.invalidate()
   }, [utils])
 
-  const isLoading = balancesAreLoading || !balancesData || !group
+  const isLoading = useSpinDelay(
+    balancesAreLoading || !balancesData || !group,
+    {
+      delay: 200,
+      minDuration: 300,
+    },
+  )
 
   return (
     <>
@@ -49,6 +56,7 @@ export default function BalancesAndReimbursements() {
               balances={balancesData.balances}
               participants={group?.participants}
               currency={getCurrencyFromGroup(group)}
+              reimbursements={balancesData.reimbursements}
             />
           )}
         </CardContent>

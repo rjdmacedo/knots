@@ -9,6 +9,7 @@ import dayjs, { type Dayjs } from 'dayjs'
 import { useTranslations } from 'next-intl'
 import { forwardRef, useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
+import { useSpinDelay } from 'spin-delay'
 import { useCurrentGroup } from '../current-group-context'
 
 const PAGE_SIZE = 20
@@ -92,7 +93,7 @@ export function ActivityList() {
 
   const {
     data: activitiesData,
-    isLoading,
+    isLoading: activitiesAreLoading,
     fetchNextPage,
   } = trpc.groups.activities.list.useInfiniteQuery(
     { groupId, limit: PAGE_SIZE },
@@ -103,11 +104,21 @@ export function ActivityList() {
   const activities = activitiesData?.pages.flatMap((page) => page.activities)
   const hasMore = activitiesData?.pages.at(-1)?.hasMore ?? false
 
+  const isLoading = useSpinDelay(
+    activitiesAreLoading || !activities || !group,
+    {
+      delay: 200,
+      minDuration: 300,
+    },
+  )
+
   useEffect(() => {
     if (inView && hasMore && !isLoading) fetchNextPage()
   }, [fetchNextPage, hasMore, inView, isLoading])
 
-  if (isLoading || !activities || !group) return <ActivitiesLoading />
+  if (isLoading) return <ActivitiesLoading />
+
+  if (!activities || !group) return <ActivitiesLoading />
 
   const groupedActivitiesByDate = getGroupedActivitiesByDate(activities)
 

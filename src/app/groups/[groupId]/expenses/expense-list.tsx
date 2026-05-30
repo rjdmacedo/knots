@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { forwardRef, useEffect, useMemo, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
+import { useSpinDelay } from 'spin-delay'
 import { useDebounce } from 'use-debounce'
 import { useCurrentGroup } from '../current-group-context'
 
@@ -133,7 +134,10 @@ const ExpenseListForSearch = ({
   const expenses = data?.pages.flatMap((page) => page.expenses)
   const hasMore = data?.pages.at(-1)?.hasMore ?? false
 
-  const isLoading = expensesAreLoading || !expenses || !group
+  const isLoading = useSpinDelay(expensesAreLoading || !expenses || !group, {
+    delay: 200,
+    minDuration: 300,
+  })
 
   useEffect(() => {
     if (inView && hasMore && !isLoading && !isFetchingNextPage) fetchNextPage()
@@ -145,6 +149,8 @@ const ExpenseListForSearch = ({
   )
 
   if (isLoading) return <ExpensesLoading />
+
+  if (!expenses || !group) return <ExpensesLoading />
 
   if (expenses.length === 0)
     return (

@@ -14,6 +14,7 @@ import { Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { PropsWithChildren, useEffect, useState } from 'react'
+import { useSpinDelay } from 'spin-delay'
 import { RecentGroupListCard } from './recent-group-list-card'
 
 export type RecentGroupsState =
@@ -103,8 +104,12 @@ function RecentGroupList_({
   refreshGroupsFromStorage: () => void
 }) {
   const t = useTranslations('Groups')
-  const { data, isLoading } = trpc.groups.list.useQuery({
+  const { data, isLoading: queryIsLoading } = trpc.groups.list.useQuery({
     groupIds: groups.map((group) => group.id),
+  })
+  const isLoading = useSpinDelay(queryIsLoading, {
+    delay: 200,
+    minDuration: 300,
   })
 
   if (isLoading || !data) {

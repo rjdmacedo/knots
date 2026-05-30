@@ -19,11 +19,14 @@ import { trpc } from '@/trpc/client'
 import { AppRouterOutput } from '@/trpc/routers/_app'
 import { StarFilledIcon } from '@radix-ui/react-icons'
 import {
+  Archive,
+  ArchiveRestore,
   Bell,
   BellOff,
   Calendar,
   MoreHorizontal,
   Star,
+  Trash2,
   Users,
 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
@@ -238,6 +241,7 @@ export function RecentGroupListCard({
                         })
                       }}
                     >
+                      <Trash2 className="w-4 h-4 mr-2" />
                       {t('removeRecent')}
                     </DropdownMenuItem>
                     <DropdownMenuItem
@@ -252,6 +256,11 @@ export function RecentGroupListCard({
                         refreshGroupsFromStorage()
                       }}
                     >
+                      {isArchived ? (
+                        <ArchiveRestore className="w-4 h-4 mr-2" />
+                      ) : (
+                        <Archive className="w-4 h-4 mr-2" />
+                      )}
                       {t(isArchived ? 'unarchive' : 'archive')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
