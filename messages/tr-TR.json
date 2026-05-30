@@ -252,6 +252,9 @@
   },
   "Stats": {
     "title": "İstatistikler",
+    "error": "İstatistikler yüklenemedi. Lütfen tekrar deneyin.",
+    "retry": "Tekrar dene",
+    "emptyState": "Harcama verisi bulunmuyor. İstatistikleri görmek için harcama ekleyin.",
     "Totals": {
       "title": "Toplamlar",
       "description": "Grubun tüm harcama özeti.",
@@ -260,6 +263,88 @@
       "yourSpendings": "Sizin toplam harcamalarınız",
       "yourEarnings": "Sizin toplam gelirleriniz",
       "yourShare": "Sizin toplam payınız"
+    },
+    "CategoryBreakdown": {
+      "title": "Kategoriye göre harcamalar",
+      "description": "Grubun harcamalarının kategorilere göre dağılımı.",
+      "emptyState": "Kategori dağılımını gösterecek harcama verisi bulunmuyor.",
+      "amount": "Tutar",
+      "category": "Kategori",
+      "percentage": "Yüzde",
+      "uncategorized": "Kategorisiz"
+    },
+    "ParticipantRanking": {
+      "title": "Katılımcı sıralaması",
+      "description": "Katılımcılar toplam ödenen tutara göre sıralanmıştır.",
+      "emptyState": "Katılımcıları sıralayacak harcama verisi bulunmuyor.",
+      "totalPaid": "Toplam ödenen",
+      "percentage": "Yüzde",
+      "participant": "Katılımcı"
+    },
+    "ExpenseDistribution": {
+      "title": "Harcama dağılımı",
+      "description": "Her katılımcının ödediği ile adil payının karşılaştırması.",
+      "emptyState": "Harcama dağılımını gösterecek veri bulunmuyor.",
+      "paid": "Ödenen",
+      "share": "Pay",
+      "difference": "Fark",
+      "participant": "Katılımcı",
+      "overpaid": "Fazla ödedi",
+      "underpaid": "Eksik ödedi"
+    },
+    "SpendingOverTime": {
+      "title": "Zaman içinde harcamalar",
+      "description": "Grubun aylık harcama eğilimleri.",
+      "emptyState": "Eğilimleri gösterecek harcama verisi bulunmuyor.",
+      "amount": "Tutar",
+      "month": "Ay"
+    },
+    "MonthOverMonth": {
+      "title": "Aydan aya",
+      "description": "Son iki ayın harcama karşılaştırması.",
+      "emptyState": "Ayları karşılaştırmak için yeterli veri yok.",
+      "increase": "Artış",
+      "decrease": "Azalış",
+      "noChange": "Değişiklik yok",
+      "vsLastMonth": "geçen aya göre",
+      "change": "Değişim"
+    },
+    "DailyAverage": {
+      "title": "Günlük ortalama",
+      "description": "Grubun aktif döneminde günlük ortalama harcama.",
+      "emptyState": "Günlük ortalamayı hesaplayacak harcama verisi bulunmuyor.",
+      "perDay": "günlük"
+    },
+    "AggregateMetrics": {
+      "title": "Özet",
+      "description": "Grubun harcamalarına ilişkin temel göstergeler.",
+      "emptyState": "Henüz harcama kaydedilmedi.",
+      "totalCount": "Toplam harcama sayısı",
+      "average": "Ortalama harcama",
+      "largest": "En büyük harcama",
+      "mostRecent": "En son harcama",
+      "amount": "Tutar",
+      "date": "Tarih"
+    },
+    "NetBalances": {
+      "title": "Net bakiyeler",
+      "description": "Her katılımcının ne kadar borçlu olduğu veya alacağı.",
+      "emptyState": "Bakiyeleri hesaplayacak harcama verisi bulunmuyor.",
+      "owed": "alacaklı",
+      "owes": "borçlu",
+      "settled": "kapatılmış",
+      "participant": "Katılımcı",
+      "balance": "Bakiye"
+    },
+    "PaidVsShare": {
+      "title": "Ödenen vs adil pay",
+      "description": "Her katılımcının ödediği yüzde ile adil payının karşılaştırması.",
+      "emptyState": "Ödenen ile payı karşılaştıracak harcama verisi bulunmuyor.",
+      "paid": "Ödenen",
+      "share": "Adil pay",
+      "participant": "Katılımcı",
+      "paidPercentage": "Ödenen %",
+      "sharePercentage": "Pay %"
     }
   },
   "Activity": {

@@ -260,6 +260,9 @@
   },
   "Stats": {
     "title": "Estadístiques",
+    "error": "No s'han pogut carregar les estadístiques. Torna-ho a provar.",
+    "retry": "Reintentar",
+    "emptyState": "No hi ha dades de despeses disponibles. Afegeix despeses per veure les estadístiques.",
     "Totals": {
       "title": "Totals",
       "description": "Resum de les despeses de tot el grup.",
@@ -268,6 +271,88 @@
       "yourSpendings": "Suma de les teves despeses",
       "yourEarnings": "Suma dels teus ingressos",
       "yourShare": "El teu percentatge"
+    },
+    "CategoryBreakdown": {
+      "title": "Despeses per categoria",
+      "description": "Com es distribueixen les despeses del grup entre categories.",
+      "emptyState": "No hi ha dades de despeses per mostrar el desglossament per categoria.",
+      "amount": "Import",
+      "category": "Categoria",
+      "percentage": "Percentatge",
+      "uncategorized": "Sense categoria"
+    },
+    "ParticipantRanking": {
+      "title": "Classificació de participants",
+      "description": "Participants ordenats per import total pagat.",
+      "emptyState": "No hi ha dades de despeses per classificar els participants.",
+      "totalPaid": "Total pagat",
+      "percentage": "Percentatge",
+      "participant": "Participant"
+    },
+    "ExpenseDistribution": {
+      "title": "Distribució de despeses",
+      "description": "Comparació entre el que cada participant ha pagat i la seva part justa.",
+      "emptyState": "No hi ha dades de despeses per mostrar la distribució.",
+      "paid": "Pagat",
+      "share": "Part",
+      "difference": "Diferència",
+      "participant": "Participant",
+      "overpaid": "Ha pagat de més",
+      "underpaid": "Ha pagat de menys"
+    },
+    "SpendingOverTime": {
+      "title": "Despeses al llarg del temps",
+      "description": "Tendències mensuals de despeses del grup.",
+      "emptyState": "No hi ha dades de despeses per mostrar tendències.",
+      "amount": "Import",
+      "month": "Mes"
+    },
+    "MonthOverMonth": {
+      "title": "Mes a mes",
+      "description": "Comparació entre els dos últims mesos de despeses.",
+      "emptyState": "No hi ha prou dades per comparar mesos.",
+      "increase": "Augment",
+      "decrease": "Disminució",
+      "noChange": "Sense canvis",
+      "vsLastMonth": "vs mes passat",
+      "change": "Canvi"
+    },
+    "DailyAverage": {
+      "title": "Mitjana diària",
+      "description": "Despesa mitjana per dia durant el període actiu del grup.",
+      "emptyState": "No hi ha dades de despeses per calcular la mitjana diària.",
+      "perDay": "per dia"
+    },
+    "AggregateMetrics": {
+      "title": "Resum",
+      "description": "Mètriques clau sobre les despeses del grup.",
+      "emptyState": "Encara no s'han registrat despeses.",
+      "totalCount": "Total de despeses",
+      "average": "Despesa mitjana",
+      "largest": "Despesa més gran",
+      "mostRecent": "Despesa més recent",
+      "amount": "Import",
+      "date": "Data"
+    },
+    "NetBalances": {
+      "title": "Balanços nets",
+      "description": "Quant deu o li deuen a cada participant.",
+      "emptyState": "No hi ha dades de despeses per calcular els balanços.",
+      "owed": "li deuen",
+      "owes": "deu",
+      "settled": "liquidat",
+      "participant": "Participant",
+      "balance": "Balanç"
+    },
+    "PaidVsShare": {
+      "title": "Pagat vs part justa",
+      "description": "Percentatge del total que cada participant ha pagat comparat amb la seva part justa.",
+      "emptyState": "No hi ha dades de despeses per comparar pagat vs part.",
+      "paid": "Pagat",
+      "share": "Part justa",
+      "participant": "Participant",
+      "paidPercentage": "% pagat",
+      "sharePercentage": "% part"
     }
   },
   "Activity": {

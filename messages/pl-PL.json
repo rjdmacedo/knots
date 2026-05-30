@@ -261,6 +261,9 @@
   },
   "Stats": {
     "title": "Statystyki",
+    "error": "Nie udało się załadować statystyk. Spróbuj ponownie.",
+    "retry": "Ponów",
+    "emptyState": "Brak danych o wydatkach. Dodaj wydatki, aby zobaczyć statystyki.",
     "Totals": {
       "title": "Podsumowanie",
       "description": "Podsumowanie wydatków dla całej grupy.",
@@ -269,6 +272,88 @@
       "yourSpendings": "Twoje wydatki",
       "yourEarnings": "Twoje wpływy",
       "yourShare": "Twoje udziały"
+    },
+    "CategoryBreakdown": {
+      "title": "Wydatki wg kategorii",
+      "description": "Jak wydatki grupy rozkładają się na kategorie.",
+      "emptyState": "Brak danych o wydatkach do wyświetlenia podziału na kategorie.",
+      "amount": "Kwota",
+      "category": "Kategoria",
+      "percentage": "Procent",
+      "uncategorized": "Bez kategorii"
+    },
+    "ParticipantRanking": {
+      "title": "Ranking uczestników",
+      "description": "Uczestnicy uszeregowani wg łącznej zapłaconej kwoty.",
+      "emptyState": "Brak danych o wydatkach do utworzenia rankingu uczestników.",
+      "totalPaid": "Łącznie zapłacono",
+      "percentage": "Procent",
+      "participant": "Uczestnik"
+    },
+    "ExpenseDistribution": {
+      "title": "Rozkład wydatków",
+      "description": "Porównanie tego, co każdy uczestnik zapłacił, z jego sprawiedliwym udziałem.",
+      "emptyState": "Brak danych o wydatkach do wyświetlenia rozkładu.",
+      "paid": "Zapłacono",
+      "share": "Udział",
+      "difference": "Różnica",
+      "participant": "Uczestnik",
+      "overpaid": "Nadpłata",
+      "underpaid": "Niedopłata"
+    },
+    "SpendingOverTime": {
+      "title": "Wydatki w czasie",
+      "description": "Miesięczne trendy wydatków grupy.",
+      "emptyState": "Brak danych o wydatkach do wyświetlenia trendów.",
+      "amount": "Kwota",
+      "month": "Miesiąc"
+    },
+    "MonthOverMonth": {
+      "title": "Miesiąc do miesiąca",
+      "description": "Porównanie wydatków z dwóch ostatnich miesięcy.",
+      "emptyState": "Za mało danych do porównania miesięcy.",
+      "increase": "Wzrost",
+      "decrease": "Spadek",
+      "noChange": "Bez zmian",
+      "vsLastMonth": "vs poprzedni miesiąc",
+      "change": "Zmiana"
+    },
+    "DailyAverage": {
+      "title": "Średnia dzienna",
+      "description": "Średnie wydatki dziennie w aktywnym okresie grupy.",
+      "emptyState": "Brak danych o wydatkach do obliczenia średniej dziennej.",
+      "perDay": "dziennie"
+    },
+    "AggregateMetrics": {
+      "title": "Podsumowanie",
+      "description": "Kluczowe wskaźniki dotyczące wydatków grupy.",
+      "emptyState": "Nie zarejestrowano jeszcze żadnych wydatków.",
+      "totalCount": "Łączna liczba wydatków",
+      "average": "Średni wydatek",
+      "largest": "Największy wydatek",
+      "mostRecent": "Najnowszy wydatek",
+      "amount": "Kwota",
+      "date": "Data"
+    },
+    "NetBalances": {
+      "title": "Salda netto",
+      "description": "Ile każdy uczestnik jest winien lub ile mu się należy.",
+      "emptyState": "Brak danych o wydatkach do obliczenia sald.",
+      "owed": "należy się",
+      "owes": "jest winien",
+      "settled": "rozliczony",
+      "participant": "Uczestnik",
+      "balance": "Saldo"
+    },
+    "PaidVsShare": {
+      "title": "Zapłacono vs sprawiedliwy udział",
+      "description": "Procent całości zapłacony przez każdego uczestnika w porównaniu z jego sprawiedliwym udziałem.",
+      "emptyState": "Brak danych o wydatkach do porównania zapłaconego vs udziału.",
+      "paid": "Zapłacono",
+      "share": "Sprawiedliwy udział",
+      "participant": "Uczestnik",
+      "paidPercentage": "Zapłacono %",
+      "sharePercentage": "Udział %"
     }
   },
   "Activity": {

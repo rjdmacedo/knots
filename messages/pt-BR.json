@@ -270,6 +270,9 @@
   },
   "Stats": {
     "title": "Estatísticas",
+    "error": "Não foi possível carregar as estatísticas. Tente novamente.",
+    "retry": "Tentar novamente",
+    "emptyState": "Nenhum dado de despesas disponível. Adicione despesas para ver estatísticas.",
     "Totals": {
       "title": "Totais",
       "description": "Resumo de gastos de todo o grupo.",
@@ -278,6 +281,88 @@
       "yourSpendings": "Seus gastos totais",
       "yourEarnings": "Suas receitas totais",
       "yourShare": "Sua participação total"
+    },
+    "CategoryBreakdown": {
+      "title": "Gastos por categoria",
+      "description": "Como os gastos do grupo se distribuem entre as categorias.",
+      "emptyState": "Nenhum dado de despesas para mostrar a distribuição por categoria.",
+      "amount": "Valor",
+      "category": "Categoria",
+      "percentage": "Porcentagem",
+      "uncategorized": "Sem categoria"
+    },
+    "ParticipantRanking": {
+      "title": "Classificação de participantes",
+      "description": "Participantes ordenados por valor total pago.",
+      "emptyState": "Nenhum dado de despesas para classificar os participantes.",
+      "totalPaid": "Total pago",
+      "percentage": "Porcentagem",
+      "participant": "Participante"
+    },
+    "ExpenseDistribution": {
+      "title": "Distribuição de despesas",
+      "description": "Comparação entre o que cada participante pagou e sua parte justa.",
+      "emptyState": "Nenhum dado de despesas para mostrar a distribuição.",
+      "paid": "Pago",
+      "share": "Parte",
+      "difference": "Diferença",
+      "participant": "Participante",
+      "overpaid": "Pagou a mais",
+      "underpaid": "Pagou a menos"
+    },
+    "SpendingOverTime": {
+      "title": "Gastos ao longo do tempo",
+      "description": "Tendências mensais de gastos do grupo.",
+      "emptyState": "Nenhum dado de despesas para mostrar tendências.",
+      "amount": "Valor",
+      "month": "Mês"
+    },
+    "MonthOverMonth": {
+      "title": "Mês a mês",
+      "description": "Comparação entre os dois últimos meses de gastos.",
+      "emptyState": "Dados insuficientes para comparar meses.",
+      "increase": "Aumento",
+      "decrease": "Diminuição",
+      "noChange": "Sem alteração",
+      "vsLastMonth": "vs mês anterior",
+      "change": "Variação"
+    },
+    "DailyAverage": {
+      "title": "Média diária",
+      "description": "Gasto médio por dia durante o período ativo do grupo.",
+      "emptyState": "Nenhum dado de despesas para calcular a média diária.",
+      "perDay": "por dia"
+    },
+    "AggregateMetrics": {
+      "title": "Resumo",
+      "description": "Métricas-chave sobre as despesas do grupo.",
+      "emptyState": "Nenhuma despesa registrada ainda.",
+      "totalCount": "Total de despesas",
+      "average": "Despesa média",
+      "largest": "Maior despesa",
+      "mostRecent": "Despesa mais recente",
+      "amount": "Valor",
+      "date": "Data"
+    },
+    "NetBalances": {
+      "title": "Saldos líquidos",
+      "description": "Quanto cada participante deve ou tem a receber.",
+      "emptyState": "Nenhum dado de despesas para calcular os saldos.",
+      "owed": "a receber",
+      "owes": "deve",
+      "settled": "quitado",
+      "participant": "Participante",
+      "balance": "Saldo"
+    },
+    "PaidVsShare": {
+      "title": "Pago vs parte justa",
+      "description": "Porcentagem do total que cada participante pagou comparado com sua parte justa.",
+      "emptyState": "Nenhum dado de despesas para comparar pago vs parte.",
+      "paid": "Pago",
+      "share": "Parte justa",
+      "participant": "Participante",
+      "paidPercentage": "Pago %",
+      "sharePercentage": "Parte %"
     }
   },
   "Activity": {

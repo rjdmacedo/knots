@@ -261,6 +261,9 @@
   },
   "Stats": {
     "title": "統計",
+    "error": "統計を読み込めませんでした。もう一度お試しください。",
+    "retry": "再試行",
+    "emptyState": "支出データがありません。統計を表示するには支出を追加してください。",
     "Totals": {
       "title": "合計",
       "description": "グループ全体の支出概要。",
@@ -269,6 +272,88 @@
       "yourSpendings": "あなたの総支出",
       "yourEarnings": "あなたの総収入",
       "yourShare": "あなたの総シェア"
+    },
+    "CategoryBreakdown": {
+      "title": "カテゴリ別支出",
+      "description": "グループの支出がカテゴリ間でどのように分布しているか。",
+      "emptyState": "カテゴリ別内訳を表示する支出データがありません。",
+      "amount": "金額",
+      "category": "カテゴリ",
+      "percentage": "割合",
+      "uncategorized": "未分類"
+    },
+    "ParticipantRanking": {
+      "title": "参加者ランキング",
+      "description": "支払い総額順の参加者ランキング。",
+      "emptyState": "参加者をランク付けする支出データがありません。",
+      "totalPaid": "支払い総額",
+      "percentage": "割合",
+      "participant": "参加者"
+    },
+    "ExpenseDistribution": {
+      "title": "支出の分配",
+      "description": "各参加者の支払い額と公平な負担額の比較。",
+      "emptyState": "支出の分配を表示するデータがありません。",
+      "paid": "支払い済み",
+      "share": "負担額",
+      "difference": "差額",
+      "participant": "参加者",
+      "overpaid": "払い過ぎ",
+      "underpaid": "不足"
+    },
+    "SpendingOverTime": {
+      "title": "支出の推移",
+      "description": "グループの月別支出トレンド。",
+      "emptyState": "トレンドを表示する支出データがありません。",
+      "amount": "金額",
+      "month": "月"
+    },
+    "MonthOverMonth": {
+      "title": "月次比較",
+      "description": "直近2ヶ月の支出の比較。",
+      "emptyState": "月を比較するのに十分なデータがありません。",
+      "increase": "増加",
+      "decrease": "減少",
+      "noChange": "変化なし",
+      "vsLastMonth": "先月比",
+      "change": "変動"
+    },
+    "DailyAverage": {
+      "title": "日平均",
+      "description": "グループの活動期間における1日あたりの平均支出。",
+      "emptyState": "日平均を計算する支出データがありません。",
+      "perDay": "1日あたり"
+    },
+    "AggregateMetrics": {
+      "title": "サマリー",
+      "description": "グループの支出に関する主要指標。",
+      "emptyState": "まだ支出が記録されていません。",
+      "totalCount": "支出件数",
+      "average": "平均支出",
+      "largest": "最大の支出",
+      "mostRecent": "最新の支出",
+      "amount": "金額",
+      "date": "日付"
+    },
+    "NetBalances": {
+      "title": "純残高",
+      "description": "各参加者がいくら受け取るべきか、または支払うべきか。",
+      "emptyState": "残高を計算する支出データがありません。",
+      "owed": "受取",
+      "owes": "支払い",
+      "settled": "精算済み",
+      "participant": "参加者",
+      "balance": "残高"
+    },
+    "PaidVsShare": {
+      "title": "支払い額 vs 公平な負担額",
+      "description": "各参加者が支払った割合と公平な負担割合の比較。",
+      "emptyState": "支払いと負担額を比較する支出データがありません。",
+      "paid": "支払い済み",
+      "share": "公平な負担額",
+      "participant": "参加者",
+      "paidPercentage": "支払い %",
+      "sharePercentage": "負担 %"
     }
   },
   "Activity": {

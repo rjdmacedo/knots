@@ -301,6 +301,9 @@
   },
   "Stats": {
     "title": "Stats",
+    "error": "Could not load statistics. Please try again.",
+    "retry": "Retry",
+    "emptyState": "No spending data available. Add expenses to see statistics.",
     "Totals": {
       "title": "Totals",
       "description": "Spending summary of the entire group.",
@@ -309,6 +312,88 @@
       "yourSpendings": "Your total spendings",
       "yourEarnings": "Your total earnings",
       "yourShare": "Your total share"
+    },
+    "CategoryBreakdown": {
+      "title": "Spending by Category",
+      "description": "How the group's spending is distributed across categories.",
+      "emptyState": "No spending data available to show category breakdown.",
+      "amount": "Amount",
+      "category": "Category",
+      "percentage": "Percentage",
+      "uncategorized": "Uncategorized"
+    },
+    "ParticipantRanking": {
+      "title": "Participant Ranking",
+      "description": "Participants ranked by total amount paid.",
+      "emptyState": "No spending data available to rank participants.",
+      "totalPaid": "Total paid",
+      "percentage": "Percentage",
+      "participant": "Participant"
+    },
+    "ExpenseDistribution": {
+      "title": "Expense Distribution",
+      "description": "Comparison of what each participant paid versus their fair share.",
+      "emptyState": "No spending data available to show expense distribution.",
+      "paid": "Paid",
+      "share": "Share",
+      "difference": "Difference",
+      "participant": "Participant",
+      "overpaid": "Overpaid",
+      "underpaid": "Underpaid"
+    },
+    "SpendingOverTime": {
+      "title": "Spending Over Time",
+      "description": "Monthly spending trends for the group.",
+      "emptyState": "No spending data available to show trends.",
+      "amount": "Amount",
+      "month": "Month"
+    },
+    "MonthOverMonth": {
+      "title": "Month-over-Month",
+      "description": "Comparison between the last two months of spending.",
+      "emptyState": "Not enough data to compare months.",
+      "increase": "Increase",
+      "decrease": "Decrease",
+      "noChange": "No change",
+      "vsLastMonth": "vs last month",
+      "change": "Change"
+    },
+    "DailyAverage": {
+      "title": "Daily Average",
+      "description": "Average spending per day across the group's active period.",
+      "emptyState": "No spending data available to compute daily average.",
+      "perDay": "per day"
+    },
+    "AggregateMetrics": {
+      "title": "Summary",
+      "description": "Key metrics about the group's expenses.",
+      "emptyState": "No expenses recorded yet.",
+      "totalCount": "Total expenses",
+      "average": "Average expense",
+      "largest": "Largest expense",
+      "mostRecent": "Most recent expense",
+      "amount": "Amount",
+      "date": "Date"
+    },
+    "NetBalances": {
+      "title": "Net Balances",
+      "description": "How much each participant is owed or owes.",
+      "emptyState": "No spending data available to compute balances.",
+      "owed": "is owed",
+      "owes": "owes",
+      "settled": "settled",
+      "participant": "Participant",
+      "balance": "Balance"
+    },
+    "PaidVsShare": {
+      "title": "Paid vs Fair Share",
+      "description": "Percentage of total each participant paid compared to their fair share.",
+      "emptyState": "No spending data available to compare paid vs share.",
+      "paid": "Paid",
+      "share": "Fair share",
+      "participant": "Participant",
+      "paidPercentage": "Paid %",
+      "sharePercentage": "Share %"
     }
   },
   "Activity": {

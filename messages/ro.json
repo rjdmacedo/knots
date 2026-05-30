@@ -252,6 +252,9 @@
   },
   "Stats": {
     "title": "Statistici",
+    "error": "Nu s-au putut încărca statisticile. Te rugăm să încerci din nou.",
+    "retry": "Reîncearcă",
+    "emptyState": "Nu există date de cheltuieli disponibile. Adaugă cheltuieli pentru a vedea statisticile.",
     "Totals": {
       "title": "Totaluri",
       "description": "Sumarul cheltuielior pentru întregul grup.",
@@ -260,6 +263,88 @@
       "yourSpendings": "Totalul cheltuielilor tale",
       "yourEarnings": "Totalul veniturilor tale",
       "yourShare": "Partea ta"
+    },
+    "CategoryBreakdown": {
+      "title": "Cheltuieli pe categorii",
+      "description": "Cum sunt distribuite cheltuielile grupului pe categorii.",
+      "emptyState": "Nu există date de cheltuieli pentru a afișa distribuția pe categorii.",
+      "amount": "Sumă",
+      "category": "Categorie",
+      "percentage": "Procent",
+      "uncategorized": "Fără categorie"
+    },
+    "ParticipantRanking": {
+      "title": "Clasamentul participanților",
+      "description": "Participanții clasați după suma totală plătită.",
+      "emptyState": "Nu există date de cheltuieli pentru a clasifica participanții.",
+      "totalPaid": "Total plătit",
+      "percentage": "Procent",
+      "participant": "Participant"
+    },
+    "ExpenseDistribution": {
+      "title": "Distribuția cheltuielilor",
+      "description": "Comparație între cât a plătit fiecare participant și partea sa echitabilă.",
+      "emptyState": "Nu există date de cheltuieli pentru a afișa distribuția.",
+      "paid": "Plătit",
+      "share": "Parte",
+      "difference": "Diferență",
+      "participant": "Participant",
+      "overpaid": "A plătit în plus",
+      "underpaid": "A plătit în minus"
+    },
+    "SpendingOverTime": {
+      "title": "Cheltuieli în timp",
+      "description": "Tendințele lunare de cheltuieli ale grupului.",
+      "emptyState": "Nu există date de cheltuieli pentru a afișa tendințele.",
+      "amount": "Sumă",
+      "month": "Lună"
+    },
+    "MonthOverMonth": {
+      "title": "Lună de lună",
+      "description": "Comparație între ultimele două luni de cheltuieli.",
+      "emptyState": "Date insuficiente pentru a compara lunile.",
+      "increase": "Creștere",
+      "decrease": "Scădere",
+      "noChange": "Fără modificări",
+      "vsLastMonth": "vs luna trecută",
+      "change": "Variație"
+    },
+    "DailyAverage": {
+      "title": "Media zilnică",
+      "description": "Cheltuiala medie pe zi în perioada activă a grupului.",
+      "emptyState": "Nu există date de cheltuieli pentru a calcula media zilnică.",
+      "perDay": "pe zi"
+    },
+    "AggregateMetrics": {
+      "title": "Sumar",
+      "description": "Indicatori cheie despre cheltuielile grupului.",
+      "emptyState": "Nu au fost înregistrate cheltuieli încă.",
+      "totalCount": "Total cheltuieli",
+      "average": "Cheltuiala medie",
+      "largest": "Cea mai mare cheltuială",
+      "mostRecent": "Cea mai recentă cheltuială",
+      "amount": "Sumă",
+      "date": "Dată"
+    },
+    "NetBalances": {
+      "title": "Solduri nete",
+      "description": "Cât datorează sau i se datorează fiecărui participant.",
+      "emptyState": "Nu există date de cheltuieli pentru a calcula soldurile.",
+      "owed": "i se datorează",
+      "owes": "datorează",
+      "settled": "achitat",
+      "participant": "Participant",
+      "balance": "Sold"
+    },
+    "PaidVsShare": {
+      "title": "Plătit vs parte echitabilă",
+      "description": "Procentul din total plătit de fiecare participant comparat cu partea sa echitabilă.",
+      "emptyState": "Nu există date de cheltuieli pentru a compara plătit vs parte.",
+      "paid": "Plătit",
+      "share": "Parte echitabilă",
+      "participant": "Participant",
+      "paidPercentage": "Plătit %",
+      "sharePercentage": "Parte %"
     }
   },
   "Activity": {

@@ -278,6 +278,9 @@
   },
   "Stats": {
     "title": "Statistiken",
+    "error": "Statistiken konnten nicht geladen werden. Bitte versuche es erneut.",
+    "retry": "Erneut versuchen",
+    "emptyState": "Keine Ausgabendaten verfügbar. Füge Ausgaben hinzu, um Statistiken zu sehen.",
     "Totals": {
       "title": "Gesamtausgaben",
       "description": "Zusammenfassung der Ausgaben der gesamten Gruppe.",
@@ -286,6 +289,88 @@
       "yourSpendings": "Deine gesamten Ausgaben",
       "yourEarnings": "Deine gesamten Einnahmen",
       "yourShare": "Dein gesamter Anteil"
+    },
+    "CategoryBreakdown": {
+      "title": "Ausgaben nach Kategorie",
+      "description": "Wie sich die Ausgaben der Gruppe auf Kategorien verteilen.",
+      "emptyState": "Keine Ausgabendaten verfügbar, um die Kategorieverteilung anzuzeigen.",
+      "amount": "Betrag",
+      "category": "Kategorie",
+      "percentage": "Prozent",
+      "uncategorized": "Ohne Kategorie"
+    },
+    "ParticipantRanking": {
+      "title": "Teilnehmer-Ranking",
+      "description": "Teilnehmer sortiert nach gezahltem Gesamtbetrag.",
+      "emptyState": "Keine Ausgabendaten verfügbar, um Teilnehmer zu bewerten.",
+      "totalPaid": "Gesamt bezahlt",
+      "percentage": "Prozent",
+      "participant": "Teilnehmer"
+    },
+    "ExpenseDistribution": {
+      "title": "Ausgabenverteilung",
+      "description": "Vergleich zwischen dem, was jeder Teilnehmer bezahlt hat und seinem fairen Anteil.",
+      "emptyState": "Keine Ausgabendaten verfügbar, um die Verteilung anzuzeigen.",
+      "paid": "Bezahlt",
+      "share": "Anteil",
+      "difference": "Differenz",
+      "participant": "Teilnehmer",
+      "overpaid": "Zu viel bezahlt",
+      "underpaid": "Zu wenig bezahlt"
+    },
+    "SpendingOverTime": {
+      "title": "Ausgaben im Zeitverlauf",
+      "description": "Monatliche Ausgabentrends der Gruppe.",
+      "emptyState": "Keine Ausgabendaten verfügbar, um Trends anzuzeigen.",
+      "amount": "Betrag",
+      "month": "Monat"
+    },
+    "MonthOverMonth": {
+      "title": "Monatsvergleich",
+      "description": "Vergleich der letzten zwei Monate an Ausgaben.",
+      "emptyState": "Nicht genügend Daten für einen Monatsvergleich.",
+      "increase": "Anstieg",
+      "decrease": "Rückgang",
+      "noChange": "Keine Änderung",
+      "vsLastMonth": "vs letzten Monat",
+      "change": "Änderung"
+    },
+    "DailyAverage": {
+      "title": "Tagesdurchschnitt",
+      "description": "Durchschnittliche Ausgaben pro Tag im aktiven Zeitraum der Gruppe.",
+      "emptyState": "Keine Ausgabendaten verfügbar, um den Tagesdurchschnitt zu berechnen.",
+      "perDay": "pro Tag"
+    },
+    "AggregateMetrics": {
+      "title": "Zusammenfassung",
+      "description": "Wichtige Kennzahlen zu den Ausgaben der Gruppe.",
+      "emptyState": "Noch keine Ausgaben erfasst.",
+      "totalCount": "Anzahl Ausgaben",
+      "average": "Durchschnittliche Ausgabe",
+      "largest": "Größte Ausgabe",
+      "mostRecent": "Neueste Ausgabe",
+      "amount": "Betrag",
+      "date": "Datum"
+    },
+    "NetBalances": {
+      "title": "Nettosalden",
+      "description": "Wie viel jedem Teilnehmer geschuldet wird oder er schuldet.",
+      "emptyState": "Keine Ausgabendaten verfügbar, um Salden zu berechnen.",
+      "owed": "bekommt",
+      "owes": "schuldet",
+      "settled": "ausgeglichen",
+      "participant": "Teilnehmer",
+      "balance": "Saldo"
+    },
+    "PaidVsShare": {
+      "title": "Bezahlt vs fairer Anteil",
+      "description": "Prozentualer Anteil, den jeder Teilnehmer bezahlt hat im Vergleich zu seinem fairen Anteil.",
+      "emptyState": "Keine Ausgabendaten verfügbar, um Bezahlt vs Anteil zu vergleichen.",
+      "paid": "Bezahlt",
+      "share": "Fairer Anteil",
+      "participant": "Teilnehmer",
+      "paidPercentage": "Bezahlt %",
+      "sharePercentage": "Anteil %"
     }
   },
   "Activity": {

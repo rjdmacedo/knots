@@ -261,6 +261,9 @@
   },
   "Stats": {
     "title": "Statistiky",
+    "error": "Nepodařilo se načíst statistiky. Zkuste to prosím znovu.",
+    "retry": "Zkusit znovu",
+    "emptyState": "Žádná data o výdajích nejsou k dispozici. Přidejte výdaje pro zobrazení statistik.",
     "Totals": {
       "title": "Celkové součty",
       "description": "Shrnutí výdajů celé skupiny.",
@@ -269,6 +272,88 @@
       "yourSpendings": "Vaše celkové výdaje",
       "yourEarnings": "Vaše celkové příjmy",
       "yourShare": "Váš celkový podíl"
+    },
+    "CategoryBreakdown": {
+      "title": "Výdaje podle kategorií",
+      "description": "Jak jsou výdaje skupiny rozloženy mezi kategorie.",
+      "emptyState": "Žádná data o výdajích pro zobrazení rozložení podle kategorií.",
+      "amount": "Částka",
+      "category": "Kategorie",
+      "percentage": "Procento",
+      "uncategorized": "Bez kategorie"
+    },
+    "ParticipantRanking": {
+      "title": "Žebříček účastníků",
+      "description": "Účastníci seřazení podle celkové zaplacené částky.",
+      "emptyState": "Žádná data o výdajích pro sestavení žebříčku účastníků.",
+      "totalPaid": "Celkem zaplaceno",
+      "percentage": "Procento",
+      "participant": "Účastník"
+    },
+    "ExpenseDistribution": {
+      "title": "Rozložení výdajů",
+      "description": "Porovnání toho, co každý účastník zaplatil oproti svému spravedlivému podílu.",
+      "emptyState": "Žádná data o výdajích pro zobrazení rozložení.",
+      "paid": "Zaplaceno",
+      "share": "Podíl",
+      "difference": "Rozdíl",
+      "participant": "Účastník",
+      "overpaid": "Přeplatek",
+      "underpaid": "Nedoplatek"
+    },
+    "SpendingOverTime": {
+      "title": "Výdaje v čase",
+      "description": "Měsíční trendy výdajů skupiny.",
+      "emptyState": "Žádná data o výdajích pro zobrazení trendů.",
+      "amount": "Částka",
+      "month": "Měsíc"
+    },
+    "MonthOverMonth": {
+      "title": "Měsíc po měsíci",
+      "description": "Porovnání posledních dvou měsíců výdajů.",
+      "emptyState": "Nedostatek dat pro porovnání měsíců.",
+      "increase": "Nárůst",
+      "decrease": "Pokles",
+      "noChange": "Beze změny",
+      "vsLastMonth": "vs minulý měsíc",
+      "change": "Změna"
+    },
+    "DailyAverage": {
+      "title": "Denní průměr",
+      "description": "Průměrné výdaje za den během aktivního období skupiny.",
+      "emptyState": "Žádná data o výdajích pro výpočet denního průměru.",
+      "perDay": "za den"
+    },
+    "AggregateMetrics": {
+      "title": "Souhrn",
+      "description": "Klíčové metriky o výdajích skupiny.",
+      "emptyState": "Zatím nebyly zaznamenány žádné výdaje.",
+      "totalCount": "Celkem výdajů",
+      "average": "Průměrný výdaj",
+      "largest": "Největší výdaj",
+      "mostRecent": "Nejnovější výdaj",
+      "amount": "Částka",
+      "date": "Datum"
+    },
+    "NetBalances": {
+      "title": "Čisté zůstatky",
+      "description": "Kolik každý účastník dluží nebo mu je dluženo.",
+      "emptyState": "Žádná data o výdajích pro výpočet zůstatků.",
+      "owed": "má nárok",
+      "owes": "dluží",
+      "settled": "vyrovnáno",
+      "participant": "Účastník",
+      "balance": "Zůstatek"
+    },
+    "PaidVsShare": {
+      "title": "Zaplaceno vs spravedlivý podíl",
+      "description": "Procento z celku, které každý účastník zaplatil ve srovnání se svým spravedlivým podílem.",
+      "emptyState": "Žádná data o výdajích pro porovnání zaplaceného vs podílu.",
+      "paid": "Zaplaceno",
+      "share": "Spravedlivý podíl",
+      "participant": "Účastník",
+      "paidPercentage": "Zaplaceno %",
+      "sharePercentage": "Podíl %"
     }
   },
   "Activity": {

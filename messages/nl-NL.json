@@ -307,6 +307,9 @@
   },
   "Stats": {
     "title": "Statistieken",
+    "error": "Kon statistieken niet laden. Probeer het opnieuw.",
+    "retry": "Opnieuw proberen",
+    "emptyState": "Geen uitgavegegevens beschikbaar. Voeg uitgaven toe om statistieken te zien.",
     "Totals": {
       "title": "Totaaluitgaven",
       "description": "Uitgavenoverzicht van de hele groep.",
@@ -315,6 +318,88 @@
       "yourSpendings": "Jouw totale uitgaven",
       "yourEarnings": "Jouw totale inkomsten",
       "yourShare": "Jouw totale aandeel"
+    },
+    "CategoryBreakdown": {
+      "title": "Uitgaven per categorie",
+      "description": "Hoe de uitgaven van de groep verdeeld zijn over categorieën.",
+      "emptyState": "Geen uitgavegegevens beschikbaar om de categorieverdeling te tonen.",
+      "amount": "Bedrag",
+      "category": "Categorie",
+      "percentage": "Percentage",
+      "uncategorized": "Zonder categorie"
+    },
+    "ParticipantRanking": {
+      "title": "Deelnemersranglijst",
+      "description": "Deelnemers gerangschikt op totaal betaald bedrag.",
+      "emptyState": "Geen uitgavegegevens beschikbaar om deelnemers te rangschikken.",
+      "totalPaid": "Totaal betaald",
+      "percentage": "Percentage",
+      "participant": "Deelnemer"
+    },
+    "ExpenseDistribution": {
+      "title": "Uitgavenverdeling",
+      "description": "Vergelijking tussen wat elke deelnemer betaalde en hun eerlijke deel.",
+      "emptyState": "Geen uitgavegegevens beschikbaar om de verdeling te tonen.",
+      "paid": "Betaald",
+      "share": "Deel",
+      "difference": "Verschil",
+      "participant": "Deelnemer",
+      "overpaid": "Te veel betaald",
+      "underpaid": "Te weinig betaald"
+    },
+    "SpendingOverTime": {
+      "title": "Uitgaven in de tijd",
+      "description": "Maandelijkse uitgavetrends van de groep.",
+      "emptyState": "Geen uitgavegegevens beschikbaar om trends te tonen.",
+      "amount": "Bedrag",
+      "month": "Maand"
+    },
+    "MonthOverMonth": {
+      "title": "Maand-op-maand",
+      "description": "Vergelijking tussen de laatste twee maanden uitgaven.",
+      "emptyState": "Niet genoeg gegevens om maanden te vergelijken.",
+      "increase": "Stijging",
+      "decrease": "Daling",
+      "noChange": "Geen verandering",
+      "vsLastMonth": "vs vorige maand",
+      "change": "Verandering"
+    },
+    "DailyAverage": {
+      "title": "Dagelijks gemiddelde",
+      "description": "Gemiddelde uitgaven per dag gedurende de actieve periode van de groep.",
+      "emptyState": "Geen uitgavegegevens beschikbaar om het dagelijks gemiddelde te berekenen.",
+      "perDay": "per dag"
+    },
+    "AggregateMetrics": {
+      "title": "Samenvatting",
+      "description": "Belangrijke cijfers over de uitgaven van de groep.",
+      "emptyState": "Nog geen uitgaven geregistreerd.",
+      "totalCount": "Totaal aantal uitgaven",
+      "average": "Gemiddelde uitgave",
+      "largest": "Grootste uitgave",
+      "mostRecent": "Meest recente uitgave",
+      "amount": "Bedrag",
+      "date": "Datum"
+    },
+    "NetBalances": {
+      "title": "Nettosaldi",
+      "description": "Hoeveel elke deelnemer verschuldigd is of tegoed heeft.",
+      "emptyState": "Geen uitgavegegevens beschikbaar om saldi te berekenen.",
+      "owed": "tegoed",
+      "owes": "is verschuldigd",
+      "settled": "verrekend",
+      "participant": "Deelnemer",
+      "balance": "Saldo"
+    },
+    "PaidVsShare": {
+      "title": "Betaald vs eerlijk deel",
+      "description": "Percentage van het totaal dat elke deelnemer betaalde vergeleken met hun eerlijke deel.",
+      "emptyState": "Geen uitgavegegevens beschikbaar om betaald vs deel te vergelijken.",
+      "paid": "Betaald",
+      "share": "Eerlijk deel",
+      "participant": "Deelnemer",
+      "paidPercentage": "Betaald %",
+      "sharePercentage": "Deel %"
     }
   },
   "Activity": {

@@ -252,6 +252,9 @@
   },
   "Stats": {
     "title": "统计",
+    "error": "无法加载统计数据。请重试。",
+    "retry": "重试",
+    "emptyState": "没有可用的支出数据。添加支出以查看统计。",
     "Totals": {
       "title": "总计",
       "description": "整个群组的花费合计。",
@@ -260,6 +263,88 @@
       "yourSpendings": "你的总计开销",
       "yourEarnings": "你的总计收入",
       "yourShare": "你的总计份额"
+    },
+    "CategoryBreakdown": {
+      "title": "按类别支出",
+      "description": "群组支出在各类别间的分布情况。",
+      "emptyState": "没有可用的支出数据来显示类别分布。",
+      "amount": "金额",
+      "category": "类别",
+      "percentage": "百分比",
+      "uncategorized": "未分类"
+    },
+    "ParticipantRanking": {
+      "title": "参与者排名",
+      "description": "按支付总额排列的参与者。",
+      "emptyState": "没有可用的支出数据来排列参与者。",
+      "totalPaid": "总支付",
+      "percentage": "百分比",
+      "participant": "参与者"
+    },
+    "ExpenseDistribution": {
+      "title": "支出分配",
+      "description": "每位参与者的支付金额与其公平份额的比较。",
+      "emptyState": "没有可用的支出数据来显示支出分配。",
+      "paid": "已付",
+      "share": "份额",
+      "difference": "差额",
+      "participant": "参与者",
+      "overpaid": "多付",
+      "underpaid": "少付"
+    },
+    "SpendingOverTime": {
+      "title": "支出趋势",
+      "description": "群组的月度支出趋势。",
+      "emptyState": "没有可用的支出数据来显示趋势。",
+      "amount": "金额",
+      "month": "月份"
+    },
+    "MonthOverMonth": {
+      "title": "月度对比",
+      "description": "最近两个月支出的比较。",
+      "emptyState": "数据不足，无法比较月份。",
+      "increase": "增加",
+      "decrease": "减少",
+      "noChange": "无变化",
+      "vsLastMonth": "较上月",
+      "change": "变化"
+    },
+    "DailyAverage": {
+      "title": "日均支出",
+      "description": "群组活跃期间的日均支出。",
+      "emptyState": "没有可用的支出数据来计算日均值。",
+      "perDay": "每天"
+    },
+    "AggregateMetrics": {
+      "title": "摘要",
+      "description": "群组支出的关键指标。",
+      "emptyState": "尚未记录任何支出。",
+      "totalCount": "支出总数",
+      "average": "平均支出",
+      "largest": "最大支出",
+      "mostRecent": "最近支出",
+      "amount": "金额",
+      "date": "日期"
+    },
+    "NetBalances": {
+      "title": "净余额",
+      "description": "每位参与者应收或应付的金额。",
+      "emptyState": "没有可用的支出数据来计算余额。",
+      "owed": "应收",
+      "owes": "应付",
+      "settled": "已结清",
+      "participant": "参与者",
+      "balance": "余额"
+    },
+    "PaidVsShare": {
+      "title": "已付 vs 公平份额",
+      "description": "每位参与者支付的百分比与其公平份额的比较。",
+      "emptyState": "没有可用的支出数据来比较已付与份额。",
+      "paid": "已付",
+      "share": "公平份额",
+      "participant": "参与者",
+      "paidPercentage": "已付 %",
+      "sharePercentage": "份额 %"
     }
   },
   "Activity": {

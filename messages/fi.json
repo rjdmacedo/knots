@@ -242,6 +242,9 @@
   },
   "Stats": {
     "title": "Tilastot",
+    "error": "Tilastoja ei voitu ladata. Yritä uudelleen.",
+    "retry": "Yritä uudelleen",
+    "emptyState": "Kulutustietoja ei saatavilla. Lisää kuluja nähdäksesi tilastot.",
     "Totals": {
       "title": "Yhteenveto",
       "description": "Koko ryhmän kulut.",
@@ -250,6 +253,88 @@
       "yourSpendings": "Kulutuksesi",
       "yourEarnings": "Saatavasi",
       "yourShare": "Osuutesi"
+    },
+    "CategoryBreakdown": {
+      "title": "Kulut kategorioittain",
+      "description": "Miten ryhmän kulut jakautuvat kategorioihin.",
+      "emptyState": "Ei kulutustietoja kategoriajakauman näyttämiseen.",
+      "amount": "Summa",
+      "category": "Kategoria",
+      "percentage": "Prosentti",
+      "uncategorized": "Luokittelematon"
+    },
+    "ParticipantRanking": {
+      "title": "Osallistujien sijoitus",
+      "description": "Osallistujat järjestettynä maksetun kokonaissumman mukaan.",
+      "emptyState": "Ei kulutustietoja osallistujien sijoittamiseen.",
+      "totalPaid": "Maksettu yhteensä",
+      "percentage": "Prosentti",
+      "participant": "Osallistuja"
+    },
+    "ExpenseDistribution": {
+      "title": "Kulujen jakautuminen",
+      "description": "Vertailu kunkin osallistujan maksamasta summasta ja reilusta osuudesta.",
+      "emptyState": "Ei kulutustietoja kulujen jakautumisen näyttämiseen.",
+      "paid": "Maksettu",
+      "share": "Osuus",
+      "difference": "Erotus",
+      "participant": "Osallistuja",
+      "overpaid": "Maksanut liikaa",
+      "underpaid": "Maksanut liian vähän"
+    },
+    "SpendingOverTime": {
+      "title": "Kulut ajan mittaan",
+      "description": "Ryhmän kuukausittaiset kulutustrendit.",
+      "emptyState": "Ei kulutustietoja trendien näyttämiseen.",
+      "amount": "Summa",
+      "month": "Kuukausi"
+    },
+    "MonthOverMonth": {
+      "title": "Kuukausittainen vertailu",
+      "description": "Vertailu kahden viimeisen kuukauden kulujen välillä.",
+      "emptyState": "Ei tarpeeksi tietoja kuukausien vertailuun.",
+      "increase": "Kasvu",
+      "decrease": "Lasku",
+      "noChange": "Ei muutosta",
+      "vsLastMonth": "vs edellinen kuukausi",
+      "change": "Muutos"
+    },
+    "DailyAverage": {
+      "title": "Päivittäinen keskiarvo",
+      "description": "Keskimääräinen päiväkulutus ryhmän aktiivisella ajanjaksolla.",
+      "emptyState": "Ei kulutustietoja päivittäisen keskiarvon laskemiseen.",
+      "perDay": "päivässä"
+    },
+    "AggregateMetrics": {
+      "title": "Yhteenveto",
+      "description": "Ryhmän kulujen keskeiset tunnusluvut.",
+      "emptyState": "Kuluja ei ole vielä kirjattu.",
+      "totalCount": "Kuluja yhteensä",
+      "average": "Keskimääräinen kulu",
+      "largest": "Suurin kulu",
+      "mostRecent": "Viimeisin kulu",
+      "amount": "Summa",
+      "date": "Päivämäärä"
+    },
+    "NetBalances": {
+      "title": "Nettosaldot",
+      "description": "Kuinka paljon kullekin osallistujalle ollaan velkaa tai hän on velkaa.",
+      "emptyState": "Ei kulutustietoja saldojen laskemiseen.",
+      "owed": "saatavaa",
+      "owes": "velkaa",
+      "settled": "tasattu",
+      "participant": "Osallistuja",
+      "balance": "Saldo"
+    },
+    "PaidVsShare": {
+      "title": "Maksettu vs reilu osuus",
+      "description": "Kunkin osallistujan maksama prosenttiosuus verrattuna reiluun osuuteen.",
+      "emptyState": "Ei kulutustietoja maksetun ja osuuden vertailuun.",
+      "paid": "Maksettu",
+      "share": "Reilu osuus",
+      "participant": "Osallistuja",
+      "paidPercentage": "Maksettu %",
+      "sharePercentage": "Osuus %"
     }
   },
   "Activity": {
