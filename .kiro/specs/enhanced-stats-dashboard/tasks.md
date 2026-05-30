@@ -34,75 +34,75 @@ This plan implements the enhanced stats dashboard by first creating the pure com
     - Implement `computePaidVsSharePercentages`: compute paid% and share% per participant (one decimal), return empty if no expenses
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 8.1, 8.4, 9.1, 9.4_
 
-- [ ] 2. Property-based tests for computation module
+- [x] 2. Property-based tests for computation module
 
-  - [ ]\* 2.1 Write property test for category aggregation correctness
+  - [x] 2.1 Write property test for category aggregation correctness
 
     - **Property 1: Category aggregation correctness**
     - Generate random expense arrays with varying categories and amounts; verify sum of category amounts equals total non-reimbursement spending and each percentage equals amount/total rounded to one decimal
     - **Validates: Requirements 1.1, 1.5**
 
-  - [ ]\* 2.2 Write property test for category descending sort
+  - [x] 2.2 Write property test for category descending sort
 
     - **Property 2: Category descending sort**
     - Generate expenses producing multiple categories; verify output is sorted by amount in non-increasing order
     - **Validates: Requirements 1.4**
 
-  - [ ]\* 2.3 Write property test for conservation of money (net balances sum to zero)
+  - [x] 2.3 Write property test for conservation of money (net balances sum to zero)
 
     - **Property 3: Conservation of money**
     - Generate random expenses and participants; verify sum of all netBalance values equals zero within floating-point tolerance
     - **Validates: Requirements 3.1, 8.1**
 
-  - [ ]\* 2.4 Write property test for participant ranking sort with tiebreaker
+  - [x] 2.4 Write property test for participant ranking sort with tiebreaker
 
     - **Property 4: Participant ranking sort with tiebreaker**
     - Generate expenses and participants; verify ranking is sorted by totalPaid descending, with alphabetical tiebreaker
     - **Validates: Requirements 2.2, 2.3**
 
-  - [ ]\* 2.5 Write property test for expense distribution imbalance sort
+  - [x] 2.5 Write property test for expense distribution imbalance sort
 
     - **Property 5: Expense distribution imbalance sort**
     - Generate expenses and participants; verify output sorted by absolute difference descending
     - **Validates: Requirements 3.4**
 
-  - [ ]\* 2.6 Write property test for monthly aggregation conservation
+  - [x] 2.6 Write property test for monthly aggregation conservation
 
     - **Property 6: Monthly aggregation conservation**
     - Generate expenses; verify sum of monthly amounts equals total non-reimbursement spending
     - **Validates: Requirements 4.1**
 
-  - [ ]\* 2.7 Write property test for monthly chronological ordering
+  - [x] 2.7 Write property test for monthly chronological ordering
 
     - **Property 7: Monthly chronological ordering**
     - Generate expenses spanning multiple months; verify output is in strictly chronological order
     - **Validates: Requirements 4.3**
 
-  - [ ]\* 2.8 Write property test for month-over-month computation correctness
+  - [x] 2.8 Write property test for month-over-month computation correctness
 
     - **Property 8: Month-over-month computation correctness**
     - Generate two consecutive months with known totals; verify absoluteDifference and percentageChange formulas
     - **Validates: Requirements 5.1**
 
-  - [ ]\* 2.9 Write property test for daily average computation correctness
+  - [x] 2.9 Write property test for daily average computation correctness
 
     - **Property 9: Daily average computation correctness**
     - Generate expenses spanning multiple days; verify daily average equals total / days (inclusive)
     - **Validates: Requirements 6.1, 6.3**
 
-  - [ ]\* 2.10 Write property test for aggregate metrics correctness
+  - [x] 2.10 Write property test for aggregate metrics correctness
 
     - **Property 10: Aggregate metrics correctness**
     - Generate non-empty expense sets; verify totalCount and averageAmount
     - **Validates: Requirements 7.1, 7.2**
 
-  - [ ]\* 2.11 Write property test for extreme expense identification
+  - [x] 2.11 Write property test for extreme expense identification
 
     - **Property 11: Extreme expense identification**
     - Generate expenses; verify largestExpense has max amount (most recent createdAt tiebreaker) and mostRecentExpense has latest createdAt
     - **Validates: Requirements 7.3, 7.4**
 
-  - [ ]\* 2.12 Write property test for net balance descending sort
+  - [x] 2.12 Write property test for net balance descending sort
     - **Property 12: Net balance descending sort**
     - Generate expenses and participants; verify netBalances sorted by netBalance descending
     - **Validates: Requirements 8.4**
@@ -198,9 +198,9 @@ This plan implements the enhanced stats dashboard by first creating the pure com
 
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 8. Unit tests for computation module
+- [x] 8. Unit tests for computation module
 
-  - [ ]\* 8.1 Write unit tests in `src/lib/__tests__/stats.test.ts`
+  - [x] 8.1 Write unit tests in `src/lib/__tests__/stats.test.ts`
     - Test empty expense list returns appropriate nulls/empty arrays for all functions
     - Test single expense produces correct breakdown across all functions
     - Test known multi-expense scenario with manually computed expected values
