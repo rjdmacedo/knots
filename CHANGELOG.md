@@ -1,3 +1,13 @@
+# [1.24.0](https://github.com/rjdmacedo/knots/compare/v1.23.0...v1.24.0) (2026-05-30)
+
+
+### Features
+
+* add components for daily average, participant ranking, net balances, and spending over time with localization support ([0e4579b](https://github.com/rjdmacedo/knots/commit/0e4579b141095268c61560928faa18bfd5a8cca5))
+* add spin delay for loading states and implement chart components for balances visualization ([f03c3d6](https://github.com/rjdmacedo/knots/commit/f03c3d6b1fa467a2da7bde068e12ed9ca70897f8))
+* implement static changelog page with parser and content rendering ([a47a5b9](https://github.com/rjdmacedo/knots/commit/a47a5b93210f71f86eeca9ca9348ac59a8eb4b29))
+* implement visual loading states with skeleton placeholders for improved user feedback during navigation ([172929a](https://github.com/rjdmacedo/knots/commit/172929ad949d365975198f9cbc567598a661e5b8))
+
 # [1.23.0](https://github.com/rjdmacedo/knots/compare/v1.22.1...v1.23.0) (2026-05-30)
 
 
