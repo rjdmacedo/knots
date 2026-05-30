@@ -70,7 +70,7 @@ function Content({ children }: { children: React.ReactNode }) {
   return (
     <TRPCProvider>
       <TooltipProvider>
-        <header className="flex items-center fixed top-0 left-0 right-0 h-16 bg-background bg-opacity-50 dark:bg-opacity-50 border-b backdrop-blur-xs z-50">
+        <header className="flex items-center fixed top-0 left-0 right-0 h-16 bg-background/50 border-b backdrop-blur-xs z-50">
           <div className="container flex justify-between">
             <Link
               className="flex items-center gap-2 hover:scale-105 transition-transform"
@@ -100,10 +100,10 @@ function Content({ children }: { children: React.ReactNode }) {
             </div>
           </div>
         </header>
-        <div className="flex flex-col min-h-[calc(100dvh-4rem)]">
-          <main className="flex-1 flex flex-col">{children}</main>
-          <Footer />
+        <div className="flex-1 overflow-y-auto py-16">
+          <main className="flex flex-col min-h-full py-4">{children}</main>
         </div>
+        <Footer />
         <Toaster />
       </TooltipProvider>
     </TRPCProvider>
@@ -120,7 +120,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <ApplePwaSplash icon="/logo-with-text.png" color="#027756" />
-      <body className="mt-16 min-h-dvh flex flex-col items-stretch">
+      <body className="h-dvh overflow-hidden flex flex-col items-stretch">
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
             attribute="class"

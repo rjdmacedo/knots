@@ -124,7 +124,11 @@ const ExpenseListForSearch = ({
     isFetchingNextPage,
   } = trpc.groups.expenses.list.useInfiniteQuery(
     { groupId, limit: PAGE_SIZE, filter: searchText },
-    { getNextPageParam: ({ nextCursor }) => nextCursor },
+    {
+      getNextPageParam: ({ nextCursor }) => nextCursor,
+      // Clear cache on unmount so skeleton shows on every navigation
+      gcTime: 0,
+    },
   )
   const expenses = data?.pages.flatMap((page) => page.expenses)
   const hasMore = data?.pages.at(-1)?.hasMore ?? false
@@ -162,7 +166,7 @@ const ExpenseListForSearch = ({
 
         return (
           <div key={expenseGroup}>
-            <div className="text-xs py-1 font-semibold sticky top-16 bg-background px-6">
+            <div className="text-xs py-1 font-semibold sticky top-0 bg-background px-6">
               {t(`Groups.${expenseGroup}`)}
             </div>
             {groupExpenses.map((expense) => (
