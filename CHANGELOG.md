@@ -1,3 +1,10 @@
+# [1.25.0](https://github.com/rjdmacedo/knots/compare/v1.24.0...v1.25.0) (2026-05-30)
+
+
+### Features
+
+* mark computation module tests and tasks as complete ([dc12846](https://github.com/rjdmacedo/knots/commit/dc1284693591fa20612bf2cfee866ae3b8070ee9))
+
 # [1.24.0](https://github.com/rjdmacedo/knots/compare/v1.23.0...v1.24.0) (2026-05-30)
 
 
