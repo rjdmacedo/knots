@@ -53,10 +53,10 @@ export default function BalancesAndReimbursements() {
             <BalancesLoading participantCount={group?.participants.length} />
           ) : (
             <BalancesList
-              balances={balancesData.balances}
-              participants={group?.participants}
-              currency={getCurrencyFromGroup(group)}
-              reimbursements={balancesData.reimbursements}
+              balances={balancesData!.balances}
+              participants={group!.participants}
+              currency={getCurrencyFromGroup(group!)}
+              reimbursements={balancesData!.reimbursements}
             />
           )}
         </CardContent>
@@ -73,9 +73,9 @@ export default function BalancesAndReimbursements() {
             />
           ) : (
             <ReimbursementList
-              reimbursements={balancesData.reimbursements}
-              participants={group?.participants}
-              currency={getCurrencyFromGroup(group)}
+              reimbursements={balancesData!.reimbursements}
+              participants={group!.participants}
+              currency={getCurrencyFromGroup(group!)}
               groupId={groupId}
             />
           )}

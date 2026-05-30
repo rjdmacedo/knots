@@ -127,8 +127,6 @@ const ExpenseListForSearch = ({
     { groupId, limit: PAGE_SIZE, filter: searchText },
     {
       getNextPageParam: ({ nextCursor }) => nextCursor,
-      // Clear cache on unmount so skeleton shows on every navigation
-      gcTime: 0,
     },
   )
   const expenses = data?.pages.flatMap((page) => page.expenses)
