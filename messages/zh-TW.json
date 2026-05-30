@@ -286,7 +286,8 @@
   "Information": {
     "title": "資訊",
     "description": "可在此添加群組相關資訊、公告及說明等。",
-    "empty": "目前沒有群組資訊。"
+    "empty": "目前沒有群組資訊。",
+    "edit": "編輯"
   },
   "Settings": {
     "title": "設定"

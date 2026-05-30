@@ -23,6 +23,11 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { useMediaQuery } from '@/lib/hooks'
 import {
   formatCurrency,
@@ -53,15 +58,12 @@ export function CreateFromReceiptButton() {
   return (
     <DialogOrDrawer
       trigger={
-        <Button
-          size="icon"
-          variant="secondary"
-          title={t('Dialog.triggerTitle')}
-        >
+        <Button size="icon" variant="secondary">
           <Receipt className="w-4 h-4" />
         </Button>
       }
-      title={
+      tooltipContent={t('Dialog.triggerTitle')}
+      heading={
         <>
           <span>{t('Dialog.title')}</span>
           <Badge className="bg-pink-700 hover:bg-pink-600 dark:bg-pink-500 dark:hover:bg-pink-600">
@@ -142,7 +144,7 @@ function ReceiptDialogContent() {
           <Button
             variant="secondary"
             className="row-span-3 w-full h-full relative"
-            title="Create expense from receipt"
+            aria-label="Create expense from receipt"
             onClick={openFileDialog}
             disabled={pending}
           >
@@ -269,20 +271,29 @@ function Unknown() {
 
 function CreateFromReceiptDialog({
   trigger,
-  title,
+  tooltipContent,
+  heading,
   description,
   children,
 }: PropsWithChildren<{
   trigger: ReactNode
-  title: ReactNode
+  tooltipContent?: ReactNode
+  heading: ReactNode
   description: ReactNode
 }>) {
   return (
     <Dialog>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DialogTrigger asChild>{trigger}</DialogTrigger>
+        </TooltipTrigger>
+        <TooltipContent>{tooltipContent}</TooltipContent>
+      </Tooltip>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">{title}</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            {heading}
+          </DialogTitle>
           <DialogDescription className="text-left">
             {description}
           </DialogDescription>
@@ -295,20 +306,29 @@ function CreateFromReceiptDialog({
 
 function CreateFromReceiptDrawer({
   trigger,
-  title,
+  tooltipContent,
+  heading,
   description,
   children,
 }: PropsWithChildren<{
   trigger: ReactNode
-  title: ReactNode
+  tooltipContent?: ReactNode
+  heading: ReactNode
   description: ReactNode
 }>) {
   return (
     <Drawer>
-      <DrawerTrigger asChild>{trigger}</DrawerTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DrawerTrigger asChild>{trigger}</DrawerTrigger>
+        </TooltipTrigger>
+        <TooltipContent>{tooltipContent}</TooltipContent>
+      </Tooltip>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle className="flex items-center gap-2">{title}</DrawerTitle>
+          <DrawerTitle className="flex items-center gap-2">
+            {heading}
+          </DrawerTitle>
           <DrawerDescription className="text-left">
             {description}
           </DrawerDescription>

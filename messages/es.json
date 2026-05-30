@@ -295,7 +295,8 @@
   "Information": {
     "title": "Información",
     "description": "Utilice este lugar para añadir cualquier información que pueda ser relevante para los participantes del grupo.",
-    "empty": "Aún no hay información sobre el grupo."
+    "empty": "Aún no hay información sobre el grupo.",
+    "edit": "Editar"
   },
   "Settings": {
     "title": "Ajustes"

@@ -7,6 +7,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { Download, FileDown, FileJson } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
@@ -15,18 +20,24 @@ export default function ExportButton({ groupId }: { groupId: string }) {
   const t = useTranslations('Expenses')
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button title={t('export')} variant="secondary" size="icon">
-          <Download className="w-4 h-4" />
-        </Button>
-      </DropdownMenuTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DropdownMenuTrigger asChild>
+            <Button variant="secondary" size="icon">
+              <Download className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{t('export')}</p>
+        </TooltipContent>
+      </Tooltip>
       <DropdownMenuContent>
         <DropdownMenuItem asChild>
           <Link
             prefetch={false}
             href={`/groups/${groupId}/expenses/export/json`}
             target="_blank"
-            title={t('exportJson')}
           >
             <div className="flex items-center gap-2">
               <FileJson className="w-4 h-4" />
@@ -39,7 +50,6 @@ export default function ExportButton({ groupId }: { groupId: string }) {
             prefetch={false}
             href={`/groups/${groupId}/expenses/export/csv`}
             target="_blank"
-            title={t('exportCsv')}
           >
             <div className="flex items-center gap-2">
               <FileDown className="w-4 h-4" />

@@ -286,7 +286,8 @@
   "Information": {
     "title": "信息",
     "description": "使用此处以添加与群组成员相关的任何信息。",
-    "empty": "当前没有群组信息。"
+    "empty": "当前没有群组信息。",
+    "edit": "编辑"
   },
   "Settings": {
     "title": "设定"

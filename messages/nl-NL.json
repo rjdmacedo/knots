@@ -341,7 +341,8 @@
   "Information": {
     "title": "Informatie",
     "description": "Gebruike deze plek om informatie toe te voegen die relevant kan zijn voor de groepsleden.",
-    "empty": "Nog geen informatie toegevoegd."
+    "empty": "Nog geen informatie toegevoegd.",
+    "edit": "Bewerken"
   },
   "Settings": {
     "title": "Instellingen"

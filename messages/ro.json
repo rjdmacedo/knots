@@ -286,7 +286,8 @@
   "Information": {
     "title": "Informații",
     "description": "Adaugă aici orice informație care poate să fie relevantă pentru membrii grupului.",
-    "empty": "Nicio informație de grup încă."
+    "empty": "Nicio informație de grup încă.",
+    "edit": "Editare"
   },
   "Settings": {
     "title": "Setări"

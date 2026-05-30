@@ -294,7 +294,8 @@
   "Information": {
     "title": "Informació",
     "description": "Utilitza aquest apartat per afegir informació rellevant per als participants del grup.",
-    "empty": "Encara no hi ha informació sobre el grup."
+    "empty": "Encara no hi ha informació sobre el grup.",
+    "edit": "Editar"
   },
   "Settings": {
     "title": "Configuració"

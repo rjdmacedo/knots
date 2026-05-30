@@ -334,7 +334,8 @@
   "Information": {
     "title": "Information",
     "description": "Utilisez cet espace pour ajouter toute information qui pourrait être pertinente pour les participants du groupe.",
-    "empty": "Aucune information pour le moment."
+    "empty": "Aucune information pour le moment.",
+    "edit": "Modifier"
   },
   "Settings": {
     "title": "Paramètres"

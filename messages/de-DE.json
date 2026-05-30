@@ -312,7 +312,8 @@
   "Information": {
     "title": "Informationen",
     "description": "Nutze diesen Ort, um Informationen hinzuzufügen, die für die Gruppenmitglieder wichtig sein könnten.",
-    "empty": "Noch keine Gruppeninformationen vorhanden."
+    "empty": "Noch keine Gruppeninformationen vorhanden.",
+    "edit": "Bearbeiten"
   },
   "Settings": {
     "title": "Einstellungen"

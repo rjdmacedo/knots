@@ -286,7 +286,8 @@
   "Information": {
     "title": "Bilgi",
     "description": "Grup katılımcıları için yararlı olabilecek bilgileri buraya ekleyebilirsiniz.",
-    "empty": "Henüz grup bilgisi bulunmuyor."
+    "empty": "Henüz grup bilgisi bulunmuyor.",
+    "edit": "Düzenle"
   },
   "Settings": {
     "title": "Ayarlar"

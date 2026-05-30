@@ -276,7 +276,8 @@
   "Information": {
     "title": "Tiedot",
     "description": "Käytä tätä paikkaa lisätäksesi kaikki tiedot, joilla voi olla merkitystä ryhmän osallistujille.",
-    "empty": "Ryhmätietoja ei vielä ole."
+    "empty": "Ryhmätietoja ei vielä ole.",
+    "edit": "Muokkaa"
   },
   "Settings": {
     "title": "Asetukset"

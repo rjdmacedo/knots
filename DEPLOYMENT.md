@@ -41,7 +41,7 @@ Use the image from GHCR instead of building locally:
 Edit `compose.ghcr.yaml` and set the image tag to a version instead of `latest`, e.g.:
 
 ```yaml
-image: ghcr.io/rjdmacedo/knots:1.20.7
+image: ghcr.io/rjdmacedo/knots:1.22.1
 ```
 
 Then run `pull` and `up -d` when you want to move to a newer version.

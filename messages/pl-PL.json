@@ -295,7 +295,8 @@
   "Information": {
     "title": "Informacje",
     "description": "Użyj tego miejsca, aby dodać wszelkie informacje, które mogą być istotne dla uczestników grupy.",
-    "empty": "Jeszcze nic tu nie ma."
+    "empty": "Jeszcze nic tu nie ma.",
+    "edit": "Edytuj"
   },
   "Settings": {
     "title": "Ustawienia"

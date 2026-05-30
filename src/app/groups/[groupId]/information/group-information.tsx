@@ -9,6 +9,11 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { Pencil } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
@@ -24,11 +29,16 @@ export default function GroupInformation({ groupId }: { groupId: string }) {
         <CardHeader>
           <CardTitle className="flex justify-between">
             <span>{t('title')}</span>
-            <Button size="icon" asChild className="-mb-12">
-              <Link href={`/groups/${groupId}/edit`}>
-                <Pencil className="w-4 h-4" />
-              </Link>
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button size="icon" asChild className="-mb-12">
+                  <Link href={`/groups/${groupId}/edit`}>
+                    <Pencil className="w-4 h-4" />
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{t('edit')}</TooltipContent>
+            </Tooltip>
           </CardTitle>
           <CardDescription className="mr-12">
             {t('description')}

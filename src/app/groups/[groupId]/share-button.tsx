@@ -8,6 +8,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { useBaseUrl } from '@/lib/hooks'
 import { Group } from '@prisma/client'
 import { Share } from 'lucide-react'
@@ -24,11 +29,16 @@ export function ShareButton({ group }: Props) {
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button title={t('title')} size="icon" className="shrink-0">
-          <Share className="w-4 h-4" />
-        </Button>
-      </PopoverTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <PopoverTrigger asChild>
+            <Button size="icon" className="shrink-0">
+              <Share className="w-4 h-4" />
+            </Button>
+          </PopoverTrigger>
+        </TooltipTrigger>
+        <TooltipContent>{t('title')}</TooltipContent>
+      </Tooltip>
       <PopoverContent align="end" className="[&_p]:text-sm flex flex-col gap-3">
         <p>{t('description')}</p>
         <div className="flex gap-2">

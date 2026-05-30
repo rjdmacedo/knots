@@ -14,12 +14,22 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Skeleton } from '@/components/ui/skeleton'
+import { isPushSupported, registerServiceWorker } from '@/lib/push/register-sw'
+import { trpc } from '@/trpc/client'
 import { AppRouterOutput } from '@/trpc/routers/_app'
 import { StarFilledIcon } from '@radix-ui/react-icons'
-import { Calendar, MoreHorizontal, Star, Users } from 'lucide-react'
+import {
+  Bell,
+  BellOff,
+  Calendar,
+  MoreHorizontal,
+  Star,
+  Users,
+} from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
 export function RecentGroupListCard({
@@ -38,6 +48,113 @@ export function RecentGroupListCard({
   const router = useRouter()
   const locale = useLocale()
   const t = useTranslations('Groups')
+
+  const [pushSupported, setPushSupported] = useState(false)
+  const [isSubscribed, setIsSubscribed] = useState(false)
+  const [isNotifLoading, setIsNotifLoading] = useState(false)
+  const checkedRef = useRef(false)
+
+  const createMutation = trpc.pushSubscriptions.create.useMutation()
+  const deleteMutation = trpc.pushSubscriptions.delete.useMutation()
+
+  useEffect(() => {
+    if (checkedRef.current) return
+    checkedRef.current = true
+
+    if (typeof window === 'undefined') return
+    const supported = isPushSupported()
+    setPushSupported(supported)
+
+    if (supported) {
+      registerServiceWorker()
+        .then((registration) => registration?.pushManager.getSubscription())
+        .then(async (subscription) => {
+          if (!subscription) return
+
+          const res = await fetch(
+            `/api/trpc/pushSubscriptions.list?batch=1&input=${encodeURIComponent(
+              JSON.stringify({
+                '0': { json: { endpoint: subscription.endpoint } },
+              }),
+            )}`,
+          )
+          if (!res.ok) return
+
+          const json = (await res.json()) as Array<{
+            result?: {
+              data?: {
+                json?: Array<{
+                  groupId: string
+                  participantName: string | null
+                }>
+              }
+            }
+          }>
+          const subscriptions = json?.[0]?.result?.data?.json
+          if (Array.isArray(subscriptions)) {
+            const groupSub = subscriptions.find(
+              (s: { groupId: string }) => s.groupId === group.id,
+            )
+            if (groupSub) {
+              setIsSubscribed(true)
+            }
+          }
+        })
+        .catch(() => {
+          // Silently handle errors during status check
+        })
+    }
+  }, [group.id])
+
+  const toggleNotifications = useCallback(async () => {
+    setIsNotifLoading(true)
+    try {
+      if (isSubscribed) {
+        const registration = await registerServiceWorker()
+        const subscription = await registration?.pushManager.getSubscription()
+        if (subscription) {
+          await deleteMutation.mutateAsync({
+            endpoint: subscription.endpoint,
+            groupId: group.id,
+          })
+          await subscription.unsubscribe()
+        }
+        setIsSubscribed(false)
+      } else {
+        const permission = await Notification.requestPermission()
+        if (permission !== 'granted') {
+          setIsNotifLoading(false)
+          return
+        }
+
+        const registration = await registerServiceWorker()
+        if (!registration) {
+          setIsNotifLoading(false)
+          return
+        }
+
+        const subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+        })
+
+        const json = subscription.toJSON()
+        await createMutation.mutateAsync({
+          endpoint: subscription.endpoint,
+          keys: {
+            p256dh: json.keys?.p256dh ?? '',
+            auth: json.keys?.auth ?? '',
+          },
+          groupId: group.id,
+        })
+        setIsSubscribed(true)
+      }
+    } catch {
+      // Silently handle errors
+    } finally {
+      setIsNotifLoading(false)
+    }
+  }, [isSubscribed, group.id, createMutation, deleteMutation])
 
   return (
     <li key={group.id}>
@@ -91,6 +208,24 @@ export function RecentGroupListCard({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
+                    {pushSupported && (
+                      <DropdownMenuItem
+                        disabled={isNotifLoading}
+                        onClick={(event) => {
+                          event.stopPropagation()
+                          toggleNotifications()
+                        }}
+                      >
+                        {isSubscribed ? (
+                          <BellOff className="w-4 h-4 mr-2" />
+                        ) : (
+                          <Bell className="w-4 h-4 mr-2" />
+                        )}
+                        {isSubscribed
+                          ? t('disableNotifications')
+                          : t('enableNotifications')}
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem
                       className="text-destructive"
                       onClick={(event) => {

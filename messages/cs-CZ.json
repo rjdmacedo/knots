@@ -295,7 +295,8 @@
   "Information": {
     "title": "Informace",
     "description": "Použijte toto místo k přidání informací, které mohou být důležité pro účastníky skupiny.",
-    "empty": "Zatím žádné informace o skupině."
+    "empty": "Zatím žádné informace o skupině.",
+    "edit": "Upravit"
   },
   "Settings": {
     "title": "Nastavení"

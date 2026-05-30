@@ -14,6 +14,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { Plus } from 'lucide-react'
 import { Metadata } from 'next'
 import { useTranslations } from 'next-intl'
@@ -44,14 +49,16 @@ export default function GroupExpensesPageClient({
             <ExportButton groupId={groupId} />
             <SplitwiseImport groupId={groupId} />
             {enableReceiptExtract && <CreateFromReceiptButton />}
-            <Button asChild size="icon">
-              <Link
-                href={`/groups/${groupId}/expenses/create`}
-                title={t('create')}
-              >
-                <Plus className="w-4 h-4" />
-              </Link>
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button asChild size="icon">
+                  <Link href={`/groups/${groupId}/expenses/create`}>
+                    <Plus className="w-4 h-4" />
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{t('create')}</TooltipContent>
+            </Tooltip>
           </CardAction>
         </CardHeader>
 

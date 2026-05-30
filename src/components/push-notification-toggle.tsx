@@ -9,6 +9,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { registerServiceWorker } from '@/lib/push/register-sw'
 import { trpc } from '@/trpc/client'
 import { Bell, BellOff, Loader2 } from 'lucide-react'
@@ -218,23 +223,29 @@ export function PushNotificationToggle({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="shrink-0"
-          disabled={isLoading}
-          title={isSubscribed ? t('unsubscribe') : t('subscribe')}
-        >
-          {isLoading ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : isSubscribed ? (
-            <Bell className="h-4 w-4" />
-          ) : (
-            <BellOff className="h-4 w-4" />
-          )}
-        </Button>
-      </DropdownMenuTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="shrink-0"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : isSubscribed ? (
+                <Bell className="h-4 w-4" />
+              ) : (
+                <BellOff className="h-4 w-4" />
+              )}
+            </Button>
+          </DropdownMenuTrigger>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{isSubscribed ? t('unsubscribe') : t('subscribe')}</p>
+        </TooltipContent>
+      </Tooltip>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>{t('subscribe')}</DropdownMenuLabel>
         <DropdownMenuSeparator />

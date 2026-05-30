@@ -306,7 +306,8 @@
   "Information": {
     "title": "Informazioni",
     "description": "Utilizza questo posto per aggiungere qualsiasi informazione che possa essere rilevante per i partecipanti al gruppo.",
-    "empty": "Ancora nessuna informazione sul gruppo."
+    "empty": "Ancora nessuna informazione sul gruppo.",
+    "edit": "Modifica"
   },
   "Settings": {
     "title": "Impostazioni"
