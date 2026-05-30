@@ -1,3 +1,11 @@
+# [1.22.0](https://github.com/rjdmacedo/knots/compare/v1.21.0...v1.22.0) (2026-05-30)
+
+
+### Features
+
+* add activity change log and group push notifications ([2a1a1bd](https://github.com/rjdmacedo/knots/commit/2a1a1bddc675394f8f27dbeb0e19e6026c6c135a))
+* add change rendering, UI specs, and backend integration for activity diffs ([ee7ac5d](https://github.com/rjdmacedo/knots/commit/ee7ac5d7ea84a616da1627c1390956dec82a7a08))
+
 # [1.21.0](https://github.com/rjdmacedo/knots/compare/v1.20.6...v1.21.0) (2026-03-10)
 
 
