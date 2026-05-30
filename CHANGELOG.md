@@ -1,3 +1,10 @@
+## [1.22.1](https://github.com/rjdmacedo/knots/compare/v1.22.0...v1.22.1) (2026-05-30)
+
+
+### Bug Fixes
+
+* add VAPID keys to build.env for push notifications in production ([62623c9](https://github.com/rjdmacedo/knots/commit/62623c90991fe30705908edd0cd81f636fafad6a))
+
 # [1.22.0](https://github.com/rjdmacedo/knots/compare/v1.21.0...v1.22.0) (2026-05-30)
 
 
