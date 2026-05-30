@@ -1,3 +1,10 @@
+# [1.23.0](https://github.com/rjdmacedo/knots/compare/v1.22.1...v1.23.0) (2026-05-30)
+
+
+### Features
+
+* standardize tooltip usage across icon buttons and add notifications toggle to context menu ([e0bf2a6](https://github.com/rjdmacedo/knots/commit/e0bf2a62366394b3b439c998ac6a1f64de422b29))
+
 ## [1.22.1](https://github.com/rjdmacedo/knots/compare/v1.22.0...v1.22.1) (2026-05-30)
 
 
