@@ -87,6 +87,9 @@ export function ActivityList() {
   const t = useTranslations('Activity')
   const { group, groupId } = useCurrentGroup()
 
+  const { data: categoriesData } = trpc.categories.list.useQuery()
+  const categories = categoriesData?.categories ?? []
+
   const {
     data: activitiesData,
     isLoading,
@@ -137,6 +140,7 @@ export function ActivityList() {
                   activity={activity}
                   participant={participant}
                   dateStyle={dateStyle}
+                  categories={categories}
                 />
               )
             })}

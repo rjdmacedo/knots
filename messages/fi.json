@@ -371,5 +371,20 @@
       "TV/Phone/Internet": "TV/Puhelin/Internet",
       "Water": "Vesi"
     }
+  },
+  "Notifications": {
+    "subscribe": "Ota ilmoitukset käyttöön",
+    "unsubscribe": "Poista ilmoitukset käytöstä",
+    "selectParticipant": "Ilmoita muiden tekemistä muutoksista",
+    "noParticipant": "Kaikki muutokset",
+    "permissionDenied": "Ilmoituslupa evättiin. Ota se käyttöön selaimen asetuksista.",
+    "notSupported": "Push-ilmoituksia ei tueta tällä laitteella.",
+    "error": "Ilmoitusten käyttöönotto epäonnistui. Yritä uudelleen.",
+    "expenseCreated": "{actor} lisäsi \"{title}\"",
+    "expenseUpdated": "{actor} päivitti \"{title}\"",
+    "expenseDeleted": "{actor} poisti \"{title}\"",
+    "groupUpdated": "{actor} päivitti ryhmän \"{group}\"",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "Uutta toimintaa ryhmässäsi"
   }
 }

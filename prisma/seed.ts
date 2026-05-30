@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { PrismaClient, SplitMode } from '@prisma/client'
-import { keyBy, sample } from 'lodash-es'
+import { sample } from 'lodash-es'
 import { randomUUID } from 'node:crypto'
 
 const prisma = new PrismaClient()
@@ -15,60 +15,19 @@ async function main() {
   await prisma.recurringExpenseLink.deleteMany()
   await prisma.expense.deleteMany()
   await prisma.participant.deleteMany()
-  await prisma.category.deleteMany()
   await prisma.group.deleteMany()
 
   console.log('Seed: creating demo data...')
 
-  // Basic categories aligned with translation keys in messages/* (Categories.*)
-  const categoryDefinitions = [
-    {
-      key: 'general',
-      grouping: 'Uncategorized',
-      name: 'General',
-    },
-    {
-      key: 'diningOut',
-      grouping: 'Food and Drink',
-      name: 'Dining Out',
-    },
-    {
-      key: 'groceries',
-      grouping: 'Food and Drink',
-      name: 'Groceries',
-    },
-    {
-      key: 'sports',
-      grouping: 'Entertainment',
-      name: 'Sports',
-    },
-    {
-      key: 'movies',
-      grouping: 'Entertainment',
-      name: 'Movies',
-    },
-    {
-      key: 'fuel',
-      grouping: 'Transportation',
-      name: 'Gas/Fuel',
-    },
-  ] as const
-
-  const createdCategories = await Promise.all(
-    categoryDefinitions.map(async (def) => ({
-      key: def.key,
-      category: await prisma.category.create({
-        data: {
-          grouping: def.grouping,
-          name: def.name,
-        },
-      }),
-    })),
-  )
-
-  const categoriesByKey = keyBy(createdCategories, (entry) => entry.key)
-
-  console.log(`Seed: created ${createdCategories.length} categories`)
+  // Categories are seeded by migrations — reference them by their stable IDs
+  const categoryIds = {
+    general: 0,
+    diningOut: 8,
+    groceries: 9,
+    sports: 6,
+    movies: 4,
+    fuel: 31,
+  } as const
 
   // Demo group
   const groupId = randomUUID()
@@ -111,7 +70,7 @@ async function main() {
 
   type SeedExpenseTemplate = {
     title: string
-    categoryKey: keyof typeof categoriesByKey
+    categoryKey: keyof typeof categoryIds
     min: number
     max: number
   }
@@ -170,14 +129,14 @@ async function main() {
     const expenseId = randomUUID()
     const paidByParticipant = sample(participants) ?? participants[0]
 
-    const categoryEntry = categoriesByKey[template.categoryKey]
+    const categoryId = categoryIds[template.categoryKey]
 
     const expense = await prisma.expense.create({
       data: {
         id: expenseId,
         groupId: group.id,
         title: template.title,
-        categoryId: categoryEntry?.category.id ?? 0,
+        categoryId,
         expenseDate,
         amount: amountInCents(template.min, template.max),
         paidById: paidByParticipant.id,

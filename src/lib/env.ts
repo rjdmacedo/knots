@@ -37,6 +37,14 @@ const envSchema = z
     ),
     OPENAI_API_KEY: z.string().optional(),
     NEXT_PUBLIC_APP_VERSION: z.string().optional().default('dev'),
+    NEXT_PUBLIC_VAPID_PUBLIC_KEY: z
+      .string()
+      .regex(/^[A-Za-z0-9_-]+$/)
+      .optional(),
+    VAPID_PRIVATE_KEY: z
+      .string()
+      .regex(/^[A-Za-z0-9_-]+$/)
+      .optional(),
   })
   .superRefine((env, ctx) => {
     if (
@@ -62,6 +70,16 @@ const envSchema = z
         code: ZodIssueCode.custom,
         message:
           'If NEXT_PUBLIC_ENABLE_RECEIPT_EXTRACT or NEXT_PUBLIC_ENABLE_CATEGORY_EXTRACT is specified, then OPENAI_API_KEY must be specified too',
+      })
+    }
+    if (
+      (env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && !env.VAPID_PRIVATE_KEY) ||
+      (!env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY)
+    ) {
+      ctx.addIssue({
+        code: ZodIssueCode.custom,
+        message:
+          'If one VAPID key is specified, both NEXT_PUBLIC_VAPID_PUBLIC_KEY and VAPID_PRIVATE_KEY must be specified',
       })
     }
   })

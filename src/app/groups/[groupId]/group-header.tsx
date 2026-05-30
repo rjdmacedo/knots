@@ -2,6 +2,7 @@
 
 import { GroupTabs } from '@/app/groups/[groupId]/group-tabs'
 import { ShareButton } from '@/app/groups/[groupId]/share-button'
+import { PushNotificationToggle } from '@/components/push-notification-toggle'
 import { Skeleton } from '@/components/ui/skeleton'
 import Link from 'next/link'
 import { useCurrentGroup } from './current-group-context'
@@ -23,7 +24,18 @@ export const GroupHeader = () => {
 
       <div className="flex gap-2 justify-between">
         <GroupTabs groupId={groupId} />
-        {group && <ShareButton group={group} />}
+        <div className="flex items-center gap-1">
+          {group && process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && (
+            <PushNotificationToggle
+              groupId={groupId}
+              participants={group.participants.map((p) => ({
+                id: p.id,
+                name: p.name,
+              }))}
+            />
+          )}
+          {group && <ShareButton group={group} />}
+        </div>
       </div>
     </div>
   )

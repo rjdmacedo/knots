@@ -391,5 +391,20 @@
       "TV/Phone/Internet": "テレビ/電話/インターネット",
       "Water": "水道"
     }
+  },
+  "Notifications": {
+    "subscribe": "通知を有効にする",
+    "unsubscribe": "通知を無効にする",
+    "selectParticipant": "他のメンバーの変更を通知する",
+    "noParticipant": "すべての変更",
+    "permissionDenied": "通知の許可が拒否されました。ブラウザの設定で有効にしてください。",
+    "notSupported": "このデバイスではプッシュ通知がサポートされていません。",
+    "error": "通知を有効にできませんでした。もう一度お試しください。",
+    "expenseCreated": "{actor}が「{title}」を追加しました",
+    "expenseUpdated": "{actor}が「{title}」を更新しました",
+    "expenseDeleted": "{actor}が「{title}」を削除しました",
+    "groupUpdated": "{actor}がグループ「{group}」を更新しました",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "グループに新しいアクティビティがあります"
   }
 }

@@ -136,7 +136,6 @@
       "recurrenceRule": {
         "label": "Recurrència de la despesa",
         "description": "Selecciona amb quina freqüència cal que es repeteixi la despesa.",
-
         "none": "Puntual",
         "daily": "Diària",
         "weekly": "Setmanal",
@@ -390,5 +389,20 @@
       "TV/Phone/Internet": "TV/Telèfon/Internet",
       "Water": "Aigua"
     }
+  },
+  "Notifications": {
+    "subscribe": "Activa les notificacions",
+    "unsubscribe": "Desactiva les notificacions",
+    "selectParticipant": "Notifica'm dels canvis d'altres",
+    "noParticipant": "Tots els canvis",
+    "permissionDenied": "El permís de notificacions ha estat denegat. Activa'l a la configuració del navegador.",
+    "notSupported": "Les notificacions push no estan disponibles en aquest dispositiu.",
+    "error": "No s'han pogut activar les notificacions. Torna-ho a provar.",
+    "expenseCreated": "{actor} ha afegit \"{title}\"",
+    "expenseUpdated": "{actor} ha actualitzat \"{title}\"",
+    "expenseDeleted": "{actor} ha eliminat \"{title}\"",
+    "groupUpdated": "{actor} ha actualitzat el grup \"{group}\"",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "Nova activitat al teu grup"
   }
 }

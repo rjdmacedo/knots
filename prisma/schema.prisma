@@ -13,15 +13,16 @@ datasource db {
 }
 
 model Group {
-  id           String        @id
-  name         String
-  information  String?       @db.Text
-  currency     String        @default("$")
-  currencyCode String?
-  participants Participant[]
-  expenses     Expense[]
-  activities   Activity[]
-  createdAt    DateTime      @default(now())
+  id                String             @id
+  name              String
+  information       String?            @db.Text
+  currency          String             @default("$")
+  currencyCode      String?
+  participants      Participant[]
+  expenses          Expense[]
+  activities        Activity[]
+  pushSubscriptions PushSubscription[]
+  createdAt         DateTime           @default(now())
 }
 
 model Participant {
@@ -116,14 +117,26 @@ model ExpensePaidFor {
 }
 
 model Activity {
-  id            String       @id
-  group         Group        @relation(fields: [groupId], references: [id])
+  id            String           @id
+  group         Group            @relation(fields: [groupId], references: [id])
   groupId       String
-  time          DateTime     @default(now())
+  time          DateTime         @default(now())
   activityType  ActivityType
   participantId String?
   expenseId     String?
   data          String?
+  changes       ActivityChange[]
+}
+
+model ActivityChange {
+  id         String   @id @default(cuid())
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  activityId String
+  field      String
+  oldValue   String?
+  newValue   String?
+
+  @@index([activityId])
 }
 
 enum ActivityType {
@@ -131,4 +144,20 @@ enum ActivityType {
   CREATE_EXPENSE
   UPDATE_EXPENSE
   DELETE_EXPENSE
+}
+
+model PushSubscription {
+  id              String   @id @default(cuid())
+  endpoint        String   @db.VarChar(2048)
+  p256dh          String   @db.VarChar(256)
+  auth            String   @db.VarChar(256)
+  groupId         String
+  group           Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  participantName String?  @db.VarChar(200)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([endpoint, groupId])
+  @@index([groupId])
+  @@index([endpoint])
 }

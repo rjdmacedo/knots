@@ -402,5 +402,20 @@
       "TV/Phone/Internet": "TV/Telefono/Internet",
       "Water": "Acqua"
     }
+  },
+  "Notifications": {
+    "subscribe": "Attiva notifiche",
+    "unsubscribe": "Disattiva notifiche",
+    "selectParticipant": "Notificami le modifiche degli altri",
+    "noParticipant": "Tutte le modifiche",
+    "permissionDenied": "Il permesso per le notifiche è stato negato. Abilitalo nelle impostazioni del browser.",
+    "notSupported": "Le notifiche push non sono supportate su questo dispositivo.",
+    "error": "Impossibile attivare le notifiche. Riprova.",
+    "expenseCreated": "{actor} ha aggiunto \"{title}\"",
+    "expenseUpdated": "{actor} ha aggiornato \"{title}\"",
+    "expenseDeleted": "{actor} ha eliminato \"{title}\"",
+    "groupUpdated": "{actor} ha aggiornato il gruppo \"{group}\"",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "Nuova attività nel tuo gruppo"
   }
 }

@@ -1,3 +1,8 @@
+import {
+  FieldChange,
+  computeExpenseChanges,
+  computeGroupChanges,
+} from '@/lib/activity-diff'
 import { prisma } from '@/lib/prisma'
 import { ExpenseFormValues, GroupFormValues } from '@/lib/schemas'
 import {
@@ -50,10 +55,21 @@ export async function createExpense(
   }
 
   const expenseId = randomId()
+  const changes: FieldChange[] = [
+    { field: 'title', oldValue: null, newValue: expenseFormValues.title },
+    {
+      field: 'amount',
+      oldValue: null,
+      newValue: String(expenseFormValues.amount),
+    },
+    { field: 'paidBy', oldValue: null, newValue: expenseFormValues.paidBy },
+  ]
+
   await logActivity(groupId, ActivityType.CREATE_EXPENSE, {
     participantId,
     expenseId,
     data: expenseFormValues.title,
+    changes,
   })
 
   const isCreateRecurrence =
@@ -115,10 +131,26 @@ export async function deleteExpense(
   participantId?: string,
 ) {
   const existingExpense = await getExpense(groupId, expenseId)
+
+  const changes: FieldChange[] = [
+    {
+      field: 'title',
+      oldValue: existingExpense?.title ?? null,
+      newValue: null,
+    },
+    {
+      field: 'amount',
+      oldValue:
+        existingExpense?.amount != null ? String(existingExpense.amount) : null,
+      newValue: null,
+    },
+  ]
+
   await logActivity(groupId, ActivityType.DELETE_EXPENSE, {
     participantId,
     expenseId,
     data: existingExpense?.title,
+    changes,
   })
 
   await prisma.expense.delete({
@@ -175,6 +207,7 @@ export async function updateExpense(
     participantId,
     expenseId,
     data: expenseFormValues.title,
+    changes: computeExpenseChanges(existingExpense, expenseFormValues),
   })
 
   const isDeleteRecurrenceExpenseLink =
@@ -292,7 +325,12 @@ export async function updateGroup(
   const existingGroup = await getGroup(groupId)
   if (!existingGroup) throw new Error('Invalid group ID')
 
-  await logActivity(groupId, ActivityType.UPDATE_GROUP, { participantId })
+  const changes = computeGroupChanges(existingGroup, groupFormValues)
+
+  await logActivity(groupId, ActivityType.UPDATE_GROUP, {
+    participantId,
+    changes,
+  })
 
   return prisma.group.update({
     where: { id: groupId },
@@ -398,6 +436,7 @@ export async function getActivities(
 ) {
   const activities = await prisma.activity.findMany({
     where: { groupId },
+    include: { changes: true },
     orderBy: [{ time: 'desc' }],
     skip: options?.offset,
     take: options?.length,
@@ -425,16 +464,39 @@ export async function getActivities(
 export async function logActivity(
   groupId: string,
   activityType: ActivityType,
-  extra?: { participantId?: string; expenseId?: string; data?: string },
+  extra?: {
+    participantId?: string
+    expenseId?: string
+    data?: string
+    changes?: FieldChange[]
+  },
 ) {
-  return prisma.activity.create({
+  const { changes, ...activityExtra } = extra ?? {}
+
+  const activity = await prisma.activity.create({
     data: {
       id: randomId(),
       groupId,
       activityType,
-      ...extra,
+      ...activityExtra,
+      ...(changes && changes.length > 0
+        ? {
+            changes: {
+              createMany: {
+                data: changes.map((change) => ({
+                  field: change.field,
+                  oldValue: change.oldValue,
+                  newValue: change.newValue,
+                })),
+              },
+            },
+          }
+        : {}),
     },
+    include: { changes: true },
   })
+
+  return activity
 }
 
 async function createRecurringExpenses() {

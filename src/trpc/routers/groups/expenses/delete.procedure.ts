@@ -1,5 +1,7 @@
 import { deleteExpense } from '@/lib/api'
+import { notifyOnActivity } from '@/lib/push/notify-on-activity'
 import { baseProcedure } from '@/trpc/init'
+import { ActivityType } from '@prisma/client'
 import { z } from 'zod'
 
 export const deleteGroupExpenseProcedure = baseProcedure
@@ -12,5 +14,9 @@ export const deleteGroupExpenseProcedure = baseProcedure
   )
   .mutation(async ({ input: { expenseId, groupId, participantId } }) => {
     await deleteExpense(groupId, expenseId, participantId)
+    notifyOnActivity(groupId, ActivityType.DELETE_EXPENSE, {
+      participantId,
+      expenseId,
+    })
     return {}
   })

@@ -451,5 +451,20 @@
       "heading": "Andere valuta"
     },
     "search": "Valuta zoeken..."
+  },
+  "Notifications": {
+    "subscribe": "Meldingen inschakelen",
+    "unsubscribe": "Meldingen uitschakelen",
+    "selectParticipant": "Meld mij over wijzigingen van anderen",
+    "noParticipant": "Alle wijzigingen",
+    "permissionDenied": "Toestemming voor meldingen is geweigerd. Schakel het in via je browserinstellingen.",
+    "notSupported": "Pushmeldingen worden niet ondersteund op dit apparaat.",
+    "error": "Kon meldingen niet inschakelen. Probeer het opnieuw.",
+    "expenseCreated": "{actor} heeft \"{title}\" toegevoegd",
+    "expenseUpdated": "{actor} heeft \"{title}\" bijgewerkt",
+    "expenseDeleted": "{actor} heeft \"{title}\" verwijderd",
+    "groupUpdated": "{actor} heeft de groep \"{group}\" bijgewerkt",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "Nieuwe activiteit in je groep"
   }
 }

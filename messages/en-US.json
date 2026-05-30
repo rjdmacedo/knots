@@ -178,7 +178,6 @@
       "recurrenceRule": {
         "label": "Expense Recurrence",
         "description": "Select how often the expense should repeat.",
-
         "none": "None",
         "daily": "Daily",
         "weekly": "Weekly",
@@ -329,7 +328,28 @@
       "earlierThisYear": "Earlier this year",
       "lastYear": "Last year",
       "older": "Older"
-    }
+    },
+    "fieldLabels": {
+      "title": "Title",
+      "amount": "Amount",
+      "expenseDate": "Date",
+      "category": "Category",
+      "paidBy": "Paid by",
+      "splitMode": "Split mode",
+      "isReimbursement": "Reimbursement",
+      "notes": "Notes",
+      "recurrenceRule": "Recurrence",
+      "paidFor": "Paid for",
+      "name": "Name",
+      "information": "Information",
+      "currency": "Currency",
+      "participants": "Participants"
+    },
+    "showMoreChanges": "Show {count} more changes",
+    "showLess": "Show less",
+    "yes": "Yes",
+    "no": "No",
+    "fieldChangesCount": "{count} field changes"
   },
   "Information": {
     "title": "Information",
@@ -473,5 +493,20 @@
         "description": "Failed to import CSV file."
       }
     }
+  },
+  "Notifications": {
+    "subscribe": "Enable notifications",
+    "unsubscribe": "Disable notifications",
+    "selectParticipant": "Notify me about changes by others",
+    "noParticipant": "All changes",
+    "permissionDenied": "Notification permission was denied. Enable it in your browser settings.",
+    "notSupported": "Push notifications are not supported on this device.",
+    "error": "Could not enable notifications. Please try again.",
+    "expenseCreated": "{actor} added \"{title}\" on {group}",
+    "expenseUpdated": "{actor} edited \"{title}\" on {group}",
+    "expenseDeleted": "{actor} deleted \"{title}\" on {group}",
+    "groupUpdated": "{actor} updated the group \"{group}\"",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "New activity in your group"
   }
 }

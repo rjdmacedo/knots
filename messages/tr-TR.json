@@ -381,5 +381,20 @@
       "TV/Phone/Internet": "TV/Telefon/İnternet",
       "Water": "Su"
     }
+  },
+  "Notifications": {
+    "subscribe": "Bildirimleri etkinleştir",
+    "unsubscribe": "Bildirimleri devre dışı bırak",
+    "selectParticipant": "Başkalarının değişikliklerini bana bildir",
+    "noParticipant": "Tüm değişiklikler",
+    "permissionDenied": "Bildirim izni reddedildi. Tarayıcı ayarlarınızdan etkinleştirin.",
+    "notSupported": "Bu cihazda push bildirimleri desteklenmiyor.",
+    "error": "Bildirimler etkinleştirilemedi. Lütfen tekrar deneyin.",
+    "expenseCreated": "{actor} \"{title}\" ekledi",
+    "expenseUpdated": "{actor} \"{title}\" güncelledi",
+    "expenseDeleted": "{actor} \"{title}\" sildi",
+    "groupUpdated": "{actor} \"{group}\" grubunu güncelledi",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "Grubunuzda yeni etkinlik"
   }
 }

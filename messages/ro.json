@@ -381,5 +381,20 @@
       "TV/Phone/Internet": "TV/Telefon/Internet",
       "Water": "Apă"
     }
+  },
+  "Notifications": {
+    "subscribe": "Activează notificările",
+    "unsubscribe": "Dezactivează notificările",
+    "selectParticipant": "Notifică-mă despre modificările altora",
+    "noParticipant": "Toate modificările",
+    "permissionDenied": "Permisiunea pentru notificări a fost refuzată. Activează-o din setările browserului.",
+    "notSupported": "Notificările push nu sunt suportate pe acest dispozitiv.",
+    "error": "Nu s-au putut activa notificările. Te rugăm să încerci din nou.",
+    "expenseCreated": "{actor} a adăugat \"{title}\"",
+    "expenseUpdated": "{actor} a actualizat \"{title}\"",
+    "expenseDeleted": "{actor} a șters \"{title}\"",
+    "groupUpdated": "{actor} a actualizat grupul \"{group}\"",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "Activitate nouă în grupul tău"
   }
 }

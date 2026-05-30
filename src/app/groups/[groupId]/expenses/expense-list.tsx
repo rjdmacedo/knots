@@ -110,10 +110,9 @@ const ExpenseListForSearch = ({
   const { group } = useCurrentGroup()
 
   useEffect(() => {
-    // Until we use tRPC more widely and can invalidate the cache on expense
-    // update, it's easier and safer to invalidate the cache on page load.
-    utils.groups.expenses.invalidate()
-  }, [utils])
+    // Invalidation is handled by tRPC mutation callbacks in expense forms.
+    // No need to invalidate on mount.
+  }, [])
 
   const t = useTranslations('Expenses')
   const { ref: loadingRef, inView } = useInView()
@@ -122,6 +121,7 @@ const ExpenseListForSearch = ({
     data,
     isLoading: expensesAreLoading,
     fetchNextPage,
+    isFetchingNextPage,
   } = trpc.groups.expenses.list.useInfiniteQuery(
     { groupId, limit: PAGE_SIZE, filter: searchText },
     { getNextPageParam: ({ nextCursor }) => nextCursor },
@@ -132,8 +132,8 @@ const ExpenseListForSearch = ({
   const isLoading = expensesAreLoading || !expenses || !group
 
   useEffect(() => {
-    if (inView && hasMore && !isLoading) fetchNextPage()
-  }, [fetchNextPage, hasMore, inView, isLoading])
+    if (inView && hasMore && !isLoading && !isFetchingNextPage) fetchNextPage()
+  }, [fetchNextPage, hasMore, inView, isLoading, isFetchingNextPage])
 
   const groupedExpensesByDate = useMemo(
     () => (expenses ? getGroupedExpensesByDate(expenses) : {}),

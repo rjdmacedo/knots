@@ -381,5 +381,20 @@
       "TV/Phone/Internet": "电视/手机/互联网",
       "Water": "水"
     }
+  },
+  "Notifications": {
+    "subscribe": "启用通知",
+    "unsubscribe": "禁用通知",
+    "selectParticipant": "通知我其他人的更改",
+    "noParticipant": "所有更改",
+    "permissionDenied": "通知权限被拒绝。请在浏览器设置中启用。",
+    "notSupported": "此设备不支持推送通知。",
+    "error": "无法启用通知。请重试。",
+    "expenseCreated": "{actor} 添加了「{title}」",
+    "expenseUpdated": "{actor} 更新了「{title}」",
+    "expenseDeleted": "{actor} 删除了「{title}」",
+    "groupUpdated": "{actor} 更新了群组「{group}」",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "您的群组有新活动"
   }
 }

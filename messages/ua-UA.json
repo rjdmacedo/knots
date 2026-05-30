@@ -381,5 +381,20 @@
       "TV/Phone/Internet": "ТБ/Телефон/Інтернет",
       "Water": "Вода"
     }
+  },
+  "Notifications": {
+    "subscribe": "Увімкнути сповіщення",
+    "unsubscribe": "Вимкнути сповіщення",
+    "selectParticipant": "Сповіщати мене про зміни інших",
+    "noParticipant": "Усі зміни",
+    "permissionDenied": "Дозвіл на сповіщення було відхилено. Увімкніть його в налаштуваннях браузера.",
+    "notSupported": "Push-сповіщення не підтримуються на цьому пристрої.",
+    "error": "Не вдалося увімкнути сповіщення. Спробуйте ще раз.",
+    "expenseCreated": "{actor} додав(ла) \"{title}\"",
+    "expenseUpdated": "{actor} оновив(ла) \"{title}\"",
+    "expenseDeleted": "{actor} видалив(ла) \"{title}\"",
+    "groupUpdated": "{actor} оновив(ла) групу \"{group}\"",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "Нова активність у вашій групі"
   }
 }

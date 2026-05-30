@@ -1,12 +1,19 @@
 'use client'
 import { Button } from '@/components/ui/button'
-import { DateTimeStyle, cn, formatDate } from '@/lib/utils'
+import {
+  DateTimeStyle,
+  cn,
+  formatDate,
+  getCurrencyFromGroup,
+} from '@/lib/utils'
 import { AppRouterOutput } from '@/trpc/routers/_app'
 import { ActivityType, Participant } from '@prisma/client'
 import { ChevronRight } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useCurrentGroup } from '../current-group-context'
+import { ChangeList } from './change-list'
 
 export type Activity =
   AppRouterOutput['groups']['activities']['list']['activities'][number]
@@ -16,6 +23,7 @@ type Props = {
   activity: Activity
   participant?: Participant
   dateStyle: DateTimeStyle
+  categories: Array<{ id: number; grouping: string; name: string }>
 }
 
 function useSummary(activity: Activity, participantName?: string) {
@@ -47,12 +55,16 @@ export function ActivityItem({
   activity,
   participant,
   dateStyle,
+  categories,
 }: Props) {
   const router = useRouter()
   const locale = useLocale()
+  const { group } = useCurrentGroup()
 
   const expenseExists = activity.expense !== undefined
   const summary = useSummary(activity, participant?.name)
+
+  const hasChanges = activity.changes && activity.changes.length > 0
 
   return (
     <div
@@ -78,6 +90,14 @@ export function ActivityItem({
       </div>
       <div className="flex-1">
         <div className="m-1">{summary}</div>
+        {hasChanges && group && (
+          <ChangeList
+            changes={activity.changes}
+            groupCurrency={getCurrencyFromGroup(group)}
+            participants={group.participants}
+            categories={categories}
+          />
+        )}
       </div>
       {expenseExists && (
         <Button

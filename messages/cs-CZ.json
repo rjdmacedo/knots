@@ -391,5 +391,20 @@
       "TV/Phone/Internet": "TV/Telefon/Internet",
       "Water": "Voda"
     }
+  },
+  "Notifications": {
+    "subscribe": "Povolit oznámení",
+    "unsubscribe": "Zakázat oznámení",
+    "selectParticipant": "Upozornit mě na změny ostatních",
+    "noParticipant": "Všechny změny",
+    "permissionDenied": "Oprávnění k oznámením bylo zamítnuto. Povolte ho v nastavení prohlížeče.",
+    "notSupported": "Push oznámení nejsou na tomto zařízení podporována.",
+    "error": "Nepodařilo se povolit oznámení. Zkuste to prosím znovu.",
+    "expenseCreated": "{actor} přidal(a) \"{title}\"",
+    "expenseUpdated": "{actor} aktualizoval(a) \"{title}\"",
+    "expenseDeleted": "{actor} smazal(a) \"{title}\"",
+    "groupUpdated": "{actor} aktualizoval(a) skupinu \"{group}\"",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "Nová aktivita ve vaší skupině"
   }
 }

@@ -442,5 +442,20 @@
         "description": "Não foi possível importar o ficheiro CSV."
       }
     }
+  },
+  "Notifications": {
+    "subscribe": "Ativar notificações",
+    "unsubscribe": "Desativar notificações",
+    "selectParticipant": "Notificar-me sobre alterações de outros",
+    "noParticipant": "Todas as alterações",
+    "permissionDenied": "A permissão de notificação foi negada. Ative-a nas definições do navegador.",
+    "notSupported": "As notificações push não são suportadas neste dispositivo.",
+    "error": "Não foi possível ativar as notificações. Por favor, tente novamente.",
+    "expenseCreated": "{actor} adicionou \"{title}\"",
+    "expenseUpdated": "{actor} atualizou \"{title}\"",
+    "expenseDeleted": "{actor} eliminou \"{title}\"",
+    "groupUpdated": "{actor} atualizou o grupo \"{group}\"",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "Nova atividade no seu grupo"
   }
 }

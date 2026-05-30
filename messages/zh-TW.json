@@ -381,5 +381,20 @@
       "TV/Phone/Internet": "電視/電話/網路",
       "Water": "水費"
     }
+  },
+  "Notifications": {
+    "subscribe": "啟用通知",
+    "unsubscribe": "停用通知",
+    "selectParticipant": "通知我其他人的變更",
+    "noParticipant": "所有變更",
+    "permissionDenied": "通知權限被拒絕。請在瀏覽器設定中啟用。",
+    "notSupported": "此裝置不支援推播通知。",
+    "error": "無法啟用通知。請重試。",
+    "expenseCreated": "{actor} 新增了「{title}」",
+    "expenseUpdated": "{actor} 更新了「{title}」",
+    "expenseDeleted": "{actor} 刪除了「{title}」",
+    "groupUpdated": "{actor} 更新了群組「{group}」",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "您的群組有新活動"
   }
 }

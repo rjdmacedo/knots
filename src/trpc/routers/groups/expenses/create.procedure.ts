@@ -1,6 +1,8 @@
 import { createExpense } from '@/lib/api'
+import { notifyOnActivity } from '@/lib/push/notify-on-activity'
 import { expenseFormSchema } from '@/lib/schemas'
 import { baseProcedure } from '@/trpc/init'
+import { ActivityType } from '@prisma/client'
 import { z } from 'zod'
 
 export const createGroupExpenseProcedure = baseProcedure
@@ -18,6 +20,10 @@ export const createGroupExpenseProcedure = baseProcedure
         groupId,
         participantId,
       )
+      notifyOnActivity(groupId, ActivityType.CREATE_EXPENSE, {
+        participantId,
+        expenseId: expense.id,
+      })
       return { expenseId: expense.id }
     },
   )

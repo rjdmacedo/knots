@@ -472,5 +472,20 @@
         "description": "Échec de l'importation du fichier CSV."
       }
     }
+  },
+  "Notifications": {
+    "subscribe": "Activer les notifications",
+    "unsubscribe": "Désactiver les notifications",
+    "selectParticipant": "Me notifier des modifications des autres",
+    "noParticipant": "Toutes les modifications",
+    "permissionDenied": "L'autorisation de notification a été refusée. Activez-la dans les paramètres de votre navigateur.",
+    "notSupported": "Les notifications push ne sont pas prises en charge sur cet appareil.",
+    "error": "Impossible d'activer les notifications. Veuillez réessayer.",
+    "expenseCreated": "{actor} a ajouté \"{title}\"",
+    "expenseUpdated": "{actor} a mis à jour \"{title}\"",
+    "expenseDeleted": "{actor} a supprimé \"{title}\"",
+    "groupUpdated": "{actor} a mis à jour le groupe \"{group}\"",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "Nouvelle activité dans votre groupe"
   }
 }

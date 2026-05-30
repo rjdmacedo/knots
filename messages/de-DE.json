@@ -421,5 +421,20 @@
     "common": {
       "heading": "Geläufigste"
     }
+  },
+  "Notifications": {
+    "subscribe": "Benachrichtigungen aktivieren",
+    "unsubscribe": "Benachrichtigungen deaktivieren",
+    "selectParticipant": "Über Änderungen anderer benachrichtigen",
+    "noParticipant": "Alle Änderungen",
+    "permissionDenied": "Die Berechtigung für Benachrichtigungen wurde verweigert. Aktiviere sie in deinen Browsereinstellungen.",
+    "notSupported": "Push-Benachrichtigungen werden auf diesem Gerät nicht unterstützt.",
+    "error": "Benachrichtigungen konnten nicht aktiviert werden. Bitte versuche es erneut.",
+    "expenseCreated": "{actor} hat \"{title}\" hinzugefügt",
+    "expenseUpdated": "{actor} hat \"{title}\" aktualisiert",
+    "expenseDeleted": "{actor} hat \"{title}\" gelöscht",
+    "groupUpdated": "{actor} hat die Gruppe \"{group}\" aktualisiert",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "Neue Aktivität in deiner Gruppe"
   }
 }
