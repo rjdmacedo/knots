@@ -1,5 +1,5 @@
 /**
- * Route protection middleware.
+ * Route protection proxy.
  * Checks for NextAuth session token cookie to determine authentication.
  * Does NOT import any Node.js modules — fully edge-compatible.
  */
@@ -20,7 +20,7 @@ const publicRoutes = [
 /** Routes that authenticated users should be redirected away from */
 const authRoutes = ['/login', '/register', '/forgot-password']
 
-export default function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Check for session token (NextAuth JWT cookie)

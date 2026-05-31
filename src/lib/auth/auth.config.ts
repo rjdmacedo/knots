@@ -50,7 +50,7 @@ export default {
         return true
       }
 
-      // Allow invite pages without auth (middleware will redirect to login with callbackUrl)
+      // Allow invite pages without auth (proxy will redirect to login with callbackUrl)
       if (pathname.startsWith('/invite/')) {
         return isAuthenticated
       }
