@@ -7,9 +7,7 @@ Implement a statically generated changelog page at `/changelog` that reads the p
 ## Tasks
 
 - [x] 1. Implement the changelog parser module
-
   - [x] 1.1 Create the parser module with types and parsing logic at `src/lib/changelog.ts`
-
     - Define the `ChangeItem`, `ChangeCategory`, and `ReleaseEntry` interfaces
     - Implement `parseChangelog(markdown: string): ReleaseEntry[]` as a pure function that handles both `##` and `#` version headings, `###` category headings, and `*` or `-` list items with inline links
     - Implement `getChangelogEntries(): ReleaseEntry[]` that reads `CHANGELOG.md` from the project root using `fs.readFileSync`, wrapped in try/catch returning `[]` on failure
@@ -17,14 +15,12 @@ Implement a statically generated changelog page at `/changelog` that reads the p
     - _Requirements: 2.1, 2.2, 2.3, 2.4_
 
   - [ ]\* 1.2 Write unit tests for the changelog parser
-
     - Create `src/lib/changelog.test.ts`
     - Test parsing of known markdown snippets with correct extraction of versions, dates, categories, and items
     - Test edge cases: empty string, missing file, malformed lines, releases without categories, items without links, version headings without dates
     - _Requirements: 2.1, 2.2, 2.3, 2.4_
 
   - [ ]\* 1.3 Write property test for parser structural round-trip
-
     - Create `src/lib/changelog.property.test.ts`
     - **Property 1: Parser structural round-trip**
     - Generate random `ReleaseEntry[]` structures using fast-check arbitraries, serialize them to conventional-changelog markdown format, parse back with `parseChangelog`, and verify structural equivalence (same number of releases, versions, dates, category names, item counts, and link URLs)
@@ -39,13 +35,10 @@ Implement a statically generated changelog page at `/changelog` that reads the p
     - **Validates: Requirements 2.4**
 
 - [x] 2. Checkpoint - Ensure parser tests pass
-
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 3. Implement the changelog page and content component
-
   - [x] 3.1 Create the `ChangelogContent` component at `src/app/changelog/_components/changelog-content.tsx`
-
     - Accept `entries: ReleaseEntry[]` as props
     - Render each `ReleaseEntry` with version as `<h2>` and date in secondary text style adjacent to the version
     - Render each `ChangeCategory` as `<h3>` sub-headings beneath the release heading
@@ -57,7 +50,6 @@ Implement a statically generated changelog page at `/changelog` that reads the p
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 1.4_
 
   - [x] 3.2 Create the changelog page at `src/app/changelog/page.tsx`
-
     - Export default `ChangelogPage` server component that calls `getChangelogEntries()` and passes entries to `ChangelogContent`
     - Export `metadata` object with title containing "Changelog" and app name, meta description (max 160 chars), Open Graph tags (og:title, og:description, og:type), and Twitter Card tags
     - Render an `<h1>` heading with text "Changelog" above the content
@@ -66,7 +58,6 @@ Implement a statically generated changelog page at `/changelog` that reads the p
     - _Requirements: 1.1, 1.2, 1.3, 4.1, 4.2, 4.3, 4.4, 5.1_
 
   - [ ]\* 3.3 Write property test for link attribute correctness
-
     - Add to `src/lib/changelog.property.test.ts` (or create `src/app/changelog/_components/changelog-content.test.tsx`)
     - **Property 3: Link attribute correctness**
     - Generate `ChangeItem` arrays with random links, render the `ChangelogContent` component, verify every `<a>` element has `target="_blank"` and `rel="noopener noreferrer"` attributes

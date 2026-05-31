@@ -16,7 +16,6 @@ So every successful release results in a new image under both the version tag an
 Use the image from GHCR instead of building locally:
 
 1. **One-time setup**
-
    - Copy `container.env.example` to `container.env` and set your values (e.g. `POSTGRES_PASSWORD`, DB URLs).
    - If the image is **private**, log in to GHCR (replace `YOUR_GITHUB_TOKEN` with a PAT with `read:packages`):
      ```bash

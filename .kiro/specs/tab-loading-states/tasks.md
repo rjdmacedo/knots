@@ -7,9 +7,7 @@ Implementation of visual loading states (skeleton placeholders) in the main cont
 ## Tasks
 
 - [x] 1. Create reusable skeleton components
-
   - [x] 1.1 Create `ListSkeleton` component
-
     - Create file `src/components/skeletons/list-skeleton.tsx`
     - Implement skeleton with vertically stacked items using the existing `Skeleton` component from `src/components/ui/skeleton.tsx`
     - Accept `itemCount` prop (default: 5) for number of items
@@ -18,7 +16,6 @@ Implementation of visual loading states (skeleton placeholders) in the main cont
     - _Requirements: 2.1, 2.4, 3.1, 5.2_
 
   - [x] 1.2 Create `CardsSkeleton` component
-
     - Create file `src/components/skeletons/cards-skeleton.tsx`
     - Implement skeleton with rectangular blocks representing cards using the existing `Skeleton` component
     - Accept `cardCount` prop (default: 3)
@@ -26,28 +23,24 @@ Implementation of visual loading states (skeleton placeholders) in the main cont
     - _Requirements: 2.2, 2.4, 3.1, 5.2_
 
   - [x] 1.3 Create `ChartsSkeleton` component
-
     - Create file `src/components/skeletons/charts-skeleton.tsx`
     - Implement skeleton with wide rectangle (chart) and smaller blocks (totals) using the existing `Skeleton` component
     - Apply `aria-hidden="true"` on decorative elements and `data-slot="skeleton"` on each placeholder
     - _Requirements: 2.3, 2.4, 3.1, 5.2_
 
   - [x] 1.4 Create `GenericSkeleton` component
-
     - Create file `src/components/skeletons/generic-skeleton.tsx`
     - Implement fallback skeleton with at least 3 line skeletons + 1 block skeleton using the existing `Skeleton` component
     - Apply `aria-hidden="true"` on decorative elements and `data-slot="skeleton"` on each placeholder
     - _Requirements: 2.6, 3.1, 5.2_
 
   - [x] 1.5 Create `LoadingError` component
-
     - Create file `src/components/loading-error.tsx`
     - Implement `warning` variant (informative message) and `error` variant (with retry/cancel buttons)
     - Include `aria-live="polite"` for assistive technology announcements
     - _Requirements: 1.4, 5.4, 6.2, 6.3_
 
   - [x] 1.6 Create `getSkeletonForTab` utility function
-
     - Create file `src/components/skeletons/get-skeleton-for-tab.ts`
     - Implement tab name to skeleton component mapping
     - Return `GenericSkeleton` for unmapped tabs
@@ -55,7 +48,6 @@ Implementation of visual loading states (skeleton placeholders) in the main cont
     - _Requirements: 2.1, 2.2, 2.3, 2.6_
 
   - [ ]\* 1.7 Write property test: Skeleton composition uses only Skeleton component
-
     - **Property 1: Skeleton composition uses only Skeleton component**
     - Create file `src/components/skeletons/__tests__/skeleton-composition.property.test.tsx`
     - Generate random tab variants with fast-check, render, verify all placeholder elements have `data-slot="skeleton"`
@@ -70,13 +62,10 @@ Implementation of visual loading states (skeleton placeholders) in the main cont
     - **Validates: Requirements 5.2**
 
 - [x] 2. Checkpoint - Verify skeleton components
-
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 3. Implement `useNavigationLoading` hook
-
   - [x] 3.1 Create `useNavigationLoading` hook
-
     - Create file `src/lib/use-navigation-loading.ts`
     - Implement listening to Next.js router navigation events
     - Integrate `spin-delay` for 200ms debounce (do not show loading on fast navigations)
@@ -87,7 +76,6 @@ Implementation of visual loading states (skeleton placeholders) in the main cont
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 4.2, 6.2, 6.3_
 
   - [ ]\* 3.2 Write unit tests for `useNavigationLoading`
-
     - Create file `src/lib/__tests__/use-navigation-loading.test.ts`
     - Test: spin-delay does not show loading on navigations <200ms
     - Test: timeout warning at 10s
@@ -104,13 +92,10 @@ Implementation of visual loading states (skeleton placeholders) in the main cont
     - **Validates: Requirements 4.2**
 
 - [x] 4. Checkpoint - Verify navigation hook
-
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 5. Create `TabLoadingContainer` and `loading.tsx` files
-
   - [x] 5.1 Create `TabLoadingContainer` component
-
     - Create file `src/components/tab-loading-container.tsx`
     - Implement wrapper that applies `aria-busy="true"` when loading
     - Remove `aria-busy` when content is ready
@@ -129,9 +114,7 @@ Implementation of visual loading states (skeleton placeholders) in the main cont
     - _Requirements: 2.1, 2.2, 2.3, 3.3_
 
 - [x] 6. Integration into existing layout
-
   - [x] 6.1 Integrate `TabLoadingContainer` in `GroupLayoutClient`
-
     - Modify `src/app/groups/[groupId]/layout.client.tsx`
     - Wrap `{children}` with `TabLoadingContainer`
     - Pass loading state from `useNavigationLoading` hook and active tab
@@ -149,7 +132,6 @@ Implementation of visual loading states (skeleton placeholders) in the main cont
     - _Requirements: 4.1, 4.3, 5.1, 5.3, 3.3, 6.4_
 
 - [x] 7. Fix tsc and prettier
-
   - Run `npx tsc --noEmit` and fix any TypeScript compilation errors in the new/modified files
   - Run `npx prettier --write` on all new/modified files to ensure formatting compliance
   - Files to check: `src/components/skeletons/*.tsx`, `src/components/skeletons/*.ts`, `src/components/loading-error.tsx`, `src/components/tab-loading-container.tsx`, `src/lib/use-navigation-loading.ts`, `src/app/groups/[groupId]/layout.client.tsx`, `src/app/groups/[groupId]/*/loading.tsx`

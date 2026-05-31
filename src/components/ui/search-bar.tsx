@@ -5,8 +5,7 @@ import { cn } from '@/lib/utils'
 import { Search, XCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   onValueChange?: (value: string) => void
 }
 

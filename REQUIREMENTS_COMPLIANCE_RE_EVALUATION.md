@@ -132,7 +132,6 @@ const submit = async (values: ExpenseFormValues) => {
 ## Recommended Fixes
 
 1. **Cancel Button**: Either:
-
    - Use `router.push()` instead of `Link` with `asChild`
    - Or use `Link` with `onClick` prop directly (not on Button)
 

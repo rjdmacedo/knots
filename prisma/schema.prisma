@@ -23,6 +23,8 @@ model Group {
   activities        Activity[]
   pushSubscriptions PushSubscription[]
   categoryMappings  ExpenseCategoryMapping[]
+  memberships       GroupMembership[]
+  invitations       Invitation[]
   createdAt         DateTime                  @default(now())
 }
 
@@ -176,4 +178,117 @@ model ExpenseCategoryMapping {
 
   @@unique([groupId, normalizedTitle])
   @@index([groupId, normalizedTitle])
+}
+
+
+// ─── Authentication Models ───────────────────────────────────────────────────
+
+model User {
+  id              String            @id @default(cuid())
+  name            String
+  email           String            @unique
+  emailVerified   DateTime?
+  passwordHash    String
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  sessions        Session[]
+  accounts        Account[]
+  tokens          Token[]
+  memberships     GroupMembership[]
+  invitationsSent Invitation[]      @relation("InvitedBy")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userAgent    String?
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Token {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      TokenType
+  hash      String    @unique
+  usedAt    DateTime?
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+
+  @@index([userId, type])
+  @@index([hash])
+}
+
+enum TokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+model GroupMembership {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  groupId  String
+  group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  joinedAt DateTime @default(now())
+
+  @@unique([userId, groupId])
+  @@index([userId])
+  @@index([groupId])
+}
+
+model Invitation {
+  id          String           @id @default(cuid())
+  groupId     String
+  group       Group            @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  email       String
+  invitedById String
+  invitedBy   User             @relation("InvitedBy", fields: [invitedById], references: [id])
+  status      InvitationStatus @default(PENDING)
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  createdAt   DateTime         @default(now())
+
+  @@unique([groupId, email, status])
+  @@index([groupId])
+  @@index([email])
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REVOKED
+}
+
+model RateLimitAttempt {
+  id        String   @id @default(cuid())
+  key       String
+  createdAt DateTime @default(now())
+
+  @@index([key, createdAt])
 }

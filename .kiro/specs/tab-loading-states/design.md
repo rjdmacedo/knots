@@ -331,11 +331,9 @@ The feature combines unit tests (specific examples and edge cases) with property
 Configuration: minimum 100 iterations per property.
 
 1. **Property 1: Skeleton composition** — Generate random tab variants, render, verify all placeholder elements have `data-slot="skeleton"`
-
    - Tag: `Feature: tab-loading-states, Property 1: Skeleton composition uses only Skeleton component`
 
 2. **Property 2: Navigation superseding** — Generate random sequences of rapid navigations, verify only the last skeleton is visible
-
    - Tag: `Feature: tab-loading-states, Property 2: Navigation superseding shows only latest skeleton`
 
 3. **Property 3: Accessibility attributes** — Generate random tab variants, verify non-empty aria-label and aria-hidden on decorative children

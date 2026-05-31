@@ -1,9 +1,19 @@
 import { faker } from '@faker-js/faker'
 import { PrismaClient, SplitMode } from '@prisma/client'
+import { hashSync } from 'bcrypt'
 import { sample } from 'lodash-es'
 import { randomUUID } from 'node:crypto'
 
 const prisma = new PrismaClient()
+
+// Pre-hashed password for all seed users: "Password1"
+const SEED_PASSWORD_HASH = hashSync('Password1', 12)
+
+const SEED_USERS = [
+  { email: 'rafaelmacedo4@gmail.com', name: 'Rafael' },
+  { email: 'alice@example.com', name: 'Alice' },
+  { email: 'bob@example.com', name: 'Bob' },
+]
 
 async function main() {
   console.log('Seed: clearing existing data...')
@@ -15,9 +25,35 @@ async function main() {
   await prisma.recurringExpenseLink.deleteMany()
   await prisma.expense.deleteMany()
   await prisma.participant.deleteMany()
+  await prisma.groupMembership.deleteMany()
+  await prisma.invitation.deleteMany()
+  await prisma.token.deleteMany()
+  await prisma.session.deleteMany()
+  await prisma.account.deleteMany()
+  await prisma.rateLimitAttempt.deleteMany()
+  await prisma.user.deleteMany()
   await prisma.group.deleteMany()
 
-  console.log('Seed: creating demo data...')
+  console.log('Seed: creating users...')
+
+  // Create users (pre-verified so they can log in immediately)
+  const users = await Promise.all(
+    SEED_USERS.map((u) =>
+      prisma.user.create({
+        data: {
+          name: u.name,
+          email: u.email,
+          passwordHash: SEED_PASSWORD_HASH,
+          emailVerified: new Date(), // Pre-verified
+        },
+      }),
+    ),
+  )
+
+  console.log(
+    `Seed: created ${users.length} users (${SEED_USERS.map((u) => u.email).join(', ')})`,
+  )
+  console.log('Seed: all users have password "Password1"')
 
   // Categories are seeded by migrations — reference them by their stable IDs
   const categoryIds = {
@@ -41,13 +77,27 @@ async function main() {
     },
   })
 
-  // Participants with random names
+  // Create group memberships for all users
+  await Promise.all(
+    users.map((user) =>
+      prisma.groupMembership.create({
+        data: {
+          userId: user.id,
+          groupId: group.id,
+        },
+      }),
+    ),
+  )
+
+  console.log(`Seed: all users added as members of "${group.name}"`)
+
+  // Participants (linked to user names)
   const participants = await Promise.all(
-    Array.from({ length: 3 }).map(() =>
+    SEED_USERS.map((u) =>
       prisma.participant.create({
         data: {
           id: randomUUID(),
-          name: faker.person.firstName(),
+          name: u.name,
           groupId: group.id,
         },
       }),

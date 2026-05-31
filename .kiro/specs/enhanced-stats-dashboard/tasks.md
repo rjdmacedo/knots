@@ -7,22 +7,18 @@ This plan implements the enhanced stats dashboard by first creating the pure com
 ## Tasks
 
 - [x] 1. Create computation module with types and core functions
-
   - [x] 1.1 Create `src/lib/stats.ts` with type definitions and category breakdown function
-
     - Define all TypeScript interfaces: `CategoryBreakdownItem`, `ParticipantRankingItem`, `ExpenseDistributionItem`, `MonthlySpendingItem`, `MonthOverMonthData`, `AggregateMetricsData`, `NetBalanceItem`, `PaidVsShareItem`
     - Define the `Expense` and `Participant` input types matching `getGroupExpenses` return shape
     - Implement `computeCategoryBreakdown`: filter out reimbursements, group by category, compute amounts and percentages (one decimal), sort descending by amount, map categoryId=0 to "Uncategorized"
     - _Requirements: 1.1, 1.3, 1.4, 1.5_
 
   - [x] 1.2 Implement participant ranking and expense distribution functions in `src/lib/stats.ts`
-
     - Implement `computeParticipantRanking`: compute total paid per participant (including zero-payers), calculate percentage of total, sort descending by totalPaid with alphabetical tiebreaker
     - Implement `computeExpenseDistribution`: compute paid vs share per participant using existing `calculateShare` logic from `src/lib/totals.ts`, compute difference, sort by absolute difference descending
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 3.1, 3.4_
 
   - [x] 1.3 Implement time-based computation functions in `src/lib/stats.ts`
-
     - Implement `computeSpendingOverTime`: aggregate non-reimbursement expenses by calendar month of expenseDate, fill gaps with zero-amount months, sort chronologically
     - Implement `computeMonthOverMonth`: take monthly data, compare last two months, compute absolute difference and percentage change, return null if fewer than 2 months
     - Implement `computeDailyAverage`: compute total non-reimbursement spending divided by days between earliest and latest expenseDate (inclusive), return null if no expenses
@@ -35,69 +31,57 @@ This plan implements the enhanced stats dashboard by first creating the pure com
     - _Requirements: 7.1, 7.2, 7.3, 7.4, 8.1, 8.4, 9.1, 9.4_
 
 - [x] 2. Property-based tests for computation module
-
   - [x] 2.1 Write property test for category aggregation correctness
-
     - **Property 1: Category aggregation correctness**
     - Generate random expense arrays with varying categories and amounts; verify sum of category amounts equals total non-reimbursement spending and each percentage equals amount/total rounded to one decimal
     - **Validates: Requirements 1.1, 1.5**
 
   - [x] 2.2 Write property test for category descending sort
-
     - **Property 2: Category descending sort**
     - Generate expenses producing multiple categories; verify output is sorted by amount in non-increasing order
     - **Validates: Requirements 1.4**
 
   - [x] 2.3 Write property test for conservation of money (net balances sum to zero)
-
     - **Property 3: Conservation of money**
     - Generate random expenses and participants; verify sum of all netBalance values equals zero within floating-point tolerance
     - **Validates: Requirements 3.1, 8.1**
 
   - [x] 2.4 Write property test for participant ranking sort with tiebreaker
-
     - **Property 4: Participant ranking sort with tiebreaker**
     - Generate expenses and participants; verify ranking is sorted by totalPaid descending, with alphabetical tiebreaker
     - **Validates: Requirements 2.2, 2.3**
 
   - [x] 2.5 Write property test for expense distribution imbalance sort
-
     - **Property 5: Expense distribution imbalance sort**
     - Generate expenses and participants; verify output sorted by absolute difference descending
     - **Validates: Requirements 3.4**
 
   - [x] 2.6 Write property test for monthly aggregation conservation
-
     - **Property 6: Monthly aggregation conservation**
     - Generate expenses; verify sum of monthly amounts equals total non-reimbursement spending
     - **Validates: Requirements 4.1**
 
   - [x] 2.7 Write property test for monthly chronological ordering
-
     - **Property 7: Monthly chronological ordering**
     - Generate expenses spanning multiple months; verify output is in strictly chronological order
     - **Validates: Requirements 4.3**
 
   - [x] 2.8 Write property test for month-over-month computation correctness
-
     - **Property 8: Month-over-month computation correctness**
     - Generate two consecutive months with known totals; verify absoluteDifference and percentageChange formulas
     - **Validates: Requirements 5.1**
 
   - [x] 2.9 Write property test for daily average computation correctness
-
     - **Property 9: Daily average computation correctness**
     - Generate expenses spanning multiple days; verify daily average equals total / days (inclusive)
     - **Validates: Requirements 6.1, 6.3**
 
   - [x] 2.10 Write property test for aggregate metrics correctness
-
     - **Property 10: Aggregate metrics correctness**
     - Generate non-empty expense sets; verify totalCount and averageAmount
     - **Validates: Requirements 7.1, 7.2**
 
   - [x] 2.11 Write property test for extreme expense identification
-
     - **Property 11: Extreme expense identification**
     - Generate expenses; verify largestExpense has max amount (most recent createdAt tiebreaker) and mostRecentExpense has latest createdAt
     - **Validates: Requirements 7.3, 7.4**
@@ -108,13 +92,10 @@ This plan implements the enhanced stats dashboard by first creating the pure com
     - **Validates: Requirements 8.4**
 
 - [x] 3. Checkpoint - Verify computation module
-
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 4. Extend tRPC procedure and add i18n keys
-
   - [x] 4.1 Extend `src/trpc/routers/groups/stats/get.procedure.ts` to return all new stats
-
     - Import computation functions from `src/lib/stats.ts`
     - Import `calculateShare` from `src/lib/totals.ts` for share computation
     - Fetch group participants from Prisma (needed for ranking, distribution, balances)
@@ -129,9 +110,7 @@ This plan implements the enhanced stats dashboard by first creating the pure com
     - _Requirements: 10.1, 10.4, 11.2, 11.4_
 
 - [x] 5. Build UI components for stats sections
-
   - [x] 5.1 Create `src/app/groups/[groupId]/stats/category-breakdown.tsx`
-
     - Render a bar chart using shadcn ChartContainer with Recharts BarChart showing spending per category
     - Display category name, amount (formatted with formatCurrency), and percentage for each bar
     - Handle empty state when no categories exist
@@ -139,7 +118,6 @@ This plan implements the enhanced stats dashboard by first creating the pure com
     - _Requirements: 1.2, 1.5, 10.1, 10.2, 11.2_
 
   - [x] 5.2 Create `src/app/groups/[groupId]/stats/participant-ranking.tsx`
-
     - Render a ranked list of participants with their total paid and percentage
     - Format amounts using formatCurrency and show percentage with one decimal
     - Handle empty state
@@ -147,7 +125,6 @@ This plan implements the enhanced stats dashboard by first creating the pure com
     - _Requirements: 2.2, 2.4, 10.1, 10.2_
 
   - [x] 5.3 Create `src/app/groups/[groupId]/stats/expense-distribution.tsx`
-
     - Render a grouped bar chart comparing paid vs share per participant
     - Apply color coding: green-toned for overpaid (positive difference), red-toned for underpaid
     - Handle empty state
@@ -155,14 +132,12 @@ This plan implements the enhanced stats dashboard by first creating the pure com
     - _Requirements: 3.2, 3.3, 10.1, 10.2_
 
   - [x] 5.4 Create `src/app/groups/[groupId]/stats/spending-over-time.tsx`
-
     - Render a bar chart with monthly spending amounts on Y-axis and locale-formatted month/year labels on X-axis
     - Handle empty state
     - Use `useTranslations('Stats.SpendingOverTime')` for all labels
     - _Requirements: 4.2, 4.3, 4.5, 10.1, 10.2, 10.3_
 
   - [x] 5.5 Create `src/app/groups/[groupId]/stats/month-over-month.tsx`
-
     - Render a card showing absolute difference and percentage change between last two months
     - Display upward/downward/neutral directional indicator based on comparison
     - Omit section entirely when data is null (fewer than 2 months)
@@ -170,7 +145,6 @@ This plan implements the enhanced stats dashboard by first creating the pure com
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 10.1, 10.2_
 
   - [x] 5.6 Create `src/app/groups/[groupId]/stats/daily-average.tsx` and `src/app/groups/[groupId]/stats/aggregate-metrics.tsx`
-
     - `daily-average.tsx`: Render a single metric card with the daily average formatted as currency; omit when null
     - `aggregate-metrics.tsx`: Render a summary card with total count, average amount, largest expense (title + amount + date), and most recent expense (title + amount + date); handle null fields when no expenses
     - Use `useTranslations` for all labels and formatCurrency/formatDate for values
@@ -184,7 +158,6 @@ This plan implements the enhanced stats dashboard by first creating the pure com
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 9.1, 9.2, 9.3, 9.4, 10.1, 10.2_
 
 - [x] 6. Wire components into the stats page
-
   - [x] 6.1 Update `src/app/groups/[groupId]/stats/page.client.tsx` to render all new sections
     - Import all new card components
     - Destructure the expanded tRPC response data
@@ -195,11 +168,9 @@ This plan implements the enhanced stats dashboard by first creating the pure com
     - _Requirements: 11.1, 11.2, 11.3, 11.4_
 
 - [x] 7. Checkpoint - Full integration verification
-
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 8. Unit tests for computation module
-
   - [x] 8.1 Write unit tests in `src/lib/__tests__/stats.test.ts`
     - Test empty expense list returns appropriate nulls/empty arrays for all functions
     - Test single expense produces correct breakdown across all functions

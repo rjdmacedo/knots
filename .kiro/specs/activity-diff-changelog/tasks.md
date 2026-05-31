@@ -7,7 +7,6 @@ Implement field-level change tracking (diffs) for the existing Activity system. 
 ## Tasks
 
 - [x] 1. Set up ActivityChange Prisma model and migration
-
   - [x] 1.1 Add `ActivityChange` model to `prisma/schema.prisma` with fields: `id` (String, @id, @default(cuid())), `activityId` (String), `field` (String), `oldValue` (String?), `newValue` (String?), relation to Activity with onDelete: Cascade, and @@index([activityId])
     - _Requirements: 1.1, 1.2, 1.4_
   - [x] 1.2 Add `changes ActivityChange[]` relation field to the existing `Activity` model
@@ -18,7 +17,6 @@ Implement field-level change tracking (diffs) for the existing Activity system. 
     - _Requirements: 1.1, 1.4, 1.5_
 
 - [x] 2. Implement expense diff engine
-
   - [x] 2.1 Create `src/lib/activity-diff.ts` with the `FieldChange` interface: `{ field: string; oldValue: string | null; newValue: string | null }`
     - _Requirements: 2.1, 2.3_
   - [x] 2.2 Implement `computeExpenseChanges(existing, updated)` function that compares tracked expense fields: title, amount, expenseDate, category, paidBy, splitMode, isReimbursement, notes, recurrenceRule, paidFor
@@ -36,7 +34,6 @@ Implement field-level change tracking (diffs) for the existing Activity system. 
     - **Validates: Requirements 2.5**
 
 - [x] 3. Implement group diff engine
-
   - [x] 3.1 Add `computeGroupChanges(existing, updated)` function to `src/lib/activity-diff.ts`
     - Track changes to group fields: name, information, currency, participants
     - _Requirements: 3.1, 3.2_
@@ -50,11 +47,9 @@ Implement field-level change tracking (diffs) for the existing Activity system. 
     - _Requirements: 3.4_
 
 - [x] 4. Checkpoint - Verify diff engines
-
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 5. Enhance logActivity to persist changes
-
   - [x] 5.1 Update the `logActivity` function signature in `src/lib/api.ts` to accept optional `changes?: FieldChange[]` in the `extra` parameter
     - Import `FieldChange` type from `src/lib/activity-diff.ts`
     - _Requirements: 4.1, 4.4_
@@ -68,7 +63,6 @@ Implement field-level change tracking (diffs) for the existing Activity system. 
     - **Validates: Requirements 4.2, 4.3**
 
 - [x] 6. Integrate diff logging into expense operations
-
   - [x] 6.1 In `updateExpense`: call `computeExpenseChanges(existingExpense, expenseFormValues)` and pass the result to `logActivity`
     - _Requirements: 5.1_
   - [x] 6.2 In `createExpense`: construct initial FieldChange entries (oldValue=null) for title, amount, paidBy and pass to `logActivity`
@@ -79,13 +73,11 @@ Implement field-level change tracking (diffs) for the existing Activity system. 
     - _Requirements: 5.4_
 
 - [x] 7. Integrate diff logging into group operations
-
   - [x] 7.1 In `updateGroup`: call `computeGroupChanges(existingGroup, groupFormValues)` and pass the result to `logActivity`
     - Import `computeGroupChanges` from `src/lib/activity-diff.ts`
     - _Requirements: 6.1, 6.2_
 
 - [x] 8. Enhance getActivities to include changes
-
   - [x] 8.1 Update the `getActivities` function to include `changes` in the Prisma query (add `include: { changes: true }` or equivalent select)
     - _Requirements: 7.1, 7.3_
   - [x] 8.2 Update the return type to include `changes` array on each activity

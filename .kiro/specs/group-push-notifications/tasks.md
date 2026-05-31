@@ -9,20 +9,16 @@ This plan implements opt-in push notifications for Knots, enabling users to rece
 ## Tasks
 
 - [x] 1. Infrastructure and tRPC router setup
-
   - [x] 1.1 Register push subscriptions router in the app router
-
     - Import `pushSubscriptionsRouter` from `@/trpc/routers/push-subscriptions` in `src/trpc/routers/_app.ts`
     - Add `pushSubscriptions: pushSubscriptionsRouter` to the `createTRPCRouter` call
     - _Requirements: 8.6_
 
   - [x] 1.2 Update `.env.example` with VAPID key placeholders
-
     - Add `NEXT_PUBLIC_VAPID_PUBLIC_KEY=` and `VAPID_PRIVATE_KEY=` with comments explaining they are optional and enable push notifications
     - _Requirements: 2.1, 2.2_
 
   - [x] 1.3 Write property test for VAPID key validation
-
     - **Property 2: VAPID key validation accepts only valid base64url strings**
     - Use fast-check to generate arbitrary strings and verify the regex `^[A-Za-z0-9_-]+$` accepts/rejects correctly
     - Create test file at `src/lib/__tests__/vapid-validation.property.test.ts`
@@ -37,13 +33,10 @@ This plan implements opt-in push notifications for Knots, enabling users to rece
     - **Validates: Requirements 3.4, 8.1, 8.2, 8.4, 8.5**
 
 - [x] 2. Checkpoint - Infrastructure verified
-
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 3. Notification dispatch service
-
   - [x] 3.1 Create the push payload builder
-
     - Create `src/lib/push/build-payload.ts`
     - Implement `buildPushPayload(activityType, groupId, groupName, expenseTitle?)` returning `{ localeKey, params, url }`
     - Map activity types to locale keys: CREATE_EXPENSE → "notifications.expenseCreated", UPDATE_EXPENSE → "notifications.expenseUpdated", DELETE_EXPENSE → "notifications.expenseDeleted", UPDATE_GROUP → "notifications.groupUpdated"
@@ -52,14 +45,12 @@ This plan implements opt-in push notifications for Knots, enabling users to rece
     - _Requirements: 6.2, 6.3, 9.1_
 
   - [x] 3.2 Write property tests for payload builder
-
     - **Property 9: Notification payload construction by activity type**
     - **Property 14: Payload contains localization keys, not pre-rendered text**
     - Create test file at `src/lib/push/__tests__/build-payload.property.test.ts`
     - **Validates: Requirements 6.2, 6.3, 9.1**
 
   - [x] 3.3 Create the notification dispatch service
-
     - Create `src/lib/push/dispatch-notifications.ts`
     - Implement `dispatchNotifications(groupId, activityType, extra)` that:
       - Queries all subscriptions for the group from the database
@@ -80,7 +71,6 @@ This plan implements opt-in push notifications for Knots, enabling users to rece
     - **Validates: Requirements 5.2, 5.3, 6.1, 6.4, 6.5**
 
 - [x] 4. Integrate dispatch with activity logging
-
   - [x] 4.1 Hook notification dispatch into the logActivity function
     - Modify `logActivity` in `src/lib/api.ts` to call `dispatchNotifications` after persisting the activity
     - Only dispatch if VAPID keys are configured (check `env.NEXT_PUBLIC_VAPID_PUBLIC_KEY` and `env.VAPID_PRIVATE_KEY`)
@@ -89,13 +79,10 @@ This plan implements opt-in push notifications for Knots, enabling users to rece
     - _Requirements: 6.1, 6.2, 6.3, 6.6_
 
 - [x] 5. Checkpoint - Server-side complete
-
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 6. Service worker and locale resolution
-
   - [x] 6.1 Create the service worker with push event handling and notification click
-
     - Create `public/sw.js` as a static JavaScript file
     - Handle `push` event: parse payload JSON, resolve notification content using bundled locale data, call `self.registration.showNotification`
     - Handle `notificationclick` event: open or focus the URL from the payload, fall back to `/groups`
@@ -103,7 +90,6 @@ This plan implements opt-in push notifications for Knots, enabling users to rece
     - _Requirements: 1.3, 1.4, 1.5, 9.2_
 
   - [x] 6.2 Bundle locale data for the service worker
-
     - Create static JSON file (`public/sw-locales.json`) containing the `Notifications` namespace from all 19 locale files
     - The service worker fetches this data at install time and caches it
     - Implement `resolveLocale(navigatorLanguage)` to match against supported locales with fallback to en-US
@@ -117,16 +103,13 @@ This plan implements opt-in push notifications for Knots, enabling users to rece
     - **Validates: Requirements 1.3, 1.4, 9.2, 9.3, 9.4, 9.5**
 
 - [x] 7. Client-side push subscription logic and UI
-
   - [x] 7.1 Create service worker registration utility
-
     - Create `src/lib/push/register-sw.ts`
     - Implement `registerServiceWorker()` that registers `/sw.js` and returns the registration
     - Implement `isPushSupported()` that checks for `serviceWorker` in navigator, `PushManager` in window, and `Notification` in window
     - _Requirements: 1.1, 1.2, 7.1_
 
   - [x] 7.2 Add translation keys to all 19 locale files
-
     - Add the `Notifications` namespace with keys: subscribe, unsubscribe, selectParticipant, noParticipant, permissionDenied, notSupported, error, expenseCreated, expenseUpdated, expenseDeleted, groupUpdated, notificationTitle, defaultBody
     - Add to all 19 locale JSON files in `/messages/{locale}.json`
     - _Requirements: 9.1, 9.2_
@@ -146,7 +129,6 @@ This plan implements opt-in push notifications for Knots, enabling users to rece
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 5.1, 5.4, 7.3, 7.4, 7.5_
 
 - [x] 8. Wire UI into the group page
-
   - [x] 8.1 Integrate PushNotificationToggle into the group page layout
     - Import and render `PushNotificationToggle` in `src/app/groups/[groupId]/layout.client.tsx`, passing groupId and participants
     - Conditionally render only when VAPID public key env var is available (client-side check via `process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY`)

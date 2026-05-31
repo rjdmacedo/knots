@@ -7,7 +7,6 @@ This plan fixes the activity tab data fetching bug caused by a missing `'use cli
 ## Tasks
 
 - [x] 1. Write bug condition exploration test
-
   - **Property 1: Bug Condition** - Missing 'use client' Directive Prevents Activity Fetch
   - **CRITICAL**: This test MUST FAIL on unfixed code - failure confirms the bug exists
   - **DO NOT attempt to fix the test or the code when it fails**
@@ -27,7 +26,6 @@ This plan fixes the activity tab data fetching bug caused by a missing `'use cli
   - _Requirements: 1.1, 1.2, 2.1, 2.2_
 
 - [x] 2. Write preservation property tests (BEFORE implementing fix)
-
   - **Property 2: Preservation** - Other Tabs and Infinite Scroll Behavior Unchanged
   - **IMPORTANT**: Follow observation-first methodology
   - Create test file at `src/app/groups/[groupId]/activity/__tests__/preservation.test.tsx`
@@ -43,9 +41,7 @@ This plan fixes the activity tab data fetching bug caused by a missing `'use cli
   - _Requirements: 3.1, 3.2, 3.3_
 
 - [x] 3. Fix for missing 'use client' directive in page.client.tsx
-
   - [x] 3.1 Implement the fix
-
     - Add `'use client'` as the very first line of `src/app/groups/[groupId]/activity/page.client.tsx`, before any imports
     - Remove the `metadata` export (`export const metadata: Metadata = { title: 'Activity' }`) and the `import { Metadata } from 'next'` since metadata is a server-only feature and is already correctly defined in `page.tsx`
     - No other changes needed - `ActivityList` already has `'use client'` and tRPC provider is set up in the app layout
@@ -55,7 +51,6 @@ This plan fixes the activity tab data fetching bug caused by a missing `'use cli
     - _Requirements: 1.1, 1.2, 2.1, 2.2, 3.1, 3.2, 3.3_
 
   - [x] 3.2 Verify bug condition exploration test now passes
-
     - **Property 1: Expected Behavior** - Activity tRPC Query Fires on Mount
     - **IMPORTANT**: Re-run the SAME test from task 1 - do NOT write a new test
     - The test from task 1 encodes the expected behavior: hooks execute and tRPC query fires

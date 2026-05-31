@@ -1,6 +1,5 @@
 'use client'
 
-import { ActiveUserModal } from '@/app/groups/[groupId]/expenses/active-user-modal'
 import { CreateFromReceiptButton } from '@/app/groups/[groupId]/expenses/create-from-receipt-button'
 import { ExpenseList } from '@/app/groups/[groupId]/expenses/expense-list'
 import ExportButton from '@/app/groups/[groupId]/export-button'
@@ -66,8 +65,6 @@ export default function GroupExpensesPageClient({
           <ExpenseList />
         </CardContent>
       </Card>
-
-      <ActiveUserModal groupId={groupId} />
     </>
   )
 }

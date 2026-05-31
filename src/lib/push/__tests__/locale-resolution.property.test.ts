@@ -180,9 +180,8 @@ function buildMockLocaleData(
       const actualKey = key.startsWith('notifications.')
         ? key.slice('notifications.'.length)
         : key
-      data[locale][
-        actualKey
-      ] = `[${locale}] ${actualKey}: {actor} {title} {group}`
+      data[locale][actualKey] =
+        `[${locale}] ${actualKey}: {actor} {title} {group}`
     }
     // Always include notificationTitle
     data[locale]['notificationTitle'] = `Knots – {group}`

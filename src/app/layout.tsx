@@ -7,6 +7,8 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { ThemeToggle } from '@/components/theme-toggle'
 import { Button } from '@/components/ui/button'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { UserMenu } from '@/components/user-menu'
+import { auth } from '@/lib/auth/auth'
 import { env } from '@/lib/env'
 import { TRPCProvider } from '@/trpc/client'
 import type { Metadata, Viewport } from 'next'
@@ -65,7 +67,13 @@ export const viewport: Viewport = {
   themeColor: '#047857',
 }
 
-function Content({ children }: { children: React.ReactNode }) {
+function Content({
+  children,
+  user,
+}: {
+  children: React.ReactNode
+  user?: { name?: string | null; email?: string | null }
+}) {
   const t = useTranslations()
   return (
     <TRPCProvider>
@@ -96,6 +104,9 @@ function Content({ children }: { children: React.ReactNode }) {
                 <li>
                   <ThemeToggle />
                 </li>
+                <li>
+                  <UserMenu name={user?.name} email={user?.email} />
+                </li>
               </ul>
             </div>
           </div>
@@ -117,6 +128,8 @@ export default async function RootLayout({
 }) {
   const locale = await getLocale()
   const messages = await getMessages()
+  const session = await auth()
+
   return (
     <html lang={locale} suppressHydrationWarning>
       <ApplePwaSplash icon="/logo-with-text.png" color="#027756" />
@@ -131,7 +144,7 @@ export default async function RootLayout({
             <Suspense>
               <ProgressBar />
             </Suspense>
-            <Content>{children}</Content>
+            <Content user={session?.user}>{children}</Content>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

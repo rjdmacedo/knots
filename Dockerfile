@@ -1,8 +1,10 @@
 FROM node:20-alpine AS base
 
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 WORKDIR /usr/app
 COPY ./package.json \
-     ./package-lock.json \
+     ./pnpm-lock.yaml \
      ./next.config.mjs \
      ./tsconfig.json \
      ./reset.d.ts \
@@ -14,7 +16,8 @@ COPY ./prisma.config.ts ./
 COPY scripts/build.env .env
 
 RUN apk add --no-cache openssl && \
-    npm ci --ignore-scripts && \
+    pnpm install --frozen-lockfile --ignore-scripts && \
+    pnpm approve-builds bcrypt && \
     npx prisma generate
 
 COPY ./src ./src
@@ -23,17 +26,19 @@ COPY ./CHANGELOG.md ./
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN npm run build
+RUN pnpm run build
 
 RUN rm -r .next/cache
 
 FROM node:20-alpine AS runtime-deps
 
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 WORKDIR /usr/app
-COPY --from=base /usr/app/package.json /usr/app/package-lock.json /usr/app/next.config.mjs ./
+COPY --from=base /usr/app/package.json /usr/app/pnpm-lock.yaml /usr/app/next.config.mjs ./
 COPY --from=base /usr/app/prisma ./prisma
 
-RUN npm ci --omit=dev --omit=optional --ignore-scripts && \
+RUN pnpm install --frozen-lockfile --prod --ignore-scripts && \
     npx prisma generate
 
 FROM node:20-alpine AS runner
@@ -41,7 +46,7 @@ FROM node:20-alpine AS runner
 EXPOSE 3000/tcp
 WORKDIR /usr/app
 
-COPY --from=base /usr/app/package.json /usr/app/package-lock.json /usr/app/next.config.mjs ./
+COPY --from=base /usr/app/package.json /usr/app/pnpm-lock.yaml /usr/app/next.config.mjs ./
 COPY --from=runtime-deps /usr/app/node_modules ./node_modules
 COPY ./public ./public
 COPY ./scripts ./scripts

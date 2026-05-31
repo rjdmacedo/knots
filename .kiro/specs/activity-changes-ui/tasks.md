@@ -7,9 +7,7 @@ This plan implements field-level change display in the activity feed. The approa
 ## Tasks
 
 - [x] 1. Create value formatting utility module
-
   - [x] 1.1 Create `src/app/groups/[groupId]/activity/format-change-value.ts` with `formatFieldValue` and `getFieldLabel` functions
-
     - Implement `getFieldLabel(field, t)` mapping known fields to translation keys, returning raw field name for unknowns
     - Implement `formatFieldValue(field, value, context)` with formatting rules: amount as currency, expenseDate as localized date, isReimbursement as Yes/No, paidBy/paidFor as resolved participant names, category as resolved category name, all others as raw string
     - Handle error cases gracefully: invalid dates return raw string, missing participant/category IDs return raw ID, invalid JSON in paidFor returns raw string
@@ -24,7 +22,6 @@ This plan implements field-level change display in the activity feed. The approa
     - Use fast-check to generate valid amounts, dates, participant IDs, category IDs, and booleans and verify correct formatting
 
 - [x] 2. Add i18n translation keys
-
   - [x] 2.1 Add Activity change field labels and toggle text to `messages/en-US.json`
     - Add keys under "Activity" namespace for all 14 field labels: title, amount, expenseDate, category, paidBy, splitMode, isReimbursement, notes, recurrenceRule, paidFor, name, information, currency, participants
     - Add toggle control keys: "showMoreChanges" with `{count}` parameter (ICU MessageFormat), "showLess" static key
@@ -33,9 +30,7 @@ This plan implements field-level change display in the activity feed. The approa
     - _Requirements: 6.1, 6.2, 6.4_
 
 - [x] 3. Create ChangeList component
-
   - [x] 3.1 Create `src/app/groups/[groupId]/activity/change-list.tsx` with ChangeList and ChangeListItem components
-
     - Implement ChangeListProps interface accepting changes array, groupCurrency, participants, and categories
     - Filter out changes where both oldValue and newValue are null
     - Manage collapsed/expanded state with useState, default collapsed when changes exceed threshold (3)
@@ -48,7 +43,6 @@ This plan implements field-level change display in the activity feed. The approa
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 7.1, 7.2, 7.3, 7.4, 7.5_
 
   - [x] 3.2 Write property tests for ChangeList filtering and collapsing logic
-
     - **Property 1: Change rendering preserves order and structure**
     - **Property 2: Both-null changes are filtered from output**
     - **Property 5: Collapse behavior for lists exceeding threshold**
@@ -70,9 +64,7 @@ This plan implements field-level change display in the activity feed. The approa
     - _Requirements: 1.2, 1.3, 1.4, 1.5, 5.3, 5.6, 7.1, 7.4, 7.5_
 
 - [x] 4. Integrate ChangeList into ActivityItem and ActivityList
-
   - [x] 4.1 Modify `src/app/groups/[groupId]/activity/activity-list.tsx` to fetch categories and pass them down
-
     - Add `trpc.categories.list.useQuery()` call in ActivityList
     - Pass `categories` prop to each ActivityItem
     - _Requirements: 3.5_

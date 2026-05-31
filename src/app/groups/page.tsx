@@ -1,10 +1,10 @@
-import { RecentGroupList } from '@/app/groups/recent-group-list'
+import { MyGroups } from '@/app/groups/my-groups'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Recently visited groups',
+  title: 'My Groups',
 }
 
 export default async function GroupsPage() {
-  return <RecentGroupList />
+  return <MyGroups />
 }

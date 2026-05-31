@@ -23,8 +23,8 @@ export function Money({
         colored && amount < 0
           ? 'text-debt'
           : colored && amount > 0
-          ? 'text-credit'
-          : '',
+            ? 'text-credit'
+            : '',
         bold && 'font-bold',
       )}
     >

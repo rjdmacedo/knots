@@ -50,8 +50,8 @@ export function NetBalances({ netBalances, currency }: Props) {
             const statusLabel = isPositive
               ? t('owed')
               : isNegative
-              ? t('owes')
-              : t('settled')
+                ? t('owes')
+                : t('settled')
 
             return (
               <li

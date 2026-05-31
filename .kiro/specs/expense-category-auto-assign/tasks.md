@@ -7,7 +7,6 @@ Implementation of a title-category association memory system for expenses within
 ## Tasks
 
 - [x] 1. Create data model and Prisma migration
-
   - [x] 1.1 Add `ExpenseCategoryMapping` model to Prisma schema and create migration
     - Add the `ExpenseCategoryMapping` model in `prisma/schema.prisma` with fields: `id` (cuid), `groupId`, `normalizedTitle`, `categoryId`, `updatedAt`, `createdAt`
     - Add composite unique constraint `@@unique([groupId, normalizedTitle])`
@@ -18,9 +17,7 @@ Implementation of a title-category association memory system for expenses within
     - _Requirements: 1.1, 4.1, 4.4_
 
 - [x] 2. Implement CategoryMappingService (business logic)
-
   - [x] 2.1 Create `src/lib/category-mapping.ts` module with `normalizeTitle`, `upsertCategoryMapping`, and `lookupCategoryMapping` functions
-
     - Implement `normalizeTitle(title: string): string` — converts to lowercase, trims, collapses internal spaces
     - Implement `upsertCategoryMapping({ groupId, title, categoryId, isReimbursement })` — performs atomic mapping upsert, with guards for short title (<2 chars) and reimbursement
     - Implement `lookupCategoryMapping({ groupId, title })` — queries mapping and validates that the category still exists before returning
@@ -28,7 +25,6 @@ Implementation of a title-category association memory system for expenses within
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 2.1, 2.4, 3.1, 3.4, 6.1, 6.3_
 
   - [x] 2.2 Write property test for `normalizeTitle` (Property 3)
-
     - **Property 3: normalizeTitle idempotence and correctness**
     - **Validates: Requirements 1.3**
     - File: `src/lib/category-mapping.property.test.ts`
@@ -36,21 +32,18 @@ Implementation of a title-category association memory system for expenses within
     - Verify result: lowercase only, no leading/trailing spaces, no consecutive internal spaces
 
   - [x] 2.3 Write property test for short title guard (Property 4)
-
     - **Property 4: Short title guard**
     - **Validates: Requirements 1.4**
     - File: `src/lib/category-mapping.property.test.ts`
     - Verify that titles with normalization < 2 chars do not create/update mappings
 
   - [x] 2.4 Write property test for reimbursement guard (Property 5)
-
     - **Property 5: Reimbursement guard**
     - **Validates: Requirements 2.4, 6.1, 6.3**
     - File: `src/lib/category-mapping.property.test.ts`
     - Verify that expenses with `isReimbursement=true` never create/update mappings
 
   - [x] 2.5 Write property test for upsert last-write-wins (Property 1)
-
     - **Property 1: Upsert last-write-wins**
     - **Validates: Requirements 1.1, 1.2, 2.1, 6.4**
     - File: `src/lib/category-mapping.property.test.ts`
@@ -63,11 +56,9 @@ Implementation of a title-category association memory system for expenses within
     - Verify that upsert in one group does not affect lookup in another group
 
 - [x] 3. Checkpoint - Verify business logic
-
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 4. Create tRPC lookup procedure
-
   - [x] 4.1 Create `src/trpc/routers/groups/expenses/lookup-category.procedure.ts` and register in router
     - Create `lookupCategoryMappingProcedure` with input `{ groupId: string, title: string }` and output `{ categoryId: number | null }`
     - Call `lookupCategoryMapping` from CategoryMappingService
@@ -75,21 +66,17 @@ Implementation of a title-category association memory system for expenses within
     - _Requirements: 3.1, 3.4, 5.1_
 
 - [x] 5. Integrate upsert in expense create and update procedures
-
   - [x] 5.1 Modify `src/trpc/routers/groups/expenses/create.procedure.ts` to call `upsertCategoryMapping` after successful creation
-
     - Extract `title`, `categoryId`, and `isReimbursement` from `expenseFormValues`
     - Call `upsertCategoryMapping` after successful `createExpense`, inside try/catch (failure does not block main operation)
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 6.1_
 
   - [x] 5.2 Modify `src/trpc/routers/groups/expenses/update.procedure.ts` to call `upsertCategoryMapping` after successful update
-
     - Extract `title`, `categoryId`, and `isReimbursement` from `expenseFormValues`
     - Call `upsertCategoryMapping` after successful `updateExpense`, inside try/catch (failure does not block main operation)
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 6.2, 6.3_
 
   - [x] 5.3 Write property test for title change preserves old mapping (Property 2)
-
     - **Property 2: Title change preserves old mapping**
     - **Validates: Requirements 2.2, 2.3**
     - File: `src/lib/category-mapping.property.test.ts`
@@ -101,13 +88,10 @@ Implementation of a title-category association memory system for expenses within
     - _Requirements: 1.1, 2.4, 6.1_
 
 - [x] 6. Checkpoint - Verify backend integration
-
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 7. Integrate lookup in frontend form
-
   - [x] 7.1 Modify `src/app/groups/[groupId]/expenses/expense-form.tsx` to query mapping on title `onBlur`
-
     - In the `title` field `onBlur` handler, before AI extraction, call `lookupCategoryMappingProcedure` via tRPC
     - If it returns a non-null `categoryId`, fill the category field with `form.setValue('category', categoryId)` and return (without calling AI)
     - If it returns `null`, keep current behavior (fallback to AI if enabled, or default category)
@@ -115,7 +99,6 @@ Implementation of a title-category association memory system for expenses within
     - _Requirements: 3.1, 3.2, 3.3, 5.1, 5.2, 5.3, 5.4_
 
   - [x] 7.2 Write property test for lookup round-trip with category validation (Property 6)
-
     - **Property 6: Lookup round-trip with category validity**
     - **Validates: Requirements 3.1, 3.4**
     - File: `src/lib/category-mapping.property.test.ts`

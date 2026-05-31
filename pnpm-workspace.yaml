@@ -1,0 +1,13 @@
+ignoredBuiltDependencies:
+  - '@parcel/watcher'
+  - '@prisma/client'
+  - '@prisma/engines'
+  - '@swc/core'
+  - esbuild
+  - msw
+  - prisma
+  - sharp
+  - unrs-resolver
+
+onlyBuiltDependencies:
+  - bcrypt

@@ -7,7 +7,6 @@ import { PropsWithChildren, useEffect } from 'react'
 import { toast } from 'sonner'
 import { CurrentGroupProvider } from './current-group-context'
 import { GroupHeader } from './group-header'
-import { SaveGroupLocally } from './save-recent-group'
 
 export function GroupLayoutClient({
   groupId,
@@ -41,7 +40,6 @@ export function GroupLayoutClient({
     <CurrentGroupProvider {...props}>
       <GroupHeader />
       {children}
-      <SaveGroupLocally />
     </CurrentGroupProvider>
   )
 }

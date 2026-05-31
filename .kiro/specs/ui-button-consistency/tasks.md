@@ -7,7 +7,6 @@ Fix UI button tooltip inconsistency by standardizing all icon buttons to use the
 ## Tasks
 
 - [x] 1. Write bug condition exploration test
-
   - **Property 1: Bug Condition** - Shadcn Tooltip Not Displayed on Icon Button Hover
   - **CRITICAL**: This test MUST FAIL on unfixed code - failure confirms the bug exists
   - **DO NOT attempt to fix the test or the code when it fails**
@@ -24,7 +23,6 @@ Fix UI button tooltip inconsistency by standardizing all icon buttons to use the
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7_
 
 - [x] 2. Write preservation property tests (BEFORE implementing fix)
-
   - **Property 2: Preservation** - Click Behavior Unchanged for All Buttons
   - **IMPORTANT**: Follow observation-first methodology
   - Observe on UNFIXED code: clicking Share button opens share popover with group URL
@@ -42,9 +40,7 @@ Fix UI button tooltip inconsistency by standardizing all icon buttons to use the
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6, 3.7, 3.8_
 
 - [x] 3. Fix for UI button tooltip inconsistency and missing context menu notifications toggle
-
   - [x] 3.1 Wrap ShareButton with shadcn Tooltip
-
     - Import `Tooltip`, `TooltipTrigger`, `TooltipContent` from `@/components/ui/tooltip`
     - Wrap `PopoverTrigger` button with `<Tooltip><TooltipTrigger asChild>...<TooltipContent>{label}</TooltipContent></Tooltip>`
     - Remove HTML `title` attribute from the Button
@@ -55,7 +51,6 @@ Fix UI button tooltip inconsistency by standardizing all icon buttons to use the
     - _Requirements: 2.1, 3.1_
 
   - [x] 3.2 Wrap PushNotificationToggle with shadcn Tooltip
-
     - Import Tooltip components
     - Wrap `DropdownMenuTrigger` button with Tooltip
     - Remove HTML `title` attribute from the Button
@@ -66,7 +61,6 @@ Fix UI button tooltip inconsistency by standardizing all icon buttons to use the
     - _Requirements: 2.2, 3.2_
 
   - [x] 3.3 Wrap ExportButton with shadcn Tooltip
-
     - Import Tooltip components
     - Wrap `DropdownMenuTrigger` button with Tooltip
     - Remove HTML `title` attribute from the Button
@@ -77,7 +71,6 @@ Fix UI button tooltip inconsistency by standardizing all icon buttons to use the
     - _Requirements: 2.3, 3.3_
 
   - [x] 3.4 Wrap Create Expense button with shadcn Tooltip
-
     - Import Tooltip components
     - Wrap the Create Expense Link/Button with `<Tooltip><TooltipTrigger asChild>...<TooltipContent>{label}</TooltipContent></Tooltip>`
     - Remove HTML `title` attribute from the Link
@@ -88,7 +81,6 @@ Fix UI button tooltip inconsistency by standardizing all icon buttons to use the
     - _Requirements: 2.4, 3.4_
 
   - [x] 3.5 Wrap CreateFromReceiptButton with shadcn Tooltip
-
     - Import Tooltip components
     - Wrap the trigger Button with Tooltip (button is passed as `trigger` prop to Dialog/Drawer)
     - Remove HTML `title` attribute from the Button
@@ -99,7 +91,6 @@ Fix UI button tooltip inconsistency by standardizing all icon buttons to use the
     - _Requirements: 2.5, 3.5_
 
   - [x] 3.6 Add Tooltip to Edit button in GroupInformation
-
     - Import Tooltip components
     - Wrap the Edit Button/Link with `<Tooltip><TooltipTrigger asChild>...<TooltipContent>{t('edit')}</TooltipContent></Tooltip>`
     - Add localized "Edit" label using the translation function
@@ -110,7 +101,6 @@ Fix UI button tooltip inconsistency by standardizing all icon buttons to use the
     - _Requirements: 2.6, 3.6_
 
   - [x] 3.7 Add "Toggle notifications" option to group card context menu
-
     - Import notification-related dependencies (push notification subscription logic or simplified toggle action)
     - Add "Toggle notifications" `DropdownMenuItem` in the `<DropdownMenuContent>`
     - Handle push notification state: toggle all notifications for the group (no participant granularity)
@@ -121,7 +111,6 @@ Fix UI button tooltip inconsistency by standardizing all icon buttons to use the
     - _Requirements: 2.7, 3.7_
 
   - [x] 3.8 Verify bug condition exploration test now passes
-
     - **Property 1: Expected Behavior** - Shadcn Tooltip Displayed on Icon Button Hover
     - **IMPORTANT**: Re-run the SAME test from task 1 - do NOT write a new test
     - The test from task 1 encodes the expected behavior

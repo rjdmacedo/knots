@@ -155,8 +155,8 @@ export function ExpenseDistribution({ data, currency }: Props) {
                   item.difference > 0
                     ? 'text-green-600 dark:text-green-400'
                     : item.difference < 0
-                    ? 'text-red-600 dark:text-red-400'
-                    : 'text-muted-foreground'
+                      ? 'text-red-600 dark:text-red-400'
+                      : 'text-muted-foreground'
                 }
               >
                 {item.difference > 0
@@ -164,12 +164,12 @@ export function ExpenseDistribution({ data, currency }: Props) {
                       'overpaid',
                     )})`
                   : item.difference < 0
-                  ? `-${formatCurrency(
-                      currency,
-                      Math.abs(item.difference),
-                      locale,
-                    )} (${t('underpaid')})`
-                  : formatCurrency(currency, 0, locale)}
+                    ? `-${formatCurrency(
+                        currency,
+                        Math.abs(item.difference),
+                        locale,
+                      )} (${t('underpaid')})`
+                    : formatCurrency(currency, 0, locale)}
               </span>
             </div>
           ))}
