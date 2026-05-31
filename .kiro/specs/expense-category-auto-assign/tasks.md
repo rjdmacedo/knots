@@ -27,7 +27,7 @@ Implementation of a title-category association memory system for expenses within
     - Use Prisma `upsert` with unique constraint `(groupId, normalizedTitle)` for atomic operation
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 2.1, 2.4, 3.1, 3.4, 6.1, 6.3_
 
-  - [ ]\* 2.2 Write property test for `normalizeTitle` (Property 3)
+  - [x] 2.2 Write property test for `normalizeTitle` (Property 3)
 
     - **Property 3: normalizeTitle idempotence and correctness**
     - **Validates: Requirements 1.3**
@@ -35,28 +35,28 @@ Implementation of a title-category association memory system for expenses within
     - Verify idempotence: `normalizeTitle(normalizeTitle(x)) === normalizeTitle(x)`
     - Verify result: lowercase only, no leading/trailing spaces, no consecutive internal spaces
 
-  - [ ]\* 2.3 Write property test for short title guard (Property 4)
+  - [x] 2.3 Write property test for short title guard (Property 4)
 
     - **Property 4: Short title guard**
     - **Validates: Requirements 1.4**
     - File: `src/lib/category-mapping.property.test.ts`
     - Verify that titles with normalization < 2 chars do not create/update mappings
 
-  - [ ]\* 2.4 Write property test for reimbursement guard (Property 5)
+  - [x] 2.4 Write property test for reimbursement guard (Property 5)
 
     - **Property 5: Reimbursement guard**
     - **Validates: Requirements 2.4, 6.1, 6.3**
     - File: `src/lib/category-mapping.property.test.ts`
     - Verify that expenses with `isReimbursement=true` never create/update mappings
 
-  - [ ]\* 2.5 Write property test for upsert last-write-wins (Property 1)
+  - [x] 2.5 Write property test for upsert last-write-wins (Property 1)
 
     - **Property 1: Upsert last-write-wins**
     - **Validates: Requirements 1.1, 1.2, 2.1, 6.4**
     - File: `src/lib/category-mapping.property.test.ts`
     - Verify that after multiple upserts, the mapping always reflects the latest categoryId
 
-  - [ ]\* 2.6 Write property test for group isolation (Property 7)
+  - [x] 2.6 Write property test for group isolation (Property 7)
     - **Property 7: Group isolation**
     - **Validates: Requirements 4.1, 4.2, 4.3**
     - File: `src/lib/category-mapping.property.test.ts`
@@ -88,14 +88,14 @@ Implementation of a title-category association memory system for expenses within
     - Call `upsertCategoryMapping` after successful `updateExpense`, inside try/catch (failure does not block main operation)
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 6.2, 6.3_
 
-  - [ ]\* 5.3 Write property test for title change preserves old mapping (Property 2)
+  - [x] 5.3 Write property test for title change preserves old mapping (Property 2)
 
     - **Property 2: Title change preserves old mapping**
     - **Validates: Requirements 2.2, 2.3**
     - File: `src/lib/category-mapping.property.test.ts`
     - Verify that when changing title from A to B, the mapping for A remains unchanged
 
-  - [ ]\* 5.4 Write unit tests for procedure integration
+  - [x] 5.4 Write unit tests for procedure integration
     - Test that upsert failure does not block expense create/edit
     - Test that reimbursement does not trigger upsert
     - _Requirements: 1.1, 2.4, 6.1_
@@ -114,14 +114,14 @@ Implementation of a title-category association memory system for expenses within
     - Handle lookup errors silently (fallback to existing behavior)
     - _Requirements: 3.1, 3.2, 3.3, 5.1, 5.2, 5.3, 5.4_
 
-  - [ ]\* 7.2 Write property test for lookup round-trip with category validation (Property 6)
+  - [x] 7.2 Write property test for lookup round-trip with category validation (Property 6)
 
     - **Property 6: Lookup round-trip with category validity**
     - **Validates: Requirements 3.1, 3.4**
     - File: `src/lib/category-mapping.property.test.ts`
     - Verify that lookup returns correct categoryId when category exists, and null when it does not
 
-  - [ ]\* 7.3 Write unit tests for priority flow in the form
+  - [x] 7.3 Write unit tests for priority flow in the form
     - Test that mapping takes priority over AI
     - Test fallback to AI when no mapping exists
     - Test fallback to default category when AI is disabled and no mapping exists
