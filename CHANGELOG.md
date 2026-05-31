@@ -1,3 +1,10 @@
+# [1.26.0](https://github.com/rjdmacedo/knots/compare/v1.25.0...v1.26.0) (2026-05-31)
+
+
+### Features
+
+* implement title-category mapping for expenses with lookup and upsert functionality ([b80cfef](https://github.com/rjdmacedo/knots/commit/b80cfef421b1e9be41538f92227c6d0248620cc2))
+
 # [1.25.0](https://github.com/rjdmacedo/knots/compare/v1.24.0...v1.25.0) (2026-05-30)
 
 
