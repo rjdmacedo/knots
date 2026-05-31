@@ -1,3 +1,10 @@
+# [1.28.0](https://github.com/rjdmacedo/knots/compare/v1.27.0...v1.28.0) (2026-05-31)
+
+
+### Features
+
+* add CHANGELOG.md to Dockerfile for improved documentation ([aac0621](https://github.com/rjdmacedo/knots/commit/aac0621367f210f2d26f58bde43922299767f405))
+
 # [1.27.0](https://github.com/rjdmacedo/knots/compare/v1.26.0...v1.27.0) (2026-05-31)
 
 
