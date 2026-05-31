@@ -35,14 +35,17 @@ function getFromAddress(): string {
   return process.env.EMAIL_FROM || 'onboarding@resend.dev'
 }
 
-function createResendClient(): Resend {
-  const apiKey = process.env.RESEND_API_KEY
-  if (!apiKey) {
-    console.warn(
-      '[EmailService] RESEND_API_KEY is not set. Email delivery will fail.',
-    )
+let resendClient: Resend | null = null
+
+function getResendClient(): Resend {
+  if (!resendClient) {
+    const apiKey = process.env.RESEND_API_KEY
+    if (!apiKey) {
+      throw new Error('[EmailService] RESEND_API_KEY is not set.')
+    }
+    resendClient = new Resend(apiKey)
   }
-  return new Resend(apiKey)
+  return resendClient
 }
 
 export function buildVerificationEmailHtml(token: string): string {
@@ -142,10 +145,9 @@ export function buildInvitationEmailText(
 }
 
 function createEmailService(): EmailService {
-  const resend = createResendClient()
-
   return {
     async sendVerificationEmail(to, token) {
+      const resend = getResendClient()
       const from = getFromAddress()
       const subject = `Verify your email for ${APP_NAME}`
       const html = buildVerificationEmailHtml(token)
@@ -179,6 +181,7 @@ function createEmailService(): EmailService {
     },
 
     async sendPasswordResetEmail(to, token) {
+      const resend = getResendClient()
       const from = getFromAddress()
       const subject = `Reset your password for ${APP_NAME}`
       const html = buildPasswordResetEmailHtml(token)
@@ -212,6 +215,7 @@ function createEmailService(): EmailService {
     },
 
     async sendInvitationEmail(to, groupName, inviteLink) {
+      const resend = getResendClient()
       const from = getFromAddress()
       const subject = `You've been invited to join "${groupName}" on ${APP_NAME}`
       const html = buildInvitationEmailHtml(groupName, inviteLink)
