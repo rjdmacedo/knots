@@ -1,3 +1,10 @@
+# [1.29.0](https://github.com/rjdmacedo/knots/compare/v1.28.0...v1.29.0) (2026-05-31)
+
+
+### Features
+
+* implement authentication features with user management and session handling ([a33b2ec](https://github.com/rjdmacedo/knots/commit/a33b2ecbb7d6c8477f6b1e20edf55504399a0e9b))
+
 # [1.28.0](https://github.com/rjdmacedo/knots/compare/v1.27.0...v1.28.0) (2026-05-31)
 
 
