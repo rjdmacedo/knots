@@ -19,6 +19,7 @@ RUN apk add --no-cache openssl && \
 
 COPY ./src ./src
 COPY ./messages ./messages
+COPY ./CHANGELOG.md ./
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
@@ -46,5 +47,6 @@ COPY ./public ./public
 COPY ./scripts ./scripts
 COPY --from=base /usr/app/prisma ./prisma
 COPY --from=base /usr/app/.next ./.next
+COPY ./CHANGELOG.md ./
 
 ENTRYPOINT ["/bin/sh", "/usr/app/scripts/container-entrypoint.sh"]
