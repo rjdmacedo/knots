@@ -2,23 +2,23 @@
 
 ## Overview
 
-Esta feature introduz estados de carregamento visuais (skeleton placeholders) na área de conteúdo principal da aplicação Knots durante navegações entre páginas e tabs. O objetivo é complementar a barra de progresso existente (2px, `next13-progressbar`) com feedback mais evidente no corpo da página, eliminando a perceção de "congelamento" durante transições.
+This feature introduces visual loading states (skeleton placeholders) in the Knots application's main content area during navigation between pages and tabs. The goal is to complement the existing progress bar (2px, `next13-progressbar`) with more prominent feedback in the page body, eliminating the perception of "freezing" during transitions.
 
-A solução utiliza o componente `Skeleton` já existente na biblioteca UI do projeto (`src/components/ui/skeleton.tsx`) e integra-se com o padrão de routing do Next.js App Router, aproveitando o mecanismo de `loading.tsx` e a biblioteca `spin-delay` já presente no projeto para evitar flashes em navegações rápidas.
+The solution uses the existing `Skeleton` component from the project's UI library (`src/components/ui/skeleton.tsx`) and integrates with the Next.js App Router routing pattern, leveraging the `loading.tsx` mechanism and the `spin-delay` library already present in the project to avoid flashes on fast navigations.
 
-### Decisões de Design Principais
+### Key Design Decisions
 
-1. **Utilizar `loading.tsx` do Next.js App Router** — Cada rota de tab terá um ficheiro `loading.tsx` que exporta o skeleton contextual correspondente. Isto é nativo ao framework e não requer gestão manual de estado de navegação.
-2. **Componentes de skeleton reutilizáveis** — Criar componentes de skeleton por tipo de conteúdo (lista, cards, gráficos) que são compostos a partir do `Skeleton` existente.
-3. **Hook `useNavigationLoading`** — Para cenários onde `loading.tsx` não é suficiente (navegação client-side via `router.push`), um hook custom gere o estado de loading com timeouts e cancelamento.
-4. **`spin-delay` para debounce** — Reutilizar a biblioteca já instalada para evitar mostrar skeletons em navegações que completam em menos de 200ms.
+1. **Use Next.js App Router `loading.tsx`** — Each tab route will have a `loading.tsx` file exporting the corresponding contextual skeleton. This is native to the framework and does not require manual navigation state management.
+2. **Reusable skeleton components** — Create skeleton components by content type (list, cards, charts) composed from the existing `Skeleton` component.
+3. **`useNavigationLoading` hook** — For scenarios where `loading.tsx` is not sufficient (client-side navigation via `router.push`), a custom hook manages loading state with timeouts and cancellation.
+4. **`spin-delay` for debounce** — Reuse the already installed library to avoid showing skeletons on navigations that complete in less than 200ms.
 
 ## Architecture
 
 ```mermaid
 graph TD
     subgraph "App Shell (layout.tsx)"
-        Header["Header (fixo)"]
+        Header["Header (fixed)"]
         ProgressBar["Progress Bar (z-50)"]
         Nav["Navigation / Tabs"]
         ContentArea["Content Area (main)"]
@@ -47,7 +47,7 @@ graph TD
     LoadingState --> SkeletonGeneric
 ```
 
-### Fluxo de Navegação
+### Navigation Flow
 
 ```mermaid
 sequenceDiagram
@@ -57,37 +57,37 @@ sequenceDiagram
     participant Hook as useNavigationLoading
     participant Content as Content Area
 
-    User->>Tabs: Clica numa tab
+    User->>Tabs: Clicks a tab
     Tabs->>Router: router.push(/groups/{id}/{tab})
-    Router->>Hook: Navegação iniciada
-    Hook->>Hook: Inicia timer (200ms delay)
+    Router->>Hook: Navigation started
+    Hook->>Hook: Start timer (200ms delay)
 
-    alt Navegação completa < 200ms
-        Router->>Content: Renderiza conteúdo
-        Hook->>Hook: Cancela timer
-    else Navegação demora > 200ms
-        Hook->>Content: Mostra Skeleton (aria-busy=true)
-        Router->>Content: Conteúdo pronto
-        Hook->>Content: Substitui skeleton por conteúdo (aria-busy=false)
+    alt Navigation completes < 200ms
+        Router->>Content: Renders content
+        Hook->>Hook: Cancel timer
+    else Navigation takes > 200ms
+        Hook->>Content: Show Skeleton (aria-busy=true)
+        Router->>Content: Content ready
+        Hook->>Content: Replace skeleton with content (aria-busy=false)
     end
 
     alt Timeout 10s
-        Hook->>Content: Mostra mensagem "a demorar..."
+        Hook->>Content: Show message "taking longer..."
     end
 
     alt Timeout 30s
-        Hook->>Content: Mostra erro + opção retry
+        Hook->>Content: Show error + retry option
         Content->>Content: aria-busy=false, aria-live=polite
     end
 ```
 
 ## Components and Interfaces
 
-### Novos Componentes
+### New Components
 
 #### 1. `TabLoadingContainer`
 
-Componente wrapper que gere o estado de loading na área de conteúdo.
+Wrapper component that manages loading state in the content area.
 
 ```typescript
 // src/components/tab-loading-container.tsx
@@ -98,16 +98,16 @@ interface TabLoadingContainerProps {
 }
 ```
 
-**Responsabilidades:**
+**Responsibilities:**
 
-- Aplica `aria-busy="true"` quando em loading
-- Remove `aria-busy` quando conteúdo está pronto
-- Gere timeouts (10s warning, 30s error)
-- Renderiza o skeleton contextual ou o conteúdo
+- Applies `aria-busy="true"` when loading
+- Removes `aria-busy` when content is ready
+- Manages timeouts (10s warning, 30s error)
+- Renders contextual skeleton or content
 
 #### 2. `ListSkeleton`
 
-Skeleton para tabs com conteúdo em lista (expenses, activity).
+Skeleton for tabs with list content (expenses, activity).
 
 ```typescript
 // src/components/skeletons/list-skeleton.tsx
@@ -116,11 +116,11 @@ interface ListSkeletonProps {
 }
 ```
 
-Renderiza N items com formato de linha horizontal empilhada, cada um composto por instâncias de `Skeleton`.
+Renders N items in vertically stacked horizontal line format, each composed of `Skeleton` instances.
 
 #### 3. `CardsSkeleton`
 
-Skeleton para tabs com conteúdo em cards (balances, information).
+Skeleton for tabs with card content (balances, information).
 
 ```typescript
 // src/components/skeletons/cards-skeleton.tsx
@@ -129,31 +129,31 @@ interface CardsSkeletonProps {
 }
 ```
 
-Renderiza N blocos retangulares representando cards de resumo.
+Renders N rectangular blocks representing summary cards.
 
 #### 4. `ChartsSkeleton`
 
-Skeleton para a tab stats.
+Skeleton for the stats tab.
 
 ```typescript
 // src/components/skeletons/charts-skeleton.tsx
 ```
 
-Renderiza blocos representando gráficos (retângulo largo) e totais (blocos menores).
+Renders blocks representing charts (wide rectangle) and totals (smaller blocks).
 
 #### 5. `GenericSkeleton`
 
-Skeleton fallback para páginas sem skeleton específico.
+Fallback skeleton for pages without a specific skeleton.
 
 ```typescript
 // src/components/skeletons/generic-skeleton.tsx
 ```
 
-Renderiza 3 skeletons de linha + 1 skeleton de bloco.
+Renders 3 line skeletons + 1 block skeleton.
 
 #### 6. `LoadingError`
 
-Componente de erro para timeouts.
+Error component for timeouts.
 
 ```typescript
 // src/components/loading-error.tsx
@@ -163,7 +163,7 @@ interface LoadingErrorProps {
 }
 ```
 
-### Novo Hook
+### New Hook
 
 #### `useNavigationLoading`
 
@@ -171,8 +171,8 @@ interface LoadingErrorProps {
 // src/lib/use-navigation-loading.ts
 interface NavigationLoadingState {
   isLoading: boolean
-  isTimeout: boolean // true após 10s
-  isError: boolean // true após 30s
+  isTimeout: boolean // true after 10s
+  isError: boolean // true after 30s
   targetTab: string | null
   cancel: () => void
   retry: () => void
@@ -185,15 +185,15 @@ function useNavigationLoading(options?: {
 }): NavigationLoadingState
 ```
 
-**Comportamento:**
+**Behavior:**
 
-- Escuta eventos de navegação do Next.js router
-- Aplica `spin-delay` para não mostrar loading em navegações rápidas (<200ms)
-- Gere timers para warning (10s) e error (30s)
-- Cancela navegação anterior quando uma nova é iniciada
-- Expõe `cancel()` e `retry()` para interação do utilizador
+- Listens to Next.js router navigation events
+- Applies `spin-delay` to avoid showing loading on fast navigations (<200ms)
+- Manages timers for warning (10s) and error (30s)
+- Cancels previous navigation when a new one starts
+- Exposes `cancel()` and `retry()` for user interaction
 
-### Função Utilitária
+### Utility Function
 
 #### `getSkeletonForTab`
 
@@ -210,11 +210,11 @@ type TabName =
 function getSkeletonForTab(tabName: TabName): React.ComponentType
 ```
 
-Mapeia o nome da tab para o componente de skeleton correspondente. Retorna `GenericSkeleton` para tabs não mapeadas.
+Maps tab name to the corresponding skeleton component. Returns `GenericSkeleton` for unmapped tabs.
 
-### Ficheiros `loading.tsx` (Next.js App Router)
+### `loading.tsx` Files (Next.js App Router)
 
-Cada diretório de tab receberá um ficheiro `loading.tsx`:
+Each tab directory will receive a `loading.tsx` file:
 
 - `src/app/groups/[groupId]/expenses/loading.tsx` → `ListSkeleton`
 - `src/app/groups/[groupId]/activity/loading.tsx` → `ListSkeleton`
@@ -222,22 +222,22 @@ Cada diretório de tab receberá um ficheiro `loading.tsx`:
 - `src/app/groups/[groupId]/information/loading.tsx` → `CardsSkeleton`
 - `src/app/groups/[groupId]/stats/loading.tsx` → `ChartsSkeleton`
 
-### Modificações a Componentes Existentes
+### Modifications to Existing Components
 
 #### `GroupLayoutClient` (layout.client.tsx)
 
-- Integrar `TabLoadingContainer` à volta do `{children}`
-- Passar estado de loading e tab ativa
+- Integrate `TabLoadingContainer` around `{children}`
+- Pass loading state and active tab
 
 #### `GroupTabs` (group-tabs.tsx)
 
-- Sem alterações visuais — os tabs permanecem clicáveis e com o mesmo estilo durante loading
+- No visual changes — tabs remain clickable with the same style during loading
 
 ## Data Models
 
-Esta feature não introduz novos modelos de dados persistentes. Os estados são geridos exclusivamente em memória (React state).
+This feature does not introduce new persistent data models. States are managed exclusively in memory (React state).
 
-### Estado do Hook `useNavigationLoading`
+### `useNavigationLoading` Hook State
 
 ```typescript
 interface NavigationState {
@@ -251,7 +251,7 @@ interface NavigationState {
 }
 ```
 
-### Mapeamento Tab → Skeleton
+### Tab → Skeleton Mapping
 
 ```typescript
 const TAB_SKELETON_MAP: Record<string, React.ComponentType> = {
@@ -287,74 +287,74 @@ _For any_ skeleton variant rendered in loading state, the skeleton container SHA
 
 ## Error Handling
 
-### Cenários de Erro
+### Error Scenarios
 
-| Cenário             | Trigger                                          | Comportamento                                                 |
-| ------------------- | ------------------------------------------------ | ------------------------------------------------------------- |
-| Timeout warning     | Transition_Period > 10s                          | Mostra mensagem informativa abaixo do skeleton                |
-| Timeout error       | Transition_Period > 30s                          | Remove skeleton, mostra erro com opção retry                  |
-| Navegação cancelada | Utilizador navega para outra tab durante loading | Cancela timers anteriores, inicia novo loading                |
-| Falha de rede       | Fetch falha durante navegação                    | Next.js error boundary captura; loading state limpa aria-busy |
+| Scenario             | Trigger                                      | Behavior                                                       |
+| -------------------- | -------------------------------------------- | -------------------------------------------------------------- |
+| Timeout warning      | Transition_Period > 10s                      | Show informative message below skeleton                        |
+| Timeout error        | Transition_Period > 30s                      | Remove skeleton, show error with retry option                  |
+| Cancelled navigation | User navigates to another tab during loading | Cancel previous timers, start new loading                      |
+| Network failure      | Fetch fails during navigation                | Next.js error boundary catches; loading state clears aria-busy |
 
-### Estratégia de Cleanup
+### Cleanup Strategy
 
-- Todos os timers (`setTimeout`) são limpos no `useEffect` cleanup
-- Navegação cancelada limpa o estado anterior imediatamente
-- O componente `TabLoadingContainer` garante que `aria-busy` é sempre removido em unmount (via `useEffect` cleanup)
+- All timers (`setTimeout`) are cleared in `useEffect` cleanup
+- Cancelled navigation clears previous state immediately
+- The `TabLoadingContainer` component ensures `aria-busy` is always removed on unmount (via `useEffect` cleanup)
 
-### Mensagens de Erro
+### Error Messages
 
-- **10s timeout:** Mensagem informativa (não bloqueante) — "O carregamento está a demorar mais do que o esperado..."
-- **30s timeout:** Mensagem de erro com ações — "Não foi possível carregar o conteúdo. [Tentar novamente] [Cancelar]"
-- Ambas as mensagens são anunciadas via `aria-live="polite"` para tecnologias assistivas
+- **10s timeout:** Informative message (non-blocking) — "Loading is taking longer than expected..."
+- **30s timeout:** Error message with actions — "Could not load content. [Try again] [Cancel]"
+- Both messages are announced via `aria-live="polite"` for assistive technologies
 
 ## Testing Strategy
 
-### Abordagem
+### Approach
 
-A feature combina testes unitários (exemplos específicos e edge cases) com testes property-based (propriedades universais). O projeto já utiliza **Jest** com **React Testing Library** e **fast-check** para property-based testing.
+The feature combines unit tests (specific examples and edge cases) with property-based tests (universal properties). The project already uses **Jest** with **React Testing Library** and **fast-check** for property-based testing.
 
-### Testes Unitários (Jest + React Testing Library)
+### Unit Tests (Jest + React Testing Library)
 
-1. **Skeleton variants rendering** — Verificar que cada tab renderiza o skeleton correto (2.1, 2.2, 2.3)
-2. **Generic fallback** — Verificar que tabs sem skeleton específico usam o genérico (2.6)
-3. **Spin-delay behavior** — Verificar que navegações <200ms não mostram skeleton (1.3)
-4. **Timeout warning at 10s** — Verificar mensagem informativa (6.2)
-5. **Timeout error at 30s** — Verificar opção retry/cancel (6.3)
-6. **aria-busy lifecycle** — Verificar que é adicionado no início e removido no fim (5.1, 5.3)
-7. **Navigation remains interactive** — Verificar que tabs não ficam disabled durante loading (4.1, 4.3)
-8. **Header/nav stability** — Verificar que header e navegação permanecem visíveis durante loading (3.3)
-9. **Error state accessibility** — Verificar aria-live region no timeout (5.4)
+1. **Skeleton variants rendering** — Verify each tab renders the correct skeleton (2.1, 2.2, 2.3)
+2. **Generic fallback** — Verify tabs without a specific skeleton use the generic one (2.6)
+3. **Spin-delay behavior** — Verify navigations <200ms do not show skeleton (1.3)
+4. **Timeout warning at 10s** — Verify informative message (6.2)
+5. **Timeout error at 30s** — Verify retry/cancel option (6.3)
+6. **aria-busy lifecycle** — Verify it is added at start and removed at end (5.1, 5.3)
+7. **Navigation remains interactive** — Verify tabs are not disabled during loading (4.1, 4.3)
+8. **Header/nav stability** — Verify header and navigation remain visible during loading (3.3)
+9. **Error state accessibility** — Verify aria-live region on timeout (5.4)
 
-### Testes Property-Based (Jest + fast-check)
+### Property-Based Tests (Jest + fast-check)
 
-Configuração: mínimo 100 iterações por propriedade.
+Configuration: minimum 100 iterations per property.
 
-1. **Property 1: Skeleton composition** — Gerar variantes de tab aleatórias, renderizar, verificar que todos os elementos placeholder têm `data-slot="skeleton"`
+1. **Property 1: Skeleton composition** — Generate random tab variants, render, verify all placeholder elements have `data-slot="skeleton"`
 
    - Tag: `Feature: tab-loading-states, Property 1: Skeleton composition uses only Skeleton component`
 
-2. **Property 2: Navigation superseding** — Gerar sequências aleatórias de navegações rápidas, verificar que apenas o último skeleton é visível
+2. **Property 2: Navigation superseding** — Generate random sequences of rapid navigations, verify only the last skeleton is visible
 
    - Tag: `Feature: tab-loading-states, Property 2: Navigation superseding shows only latest skeleton`
 
-3. **Property 3: Accessibility attributes** — Gerar variantes de tab aleatórias, verificar aria-label não vazio e aria-hidden nos filhos decorativos
+3. **Property 3: Accessibility attributes** — Generate random tab variants, verify non-empty aria-label and aria-hidden on decorative children
    - Tag: `Feature: tab-loading-states, Property 3: Accessibility attributes on skeleton variants`
 
-### Testes de Integração
+### Integration Tests
 
-- **CLS measurement** — Verificar que a transição skeleton → conteúdo não causa layout shift (2.5, 3.4)
-- **Progress bar coexistence** — Verificar que o loading state não interfere com a progress bar existente (6.4)
-- **Theme switching** — Verificar que skeletons adaptam cores ao mudar tema (3.2)
+- **CLS measurement** — Verify skeleton → content transition does not cause layout shift (2.5, 3.4)
+- **Progress bar coexistence** — Verify loading state does not interfere with existing progress bar (6.4)
+- **Theme switching** — Verify skeletons adapt colors when theme changes (3.2)
 
-### Estrutura de Ficheiros de Teste
+### Test File Structure
 
 ```
 src/components/skeletons/__tests__/
   skeleton-composition.property.test.tsx    # Property 1
   skeleton-accessibility.property.test.tsx  # Property 3
 src/lib/__tests__/
-  use-navigation-loading.test.ts           # Unit tests para o hook
+  use-navigation-loading.test.ts           # Unit tests for the hook
   navigation-superseding.property.test.ts  # Property 2
 src/app/groups/[groupId]/__tests__/
   tab-loading-states.test.tsx              # Integration tests

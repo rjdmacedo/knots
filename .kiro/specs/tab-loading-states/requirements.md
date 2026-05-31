@@ -2,82 +2,82 @@
 
 ## Introduction
 
-Quando o utilizador navega entre páginas na aplicação Knots (incluindo mudanças de tab dentro de um grupo, navegação para páginas de criação/edição, ou qualquer outra transição de rota), o ecrã parece "congelado" sem indicação clara de que algo está a acontecer. Embora exista uma barra de progresso fina no topo (2px, via `next13-progressbar`), esta não é suficientemente visível para comunicar ao utilizador que a aplicação está ocupada. Esta feature introduz estados de carregamento visuais mais evidentes na área de conteúdo principal, dando feedback claro durante transições de página.
+When the user navigates between pages in the Knots application (including tab changes within a group, navigation to create/edit pages, or any other route transition), the screen appears "frozen" with no clear indication that something is happening. Although a thin progress bar exists at the top (2px, via `next13-progressbar`), it is not visible enough to communicate to the user that the application is busy. This feature introduces more prominent visual loading states in the main content area, providing clear feedback during page transitions.
 
 ## Glossary
 
-- **Page_Navigation**: Qualquer transição de rota na aplicação, incluindo mudanças de tab, navegação para sub-páginas, ou navegação entre secções principais
-- **Content_Area**: A área principal da página (`<main>`) onde o conteúdo dinâmico é renderizado
-- **Loading_State**: O estado visual apresentado na Content_Area durante o período entre o início da navegação e a renderização completa da nova página
-- **Skeleton_Placeholder**: Elemento visual com forma semelhante ao conteúdo final que apresenta uma animação de pulso para indicar carregamento
-- **Transition_Period**: O intervalo de tempo entre o início de uma Page_Navigation e a renderização completa do conteúdo de destino
-- **Progress_Bar**: A barra de progresso existente no topo da aplicação (2px, cor slate)
+- **Page_Navigation**: Any route transition in the application, including tab changes, navigation to sub-pages, or navigation between main sections
+- **Content_Area**: The main page area (`<main>`) where dynamic content is rendered
+- **Loading_State**: The visual state displayed in the Content_Area during the period between the start of navigation and the complete rendering of the new page
+- **Skeleton_Placeholder**: Visual element shaped like the final content that displays a pulse animation to indicate loading
+- **Transition_Period**: The time interval between the start of a Page_Navigation and the complete rendering of the destination content
+- **Progress_Bar**: The existing progress bar at the top of the application (2px, slate color)
 
 ## Requirements
 
-### Requisito 1: Indicação visual de carregamento na área de conteúdo
+### Requirement 1: Visual loading indication in the content area
 
-**User Story:** Como utilizador, quero ver uma indicação visual clara na área de conteúdo quando navego entre páginas, para que saiba que a aplicação está a processar o meu pedido e não está "congelada".
+**User Story:** As a user, I want to see a clear visual indication in the content area when navigating between pages, so that I know the application is processing my request and is not "frozen".
 
-#### Critérios de Aceitação
+#### Acceptance Criteria
 
-1. WHEN uma Page_Navigation é iniciada, THE Content_Area SHALL apresentar um Loading_State que ocupe no mínimo 48x48 píxeis dentro do viewport visível, com um contraste mínimo de 3:1 face ao fundo, e que seja anunciado a tecnologias assistivas através de um atributo aria-busy="true" na Content_Area
-2. WHEN o conteúdo da página de destino termina de carregar, THE Content_Area SHALL substituir o Loading_State pelo conteúdo real no máximo em 100ms após o conteúdo estar pronto para renderização
-3. IF o Transition_Period é inferior a 200ms, THEN THE Content_Area SHALL apresentar o conteúdo diretamente sem mostrar Loading_State
-4. IF o Transition_Period exceder 10 segundos sem que o conteúdo da página de destino termine de carregar, THEN THE Content_Area SHALL remover o Loading_State e apresentar uma mensagem de erro indicando que o carregamento falhou, permitindo ao utilizador tentar novamente
+1. WHEN a Page_Navigation is initiated, THE Content_Area SHALL display a Loading_State that occupies at least 48x48 pixels within the visible viewport, with a minimum contrast of 3:1 against the background, and that is announced to assistive technologies via an aria-busy="true" attribute on the Content_Area
+2. WHEN the destination page content finishes loading, THE Content_Area SHALL replace the Loading_State with the real content within at most 100ms after the content is ready to render
+3. IF the Transition_Period is less than 200ms, THEN THE Content_Area SHALL display the content directly without showing Loading_State
+4. IF the Transition_Period exceeds 10 seconds without the destination page content finishing loading, THEN THE Content_Area SHALL remove the Loading_State and display an error message indicating that loading failed, allowing the user to try again
 
-### Requisito 2: Skeleton placeholders contextuais
+### Requirement 2: Contextual skeleton placeholders
 
-**User Story:** Como utilizador, quero que os placeholders de carregamento representem a estrutura do conteúdo que vou ver, para que a transição seja suave e previsível.
+**User Story:** As a user, I want loading placeholders to represent the structure of the content I will see, so that the transition feels smooth and predictable.
 
-#### Critérios de Aceitação
+#### Acceptance Criteria
 
-1. WHILE a Content_Area está em Loading_State para a tab "expenses" ou "activity", THE Skeleton_Placeholder SHALL apresentar um mínimo de 3 elementos em formato de item de lista (linhas horizontais empilhadas verticalmente) representando a lista de itens da página de destino
-2. WHILE a Content_Area está em Loading_State para a tab "balances" ou "information", THE Skeleton_Placeholder SHALL apresentar elementos em formato de card (blocos retangulares) representando os cards de resumo da página de destino
-3. WHILE a Content_Area está em Loading_State para a tab "stats", THE Skeleton_Placeholder SHALL apresentar elementos em formato de bloco retangular representando os gráficos e totais da página de destino
-4. WHILE o Skeleton_Placeholder está visível, THE Skeleton_Placeholder SHALL apresentar uma animação de pulso com ciclo contínuo para comunicar atividade ao utilizador
-5. WHEN o conteúdo da página de destino termina de renderizar, THE Content_Area SHALL substituir o Skeleton_Placeholder pelo conteúdo final sem provocar alteração da posição vertical dos elementos adjacentes (sem layout shift)
-6. WHERE uma página não tem um Skeleton_Placeholder específico definido, THE Content_Area SHALL apresentar um Loading_State genérico composto por no mínimo 3 skeletons de linha e 1 skeleton de bloco
+1. WHILE the Content_Area is in Loading_State for the "expenses" or "activity" tab, THE Skeleton_Placeholder SHALL display at least 3 list-item elements (horizontally stacked lines) representing the destination page's item list
+2. WHILE the Content_Area is in Loading_State for the "balances" or "information" tab, THE Skeleton_Placeholder SHALL display card-format elements (rectangular blocks) representing the destination page's summary cards
+3. WHILE the Content_Area is in Loading_State for the "stats" tab, THE Skeleton_Placeholder SHALL display rectangular block elements representing the destination page's charts and totals
+4. WHILE the Skeleton_Placeholder is visible, THE Skeleton_Placeholder SHALL display a continuous pulse animation to communicate activity to the user
+5. WHEN the destination page content finishes rendering, THE Content_Area SHALL replace the Skeleton_Placeholder with the final content without causing vertical position changes in adjacent elements (no layout shift)
+6. WHERE a page does not have a specific Skeleton_Placeholder defined, THE Content_Area SHALL display a generic Loading_State composed of at least 3 line skeletons and 1 block skeleton
 
-### Requisito 3: Consistência visual com o design existente
+### Requirement 3: Visual consistency with existing design
 
-**User Story:** Como utilizador, quero que os estados de carregamento sejam visualmente consistentes com o resto da aplicação, para que a experiência seja coesa.
+**User Story:** As a user, I want loading states to be visually consistent with the rest of the application, so that the experience feels cohesive.
 
-#### Critérios de Aceitação
+#### Acceptance Criteria
 
-1. THE Skeleton_Placeholder SHALL ser composto exclusivamente por instâncias do componente Skeleton existente na biblioteca de UI do projeto, sem introduzir novos componentes visuais de carregamento
-2. WHEN o tema ativo muda entre claro e escuro, THE Loading_State SHALL adaptar as suas cores automaticamente através dos tokens de design do tema (sem necessidade de configuração adicional por parte do programador)
-3. WHILE a Loading_State é apresentada, THE layout SHALL manter o header e a navegação renderizados e visíveis nas suas posições originais, sem alteração de dimensões ou posição, de modo que apenas a Content_Area apresente o Skeleton_Placeholder
-4. THE Skeleton_Placeholder SHALL ocupar dimensões (largura e altura) aproximadas às do conteúdo final que substitui, de forma que a transição entre o estado de carregamento e o conteúdo renderizado não provoque deslocamento visível dos elementos circundantes (CLS igual a 0)
+1. THE Skeleton_Placeholder SHALL be composed exclusively of instances of the existing Skeleton component from the project's UI library, without introducing new visual loading components
+2. WHEN the active theme switches between light and dark, THE Loading_State SHALL adapt its colors automatically through the theme design tokens (without additional configuration required from the developer)
+3. WHILE Loading_State is displayed, THE layout SHALL keep the header and navigation rendered and visible in their original positions, without dimension or position changes, so that only the Content_Area displays the Skeleton_Placeholder
+4. THE Skeleton_Placeholder SHALL occupy dimensions (width and height) approximate to the final content it replaces, so that the transition between loading state and rendered content does not cause visible displacement of surrounding elements (CLS equal to 0)
 
-### Requisito 4: Navegação funcional durante o carregamento
+### Requirement 4: Functional navigation during loading
 
-**User Story:** Como utilizador, quero poder navegar para outra página mesmo enquanto a atual ainda está a carregar, para que não fique bloqueado à espera.
+**User Story:** As a user, I want to be able to navigate to another page even while the current one is still loading, so that I am not blocked waiting.
 
-#### Critérios de Aceitação
+#### Acceptance Criteria
 
-1. WHILE a Content_Area está em Loading_State, THE Page_Navigation SHALL permanecer clicável e responder a interações do utilizador sem atraso percetível (dentro de 100ms após o clique)
-2. WHEN o utilizador inicia uma nova Page_Navigation enquanto uma navegação anterior ainda está em Loading_State, THE Content_Area SHALL cancelar o carregamento da navegação anterior e apresentar imediatamente o Loading_State correspondente à nova navegação, independentemente de quantas navegações anteriores estejam pendentes
-3. WHILE a Content_Area está em Loading_State, THE Page_Navigation SHALL apresentar os elementos de navegação no mesmo estado visual (não desativados, não esmaecidos) que apresenta quando nenhum carregamento está em curso
+1. WHILE the Content_Area is in Loading_State, THE Page_Navigation SHALL remain clickable and respond to user interactions without perceptible delay (within 100ms after click)
+2. WHEN the user initiates a new Page_Navigation while a previous navigation is still in Loading_State, THE Content_Area SHALL cancel loading of the previous navigation and immediately display the Loading_State corresponding to the new navigation, regardless of how many previous navigations are pending
+3. WHILE the Content_Area is in Loading_State, THE Page_Navigation SHALL display navigation elements in the same visual state (not disabled, not dimmed) as when no loading is in progress
 
-### Requisito 5: Acessibilidade dos estados de carregamento
+### Requirement 5: Accessibility of loading states
 
-**User Story:** Como utilizador com tecnologias assistivas, quero ser informado sobre estados de carregamento, para que saiba que conteúdo está a ser obtido.
+**User Story:** As a user with assistive technologies, I want to be informed about loading states, so that I know content is being fetched.
 
-#### Critérios de Aceitação
+#### Acceptance Criteria
 
-1. WHEN uma Page_Navigation é iniciada, THE Content_Area SHALL comunicar o estado de carregamento a tecnologias assistivas através do atributo aria-busy="true"
-2. THE Skeleton_Placeholder SHALL incluir um atributo aria-label que identifique o tipo de conteúdo em carregamento (por exemplo, "A carregar lista de projetos") e os seus elementos visuais decorativos SHALL ser ocultados de tecnologias assistivas através de aria-hidden="true"
-3. WHEN o conteúdo termina de carregar, THE Content_Area SHALL remover o atributo aria-busy para notificar tecnologias assistivas de que o conteúdo está disponível
-4. IF uma Page_Navigation falha ou não completa dentro de 30 segundos, THEN THE Content_Area SHALL definir aria-busy="false" e comunicar o estado de erro a tecnologias assistivas através de uma região aria-live
+1. WHEN a Page_Navigation is initiated, THE Content_Area SHALL communicate the loading state to assistive technologies via the aria-busy="true" attribute
+2. THE Skeleton_Placeholder SHALL include an aria-label attribute identifying the type of content being loaded (for example, "Loading project list") and its decorative visual elements SHALL be hidden from assistive technologies via aria-hidden="true"
+3. WHEN content finishes loading, THE Content_Area SHALL remove the aria-busy attribute to notify assistive technologies that content is available
+4. IF a Page_Navigation fails or does not complete within 30 seconds, THEN THE Content_Area SHALL set aria-busy="false" and communicate the error state to assistive technologies via an aria-live region
 
-### Requisito 6: Performance e limites temporais
+### Requirement 6: Performance and time limits
 
-**User Story:** Como utilizador, quero que os estados de carregamento não degradem a performance da aplicação, para que a experiência continue fluida.
+**User Story:** As a user, I want loading states not to degrade application performance, so that the experience remains smooth.
 
-#### Critérios de Aceitação
+#### Acceptance Criteria
 
-1. THE Loading_State SHALL utilizar exclusivamente animações CSS (não JavaScript) e manter uma taxa de renderização de pelo menos 60 frames por segundo durante a animação no Content_Area
-2. IF o Transition_Period exceder 10 segundos, THEN THE Loading_State SHALL apresentar uma mensagem informando o utilizador de que o carregamento está a demorar mais do que o esperado
-3. IF o Transition_Period exceder 30 segundos, THEN THE Loading_State SHALL apresentar uma opção que permita ao utilizador cancelar o carregamento ou tentar novamente a navegação
-4. WHILE o Loading_State estiver visível no Content_Area, THE Loading_State SHALL permanecer abaixo da Progress_Bar na hierarquia visual, sem sobrepor, ocultar ou interromper a animação da Progress_Bar existente
+1. THE Loading_State SHALL use exclusively CSS animations (not JavaScript) and maintain a rendering rate of at least 60 frames per second during animation in the Content_Area
+2. IF the Transition_Period exceeds 10 seconds, THEN THE Loading_State SHALL display a message informing the user that loading is taking longer than expected
+3. IF the Transition_Period exceeds 30 seconds, THEN THE Loading_State SHALL display an option allowing the user to cancel loading or retry navigation
+4. WHILE Loading_State is visible in the Content_Area, THE Loading_State SHALL remain below the Progress_Bar in the visual hierarchy, without overlapping, hiding, or interrupting the animation of the existing Progress_Bar

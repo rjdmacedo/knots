@@ -13,16 +13,17 @@ datasource db {
 }
 
 model Group {
-  id                String             @id
+  id                String                    @id
   name              String
-  information       String?            @db.Text
-  currency          String             @default("$")
+  information       String?                   @db.Text
+  currency          String                    @default("$")
   currencyCode      String?
   participants      Participant[]
   expenses          Expense[]
   activities        Activity[]
   pushSubscriptions PushSubscription[]
-  createdAt         DateTime           @default(now())
+  categoryMappings  ExpenseCategoryMapping[]
+  createdAt         DateTime                  @default(now())
 }
 
 model Participant {
@@ -35,10 +36,11 @@ model Participant {
 }
 
 model Category {
-  id       Int       @id @default(autoincrement())
-  grouping String
-  name     String
-  Expense  Expense[]
+  id               Int                      @id @default(autoincrement())
+  grouping         String
+  name             String
+  Expense          Expense[]
+  categoryMappings ExpenseCategoryMapping[]
 }
 
 model Expense {
@@ -160,4 +162,18 @@ model PushSubscription {
   @@unique([endpoint, groupId])
   @@index([groupId])
   @@index([endpoint])
+}
+
+model ExpenseCategoryMapping {
+  id              String   @id @default(cuid())
+  groupId         String
+  group           Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  normalizedTitle String
+  categoryId      Int
+  category        Category @relation(fields: [categoryId], references: [id])
+  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now())
+
+  @@unique([groupId, normalizedTitle])
+  @@index([groupId, normalizedTitle])
 }

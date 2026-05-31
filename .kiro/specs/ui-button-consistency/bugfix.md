@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Inconsistência visual e de acessibilidade nos botões da aplicação. O botão "Import from Splitwise" utiliza corretamente os componentes shadcn `Tooltip`/`TooltipTrigger`/`TooltipContent`, enquanto os demais botões de ícone (share, notifications, export, create expense, create from receipt, edit group) usam apenas o atributo HTML `title` ou não possuem tooltip algum. Além disso, o card de grupo no menu de contexto não possui a opção de ativar/desativar notificações.
+Visual and accessibility inconsistency in application buttons. The "Import from Splitwise" button correctly uses the shadcn `Tooltip`/`TooltipTrigger`/`TooltipContent` components, while the other icon buttons (share, notifications, export, create expense, create from receipt, edit group) use only the HTML `title` attribute or have no tooltip at all. In addition, the group card context menu does not include an option to enable/disable notifications.
 
 ## Bug Analysis
 

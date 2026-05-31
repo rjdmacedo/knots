@@ -4,6 +4,7 @@ import { deleteGroupExpenseProcedure } from '@/trpc/routers/groups/expenses/dele
 import { getGroupExpenseProcedure } from '@/trpc/routers/groups/expenses/get.procedure'
 import { importSplitwiseCSVProcedure } from '@/trpc/routers/groups/expenses/import.procedure'
 import { listGroupExpensesProcedure } from '@/trpc/routers/groups/expenses/list.procedure'
+import { lookupCategoryMappingProcedure } from '@/trpc/routers/groups/expenses/lookup-category.procedure'
 import { updateGroupExpenseProcedure } from '@/trpc/routers/groups/expenses/update.procedure'
 
 export const groupExpensesRouter = createTRPCRouter({
@@ -13,4 +14,5 @@ export const groupExpensesRouter = createTRPCRouter({
   update: updateGroupExpenseProcedure,
   delete: deleteGroupExpenseProcedure,
   importSplitwise: importSplitwiseCSVProcedure,
+  lookupCategory: lookupCategoryMappingProcedure,
 })

@@ -54,6 +54,7 @@ import {
   formatCurrency,
   getCurrencyFromGroup,
 } from '@/lib/utils'
+import { trpc } from '@/trpc/client'
 import { AppRouterOutput } from '@/trpc/routers/_app'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { RecurrenceRule } from '@prisma/client'
@@ -280,6 +281,7 @@ export function ExpenseForm({
   })
   const [isCategoryLoading, setCategoryLoading] = useState(false)
   const activeUserId = useActiveUser(group.id)
+  const utils = trpc.useUtils()
   const uploadPendingDocumentsRef = useRef<(() => Promise<void>) | null>(null)
   const deletePendingDocumentsRef = useRef<(() => Promise<void>) | null>(null)
 
@@ -510,6 +512,26 @@ export function ExpenseForm({
                       {...field}
                       onBlur={async () => {
                         field.onBlur() // avoid skipping other blur event listeners since we overwrite `field`
+
+                        // 1. Try lookup from category mapping (has priority over AI)
+                        try {
+                          if (field.value.trim().length > 0) {
+                            const { categoryId: mappedCategoryId } =
+                              await utils.groups.expenses.lookupCategory.fetch({
+                                groupId: group.id,
+                                title: field.value,
+                              })
+
+                            if (mappedCategoryId !== null) {
+                              form.setValue('category', mappedCategoryId)
+                              return
+                            }
+                          }
+                        } catch {
+                          // Silently fall through to existing behavior
+                        }
+
+                        // 2. Fallback to AI extraction (if enabled)
                         if (runtimeFeatureFlags.enableCategoryExtract) {
                           setCategoryLoading(true)
                           const { categoryId } = await extractCategoryFromTitle(
