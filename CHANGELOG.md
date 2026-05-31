@@ -1,3 +1,10 @@
+# [1.27.0](https://github.com/rjdmacedo/knots/compare/v1.26.0...v1.27.0) (2026-05-31)
+
+
+### Features
+
+* update task list with property test status and add category mapping tests ([e3941da](https://github.com/rjdmacedo/knots/commit/e3941da7fafcdefa5d26f6611ec7208f7e808267))
+
 # [1.26.0](https://github.com/rjdmacedo/knots/compare/v1.25.0...v1.26.0) (2026-05-31)
 
 
