@@ -1,3 +1,10 @@
+# [1.30.0](https://github.com/rjdmacedo/knots/compare/v1.29.0...v1.30.0) (2026-05-31)
+
+
+### Features
+
+* add new dependencies for visually hidden elements and deep merging ([2831188](https://github.com/rjdmacedo/knots/commit/2831188fa7e01b53aac72fea795ca5ea08cf52d4))
+
 # [1.29.0](https://github.com/rjdmacedo/knots/compare/v1.28.0...v1.29.0) (2026-05-31)
 
 
