@@ -1,3 +1,10 @@
+## [1.30.1](https://github.com/rjdmacedo/knots/compare/v1.30.0...v1.30.1) (2026-06-01)
+
+
+### Bug Fixes
+
+* build Docker image from release commit instead of stale version tag ([213d9c7](https://github.com/rjdmacedo/knots/commit/213d9c7c72cca7b70c7bb871f5cb4aa9ee823be5))
+
 # [1.30.0](https://github.com/rjdmacedo/knots/compare/v1.29.0...v1.30.0) (2026-05-31)
 
 
