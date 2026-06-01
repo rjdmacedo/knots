@@ -1,9 +1,10 @@
 /**
  * Email Service — handles email composition and delivery via Resend.
  * Sends verification, password reset, and invitation emails.
+ * Uses dynamic import to avoid loading Resend at build time.
  */
 
-import { Resend } from 'resend'
+import type { Resend } from 'resend'
 
 export interface EmailService {
   sendVerificationEmail(
@@ -37,12 +38,13 @@ function getFromAddress(): string {
 
 let resendClient: Resend | null = null
 
-function getResendClient(): Resend {
+async function getResendClient(): Promise<Resend> {
   if (!resendClient) {
     const apiKey = process.env.RESEND_API_KEY
     if (!apiKey) {
       throw new Error('[EmailService] RESEND_API_KEY is not set.')
     }
+    const { Resend } = await import('resend')
     resendClient = new Resend(apiKey)
   }
   return resendClient
@@ -147,7 +149,7 @@ export function buildInvitationEmailText(
 function createEmailService(): EmailService {
   return {
     async sendVerificationEmail(to, token) {
-      const resend = getResendClient()
+      const resend = await getResendClient()
       const from = getFromAddress()
       const subject = `Verify your email for ${APP_NAME}`
       const html = buildVerificationEmailHtml(token)
@@ -181,7 +183,7 @@ function createEmailService(): EmailService {
     },
 
     async sendPasswordResetEmail(to, token) {
-      const resend = getResendClient()
+      const resend = await getResendClient()
       const from = getFromAddress()
       const subject = `Reset your password for ${APP_NAME}`
       const html = buildPasswordResetEmailHtml(token)
@@ -215,7 +217,7 @@ function createEmailService(): EmailService {
     },
 
     async sendInvitationEmail(to, groupName, inviteLink) {
-      const resend = getResendClient()
+      const resend = await getResendClient()
       const from = getFromAddress()
       const subject = `You've been invited to join "${groupName}" on ${APP_NAME}`
       const html = buildInvitationEmailHtml(groupName, inviteLink)
