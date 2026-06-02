@@ -1,3 +1,10 @@
+# [1.35.0](https://github.com/rjdmacedo/knots/compare/v1.34.0...v1.35.0) (2026-06-02)
+
+
+### Features
+
+* add form ID for expense submission and link SubmitButton to form ([ed1d460](https://github.com/rjdmacedo/knots/commit/ed1d460d0548cbe490891cfcd34c4e16c2de7559))
+
 # [1.34.0](https://github.com/rjdmacedo/knots/compare/v1.33.0...v1.34.0) (2026-06-02)
 
 
