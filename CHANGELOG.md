@@ -1,3 +1,10 @@
+# [1.32.0](https://github.com/rjdmacedo/knots/compare/v1.31.0...v1.32.0) (2026-06-02)
+
+
+### Features
+
+* add Knots import, group archive/delete, and cancellable imports ([32b5995](https://github.com/rjdmacedo/knots/commit/32b5995501c9e4fb449ed486f5e69873b1d3b2bd))
+
 # [1.31.0](https://github.com/rjdmacedo/knots/compare/v1.30.1...v1.31.0) (2026-06-02)
 
 
