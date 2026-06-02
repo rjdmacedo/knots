@@ -28,10 +28,7 @@ export function NameChangeForm({ currentName }: { currentName: string }) {
   const t = useTranslations('ProfileSettings.NameForm')
 
   const nameChangeSchema = z.object({
-    name: z
-      .string()
-      .min(1, t('nameRequired'))
-      .max(100, t('nameMaxLength')),
+    name: z.string().min(1, t('nameRequired')).max(100, t('nameMaxLength')),
   })
 
   type NameChangeFormValues = z.infer<typeof nameChangeSchema>

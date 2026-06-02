@@ -51,9 +51,11 @@ export function usePushNotificationSubscription(
         if (cancelled || !subscription) return
 
         try {
-          const subscriptions = await utils.client.pushSubscriptions.list.query({
-            endpoint: subscription.endpoint,
-          })
+          const subscriptions = await utils.client.pushSubscriptions.list.query(
+            {
+              endpoint: subscription.endpoint,
+            },
+          )
           const groupSub = subscriptions.find((s) => s.groupId === groupId)
           if (groupSub) {
             setIsSubscribed(true)
@@ -151,40 +153,42 @@ export function usePushNotificationSubscription(
     [currentUserId, preferences, persistSubscription],
   )
 
-  const unsubscribe = useCallback(async (): Promise<PushNotificationErrorCode | null> => {
-    setIsLoading(true)
-    setError(null)
+  const unsubscribe =
+    useCallback(async (): Promise<PushNotificationErrorCode | null> => {
+      setIsLoading(true)
+      setError(null)
 
-    try {
-      const registration = await registerServiceWorker()
-      const subscription = await registration?.pushManager.getSubscription()
+      try {
+        const registration = await registerServiceWorker()
+        const subscription = await registration?.pushManager.getSubscription()
 
-      if (subscription) {
-        await deleteMutation.mutateAsync({
-          endpoint: subscription.endpoint,
-          groupId,
-        })
-        await subscription.unsubscribe()
+        if (subscription) {
+          await deleteMutation.mutateAsync({
+            endpoint: subscription.endpoint,
+            groupId,
+          })
+          await subscription.unsubscribe()
+        }
+
+        setIsSubscribed(false)
+        setPreferences(null)
+        return null
+      } catch (err) {
+        console.error('[push] Unsubscribe failed:', err)
+        setError('subscribeError')
+        return 'subscribeError'
+      } finally {
+        setIsLoading(false)
       }
+    }, [groupId, deleteMutation])
 
-      setIsSubscribed(false)
-      setPreferences(null)
-      return null
-    } catch (err) {
-      console.error('[push] Unsubscribe failed:', err)
-      setError('subscribeError')
-      return 'subscribeError'
-    } finally {
-      setIsLoading(false)
-    }
-  }, [groupId, deleteMutation])
-
-  const toggle = useCallback(async (): Promise<PushNotificationErrorCode | null> => {
-    if (isSubscribed) {
-      return unsubscribe()
-    }
-    return subscribe()
-  }, [isSubscribed, subscribe, unsubscribe])
+  const toggle =
+    useCallback(async (): Promise<PushNotificationErrorCode | null> => {
+      if (isSubscribed) {
+        return unsubscribe()
+      }
+      return subscribe()
+    }, [isSubscribed, subscribe, unsubscribe])
 
   const updatePreferences = useCallback(
     async (

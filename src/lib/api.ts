@@ -40,16 +40,26 @@ export async function createExpense(
   groupId: string,
 ): Promise<Expense> {
   const group = await getGroup(groupId)
-  if (!group) throw new TRPCError({ code: 'NOT_FOUND', message: `Group not found: ${groupId}` })
+  if (!group)
+    throw new TRPCError({
+      code: 'NOT_FOUND',
+      message: `Group not found: ${groupId}`,
+    })
 
   const memberIds = new Set(group.participants.map((p) => p.id))
 
   if (!memberIds.has(expenseFormValues.paidBy)) {
-    throw new TRPCError({ code: 'BAD_REQUEST', message: 'paidBy user is not a group member' })
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'paidBy user is not a group member',
+    })
   }
   for (const pf of expenseFormValues.paidFor) {
     if (!memberIds.has(pf.participant)) {
-      throw new TRPCError({ code: 'BAD_REQUEST', message: `User ${pf.participant} is not a group member` })
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: `User ${pf.participant} is not a group member`,
+      })
     }
   }
 
@@ -190,19 +200,33 @@ export async function updateExpense(
   userId?: string,
 ) {
   const group = await getGroup(groupId)
-  if (!group) throw new TRPCError({ code: 'NOT_FOUND', message: `Group not found: ${groupId}` })
+  if (!group)
+    throw new TRPCError({
+      code: 'NOT_FOUND',
+      message: `Group not found: ${groupId}`,
+    })
 
   const existingExpense = await getExpense(groupId, expenseId)
-  if (!existingExpense) throw new TRPCError({ code: 'NOT_FOUND', message: `Expense not found: ${expenseId}` })
+  if (!existingExpense)
+    throw new TRPCError({
+      code: 'NOT_FOUND',
+      message: `Expense not found: ${expenseId}`,
+    })
 
   const memberIds = new Set(group.participants.map((p) => p.id))
 
   if (!memberIds.has(expenseFormValues.paidBy)) {
-    throw new TRPCError({ code: 'BAD_REQUEST', message: 'paidBy user is not a group member' })
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'paidBy user is not a group member',
+    })
   }
   for (const pf of expenseFormValues.paidFor) {
     if (!memberIds.has(pf.participant)) {
-      throw new TRPCError({ code: 'BAD_REQUEST', message: `User ${pf.participant} is not a group member` })
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: `User ${pf.participant} is not a group member`,
+      })
     }
   }
 

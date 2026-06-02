@@ -35,7 +35,13 @@ export default async function ProfileSettingsPage() {
   return <ProfileSettingsContent email={profile.email} name={profile.name} />
 }
 
-function ProfileSettingsContent({ email, name }: { email: string; name: string }) {
+function ProfileSettingsContent({
+  email,
+  name,
+}: {
+  email: string
+  name: string
+}) {
   const t = useTranslations('ProfileSettings')
 
   return (

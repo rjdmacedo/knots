@@ -264,10 +264,7 @@ export function PushNotificationToggle({
                               const on = value === true
                               let nextIds = on
                                 ? Array.from(
-                                    new Set([
-                                      ...selectedMemberIds,
-                                      member.id,
-                                    ]),
+                                    new Set([...selectedMemberIds, member.id]),
                                   )
                                 : selectedMemberIds.filter(
                                     (id) => id !== member.id,

@@ -84,10 +84,7 @@ async function simulateCreateProcedure(input: {
 }) {
   const { groupId, expenseFormValues } = input
 
-  const expense = await (createExpense as jest.Mock)(
-    expenseFormValues,
-    groupId,
-  )
+  const expense = await (createExpense as jest.Mock)(expenseFormValues, groupId)
 
   // Upsert category mapping (secondary operation - must not block expense creation)
   try {

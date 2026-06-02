@@ -1,5 +1,4 @@
 import { prisma } from '@/lib/prisma'
-import { defaultPushPreferences } from '@/lib/push/subscription-filters'
 import { baseProcedure, createTRPCRouter } from '@/trpc/init'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
@@ -13,10 +12,9 @@ const preferencesSchema = z
     notifyOnUpdate: z.boolean(),
     notifyOnDelete: z.boolean(),
   })
-  .refine(
-    (p) => p.notifyAllMembers || p.includedUserIds.length > 0,
-    { message: 'Select at least one member.' },
-  )
+  .refine((p) => p.notifyAllMembers || p.includedUserIds.length > 0, {
+    message: 'Select at least one member.',
+  })
 
 const createInputSchema = z.object({
   endpoint: z.string().url().max(2048),
@@ -125,4 +123,3 @@ export const pushSubscriptionsRouter = createTRPCRouter({
     return subscriptions
   }),
 })
-

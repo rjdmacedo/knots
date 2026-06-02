@@ -170,7 +170,11 @@ describe('Push Subscriptions Router Property Tests', () => {
                   endpoint_groupId: { endpoint: string; groupId: string }
                 }
                 create: { subscriberUserId: string }
-                update: { p256dh: string; auth: string; subscriberUserId: string }
+                update: {
+                  p256dh: string
+                  auth: string
+                  subscriberUserId: string
+                }
               }
               expect(upsertArgs.where.endpoint_groupId).toEqual({
                 endpoint: input.endpoint,

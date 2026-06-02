@@ -25,7 +25,11 @@ export const leaveProcedure = protectedProcedure
     // If the user is the owner, check if there's another owner
     if (membership.role === MembershipRole.OWNER) {
       const otherOwners = await prisma.groupMembership.count({
-        where: { groupId, userId: { not: user.id }, role: MembershipRole.OWNER },
+        where: {
+          groupId,
+          userId: { not: user.id },
+          role: MembershipRole.OWNER,
+        },
       })
 
       if (otherOwners === 0) {

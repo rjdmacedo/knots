@@ -1,4 +1,4 @@
- import { getGroup, getGroupExpenseUserIds } from '@/lib/api'
+import { getGroup, getGroupExpenseUserIds } from '@/lib/api'
 import { baseProcedure } from '@/trpc/init'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'

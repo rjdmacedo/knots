@@ -1,5 +1,6 @@
 'use client'
 
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,7 +11,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -30,8 +30,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { trpc } from '@/trpc/client'
 import { usePushNotificationSubscription } from '@/lib/push/use-push-notification-subscription'
+import { trpc } from '@/trpc/client'
 import {
   AlertCircle,
   Bell,
@@ -77,9 +77,7 @@ export function MyGroups() {
       <MyGroupsLayout>
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            {t('loadError')}
-          </AlertDescription>
+          <AlertDescription>{t('loadError')}</AlertDescription>
         </Alert>
       </MyGroupsLayout>
     )
@@ -128,10 +126,7 @@ function GroupCard({
   const [leaveDialogOpen, setLeaveDialogOpen] = useState(false)
   const utils = trpc.useUtils()
   const pushConfigured = !!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
-  const notifications = usePushNotificationSubscription(
-    groupId,
-    currentUserId,
-  )
+  const notifications = usePushNotificationSubscription(groupId, currentUserId)
 
   const leaveGroup = trpc.groups.members.leave.useMutation({
     onSuccess: () => {
@@ -207,10 +202,10 @@ function GroupCard({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t('leaveGroupConfirmCancel')}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => leaveGroup.mutate({ groupId })}
-            >
+            <AlertDialogCancel>
+              {t('leaveGroupConfirmCancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={() => leaveGroup.mutate({ groupId })}>
               {t('leaveGroupConfirmAction')}
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -305,9 +300,7 @@ function CreateGroupDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('createGroupTitle')}</DialogTitle>
-          <DialogDescription>
-            {t('createGroupDescription')}
-          </DialogDescription>
+          <DialogDescription>{t('createGroupDescription')}</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="grid gap-4">
           {error && (

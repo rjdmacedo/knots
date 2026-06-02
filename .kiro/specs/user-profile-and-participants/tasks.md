@@ -1,4 +1,4 @@
-  # Implementation Plan: User Profile and Participants
+# Implementation Plan: User Profile and Participants
 
 ## Overview
 
@@ -15,19 +15,19 @@ This plan migrates the expense system from the standalone `Participant` model to
     - Use existing `hashPassword`, `verifyPassword` from `src/lib/auth/password.ts` and `validatePassword` from `src/lib/auth/password-validation.ts`
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 5.1, 5.2, 5.3_
 
-  - [ ]* 1.2 Write property tests for password change logic
+  - [ ]\* 1.2 Write property tests for password change logic
     - **Property 7: Password change updates hash correctly**
     - **Property 8: Incorrect current password rejection**
     - **Property 10: Same-password rejection**
     - **Property 11: Session invalidation on password change**
     - **Validates: Requirements 4.1, 4.2, 4.4, 4.5**
 
-  - [ ]* 1.3 Write property tests for name change logic
+  - [ ]\* 1.3 Write property tests for name change logic
     - **Property 12: Name update persistence with trimming**
     - **Property 13: Name length validation**
     - **Validates: Requirements 5.1, 5.2, 5.3**
 
-  - [ ]* 1.4 Write property test for password validation
+  - [ ]\* 1.4 Write property test for password validation
     - **Property 9: Password validation correctness**
     - **Validates: Requirements 4.3**
 
@@ -64,7 +64,7 @@ This plan migrates the expense system from the standalone `Participant` model to
     - Show success toast on success, display specific error messages on failure (mismatch, same password, invalid password)
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 6.4, 6.5, 6.6_
 
-  - [ ]* 3.4 Write unit tests for profile settings page
+  - [ ]\* 3.4 Write unit tests for profile settings page
     - Test that the page renders name and email
     - Test that success/error toasts display correctly
     - _Requirements: 6.1, 6.2, 6.5, 6.6_
@@ -95,7 +95,7 @@ This plan migrates the expense system from the standalone `Participant` model to
     - Update `ExpensePaidFor` `@@id` to `[expenseId, userId]`
     - _Requirements: 1.1, 1.2, 1.4_
 
-  - [ ]* 5.3 Write property tests for migration logic
+  - [ ]\* 5.3 Write property tests for migration logic
     - **Property 3: Migration correctly maps participants to users and updates all references**
     - **Property 4: Migration preserves expense data integrity**
     - **Validates: Requirements 2.1, 2.2, 2.4**
@@ -124,7 +124,7 @@ This plan migrates the expense system from the standalone `Participant` model to
     - Update `src/trpc/routers/groups/expenses/get.procedure.ts` and `list.procedure.ts` to join on User instead of Participant
     - _Requirements: 1.1, 1.2, 1.5_
 
-  - [ ]* 7.4 Write property tests for group membership queries and expense validation
+  - [ ]\* 7.4 Write property tests for group membership queries and expense validation
     - **Property 1: Group participants query returns exactly membership users**
     - **Property 2: Expense creation rejects non-members**
     - **Validates: Requirements 1.3, 1.5**
@@ -143,7 +143,7 @@ This plan migrates the expense system from the standalone `Participant` model to
     - Remove any logic that creates `Participant` records during group creation
     - _Requirements: 3.3_
 
-  - [ ]* 8.3 Write property test for group creator automatic membership
+  - [ ]\* 8.3 Write property test for group creator automatic membership
     - **Property 6: Group creator automatic membership**
     - **Validates: Requirements 3.3**
 
@@ -154,7 +154,7 @@ This plan migrates the expense system from the standalone `Participant` model to
     - Update the `expenseFormSchema` if needed — the `paidBy` and `paidFor[].participant` fields now reference User IDs
     - _Requirements: 3.4_
 
-  - [ ]* 9.2 Write unit tests for expense form member selection
+  - [ ]\* 9.2 Write unit tests for expense form member selection
     - Test that only group members appear as selectable options
     - Test that non-members cannot be selected
     - _Requirements: 3.4_

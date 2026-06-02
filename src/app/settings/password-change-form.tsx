@@ -58,17 +58,26 @@ export function PasswordChangeForm() {
     onError: (error) => {
       const message = error.message.toLowerCase()
 
-      if (message.includes('current password') || message.includes('mismatch')) {
+      if (
+        message.includes('current password') ||
+        message.includes('mismatch')
+      ) {
         form.setError('currentPassword', {
           type: 'manual',
           message: t('currentPasswordIncorrect'),
         })
-      } else if (message.includes('same password') || message.includes('same as')) {
+      } else if (
+        message.includes('same password') ||
+        message.includes('same as')
+      ) {
         form.setError('newPassword', {
           type: 'manual',
           message: t('newPasswordSameAsCurrent'),
         })
-      } else if (message.includes('invalid password') || message.includes('password requirements')) {
+      } else if (
+        message.includes('invalid password') ||
+        message.includes('password requirements')
+      ) {
         form.setError('newPassword', {
           type: 'manual',
           message: t('passwordRequirementsNotMet'),
@@ -179,10 +188,7 @@ export function PasswordChangeForm() {
           )}
         />
 
-        <Button
-          type="submit"
-          disabled={changePasswordMutation.isPending}
-        >
+        <Button type="submit" disabled={changePasswordMutation.isPending}>
           {changePasswordMutation.isPending ? (
             <>
               <Loader2 className="size-4 animate-spin" />

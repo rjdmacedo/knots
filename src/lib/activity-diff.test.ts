@@ -11,10 +11,7 @@ describe('computeExpenseChanges', () => {
     isReimbursement: false,
     notes: null,
     recurrenceRule: null,
-    paidFor: [
-      { userId: 'participant-1' },
-      { userId: 'participant-2' },
-    ],
+    paidFor: [{ userId: 'participant-1' }, { userId: 'participant-2' }],
   }
 
   const baseUpdated = {
@@ -84,10 +81,7 @@ describe('computeExpenseChanges', () => {
       const changes = computeExpenseChanges(
         {
           ...baseExpense,
-          paidFor: [
-            { userId: 'participant-2' },
-            { userId: 'participant-1' },
-          ],
+          paidFor: [{ userId: 'participant-2' }, { userId: 'participant-1' }],
         },
         {
           ...baseUpdated,

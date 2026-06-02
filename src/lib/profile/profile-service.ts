@@ -3,9 +3,9 @@
  * Uses existing auth utilities for password hashing/verification and validation.
  */
 
-import { prisma } from '@/lib/prisma'
 import { hashPassword, verifyPassword } from '@/lib/auth/password'
 import { validatePassword } from '@/lib/auth/password-validation'
+import { prisma } from '@/lib/prisma'
 
 export type ProfileError =
   | { code: 'INVALID_NAME'; message: string }
@@ -76,7 +76,10 @@ export async function changePassword(
   }
 
   // Verify current password
-  const isCurrentValid = await verifyPassword(currentPassword, user.passwordHash)
+  const isCurrentValid = await verifyPassword(
+    currentPassword,
+    user.passwordHash,
+  )
   if (!isCurrentValid) {
     return {
       ok: false,

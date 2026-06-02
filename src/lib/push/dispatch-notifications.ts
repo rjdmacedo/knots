@@ -66,8 +66,7 @@ export async function dispatchNotifications(
 
   // Resolve actor name from userId
   const actorName = extra.userId
-    ? group?.memberships?.find((m) => m.user.id === extra.userId)?.user
-        .name
+    ? group?.memberships?.find((m) => m.user.id === extra.userId)?.user.name
     : undefined
 
   let expenseTitle: string | undefined

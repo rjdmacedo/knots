@@ -74,7 +74,9 @@ sequenceDiagram
 export const profileRouter = createTRPCRouter({
   getProfile: protectedProcedure.query(/* ... */),
   changeName: protectedProcedure.input(changeNameSchema).mutation(/* ... */),
-  changePassword: protectedProcedure.input(changePasswordSchema).mutation(/* ... */),
+  changePassword: protectedProcedure
+    .input(changePasswordSchema)
+    .mutation(/* ... */),
 })
 ```
 
@@ -83,11 +85,14 @@ export const profileRouter = createTRPCRouter({
 ```typescript
 // src/lib/profile/profile-service.ts
 export interface ProfileService {
-  changeName(userId: string, newName: string): Promise<Result<void, ProfileError>>
+  changeName(
+    userId: string,
+    newName: string,
+  ): Promise<Result<void, ProfileError>>
   changePassword(
     userId: string,
     currentPassword: string,
-    newPassword: string
+    newPassword: string,
   ): Promise<Result<void, ProfileError>>
 }
 
@@ -120,15 +125,21 @@ export async function createExpense(
   userId: string, // authenticated user performing the action
 ): Promise<Expense> {
   const members = await getGroupMembers(groupId)
-  const memberIds = new Set(members.map(m => m.user.id))
+  const memberIds = new Set(members.map((m) => m.user.id))
 
   // Validate paidBy and all paidFor users are group members
   if (!memberIds.has(expenseFormValues.paidBy)) {
-    throw new TRPCError({ code: 'BAD_REQUEST', message: 'paidBy user is not a group member' })
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'paidBy user is not a group member',
+    })
   }
   for (const pf of expenseFormValues.paidFor) {
     if (!memberIds.has(pf.participant)) {
-      throw new TRPCError({ code: 'BAD_REQUEST', message: `User ${pf.participant} is not a group member` })
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: `User ${pf.participant} is not a group member`,
+      })
     }
   }
   // ... create expense with User references
@@ -252,83 +263,83 @@ WHERE epf."participantId" = p.id;
 
 ## Correctness Properties
 
-*A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+_A property is a characteristic or behavior that should hold true across all valid executions of a system — essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees._
 
 ### Property 1: Group participants query returns exactly membership users
 
-*For any* group with any set of GroupMembership records, querying the group's participants SHALL return exactly the set of Users who hold a GroupMembership for that group — no more, no fewer.
+_For any_ group with any set of GroupMembership records, querying the group's participants SHALL return exactly the set of Users who hold a GroupMembership for that group — no more, no fewer.
 
 **Validates: Requirements 1.3**
 
 ### Property 2: Expense creation rejects non-members
 
-*For any* expense creation attempt where the paidBy user or any paidFor user does NOT hold an active GroupMembership in the target group, the system SHALL reject the creation with a validation error.
+_For any_ expense creation attempt where the paidBy user or any paidFor user does NOT hold an active GroupMembership in the target group, the system SHALL reject the creation with a validation error.
 
 **Validates: Requirements 1.5**
 
 ### Property 3: Migration correctly maps participants to users and updates all references
 
-*For any* Participant record that has a corresponding User with a GroupMembership in the same group (matched by name), the migration SHALL update all Expense.paidById and ExpensePaidFor.participantId references from that Participant's ID to the matched User's ID.
+_For any_ Participant record that has a corresponding User with a GroupMembership in the same group (matched by name), the migration SHALL update all Expense.paidById and ExpensePaidFor.participantId references from that Participant's ID to the matched User's ID.
 
 **Validates: Requirements 2.1, 2.2**
 
 ### Property 4: Migration preserves expense data integrity
 
-*For any* expense in the database, after migration completes, the expense's amount, expenseDate, title, splitMode, isReimbursement, and all ExpensePaidFor.shares values SHALL be identical to their pre-migration values.
+_For any_ expense in the database, after migration completes, the expense's amount, expenseDate, title, splitMode, isReimbursement, and all ExpensePaidFor.shares values SHALL be identical to their pre-migration values.
 
 **Validates: Requirements 2.4**
 
 ### Property 5: Migration round-trip preserves state
 
-*For any* database state, applying the up-migration followed by the down-migration SHALL restore the Participant model and all original Expense/ExpensePaidFor references to their pre-migration values.
+_For any_ database state, applying the up-migration followed by the down-migration SHALL restore the Participant model and all original Expense/ExpensePaidFor references to their pre-migration values.
 
 **Validates: Requirements 2.5**
 
 ### Property 6: Group creator automatic membership
 
-*For any* authenticated user creating a new group, the system SHALL create a GroupMembership record linking that user to the new group, making them the first member.
+_For any_ authenticated user creating a new group, the system SHALL create a GroupMembership record linking that user to the new group, making them the first member.
 
 **Validates: Requirements 3.3**
 
 ### Property 7: Password change updates hash correctly
 
-*For any* valid current password and any valid new password (different from current), after a successful password change, verifying the new password against the stored hash SHALL succeed, and verifying the old password SHALL fail.
+_For any_ valid current password and any valid new password (different from current), after a successful password change, verifying the new password against the stored hash SHALL succeed, and verifying the old password SHALL fail.
 
 **Validates: Requirements 4.1**
 
 ### Property 8: Incorrect current password rejection
 
-*For any* password that does not match the user's current passwordHash, a password change request SHALL be rejected with a `CURRENT_PASSWORD_MISMATCH` error.
+_For any_ password that does not match the user's current passwordHash, a password change request SHALL be rejected with a `CURRENT_PASSWORD_MISMATCH` error.
 
 **Validates: Requirements 4.2**
 
 ### Property 9: Password validation correctness
 
-*For any* string, the password validator SHALL accept it if and only if it has at least 8 characters, at most 128 characters, contains at least one uppercase letter, at least one lowercase letter, and at least one digit.
+_For any_ string, the password validator SHALL accept it if and only if it has at least 8 characters, at most 128 characters, contains at least one uppercase letter, at least one lowercase letter, and at least one digit.
 
 **Validates: Requirements 4.3**
 
 ### Property 10: Same-password rejection
 
-*For any* valid password, attempting to change the password to the same value SHALL be rejected with a `SAME_PASSWORD` error.
+_For any_ valid password, attempting to change the password to the same value SHALL be rejected with a `SAME_PASSWORD` error.
 
 **Validates: Requirements 4.4**
 
 ### Property 11: Session invalidation on password change
 
-*For any* user with N active sessions (N ≥ 1), after a successful password change, all sessions except the current one SHALL be invalidated (deleted).
+_For any_ user with N active sessions (N ≥ 1), after a successful password change, all sessions except the current one SHALL be invalidated (deleted).
 
 **Validates: Requirements 4.5**
 
 ### Property 12: Name update persistence with trimming
 
-*For any* valid name string (1–100 characters after trimming), after a name update, the stored user name SHALL equal the trimmed version of the submitted name.
+_For any_ valid name string (1–100 characters after trimming), after a name update, the stored user name SHALL equal the trimmed version of the submitted name.
 
 **Validates: Requirements 5.1, 5.3**
 
 ### Property 13: Name length validation
 
-*For any* string that, after trimming, has length 0 or greater than 100, the name change request SHALL be rejected with an `INVALID_NAME` error.
+_For any_ string that, after trimming, has length 0 or greater than 100, the name change request SHALL be rejected with an `INVALID_NAME` error.
 
 **Validates: Requirements 5.2**
 
@@ -336,19 +347,19 @@ WHERE epf."participantId" = p.id;
 
 ### Profile Service Errors
 
-| Error Code | Condition | HTTP-equivalent |
-|---|---|---|
-| `CURRENT_PASSWORD_MISMATCH` | Supplied current password doesn't match stored hash | 400 |
-| `SAME_PASSWORD` | New password identical to current | 400 |
-| `INVALID_PASSWORD` | New password fails validation rules | 400 |
-| `INVALID_NAME` | Name empty or exceeds 100 chars after trim | 400 |
+| Error Code                  | Condition                                           | HTTP-equivalent |
+| --------------------------- | --------------------------------------------------- | --------------- |
+| `CURRENT_PASSWORD_MISMATCH` | Supplied current password doesn't match stored hash | 400             |
+| `SAME_PASSWORD`             | New password identical to current                   | 400             |
+| `INVALID_PASSWORD`          | New password fails validation rules                 | 400             |
+| `INVALID_NAME`              | Name empty or exceeds 100 chars after trim          | 400             |
 
 ### Expense Validation Errors
 
-| Error Code | Condition | HTTP-equivalent |
-|---|---|---|
-| `BAD_REQUEST` | paidBy or paidFor user is not a group member | 400 |
-| `NOT_FOUND` | Group does not exist | 404 |
+| Error Code    | Condition                                    | HTTP-equivalent |
+| ------------- | -------------------------------------------- | --------------- |
+| `BAD_REQUEST` | paidBy or paidFor user is not a group member | 400             |
+| `NOT_FOUND`   | Group does not exist                         | 404             |
 
 ### Migration Error Handling
 
@@ -370,11 +381,13 @@ WHERE epf."participantId" = p.id;
 The project uses Jest as its test runner. Property-based tests will use **fast-check** with a minimum of 100 iterations per property.
 
 Each property test will be tagged with a comment referencing the design property:
+
 ```
 // Feature: user-profile-and-participants, Property N: <property text>
 ```
 
 **Properties to implement:**
+
 - Properties 7–13 (profile service logic) — pure function tests against the ProfileService
 - Property 9 (password validation) — already partially covered, extend with PBT
 - Properties 1–2 (membership queries and expense validation) — test against in-memory or mocked Prisma

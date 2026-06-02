@@ -32,7 +32,15 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { trpc } from '@/trpc/client'
-import { Crown, LogOut, MoreVertical, Plus, ShieldMinus, ShieldPlus, Trash2 } from 'lucide-react'
+import {
+  Crown,
+  LogOut,
+  MoreVertical,
+  Plus,
+  ShieldMinus,
+  ShieldPlus,
+  Trash2,
+} from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -204,11 +212,7 @@ export function MembersManagement({ groupId, members, currentUserId }: Props) {
                 {isOwner && member.id !== currentUserId && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                      >
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
                         <MoreVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
