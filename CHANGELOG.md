@@ -1,3 +1,10 @@
+# [1.31.0](https://github.com/rjdmacedo/knots/compare/v1.30.1...v1.31.0) (2026-06-02)
+
+
+### Features
+
+* add group member management, profile settings, and participant-to-user migration ([b06d84d](https://github.com/rjdmacedo/knots/commit/b06d84db2c7b85b9dfc383d87e41b7567b9177d3))
+
 ## [1.30.1](https://github.com/rjdmacedo/knots/compare/v1.30.0...v1.30.1) (2026-06-01)
 
 
