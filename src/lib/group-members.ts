@@ -1,4 +1,6 @@
+import { upsertFriendByEmail } from '@/lib/friends'
 import { prisma } from '@/lib/prisma'
+import { isBlockedBy } from '@/lib/profile/block-check'
 import { MembershipRole } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 
@@ -9,15 +11,38 @@ export type AddGroupMemberResult = {
   createdMembership: boolean
 }
 
-export async function addGroupMember(input: {
+type AddGroupMemberInput = {
   groupId: string
-  email: string
-  name?: string
   requesterUserId: string
+  userId?: string
+  email?: string
+  name?: string
   /** When true, adding someone who is already a member succeeds silently. */
   idempotent?: boolean
-}): Promise<AddGroupMemberResult> {
-  const { groupId, email, name, requesterUserId, idempotent = false } = input
+  /** When adding by email, upsert into the caller's friends list. Defaults to true. */
+  upsertFriend?: boolean
+}
+
+export async function addGroupMember(
+  input: AddGroupMemberInput,
+): Promise<AddGroupMemberResult> {
+  const {
+    groupId,
+    requesterUserId,
+    name,
+    idempotent = false,
+    upsertFriend = true,
+  } = input
+
+  const hasUserId = !!input.userId
+  const hasEmail = !!input.email
+
+  if (hasUserId === hasEmail) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Exactly one of userId or email must be provided.',
+    })
+  }
 
   const callerMembership = await prisma.groupMembership.findUnique({
     where: { userId_groupId: { userId: requesterUserId, groupId } },
@@ -30,22 +55,46 @@ export async function addGroupMember(input: {
     })
   }
 
-  const normalizedEmail = email.toLowerCase().trim()
-
-  let targetUser = await prisma.user.findUnique({
-    where: { email: normalizedEmail },
-  })
-
+  let targetUser
   let createdUser = false
-  if (!targetUser) {
-    targetUser = await prisma.user.create({
-      data: {
-        name: name?.trim() || normalizedEmail.split('@')[0],
-        email: normalizedEmail,
-        passwordHash: '',
-      },
+
+  if (input.userId) {
+    targetUser = await prisma.user.findUnique({
+      where: { id: input.userId },
     })
-    createdUser = true
+
+    if (!targetUser) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'User not found.',
+      })
+    }
+  } else {
+    const normalizedEmail = input.email!.toLowerCase().trim()
+
+    targetUser = await prisma.user.findUnique({
+      where: { email: normalizedEmail },
+    })
+
+    if (!targetUser) {
+      targetUser = await prisma.user.create({
+        data: {
+          name: name?.trim() || normalizedEmail.split('@')[0],
+          email: normalizedEmail,
+          passwordHash: '',
+        },
+      })
+      createdUser = true
+    }
+
+    if (upsertFriend) {
+      await upsertFriendByEmail({
+        userId: requesterUserId,
+        email: normalizedEmail,
+        name: name?.trim() || targetUser.name,
+        friendUserId: targetUser.id,
+      })
+    }
   }
 
   const existingMembership = await prisma.groupMembership.findUnique({
@@ -65,6 +114,15 @@ export async function addGroupMember(input: {
     throw new TRPCError({
       code: 'CONFLICT',
       message: 'User is already a member of this group.',
+    })
+  }
+
+  // Check if the target user has blocked the requester — fail with generic error
+  const blocked = await isBlockedBy(requesterUserId, targetUser.id)
+  if (blocked) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Something went wrong. Please try again.',
     })
   }
 

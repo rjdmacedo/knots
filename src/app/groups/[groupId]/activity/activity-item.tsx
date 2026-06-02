@@ -12,18 +12,24 @@ import { ChevronRight } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useCurrentGroup } from '../current-group-context'
 import { ChangeList } from './change-list'
 
 export type Activity =
   AppRouterOutput['groups']['activities']['list']['activities'][number]
 
+export type ActivityGroup = Pick<
+  AppRouterOutput['activities']['list']['activities'][number]['group'],
+  'id' | 'name' | 'currency' | 'currencyCode' | 'participants'
+>
+
 type Props = {
   groupId: string
   activity: Activity
+  group: ActivityGroup
   participant?: { id: string; name: string }
   dateStyle: DateTimeStyle
   categories: Array<{ id: number; grouping: string; name: string }>
+  showGroupName?: boolean
 }
 
 function useSummary(activity: Activity, participantName?: string) {
@@ -53,13 +59,14 @@ function useSummary(activity: Activity, participantName?: string) {
 export function ActivityItem({
   groupId,
   activity,
+  group,
   participant,
   dateStyle,
   categories,
+  showGroupName,
 }: Props) {
   const router = useRouter()
   const locale = useLocale()
-  const { group } = useCurrentGroup()
 
   const expenseExists = activity.expense !== undefined
   const summary = useSummary(activity, participant?.name)
@@ -89,8 +96,19 @@ export function ActivityItem({
         </div>
       </div>
       <div className="flex-1">
+        {showGroupName && (
+          <div className="m-1 text-xs text-muted-foreground">
+            <Link
+              href={`/groups/${groupId}`}
+              className="hover:underline"
+              onClick={(event) => event.stopPropagation()}
+            >
+              {group.name}
+            </Link>
+          </div>
+        )}
         <div className="m-1">{summary}</div>
-        {hasChanges && group && (
+        {hasChanges && (
           <ChangeList
             changes={activity.changes}
             groupCurrency={getCurrencyFromGroup(group)}

@@ -8,7 +8,11 @@
     }
   },
   "Header": {
-    "groups": "Grups"
+    "navLabel": "Navegació principal",
+    "friends": "Amics",
+    "groups": "Grups",
+    "activities": "Activitat",
+    "profile": "Perfil"
   },
   "Expenses": {
     "title": "Despeses",
@@ -438,7 +442,10 @@
     "showLess": "Mostra menys",
     "yes": "Sí",
     "no": "No",
-    "fieldChangesCount": "{count} canvis de camps"
+    "fieldChangesCount": "{count} canvis de camps",
+    "globalTitle": "Activitat",
+    "globalDescription": "Resum de tota l'activitat de tots els teus grups.",
+    "globalNoActivity": "Encara no hi ha cap activitat als teus grups."
   },
   "Information": {
     "title": "Informació",
@@ -606,7 +613,9 @@
     "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
     "emailLabel": "Email",
     "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group."
+    "softCreateHint": "They can register later with this email to access the group.",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "ProfileSettings": {
     "title": "Configuració del perfil",
@@ -614,6 +623,13 @@
     "emailDescription": "La teva adreça de correu no es pot canviar.",
     "displayNameTitle": "Nom per mostrar",
     "passwordTitle": "Contrasenya",
+    "preferencesTitle": "Preferències",
+    "preferencesDescription": "Personalitza l'idioma i l'aparença.",
+    "languageLabel": "Idioma",
+    "themeLabel": "Tema",
+    "accountTitle": "Compte",
+    "signOut": "Tancar sessió",
+    "signingOut": "Tancant sessió…",
     "NameForm": {
       "nameRequired": "El nom és obligatori",
       "nameMaxLength": "El nom ha de tenir com a màxim 100 caràcters",
@@ -643,7 +659,92 @@
       "errorMissingUppercase": "Ha de contenir almenys una majúscula",
       "errorMissingLowercase": "Ha de contenir almenys una minúscula",
       "errorMissingDigit": "Ha de contenir almenys un dígit"
+    },
+    "blockedUsersTitle": "Usuaris bloquejats",
+    "blockedUsersDescription": "Gestiona els usuaris que has bloquejat. Els usuaris bloquejats no et poden afegir a grups ni enviar-te sol·licituds d'amistat.",
+    "Preferences": {
+      "timezoneLabel": "Zona horària",
+      "timezoneSelect": "Selecciona la zona horària…",
+      "timezoneSearch": "Cerca zona horària…",
+      "timezoneEmpty": "No s'ha trobat cap zona horària.",
+      "timezoneSaved": "Zona horària actualitzada.",
+      "currencyLabel": "Moneda per defecte",
+      "currencySaved": "Moneda per defecte actualitzada."
+    },
+    "SignOutAll": {
+      "button": "Tanca la sessió a tots els dispositius",
+      "dialogTitle": "Vols tancar la sessió a tots els dispositius?",
+      "dialogDescription": "Això finalitzarà totes les sessions actives, inclosa aquesta. Se us redirigirà a la pàgina d'inici de sessió.",
+      "cancel": "Cancel·lar",
+      "confirm": "Tanca la sessió a tot arreu",
+      "signingOut": "Tancant la sessió…",
+      "successToast": "S'han tancat totes les sessions."
+    },
+    "BlockedUsers": {
+      "manage": "Gestionar usuaris bloquejats",
+      "title": "Usuaris bloquejats",
+      "description": "Bloqueja usuaris seleccionant un amic o introduint la seva adreça de correu electrònic.",
+      "blockFriendLabel": "Bloquejar un amic",
+      "blockFriendPlaceholder": "Selecciona un amic per bloquejar…",
+      "or": "o bloquejar per correu electrònic",
+      "emailPlaceholder": "correu@exemple.com",
+      "block": "Bloquejar",
+      "unblock": "Desbloquejar",
+      "empty": "No has bloquejat ningú.",
+      "blockedToast": "Usuari bloquejat correctament.",
+      "unblockedToast": "Usuari desbloquejat.",
+      "confirmBlockTitle": "Bloquejar aquest amic?",
+      "confirmBlockDescription": "Bloquejar a {name} també el suprimirà de la teva llista d'amics. No rebrà cap notificació sobre el bloqueig.",
+      "confirmBlockCancel": "Cancel·lar",
+      "confirmBlockAction": "Bloquejar i suprimir amic"
     }
+  },
+  "Friends": {
+    "title": "Amics",
+    "description": "Desa les persones amb qui comparteixes despeses per afegir-les ràpidament als grups.",
+    "loading": "Carregant amics…",
+    "loadError": "No s'han pogut carregar els amics. Torna-ho a provar més tard.",
+    "listTitle": "Els teus amics",
+    "listDescription": "Els amics es poden afegir als grups per correu electrònic en crear o editar un grup.",
+    "empty": "Encara no has afegit cap amic.",
+    "hasAccount": "A Knots",
+    "noAccount": "Sense compte encara",
+    "pending": "Pendent",
+    "connected": "Connectat",
+    "addTitle": "Afegir amic",
+    "addDescription": "Introdueix la seva adreça de correu electrònic. Enviarem una invitació per connectar-se a Knots. Opcionalment, estableix un nom per mostrar.",
+    "addFriend": "Afegir amic",
+    "nameLabel": "Nom per mostrar (opcional)",
+    "namePlaceholder": "Com el dius",
+    "emailLabel": "Correu electrònic",
+    "emailPlaceholder": "email@exemple.com",
+    "add": "Afegir",
+    "adding": "Afegint…",
+    "cancel": "Cancel·lar",
+    "remove": "Eliminar",
+    "removeFriend": "Eliminar amic",
+    "removeFriendDescription": "Eliminar {name} de la llista d'amics? No serà eliminat de cap grup.",
+    "addedToast": "{name} afegit a la teva llista d'amics.",
+    "removedToast": "Amic eliminat.",
+    "requestsTitle": "Sol·licituds de connexió",
+    "requestsDescription": "Persones que t'han afegit a Knots. Accepta per afegir-les a la teva llista d'amics.",
+    "wantsToConnect": "Vol connectar amb tu",
+    "accept": "Acceptar",
+    "accepting": "Acceptant…",
+    "decline": "Rebutjar",
+    "acceptedToast": "{name} afegit a la teva llista d'amics.",
+    "declinedToast": "Sol·licitud de connexió rebutjada.",
+    "pickerTitle": "Select a friend",
+    "pickerPlaceholder": "Select a friend…",
+    "pickerSearch": "Search friends…",
+    "pickerEmpty": "No friends found.",
+    "pickerInvited": "Invited",
+    "addByEmail": "Add by email instead",
+    "useEmail": "Use this email",
+    "unblockDialogTitle": "Aquest usuari està bloquejat",
+    "unblockDialogDescription": "Has bloquejat a {email}. Per afegir-lo com a amic, primer l'has de desbloquejar.",
+    "unblockAndAdd": "Desbloquejar i afegir",
+    "unblocking": "Desbloquejant…"
   },
   "Members": {
     "addedToGroup": "{name} afegit al grup.",
@@ -660,7 +761,8 @@
     "leave": "Abandona",
     "removeFromGroup": "Elimina del grup",
     "promoteToOwner": "Promou a propietari",
-    "demoteToMember": "Degrada a membre"
+    "demoteToMember": "Degrada a membre",
+    "pickFriend": "Choose from your friends or enter an email."
   },
   "MyGroups": {
     "title": "Els meus grups",
@@ -773,7 +875,9 @@
       "invalidJson": "Fitxer JSON no vàlid.",
       "invalidFormat": "Aquest fitxer no és una exportació de Knots vàlida.",
       "noExpenses": "L'exportació no conté despeses."
-    }
+    },
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "GroupDangerZone": {
     "title": "Gestió del grup",

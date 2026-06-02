@@ -1,6 +1,6 @@
 /**
  * Email Service — handles email composition and delivery via Resend.
- * Sends verification, password reset, and invitation emails.
+ * Sends verification, password reset, group invitation, and friend invite emails.
  * Uses dynamic import to avoid loading Resend at build time.
  */
 
@@ -19,6 +19,12 @@ export interface EmailService {
     to: string,
     groupName: string,
     inviteLink: string,
+  ): Promise<{ ok: true } | { ok: false; error: string }>
+  sendFriendInviteEmail(
+    to: string,
+    inviterName: string,
+    inviteLink: string,
+    hasAccount: boolean,
   ): Promise<{ ok: true } | { ok: false; error: string }>
 }
 
@@ -146,6 +152,60 @@ export function buildInvitationEmailText(
   ].join('\n')
 }
 
+export function buildFriendInviteEmailHtml(
+  inviterName: string,
+  inviteLink: string,
+  hasAccount: boolean,
+): string {
+  if (hasAccount) {
+    return `
+    <h1>${inviterName} added you on ${APP_NAME}</h1>
+    <p>${inviterName} added you to their friends on ${APP_NAME} — a simple way to share expenses with friends and family.</p>
+    <p>Sign in to connect:</p>
+    <p><a href="${inviteLink}">Open ${APP_NAME}</a></p>
+    <p>If you do not know ${inviterName}, you can safely ignore this email.</p>
+  `.trim()
+  }
+
+  return `
+    <h1>Connect with ${inviterName} on ${APP_NAME}</h1>
+    <p>${inviterName} added you to their friends on ${APP_NAME} — a simple way to share expenses with friends and family.</p>
+    <p>Create your free account to connect:</p>
+    <p><a href="${inviteLink}">Join ${APP_NAME}</a></p>
+    <p>If you do not know ${inviterName}, you can safely ignore this email.</p>
+  `.trim()
+}
+
+export function buildFriendInviteEmailText(
+  inviterName: string,
+  inviteLink: string,
+  hasAccount: boolean,
+): string {
+  if (hasAccount) {
+    return [
+      `${inviterName} added you on ${APP_NAME}`,
+      '',
+      `${inviterName} added you to their friends on ${APP_NAME} — a simple way to share expenses with friends and family.`,
+      '',
+      `Sign in to connect:`,
+      inviteLink,
+      '',
+      `If you do not know ${inviterName}, you can safely ignore this email.`,
+    ].join('\n')
+  }
+
+  return [
+    `Connect with ${inviterName} on ${APP_NAME}`,
+    '',
+    `${inviterName} added you to their friends on ${APP_NAME} — a simple way to share expenses with friends and family.`,
+    '',
+    `Create your free account to connect:`,
+    inviteLink,
+    '',
+    `If you do not know ${inviterName}, you can safely ignore this email.`,
+  ].join('\n')
+}
+
 function createEmailService(): EmailService {
   return {
     async sendVerificationEmail(to, token) {
@@ -244,6 +304,48 @@ function createEmailService(): EmailService {
           err instanceof Error ? err.message : 'Unknown email delivery error'
         console.error(
           `[EmailService] Failed to send invitation email to ${to}:`,
+          message,
+        )
+        return { ok: false, error: message }
+      }
+    },
+
+    async sendFriendInviteEmail(to, inviterName, inviteLink, hasAccount) {
+      const resend = await getResendClient()
+      const from = getFromAddress()
+      const subject = `${inviterName} wants to connect with you on ${APP_NAME}`
+      const html = buildFriendInviteEmailHtml(
+        inviterName,
+        inviteLink,
+        hasAccount,
+      )
+      const text = buildFriendInviteEmailText(
+        inviterName,
+        inviteLink,
+        hasAccount,
+      )
+
+      try {
+        const { error } = await resend.emails.send({
+          from,
+          to,
+          subject,
+          html,
+          text,
+        })
+        if (error) {
+          console.error(
+            `[EmailService] Failed to send friend invite email to ${to}:`,
+            error,
+          )
+          return { ok: false, error: error.message }
+        }
+        return { ok: true }
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : 'Unknown email delivery error'
+        console.error(
+          `[EmailService] Failed to send friend invite email to ${to}:`,
           message,
         )
         return { ok: false, error: message }

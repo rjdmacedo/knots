@@ -487,6 +487,76 @@ export async function getActivities(
   }))
 }
 
+export async function getGlobalActivities(
+  userId: string,
+  options?: { offset?: number; length?: number },
+) {
+  const memberships = await prisma.groupMembership.findMany({
+    where: { userId },
+  })
+  const groupIds = memberships.map((membership) => membership.groupId)
+
+  if (groupIds.length === 0) {
+    return []
+  }
+
+  const activities = await prisma.activity.findMany({
+    where: { groupId: { in: groupIds } },
+    include: { changes: true },
+    orderBy: [{ time: 'desc' }],
+    skip: options?.offset,
+    take: options?.length,
+  })
+
+  const expenseIds = activities
+    .map((activity) => activity.expenseId)
+    .filter(Boolean) as string[]
+
+  const activityGroupIds = Array.from(
+    new Set(activities.map((activity) => activity.groupId)),
+  )
+
+  const [expenses, groups] = await Promise.all([
+    prisma.expense.findMany({
+      where: { id: { in: expenseIds } },
+    }),
+    prisma.group.findMany({
+      where: { id: { in: activityGroupIds } },
+      include: {
+        memberships: {
+          include: { user: { select: { id: true, name: true, email: true } } },
+        },
+      },
+    }),
+  ])
+
+  const groupMap = new Map(
+    groups.map((group) => [
+      group.id,
+      {
+        id: group.id,
+        name: group.name,
+        currency: group.currency,
+        currencyCode: group.currencyCode,
+        participants: group.memberships.map((membership) => ({
+          id: membership.user.id,
+          name: membership.user.name,
+          email: membership.user.email,
+        })),
+      },
+    ]),
+  )
+
+  return activities.map((activity) => ({
+    ...activity,
+    expense:
+      activity.expenseId !== null
+        ? expenses.find((expense) => expense.id === activity.expenseId)
+        : undefined,
+    group: groupMap.get(activity.groupId)!,
+  }))
+}
+
 export async function logActivity(
   groupId: string,
   activityType: ActivityType,

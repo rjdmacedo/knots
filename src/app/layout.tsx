@@ -1,20 +1,15 @@
 import { ApplePwaSplash } from '@/app/apple-pwa-splash'
+import { AppHeader } from '@/components/app-header'
 import { Footer } from '@/components/footer'
-import { KnotsLogo } from '@/components/knots-logo'
-import { LocaleSwitcher } from '@/components/locale-switcher'
 import { ProgressBar } from '@/components/progress-bar'
 import { ThemeProvider } from '@/components/theme-provider'
-import { ThemeToggle } from '@/components/theme-toggle'
-import { Button } from '@/components/ui/button'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { UserMenu } from '@/components/user-menu'
 import { auth } from '@/lib/auth/auth'
 import { env } from '@/lib/env'
 import { TRPCProvider } from '@/trpc/client'
 import type { Metadata, Viewport } from 'next'
-import { NextIntlClientProvider, useTranslations } from 'next-intl'
+import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
-import Link from 'next/link'
 import { Suspense } from 'react'
 import { Toaster } from 'sonner'
 import './globals.css'
@@ -69,48 +64,15 @@ export const viewport: Viewport = {
 
 function Content({
   children,
-  user,
+  isAuthenticated,
 }: {
   children: React.ReactNode
-  user?: { name?: string | null; email?: string | null }
+  isAuthenticated: boolean
 }) {
-  const t = useTranslations()
   return (
     <TRPCProvider>
       <TooltipProvider>
-        <header className="flex items-center fixed top-0 left-0 right-0 h-16 bg-background/50 border-b backdrop-blur-xs z-50">
-          <div className="container flex justify-between">
-            <Link
-              className="flex items-center gap-2 hover:scale-105 transition-transform"
-              href="/"
-            >
-              <span className="flex items-center">
-                <KnotsLogo />
-                <span className="ml-2 font-semibold text-xl tracking-tight">
-                  Knots
-                </span>
-              </span>
-            </Link>
-            <div role="navigation" aria-label="Menu" className="flex">
-              <ul className="flex items-center text-sm">
-                <li>
-                  <Button variant="ghost" size="sm" asChild className="-my-3">
-                    <Link href="/groups">{t('Header.groups')}</Link>
-                  </Button>
-                </li>
-                <li>
-                  <LocaleSwitcher />
-                </li>
-                <li>
-                  <ThemeToggle />
-                </li>
-                <li>
-                  <UserMenu name={user?.name} email={user?.email} />
-                </li>
-              </ul>
-            </div>
-          </div>
-        </header>
+        <AppHeader isAuthenticated={isAuthenticated} />
         <div className="flex-1 overflow-y-auto py-16">
           <main className="flex flex-col min-h-full py-4">{children}</main>
         </div>
@@ -144,7 +106,7 @@ export default async function RootLayout({
             <Suspense>
               <ProgressBar />
             </Suspense>
-            <Content user={session?.user}>{children}</Content>
+            <Content isAuthenticated={!!session?.user}>{children}</Content>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

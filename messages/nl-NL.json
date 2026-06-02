@@ -8,7 +8,11 @@
     }
   },
   "Header": {
-    "groups": "Groepen"
+    "navLabel": "Hoofdnavigatie",
+    "friends": "Vrienden",
+    "groups": "Groepen",
+    "activities": "Activiteiten",
+    "profile": "Profiel"
   },
   "Expenses": {
     "title": "Uitgaven",
@@ -438,7 +442,10 @@
     "showLess": "Minder tonen",
     "yes": "Ja",
     "no": "Nee",
-    "fieldChangesCount": "{count} veldwijzigingen"
+    "fieldChangesCount": "{count} veldwijzigingen",
+    "globalTitle": "Activiteit",
+    "globalDescription": "Overzicht van alle activiteiten in jouw groepen.",
+    "globalNoActivity": "Er is nog geen activiteit in je groepen."
   },
   "Information": {
     "title": "Informatie",
@@ -606,7 +613,9 @@
     "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
     "emailLabel": "Email",
     "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group."
+    "softCreateHint": "They can register later with this email to access the group.",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "ProfileSettings": {
     "title": "Profielinstellingen",
@@ -614,6 +623,13 @@
     "emailDescription": "Je e-mailadres kan niet worden gewijzigd.",
     "displayNameTitle": "Weergavenaam",
     "passwordTitle": "Wachtwoord",
+    "preferencesTitle": "Voorkeuren",
+    "preferencesDescription": "Pas taal en weergave aan.",
+    "languageLabel": "Taal",
+    "themeLabel": "Thema",
+    "accountTitle": "Account",
+    "signOut": "Uitloggen",
+    "signingOut": "Uitloggen…",
     "NameForm": {
       "nameRequired": "Naam is verplicht",
       "nameMaxLength": "Naam mag maximaal 100 tekens bevatten",
@@ -643,7 +659,92 @@
       "errorMissingUppercase": "Moet minstens één hoofdletter bevatten",
       "errorMissingLowercase": "Moet minstens één kleine letter bevatten",
       "errorMissingDigit": "Moet minstens één cijfer bevatten"
+    },
+    "blockedUsersTitle": "Geblokkeerde gebruikers",
+    "blockedUsersDescription": "Beheer de gebruikers die je hebt geblokkeerd. Geblokkeerde gebruikers kunnen je niet toevoegen aan groepen of vriendschapsverzoeken sturen.",
+    "Preferences": {
+      "timezoneLabel": "Tijdzone",
+      "timezoneSelect": "Selecteer tijdzone…",
+      "timezoneSearch": "Zoek tijdzone…",
+      "timezoneEmpty": "Geen tijdzone gevonden.",
+      "timezoneSaved": "Tijdzone bijgewerkt.",
+      "currencyLabel": "Standaard valuta",
+      "currencySaved": "Standaard valuta bijgewerkt."
+    },
+    "SignOutAll": {
+      "button": "Meld af op alle apparaten",
+      "dialogTitle": "Afmelden op alle apparaten?",
+      "dialogDescription": "Dit beëindigt alle actieve sessies, inclusief deze. Je wordt doorgestuurd naar de inlogpagina.",
+      "cancel": "Annuleren",
+      "confirm": "Overal afmelden",
+      "signingOut": "Afmelden…",
+      "successToast": "Alle sessies zijn beëindigd."
+    },
+    "BlockedUsers": {
+      "manage": "Geblokkeerde gebruikers beheren",
+      "title": "Geblokkeerde gebruikers",
+      "description": "Blokkeer gebruikers door een vriend te selecteren of hun e-mailadres in te voeren.",
+      "blockFriendLabel": "Een vriend blokkeren",
+      "blockFriendPlaceholder": "Selecteer een vriend om te blokkeren…",
+      "or": "of blokkeer via e-mail",
+      "emailPlaceholder": "naam@voorbeeld.nl",
+      "block": "Blokkeren",
+      "unblock": "Deblokkeren",
+      "empty": "Je hebt niemand geblokkeerd.",
+      "blockedToast": "Gebruiker succesvol geblokkeerd.",
+      "unblockedToast": "Gebruiker gedeblokkeerd.",
+      "confirmBlockTitle": "Deze vriend blokkeren?",
+      "confirmBlockDescription": "Het blokkeren van {name} verwijdert deze persoon ook uit je vriendenlijst. Diegene krijgt hier geen melding van.",
+      "confirmBlockCancel": "Annuleren",
+      "confirmBlockAction": "Blokkeren en vriend verwijderen"
     }
+  },
+  "Friends": {
+    "title": "Vrienden",
+    "description": "Bewaar mensen met wie je kosten deelt, zodat je ze snel aan groepen kunt toevoegen.",
+    "loading": "Vrienden laden…",
+    "loadError": "Vrienden laden mislukt. Probeer het later opnieuw.",
+    "listTitle": "Je vrienden",
+    "listDescription": "Vrienden kunnen per e-mail aan groepen worden toegevoegd bij het maken of bewerken van een groep.",
+    "empty": "Je hebt nog geen vrienden toegevoegd.",
+    "hasAccount": "Op Knots",
+    "noAccount": "Nog geen account",
+    "pending": "In afwachting",
+    "connected": "Verbonden",
+    "addTitle": "Vriend toevoegen",
+    "addDescription": "Voer hun e-mailadres in. We sturen een uitnodiging om te verbinden op Knots. Je kunt optioneel een weergavenaam instellen.",
+    "addFriend": "Vriend toevoegen",
+    "nameLabel": "Weergavenaam (optioneel)",
+    "namePlaceholder": "Hoe je ze noemt",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "email@voorbeeld.nl",
+    "add": "Toevoegen",
+    "adding": "Bezig met toevoegen…",
+    "cancel": "Annuleren",
+    "remove": "Verwijderen",
+    "removeFriend": "Vriend verwijderen",
+    "removeFriendDescription": "{name} uit je vriendenlijst verwijderen? Ze worden uit geen enkele groep verwijderd.",
+    "addedToast": "{name} toegevoegd aan je vriendenlijst.",
+    "removedToast": "Vriend verwijderd.",
+    "requestsTitle": "Verbindingsverzoeken",
+    "requestsDescription": "Mensen die je hebben toegevoegd op Knots. Accepteer om ze aan je vriendenlijst toe te voegen.",
+    "wantsToConnect": "Wil met je verbinden",
+    "accept": "Accepteren",
+    "accepting": "Bezig met accepteren…",
+    "decline": "Weigeren",
+    "acceptedToast": "{name} toegevoegd aan je vriendenlijst.",
+    "declinedToast": "Verbindingsverzoek geweigerd.",
+    "pickerTitle": "Select a friend",
+    "pickerPlaceholder": "Select a friend…",
+    "pickerSearch": "Search friends…",
+    "pickerEmpty": "No friends found.",
+    "pickerInvited": "Invited",
+    "addByEmail": "Add by email instead",
+    "useEmail": "Use this email",
+    "unblockDialogTitle": "Deze gebruiker is geblokkeerd",
+    "unblockDialogDescription": "Je hebt {email} geblokkeerd. Om deze persoon als vriend toe te voegen, moet je deze eerst deblokkeren.",
+    "unblockAndAdd": "Deblokkeren en toevoegen",
+    "unblocking": "Deblokkeren…"
   },
   "Members": {
     "addedToGroup": "{name} toegevoegd aan de groep.",
@@ -660,7 +761,8 @@
     "leave": "Verlaten",
     "removeFromGroup": "Uit groep verwijderen",
     "promoteToOwner": "Bevorderen tot eigenaar",
-    "demoteToMember": "Degraderen tot lid"
+    "demoteToMember": "Degraderen tot lid",
+    "pickFriend": "Choose from your friends or enter an email."
   },
   "MyGroups": {
     "title": "Mijn groepen",
@@ -773,7 +875,9 @@
       "invalidJson": "Ongeldig JSON-bestand.",
       "invalidFormat": "Dit bestand is geen geldige Knots-export.",
       "noExpenses": "De export bevat geen uitgaven."
-    }
+    },
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "GroupDangerZone": {
     "title": "Groepsbeheer",

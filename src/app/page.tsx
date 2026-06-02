@@ -9,7 +9,7 @@ import Link from 'next/link'
 export default function HomePage() {
   const t = useTranslations()
   return (
-    <main>
+    <div>
       <section className="py-16 md:py-24 lg:py-32">
         <div className="container flex max-w-[var(--breakpoint-md)] flex-col items-center gap-4 text-center">
           <h1 className="!leading-none font-bold text-2xl sm:text-3xl md:text-4xl lg:text-5xl landing-header py-2">
@@ -35,6 +35,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   )
 }

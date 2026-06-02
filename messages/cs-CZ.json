@@ -8,7 +8,11 @@
     }
   },
   "Header": {
-    "groups": "Skupiny"
+    "navLabel": "Hlavní navigace",
+    "friends": "Přátelé",
+    "groups": "Skupiny",
+    "activities": "Aktivity",
+    "profile": "Profil"
   },
   "Expenses": {
     "title": "Výdaje",
@@ -438,7 +442,10 @@
     "showLess": "Zobrazit méně",
     "yes": "Ano",
     "no": "Ne",
-    "fieldChangesCount": "{count} změn polí"
+    "fieldChangesCount": "{count} změn polí",
+    "globalTitle": "Aktivita",
+    "globalDescription": "Přehled veškeré aktivity ve všech vašich skupinách.",
+    "globalNoActivity": "Ve vašich skupinách zatím není žádná aktivita."
   },
   "Information": {
     "title": "Informace",
@@ -606,7 +613,9 @@
     "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
     "emailLabel": "Email",
     "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group."
+    "softCreateHint": "They can register later with this email to access the group.",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "ProfileSettings": {
     "title": "Nastavení profilu",
@@ -614,6 +623,13 @@
     "emailDescription": "Vaši e-mailovou adresu nelze změnit.",
     "displayNameTitle": "Zobrazované jméno",
     "passwordTitle": "Heslo",
+    "preferencesTitle": "Předvolby",
+    "preferencesDescription": "Přizpůsobte jazyk a vzhled.",
+    "languageLabel": "Jazyk",
+    "themeLabel": "Motiv",
+    "accountTitle": "Účet",
+    "signOut": "Odhlásit se",
+    "signingOut": "Odhlašování…",
     "NameForm": {
       "nameRequired": "Jméno je povinné",
       "nameMaxLength": "Jméno může mít maximálně 100 znaků",
@@ -643,7 +659,92 @@
       "errorMissingUppercase": "Musí obsahovat alespoň jedno velké písmeno",
       "errorMissingLowercase": "Musí obsahovat alespoň jedno malé písmeno",
       "errorMissingDigit": "Musí obsahovat alespoň jednu číslici"
+    },
+    "blockedUsersTitle": "Blokovaní uživatelé",
+    "blockedUsersDescription": "Správa uživatelů, které jste zablokovali. Blokovaní uživatelé vás nemohou přidávat do skupin ani vám posílat žádosti o přátelství.",
+    "Preferences": {
+      "timezoneLabel": "Časové pásmo",
+      "timezoneSelect": "Vybrat časové pásmo…",
+      "timezoneSearch": "Hledat časové pásmo…",
+      "timezoneEmpty": "Nebylo nalezeno žádné časové pásmo.",
+      "timezoneSaved": "Časové pásmo bylo aktualizováno.",
+      "currencyLabel": "Výchozí měna",
+      "currencySaved": "Výchozí měna byla aktualizována."
+    },
+    "SignOutAll": {
+      "button": "Odhlásit se ze všech zařízení",
+      "dialogTitle": "Odhlásit se ze všech zařízení?",
+      "dialogDescription": "Tímto ukončíte všechny aktivní relace, včetně této. Budete přesměrováni na přihlašovací stránku.",
+      "cancel": "Zrušit",
+      "confirm": "Odhlásit se všude",
+      "signingOut": "Odhlašování…",
+      "successToast": "Všechny relace byly ukončeny."
+    },
+    "BlockedUsers": {
+      "manage": "Spravovat blokované uživatele",
+      "title": "Blokovaní uživatelé",
+      "description": "Zablokujte uživatele výběrem ze svých přátel nebo zadáním jejich e-mailové adresy.",
+      "blockFriendLabel": "Zablokovat přítele",
+      "blockFriendPlaceholder": "Vyberte přítele, kterého chcete zablokovat…",
+      "or": "nebo zablokovat pomocí e-mailu",
+      "emailPlaceholder": "jmeno@priklad.cz",
+      "block": "Zablokovat",
+      "unblock": "Odblokovat",
+      "empty": "Nikoho jste nezablokovali.",
+      "blockedToast": "Uživatel byl úspěšně zablokován.",
+      "unblockedToast": "Uživatel byl odblokován.",
+      "confirmBlockTitle": "Zablokovat tohoto přítele?",
+      "confirmBlockDescription": "Zablokováním uživatele {name} jej také odeberete ze seznamu přátel. O zablokování nebude informován.",
+      "confirmBlockCancel": "Zrušit",
+      "confirmBlockAction": "Zablokovat a odeberte přítele"
     }
+  },
+  "Friends": {
+    "title": "Přátelé",
+    "description": "Uložte si lidi, se kterými sdílíte výdaje, abyste je mohli rychle přidat do skupin.",
+    "loading": "Načítání přátel…",
+    "loadError": "Nepodařilo se načíst přátele. Zkuste to prosím později.",
+    "listTitle": "Vaši přátelé",
+    "listDescription": "Přátele lze přidat do skupin e-mailem při vytváření nebo úpravě skupiny.",
+    "empty": "Zatím jste nepřidali žádné přátele.",
+    "hasAccount": "Na Knots",
+    "noAccount": "Zatím bez účtu",
+    "pending": "Čeká",
+    "connected": "Propojeno",
+    "addTitle": "Přidat přítele",
+    "addDescription": "Zadejte e-mailovou adresu. Pošleme pozvánku ke spojení v Knots. Volitelně můžete nastavit zobrazované jméno.",
+    "addFriend": "Přidat přítele",
+    "nameLabel": "Zobrazované jméno (volitelné)",
+    "namePlaceholder": "Jak je oslovujete",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "email@priklad.cz",
+    "add": "Přidat",
+    "adding": "Přidávání…",
+    "cancel": "Zrušit",
+    "remove": "Odebrat",
+    "removeFriend": "Odebrat přítele",
+    "removeFriendDescription": "Odebrat {name} ze seznamu přátel? Nebude odebrán ze žádné skupiny.",
+    "addedToast": "{name} přidán do seznamu přátel.",
+    "removedToast": "Přítel odebrán.",
+    "requestsTitle": "Žádosti o propojení",
+    "requestsDescription": "Lidé, kteří vás přidali v Knots. Přijměte je a přidají se do seznamu přátel.",
+    "wantsToConnect": "Chce se s vámi propojit",
+    "accept": "Přijmout",
+    "accepting": "Přijímání…",
+    "decline": "Odmítnout",
+    "acceptedToast": "{name} přidán do seznamu přátel.",
+    "declinedToast": "Žádost o propojení odmítnuta.",
+    "pickerTitle": "Select a friend",
+    "pickerPlaceholder": "Select a friend…",
+    "pickerSearch": "Search friends…",
+    "pickerEmpty": "No friends found.",
+    "pickerInvited": "Invited",
+    "addByEmail": "Add by email instead",
+    "useEmail": "Use this email",
+    "unblockDialogTitle": "Tento uživatel je blokován",
+    "unblockDialogDescription": "Zablokovali jste uživatele {email}. Chcete-li si jej přidat do přátel, musíte jej nejprve odblokovat.",
+    "unblockAndAdd": "Odblokovat a přidat",
+    "unblocking": "Odblokovávání…"
   },
   "Members": {
     "addedToGroup": "{name} přidán do skupiny.",
@@ -660,7 +761,8 @@
     "leave": "Opustit",
     "removeFromGroup": "Odebrat ze skupiny",
     "promoteToOwner": "Povýšit na vlastníka",
-    "demoteToMember": "Degradovat na člena"
+    "demoteToMember": "Degradovat na člena",
+    "pickFriend": "Choose from your friends or enter an email."
   },
   "MyGroups": {
     "title": "Moje skupiny",
@@ -773,7 +875,9 @@
       "invalidJson": "Neplatný soubor JSON.",
       "invalidFormat": "Tento soubor není platný export Knots.",
       "noExpenses": "Export neobsahuje žádné výdaje."
-    }
+    },
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "GroupDangerZone": {
     "title": "Správa skupiny",

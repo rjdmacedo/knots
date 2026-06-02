@@ -5,6 +5,7 @@
  */
 import { groupService } from '@/lib/auth/group-service'
 import { invitationService } from '@/lib/auth/invitation-service'
+import { isBlockedByEmail } from '@/lib/profile/block-check'
 import { createTRPCRouter, protectedProcedure } from '@/trpc/init'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
@@ -54,6 +55,15 @@ export const groupMembershipRouter = createTRPCRouter({
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: 'You are not a member of this group.',
+        })
+      }
+
+      // If the invitee has blocked the inviter, fail with a generic error
+      const blocked = await isBlockedByEmail(ctx.user.id, input.email)
+      if (blocked) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Something went wrong. Please try again.',
         })
       }
 

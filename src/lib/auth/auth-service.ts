@@ -96,6 +96,17 @@ const placeholderEmailService: EmailService = {
     )
     return { ok: true as const }
   },
+  async sendFriendInviteEmail(
+    to: string,
+    inviterName: string,
+    _inviteLink: string,
+    hasAccount: boolean,
+  ) {
+    console.log(
+      `[EmailService] Would send friend invite email to ${to} from ${inviterName} (hasAccount=${hasAccount})`,
+    )
+    return { ok: true as const }
+  },
 }
 
 function createAuthService(emailService: EmailService): AuthService {

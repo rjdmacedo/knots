@@ -8,7 +8,11 @@
     }
   },
   "Header": {
-    "groups": "グループ"
+    "navLabel": "メインナビゲーション",
+    "friends": "友達",
+    "groups": "グループ",
+    "activities": "アクティビティ",
+    "profile": "プロフィール"
   },
   "Expenses": {
     "title": "支出",
@@ -438,7 +442,10 @@
     "showLess": "折りたたむ",
     "yes": "はい",
     "no": "いいえ",
-    "fieldChangesCount": "{count} 件のフィールド変更"
+    "fieldChangesCount": "{count} 件のフィールド変更",
+    "globalTitle": "アクティビティ",
+    "globalDescription": "すべてのグループのアクティビティ概要。",
+    "globalNoActivity": "グループにはまだアクティビティがありません。"
   },
   "Information": {
     "title": "情報",
@@ -606,7 +613,9 @@
     "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
     "emailLabel": "Email",
     "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group."
+    "softCreateHint": "They can register later with this email to access the group.",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "ProfileSettings": {
     "title": "プロフィール設定",
@@ -614,6 +623,13 @@
     "emailDescription": "メールアドレスは変更できません。",
     "displayNameTitle": "表示名",
     "passwordTitle": "パスワード",
+    "preferencesTitle": "設定",
+    "preferencesDescription": "言語と外観をカスタマイズします。",
+    "languageLabel": "言語",
+    "themeLabel": "テーマ",
+    "accountTitle": "アカウント",
+    "signOut": "サインアウト",
+    "signingOut": "サインアウト中…",
     "NameForm": {
       "nameRequired": "名前は必須です",
       "nameMaxLength": "名前は100文字以内にしてください",
@@ -643,7 +659,92 @@
       "errorMissingUppercase": "大文字を1文字以上含めてください",
       "errorMissingLowercase": "小文字を1文字以上含めてください",
       "errorMissingDigit": "数字を1文字以上含めてください"
+    },
+    "blockedUsersTitle": "ブロックしたユーザー",
+    "blockedUsersDescription": "ブロックしたユーザーを管理します。ブロックされたユーザーは、あなたをグループに追加したり、友達リクエストを送信したりできなくなります。",
+    "Preferences": {
+      "timezoneLabel": "タイムゾーン",
+      "timezoneSelect": "タイムゾーンを選択…",
+      "timezoneSearch": "タイムゾーンを検索…",
+      "timezoneEmpty": "タイムゾーンが見つかりません。",
+      "timezoneSaved": "タイムゾーンが更新されました。",
+      "currencyLabel": "デフォルトの通貨",
+      "currencySaved": "デフォルトの通貨が更新されました。"
+    },
+    "SignOutAll": {
+      "button": "すべてのデバイスからサインアウト",
+      "dialogTitle": "すべてのデバイスからサインアウトしますか？",
+      "dialogDescription": "これにより、このセッションを含むすべてのアクティブなセッションが終了します。ログインページにリダイレクトされます。",
+      "cancel": "キャンセル",
+      "confirm": "すべての場所からサインアウト",
+      "signingOut": "サインアウトしています…",
+      "successToast": "すべてのセッションが終了しました。"
+    },
+    "BlockedUsers": {
+      "manage": "ブロックしたユーザーの管理",
+      "title": "ブロックしたユーザー",
+      "description": "友達を選択するか、メールアドレスを入力してユーザーをブロックします。",
+      "blockFriendLabel": "友達をブロック",
+      "blockFriendPlaceholder": "ブロックする友達を選択…",
+      "or": "またはメールアドレスでブロック",
+      "emailPlaceholder": "name@example.com",
+      "block": "ブロック",
+      "unblock": "ブロック解除",
+      "empty": "ブロックしているユーザーはいません。",
+      "blockedToast": "ユーザーをブロックしました。",
+      "unblockedToast": "ユーザーのブロックを解除しました。",
+      "confirmBlockTitle": "この友達をブロックしますか？",
+      "confirmBlockDescription": "{name}をブロックすると、友達リストからも削除されます。相手にブロックの通知は送信されません。",
+      "confirmBlockCancel": "キャンセル",
+      "confirmBlockAction": "ブロックして友達から削除"
     }
+  },
+  "Friends": {
+    "title": "友達",
+    "description": "一緒に支出を共有する人を保存して、グループに素早く追加できます。",
+    "loading": "友達を読み込み中…",
+    "loadError": "友達の読み込みに失敗しました。後でもう一度お試しください。",
+    "listTitle": "あなたの友達",
+    "listDescription": "グループの作成や編集時に、メールアドレスで友達をグループに追加できます。",
+    "empty": "まだ友達を追加していません。",
+    "hasAccount": "Knots登録済み",
+    "noAccount": "未登録",
+    "pending": "保留中",
+    "connected": "接続済み",
+    "addTitle": "友達を追加",
+    "addDescription": "メールアドレスを入力してください。Knotsでつながる招待メールを送信します。任意で表示名を設定できます。",
+    "addFriend": "友達を追加",
+    "nameLabel": "表示名（任意）",
+    "namePlaceholder": "呼び方",
+    "emailLabel": "メール",
+    "emailPlaceholder": "email@example.com",
+    "add": "追加",
+    "adding": "追加中…",
+    "cancel": "キャンセル",
+    "remove": "削除",
+    "removeFriend": "友達を削除",
+    "removeFriendDescription": "{name}を友達リストから削除しますか？グループからは削除されません。",
+    "addedToast": "{name}を友達リストに追加しました。",
+    "removedToast": "友達を削除しました。",
+    "requestsTitle": "つながりリクエスト",
+    "requestsDescription": "Knotsであなたを追加した人です。承認すると友達リストに追加されます。",
+    "wantsToConnect": "あなたとつながりたい",
+    "accept": "承認",
+    "accepting": "承認中…",
+    "decline": "拒否",
+    "acceptedToast": "{name}を友達リストに追加しました。",
+    "declinedToast": "つながりリクエストを拒否しました。",
+    "pickerTitle": "Select a friend",
+    "pickerPlaceholder": "Select a friend…",
+    "pickerSearch": "Search friends…",
+    "pickerEmpty": "No friends found.",
+    "pickerInvited": "Invited",
+    "addByEmail": "Add by email instead",
+    "useEmail": "Use this email",
+    "unblockDialogTitle": "このユーザーはブロックされています",
+    "unblockDialogDescription": "{email}をブロックしています。友達として追加するには、まずブロックを解除する必要があります。",
+    "unblockAndAdd": "ブロック解除して追加",
+    "unblocking": "ブロックを解除しています…"
   },
   "Members": {
     "addedToGroup": "{name} をグループに追加しました。",
@@ -660,7 +761,8 @@
     "leave": "退出",
     "removeFromGroup": "グループから削除",
     "promoteToOwner": "オーナーに昇格",
-    "demoteToMember": "メンバーに降格"
+    "demoteToMember": "メンバーに降格",
+    "pickFriend": "Choose from your friends or enter an email."
   },
   "MyGroups": {
     "title": "マイグループ",
@@ -773,7 +875,9 @@
       "invalidJson": "無効なJSONファイルです。",
       "invalidFormat": "このファイルは有効なKnotsエクスポートではありません。",
       "noExpenses": "エクスポートに支出が含まれていません。"
-    }
+    },
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "GroupDangerZone": {
     "title": "グループ管理",

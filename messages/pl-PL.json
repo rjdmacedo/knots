@@ -8,7 +8,11 @@
     }
   },
   "Header": {
-    "groups": "Grupy"
+    "navLabel": "Nawigacja główna",
+    "friends": "Znajomi",
+    "groups": "Grupy",
+    "activities": "Aktywność",
+    "profile": "Profil"
   },
   "Expenses": {
     "title": "Wydatki",
@@ -438,7 +442,10 @@
     "showLess": "Pokaż mniej",
     "yes": "Tak",
     "no": "Nie",
-    "fieldChangesCount": "{count} zmian pól"
+    "fieldChangesCount": "{count} zmian pól",
+    "globalTitle": "Aktywność",
+    "globalDescription": "Przegląd całej aktywności we wszystkich Twoich grupach.",
+    "globalNoActivity": "W Twoich grupach nie ma jeszcze żadnej aktywności."
   },
   "Information": {
     "title": "Informacje",
@@ -606,7 +613,9 @@
     "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
     "emailLabel": "Email",
     "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group."
+    "softCreateHint": "They can register later with this email to access the group.",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "ProfileSettings": {
     "title": "Ustawienia profilu",
@@ -614,6 +623,13 @@
     "emailDescription": "Twój adres e-mail nie może zostać zmieniony.",
     "displayNameTitle": "Nazwa wyświetlana",
     "passwordTitle": "Hasło",
+    "preferencesTitle": "Preferencje",
+    "preferencesDescription": "Dostosuj język i wygląd.",
+    "languageLabel": "Język",
+    "themeLabel": "Motyw",
+    "accountTitle": "Konto",
+    "signOut": "Wyloguj się",
+    "signingOut": "Wylogowywanie…",
     "NameForm": {
       "nameRequired": "Nazwa jest wymagana",
       "nameMaxLength": "Nazwa może mieć maksymalnie 100 znaków",
@@ -643,7 +659,92 @@
       "errorMissingUppercase": "Musi zawierać co najmniej jedną wielką literę",
       "errorMissingLowercase": "Musi zawierać co najmniej jedną małą literę",
       "errorMissingDigit": "Musi zawierać co najmniej jedną cyfrę"
+    },
+    "blockedUsersTitle": "Zablokowani użytkownicy",
+    "blockedUsersDescription": "Zarządzaj zablokowanymi użytkownikami. Zablokowani użytkownicy nie mogą dodawać Cię do grup ani wysyłać Ci zaproszeń do znajomych.",
+    "Preferences": {
+      "timezoneLabel": "Strefa czasowa",
+      "timezoneSelect": "Wybierz strefę czasową…",
+      "timezoneSearch": "Szukaj strefy czasowej…",
+      "timezoneEmpty": "Nie znaleziono strefy czasowej.",
+      "timezoneSaved": "Strefa czasowa zaktualizowana.",
+      "currencyLabel": "Domyślna waluta",
+      "currencySaved": "Domyślna waluta zaktualizowana."
+    },
+    "SignOutAll": {
+      "button": "Wyloguj ze wszystkich urządzeń",
+      "dialogTitle": "Wylogować ze wszystkich urządzeń?",
+      "dialogDescription": "Spowoduje to zakończenie wszystkich aktywnych sesji, w tym tej. Zostaniesz przekierowany do strony logowania.",
+      "cancel": "Anuluj",
+      "confirm": "Wyloguj wszędzie",
+      "signingOut": "Wylogowywanie…",
+      "successToast": "Wszystkie sesje zostały zakończone."
+    },
+    "BlockedUsers": {
+      "manage": "Zarządzaj zablokowanymi użytkownikami",
+      "title": "Zablokowani użytkownicy",
+      "description": "Zablokuj użytkowników, wybierając znajomego lub wpisując jego adres e-mail.",
+      "blockFriendLabel": "Zablokuj znajomego",
+      "blockFriendPlaceholder": "Wybierz znajomego do zablokowania…",
+      "or": "lub zablokuj przez e-mail",
+      "emailPlaceholder": "nazwa@przyklad.pl",
+      "block": "Zablokuj",
+      "unblock": "Odblokuj",
+      "empty": "Nikogo nie zablokowałeś.",
+      "blockedToast": "Użytkownik został pomyślnie zablokowany.",
+      "unblockedToast": "Użytkownik został odblokowany.",
+      "confirmBlockTitle": "Zablokować tego znajomego?",
+      "confirmBlockDescription": "Zablokowanie użytkownika {name} spowoduje również usunięcie go z Twojej listy znajomych. Nie zostanie on powiadomiony o blokadzie.",
+      "confirmBlockCancel": "Anuluj",
+      "confirmBlockAction": "Zablokuj i usuń znajomego"
     }
+  },
+  "Friends": {
+    "title": "Znajomi",
+    "description": "Zapisuj osoby, z którymi dzielisz wydatki, aby szybko dodawać je do grup.",
+    "loading": "Ładowanie znajomych…",
+    "loadError": "Nie udało się załadować znajomych. Spróbuj ponownie później.",
+    "listTitle": "Twoi znajomi",
+    "listDescription": "Znajomych można dodawać do grup przez e-mail podczas tworzenia lub edycji grupy.",
+    "empty": "Nie dodałeś jeszcze żadnych znajomych.",
+    "hasAccount": "Na Knots",
+    "noAccount": "Brak konta",
+    "pending": "Oczekujące",
+    "connected": "Połączono",
+    "addTitle": "Dodaj znajomego",
+    "addDescription": "Wprowadź adres e-mail. Wyślemy zaproszenie do połączenia w Knots. Opcjonalnie ustaw nazwę wyświetlaną.",
+    "addFriend": "Dodaj znajomego",
+    "nameLabel": "Nazwa wyświetlana (opcjonalnie)",
+    "namePlaceholder": "Jak go nazywasz",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "email@przyklad.pl",
+    "add": "Dodaj",
+    "adding": "Dodawanie…",
+    "cancel": "Anuluj",
+    "remove": "Usuń",
+    "removeFriend": "Usuń znajomego",
+    "removeFriendDescription": "Usunąć {name} z listy znajomych? Nie zostanie usunięty z żadnej grupy.",
+    "addedToast": "{name} dodany do listy znajomych.",
+    "removedToast": "Znajomy usunięty.",
+    "requestsTitle": "Prośby o połączenie",
+    "requestsDescription": "Osoby, które dodały cię w Knots. Zaakceptuj, aby dodać je do listy znajomych.",
+    "wantsToConnect": "Chce się z tobą połączyć",
+    "accept": "Akceptuj",
+    "accepting": "Akceptowanie…",
+    "decline": "Odrzuć",
+    "acceptedToast": "{name} dodany do listy znajomych.",
+    "declinedToast": "Prośba o połączenie odrzucona.",
+    "pickerTitle": "Select a friend",
+    "pickerPlaceholder": "Select a friend…",
+    "pickerSearch": "Search friends…",
+    "pickerEmpty": "No friends found.",
+    "pickerInvited": "Invited",
+    "addByEmail": "Add by email instead",
+    "useEmail": "Use this email",
+    "unblockDialogTitle": "Ten użytkownik jest zablokowany",
+    "unblockDialogDescription": "Zablokowałeś użytkownika {email}. Aby dodać go do znajomych, musisz go najpierw odblokować.",
+    "unblockAndAdd": "Odblokuj i dodaj",
+    "unblocking": "Odblokowywanie…"
   },
   "Members": {
     "addedToGroup": "{name} dodany do grupy.",
@@ -660,7 +761,8 @@
     "leave": "Opuść",
     "removeFromGroup": "Usuń z grupy",
     "promoteToOwner": "Awansuj na właściciela",
-    "demoteToMember": "Zdegraduj do członka"
+    "demoteToMember": "Zdegraduj do członka",
+    "pickFriend": "Choose from your friends or enter an email."
   },
   "MyGroups": {
     "title": "Moje grupy",
@@ -773,7 +875,9 @@
       "invalidJson": "Nieprawidłowy plik JSON.",
       "invalidFormat": "Ten plik nie jest prawidłowym eksportem Knots.",
       "noExpenses": "Eksport nie zawiera wydatków."
-    }
+    },
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "GroupDangerZone": {
     "title": "Zarządzanie grupą",

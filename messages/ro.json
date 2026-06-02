@@ -8,7 +8,11 @@
     }
   },
   "Header": {
-    "groups": "Grupuri"
+    "navLabel": "Navigare principală",
+    "friends": "Prieteni",
+    "groups": "Grupuri",
+    "activities": "Activitate",
+    "profile": "Profil"
   },
   "Expenses": {
     "title": "Cheltuieli",
@@ -438,7 +442,10 @@
     "showLess": "Afișează mai puțin",
     "yes": "Da",
     "no": "Nu",
-    "fieldChangesCount": "{count} modificări de câmpuri"
+    "fieldChangesCount": "{count} modificări de câmpuri",
+    "globalTitle": "Activitate",
+    "globalDescription": "Prezentare generală a întregii activități din grupurile tale.",
+    "globalNoActivity": "Nu există încă nicio activitate în grupurile tale."
   },
   "Information": {
     "title": "Informații",
@@ -606,7 +613,9 @@
     "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
     "emailLabel": "Email",
     "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group."
+    "softCreateHint": "They can register later with this email to access the group.",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "ProfileSettings": {
     "title": "Setări profil",
@@ -614,6 +623,13 @@
     "emailDescription": "Adresa ta de e-mail nu poate fi schimbată.",
     "displayNameTitle": "Nume afișat",
     "passwordTitle": "Parolă",
+    "preferencesTitle": "Preferințe",
+    "preferencesDescription": "Personalizează limba și aspectul.",
+    "languageLabel": "Limbă",
+    "themeLabel": "Temă",
+    "accountTitle": "Cont",
+    "signOut": "Deconectare",
+    "signingOut": "Deconectare…",
     "NameForm": {
       "nameRequired": "Numele este obligatoriu",
       "nameMaxLength": "Numele trebuie să aibă cel mult 100 de caractere",
@@ -643,7 +659,92 @@
       "errorMissingUppercase": "Trebuie să conțină cel puțin o majusculă",
       "errorMissingLowercase": "Trebuie să conțină cel puțin o minusculă",
       "errorMissingDigit": "Trebuie să conțină cel puțin o cifră"
+    },
+    "blockedUsersTitle": "Utilizatori blocați",
+    "blockedUsersDescription": "Gestionează utilizatorii pe care i-ai blocat. Utilizatorii blocați nu te pot adăuga în grupuri și nu îți pot trimite cereri de prietenie.",
+    "Preferences": {
+      "timezoneLabel": "Fus orar",
+      "timezoneSelect": "Selectează fusul orar…",
+      "timezoneSearch": "Caută fusul orar…",
+      "timezoneEmpty": "Nu s-a găsit niciun fus orar.",
+      "timezoneSaved": "Fus orar actualizat.",
+      "currencyLabel": "Monedă implicită",
+      "currencySaved": "Monedă implicită actualizată."
+    },
+    "SignOutAll": {
+      "button": "Deconectează toate dispozitivele",
+      "dialogTitle": "Deconectezi toate dispozitivele?",
+      "dialogDescription": "Această acțiune va închide toate sesiunile active, inclusiv pe aceasta. Vei fi redirecționat la pagina de autentificare.",
+      "cancel": "Anulează",
+      "confirm": "Deconectează-te de peste tot",
+      "signingOut": "Deconectare…",
+      "successToast": "Toate sesiunile au fost închise."
+    },
+    "BlockedUsers": {
+      "manage": "Gestionează utilizatorii blocați",
+      "title": "Utilizatori blocați",
+      "description": "Blochează utilizatori prin selectarea unui prieten sau prin introducerea adresei de e-mail.",
+      "blockFriendLabel": "Blochează un prieten",
+      "blockFriendPlaceholder": "Selectează un prieten de blocat…",
+      "or": "sau blochează prin e-mail",
+      "emailPlaceholder": "nume@exemplu.ro",
+      "block": "Blochează",
+      "unblock": "Deblochează",
+      "empty": "Nu ai blocat pe nimeni.",
+      "blockedToast": "Utilizator blocat cu succes.",
+      "unblockedToast": "Utilizator deblocat.",
+      "confirmBlockTitle": "Blochezi acest prieten?",
+      "confirmBlockDescription": "Blocarea lui {name} îl va elimina, de asemenea, din lista ta de prieteni. Acesta nu va fi notificat despre blocare.",
+      "confirmBlockCancel": "Anulează",
+      "confirmBlockAction": "Blochează și elimină prietenul"
     }
+  },
+  "Friends": {
+    "title": "Prieteni",
+    "description": "Salvează persoanele cu care împarți cheltuielile pentru a le adăuga rapid în grupuri.",
+    "loading": "Se încarcă prietenii…",
+    "loadError": "Nu s-au putut încărca prietenii. Încearcă din nou mai târziu.",
+    "listTitle": "Prietenii tăi",
+    "listDescription": "Prietenii pot fi adăugați în grupuri prin e-mail la crearea sau editarea unui grup.",
+    "empty": "Nu ai adăugat încă niciun prieten.",
+    "hasAccount": "Pe Knots",
+    "noAccount": "Fără cont încă",
+    "pending": "În așteptare",
+    "connected": "Conectat",
+    "addTitle": "Adaugă prieten",
+    "addDescription": "Introdu adresa de e-mail. Vom trimite o invitație de conectare pe Knots. Opțional, setează un nume afișat.",
+    "addFriend": "Adaugă prieten",
+    "nameLabel": "Nume afișat (opțional)",
+    "namePlaceholder": "Cum îi numești",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "email@exemplu.com",
+    "add": "Adaugă",
+    "adding": "Se adaugă…",
+    "cancel": "Anulează",
+    "remove": "Elimină",
+    "removeFriend": "Elimină prieten",
+    "removeFriendDescription": "Elimini {name} din lista de prieteni? Nu va fi eliminat din niciun grup.",
+    "addedToast": "{name} adăugat în lista de prieteni.",
+    "removedToast": "Prieten eliminat.",
+    "requestsTitle": "Cereri de conectare",
+    "requestsDescription": "Persoane care te-au adăugat pe Knots. Acceptă pentru a le adăuga în lista de prieteni.",
+    "wantsToConnect": "Vrea să se conecteze cu tine",
+    "accept": "Acceptă",
+    "accepting": "Se acceptă…",
+    "decline": "Refuză",
+    "acceptedToast": "{name} adăugat în lista de prieteni.",
+    "declinedToast": "Cerere de conectare refuzată.",
+    "pickerTitle": "Select a friend",
+    "pickerPlaceholder": "Select a friend…",
+    "pickerSearch": "Search friends…",
+    "pickerEmpty": "No friends found.",
+    "pickerInvited": "Invited",
+    "addByEmail": "Add by email instead",
+    "useEmail": "Use this email",
+    "unblockDialogTitle": "Acest utilizator este blocat",
+    "unblockDialogDescription": "L-ai blocat pe {email}. Pentru a-l adăuga ca prieten, trebuie să-l deblochezi mai întâi.",
+    "unblockAndAdd": "Deblochează și adaugă",
+    "unblocking": "Se deblochează…"
   },
   "Members": {
     "addedToGroup": "{name} adăugat în grup.",
@@ -660,7 +761,8 @@
     "leave": "Părăsește",
     "removeFromGroup": "Elimină din grup",
     "promoteToOwner": "Promovează la proprietar",
-    "demoteToMember": "Retrogradează la membru"
+    "demoteToMember": "Retrogradează la membru",
+    "pickFriend": "Choose from your friends or enter an email."
   },
   "MyGroups": {
     "title": "Grupurile mele",
@@ -773,7 +875,9 @@
       "invalidJson": "Fișier JSON invalid.",
       "invalidFormat": "Acest fișier nu este un export Knots valid.",
       "noExpenses": "Exportul nu conține cheltuieli."
-    }
+    },
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "GroupDangerZone": {
     "title": "Administrarea grupului",

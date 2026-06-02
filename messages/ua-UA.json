@@ -8,7 +8,11 @@
     }
   },
   "Header": {
-    "groups": "Групи"
+    "navLabel": "Головна навігація",
+    "friends": "Друзі",
+    "groups": "Групи",
+    "activities": "Активність",
+    "profile": "Профіль"
   },
   "Expenses": {
     "title": "Витрати",
@@ -438,7 +442,10 @@
     "showLess": "Згорнути",
     "yes": "Так",
     "no": "Ні",
-    "fieldChangesCount": "{count} змін полів"
+    "fieldChangesCount": "{count} змін полів",
+    "globalTitle": "Активність",
+    "globalDescription": "Огляд усієї активності в усіх ваших групах.",
+    "globalNoActivity": "У ваших групах поки немає жодної активності."
   },
   "Information": {
     "title": "Інформація",
@@ -606,7 +613,9 @@
     "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
     "emailLabel": "Email",
     "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group."
+    "softCreateHint": "They can register later with this email to access the group.",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "ProfileSettings": {
     "title": "Налаштування профілю",
@@ -614,6 +623,13 @@
     "emailDescription": "Вашу адресу ел. пошти не можна змінити.",
     "displayNameTitle": "Відображуване ім'я",
     "passwordTitle": "Пароль",
+    "preferencesTitle": "Налаштування",
+    "preferencesDescription": "Налаштуйте мову та зовнішній вигляд.",
+    "languageLabel": "Мова",
+    "themeLabel": "Тема",
+    "accountTitle": "Обліковий запис",
+    "signOut": "Вийти",
+    "signingOut": "Вихід…",
     "NameForm": {
       "nameRequired": "Ім'я обов'язкове",
       "nameMaxLength": "Ім'я має містити не більше 100 символів",
@@ -643,7 +659,92 @@
       "errorMissingUppercase": "Має містити щонайменше одну велику літеру",
       "errorMissingLowercase": "Має містити щонайменше одну малу літеру",
       "errorMissingDigit": "Має містити щонайменше одну цифру"
+    },
+    "blockedUsersTitle": "Заблоковані користувачі",
+    "blockedUsersDescription": "Керуйте заблокованими користувачами. Заблоковані користувачі не можуть додавати вас до груп або надсилати вам запити в друзі.",
+    "Preferences": {
+      "timezoneLabel": "Часовий пояс",
+      "timezoneSelect": "Виберіть часовий пояс…",
+      "timezoneSearch": "Пошук часового поясу…",
+      "timezoneEmpty": "Часовий пояс не знайдено.",
+      "timezoneSaved": "Часовий пояс оновлено.",
+      "currencyLabel": "Валюта за замовчуванням",
+      "currencySaved": "Валюту за замовчуванням оновлено."
+    },
+    "SignOutAll": {
+      "button": "Вийти на всіх пристроях",
+      "dialogTitle": "Вийти на всіх пристроях?",
+      "dialogDescription": "Це завершить усі активні сеанси, включаючи цей. Вас буде перенаправлено на сторінку входу.",
+      "cancel": "Скасувати",
+      "confirm": "Вийти всюди",
+      "signingOut": "Вихід із системи…",
+      "successToast": "Усі сеанси завершено."
+    },
+    "BlockedUsers": {
+      "manage": "Керувати заблокованими користувачами",
+      "title": "Заблоковані користувачі",
+      "description": "Заблокуйте користувача, вибравши друга або ввівши його адресу електронної пошти.",
+      "blockFriendLabel": "Заблокувати друга",
+      "blockFriendPlaceholder": "Виберіть друга для блокування…",
+      "or": "або заблокувати за електронною поштою",
+      "emailPlaceholder": "name@example.com",
+      "block": "Заблокувати",
+      "unblock": "Розблокувати",
+      "empty": "Ви нікого не заблокирували.",
+      "blockedToast": "Користувача успішно заблоковано.",
+      "unblockedToast": "Користувача розблоковано.",
+      "confirmBlockTitle": "Заблокувати цього друга?",
+      "confirmBlockDescription": "Блокування {name} також видалить його зі списку ваших друзів. Він не отримає сповіщення про блокування.",
+      "confirmBlockCancel": "Скасувати",
+      "confirmBlockAction": "Заблокувати та видалити з друзів"
     }
+  },
+  "Friends": {
+    "title": "Друзі",
+    "description": "Зберігайте людей, з якими ділитеся витратами, щоб швидко додавати їх до груп.",
+    "loading": "Завантаження друзів…",
+    "loadError": "Не вдалося завантажити друзів. Спробуйте пізніше.",
+    "listTitle": "Ваші друзі",
+    "listDescription": "Друзів можна додавати до груп електронною поштою під час створення або редагування групи.",
+    "empty": "Ви ще не додали жодного друга.",
+    "hasAccount": "У Knots",
+    "noAccount": "Ще немає облікового запису",
+    "pending": "Очікує",
+    "connected": "Підключено",
+    "addTitle": "Додати друга",
+    "addDescription": "Введіть адресу електронної пошти. Ми надішлемо запрошення підключитися в Knots. За бажанням вкажіть відображуване ім'я.",
+    "addFriend": "Додати друга",
+    "nameLabel": "Відображуване ім'я (необов'язково)",
+    "namePlaceholder": "Як ви їх називаєте",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "email@example.com",
+    "add": "Додати",
+    "adding": "Додавання…",
+    "cancel": "Скасувати",
+    "remove": "Видалити",
+    "removeFriend": "Видалити друга",
+    "removeFriendDescription": "Видалити {name} зі списку друзів? Вони не будуть видалені з жодної групи.",
+    "addedToast": "{name} додано до списку друзів.",
+    "removedToast": "Друга видалено.",
+    "requestsTitle": "Запити на підключення",
+    "requestsDescription": "Люди, які додали вас у Knots. Прийміть, щоб додати їх до списку друзів.",
+    "wantsToConnect": "Хоче підключитися до вас",
+    "accept": "Прийняти",
+    "accepting": "Приймається…",
+    "decline": "Відхилити",
+    "acceptedToast": "{name} додано до списку друзів.",
+    "declinedToast": "Запит на підключення відхилено.",
+    "pickerTitle": "Select a friend",
+    "pickerPlaceholder": "Select a friend…",
+    "pickerSearch": "Search friends…",
+    "pickerEmpty": "No friends found.",
+    "pickerInvited": "Invited",
+    "addByEmail": "Add by email instead",
+    "useEmail": "Use this email",
+    "unblockDialogTitle": "Цей користувач заблокований",
+    "unblockDialogDescription": "Ви заблокували {email}. Щоб додати його в друзі, спочатку розблокуйте його.",
+    "unblockAndAdd": "Розблокувати та додати",
+    "unblocking": "Розблокування…"
   },
   "Members": {
     "addedToGroup": "{name} додано до групи.",
@@ -660,7 +761,8 @@
     "leave": "Покинути",
     "removeFromGroup": "Видалити з групи",
     "promoteToOwner": "Підвищити до власника",
-    "demoteToMember": "Понизити до учасника"
+    "demoteToMember": "Понизити до учасника",
+    "pickFriend": "Choose from your friends or enter an email."
   },
   "MyGroups": {
     "title": "Мої групи",
@@ -773,7 +875,9 @@
       "invalidJson": "Недійсний файл JSON.",
       "invalidFormat": "Цей файл не є дійсним експортом Knots.",
       "noExpenses": "Експорт не містить витрат."
-    }
+    },
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "GroupDangerZone": {
     "title": "Керування групою",

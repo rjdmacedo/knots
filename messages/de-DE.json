@@ -8,7 +8,11 @@
     }
   },
   "Header": {
-    "groups": "Gruppen"
+    "navLabel": "Hauptnavigation",
+    "friends": "Freunde",
+    "groups": "Gruppen",
+    "activities": "Aktivitäten",
+    "profile": "Profil"
   },
   "Expenses": {
     "title": "Ausgaben",
@@ -438,7 +442,10 @@
     "showLess": "Weniger anzeigen",
     "yes": "Ja",
     "no": "Nein",
-    "fieldChangesCount": "{count} Feldänderungen"
+    "fieldChangesCount": "{count} Feldänderungen",
+    "globalTitle": "Aktivität",
+    "globalDescription": "Übersicht über alle Aktivitäten in deinen Gruppen.",
+    "globalNoActivity": "Es gibt noch keine Aktivitäten in deinen Gruppen."
   },
   "Information": {
     "title": "Informationen",
@@ -606,7 +613,9 @@
     "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
     "emailLabel": "Email",
     "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group."
+    "softCreateHint": "They can register later with this email to access the group.",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "ProfileSettings": {
     "title": "Profileinstellungen",
@@ -614,6 +623,13 @@
     "emailDescription": "Deine E-Mail-Adresse kann nicht geändert werden.",
     "displayNameTitle": "Anzeigename",
     "passwordTitle": "Passwort",
+    "preferencesTitle": "Einstellungen",
+    "preferencesDescription": "Sprache und Erscheinungsbild anpassen.",
+    "languageLabel": "Sprache",
+    "themeLabel": "Design",
+    "accountTitle": "Konto",
+    "signOut": "Abmelden",
+    "signingOut": "Abmelden…",
     "NameForm": {
       "nameRequired": "Name ist erforderlich",
       "nameMaxLength": "Der Name darf höchstens 100 Zeichen lang sein",
@@ -643,7 +659,92 @@
       "errorMissingUppercase": "Mindestens ein Großbuchstabe erforderlich",
       "errorMissingLowercase": "Mindestens ein Kleinbuchstabe erforderlich",
       "errorMissingDigit": "Mindestens eine Ziffer erforderlich"
+    },
+    "blockedUsersTitle": "Blockierte Nutzer",
+    "blockedUsersDescription": "Verwalte die Nutzer, die du blockiert hast. Blockierte Nutzer können dich nicht zu Gruppen hinzufügen oder dir Freundschaftsanfragen senden.",
+    "Preferences": {
+      "timezoneLabel": "Zeitzone",
+      "timezoneSelect": "Zeitzone auswählen…",
+      "timezoneSearch": "Zeitzone suchen…",
+      "timezoneEmpty": "Keine Zeitzone gefunden.",
+      "timezoneSaved": "Zeitzone aktualisiert.",
+      "currencyLabel": "Standardwährung",
+      "currencySaved": "Standardwährung aktualisiert."
+    },
+    "SignOutAll": {
+      "button": "Auf allen Geräten abmelden",
+      "dialogTitle": "Auf allen Geräten abmelden?",
+      "dialogDescription": "Dies beendet alle aktiven Sitzungen, einschließlich dieser. Du wirst zur Login-Seite weitergeleitet.",
+      "cancel": "Abbrechen",
+      "confirm": "Überall abmelden",
+      "signingOut": "Abmeldung…",
+      "successToast": "Alle Sitzungen wurden beendet."
+    },
+    "BlockedUsers": {
+      "manage": "Blockierte Nutzer verwalten",
+      "title": "Blockierte Nutzer",
+      "description": "Blockiere Nutzer, indem du einen Freund auswählst oder deren E-Mail-Adresse eingibst.",
+      "blockFriendLabel": "Einen Freund blockieren",
+      "blockFriendPlaceholder": "Freund zum Blockieren auswählen…",
+      "or": "oder per E-Mail blockieren",
+      "emailPlaceholder": "name@beispiel.de",
+      "block": "Blockieren",
+      "unblock": "Entblocken",
+      "empty": "Du hast niemanden blockiert.",
+      "blockedToast": "Nutzer erfolgreich blockiert.",
+      "unblockedToast": "Nutzer entblockt.",
+      "confirmBlockTitle": "Diesen Freund blockieren?",
+      "confirmBlockDescription": "Das Blockieren von {name} entfernt die Person auch aus deiner Freundesliste. Sie wird nicht darüber benachrichtigt.",
+      "confirmBlockCancel": "Abbrechen",
+      "confirmBlockAction": "Blockieren und als Freund entfernen"
     }
+  },
+  "Friends": {
+    "title": "Freunde",
+    "description": "Speichere Personen, mit denen du Ausgaben teilst, um sie schnell zu Gruppen hinzuzufügen.",
+    "loading": "Freunde werden geladen…",
+    "loadError": "Freunde konnten nicht geladen werden. Bitte versuche es später erneut.",
+    "listTitle": "Deine Freunde",
+    "listDescription": "Freunde können per E-Mail zu Gruppen hinzugefügt werden, wenn du eine Gruppe erstellst oder bearbeitest.",
+    "empty": "Du hast noch keine Freunde hinzugefügt.",
+    "hasAccount": "Auf Knots",
+    "noAccount": "Noch kein Konto",
+    "pending": "Ausstehend",
+    "connected": "Verbunden",
+    "addTitle": "Freund hinzufügen",
+    "addDescription": "Gib die E-Mail-Adresse ein. Wir senden eine Einladung, sich auf Knots zu verbinden. Optional kannst du einen Anzeigenamen festlegen.",
+    "addFriend": "Freund hinzufügen",
+    "nameLabel": "Anzeigename (optional)",
+    "namePlaceholder": "Wie du sie nennst",
+    "emailLabel": "E-Mail",
+    "emailPlaceholder": "email@beispiel.de",
+    "add": "Hinzufügen",
+    "adding": "Wird hinzugefügt…",
+    "cancel": "Abbrechen",
+    "remove": "Entfernen",
+    "removeFriend": "Freund entfernen",
+    "removeFriendDescription": "{name} aus deiner Freundesliste entfernen? Sie werden aus keiner Gruppe entfernt.",
+    "addedToast": "{name} zu deiner Freundesliste hinzugefügt.",
+    "removedToast": "Freund entfernt.",
+    "requestsTitle": "Verbindungsanfragen",
+    "requestsDescription": "Personen, die dich auf Knots hinzugefügt haben. Akzeptiere, um sie zu deiner Freundesliste hinzuzufügen.",
+    "wantsToConnect": "Möchte sich mit dir verbinden",
+    "accept": "Annehmen",
+    "accepting": "Wird angenommen…",
+    "decline": "Ablehnen",
+    "acceptedToast": "{name} zu deiner Freundesliste hinzugefügt.",
+    "declinedToast": "Verbindungsanfrage abgelehnt.",
+    "pickerTitle": "Select a friend",
+    "pickerPlaceholder": "Select a friend…",
+    "pickerSearch": "Search friends…",
+    "pickerEmpty": "No friends found.",
+    "pickerInvited": "Invited",
+    "addByEmail": "Add by email instead",
+    "useEmail": "Use this email",
+    "unblockDialogTitle": "Dieser Nutzer ist blockiert",
+    "unblockDialogDescription": "Du hast {email} blockiert. Um diese Person als Freund hinzuzufügen, musst du sie zuerst entblocken.",
+    "unblockAndAdd": "Entblocken und hinzufügen",
+    "unblocking": "Entblocken…"
   },
   "Members": {
     "addedToGroup": "{name} zur Gruppe hinzugefügt.",
@@ -660,7 +761,8 @@
     "leave": "Verlassen",
     "removeFromGroup": "Aus Gruppe entfernen",
     "promoteToOwner": "Zum Eigentümer befördern",
-    "demoteToMember": "Zum Mitglied herabstufen"
+    "demoteToMember": "Zum Mitglied herabstufen",
+    "pickFriend": "Choose from your friends or enter an email."
   },
   "MyGroups": {
     "title": "Meine Gruppen",
@@ -773,7 +875,9 @@
       "invalidJson": "Ungültige JSON-Datei.",
       "invalidFormat": "Diese Datei ist kein gültiger Knots-Export.",
       "noExpenses": "Der Export enthält keine Ausgaben."
-    }
+    },
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "GroupDangerZone": {
     "title": "Gruppenverwaltung",

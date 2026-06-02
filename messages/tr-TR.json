@@ -8,7 +8,11 @@
     }
   },
   "Header": {
-    "groups": "Gruplar"
+    "navLabel": "Ana navigasyon",
+    "friends": "Arkadaşlar",
+    "groups": "Gruplar",
+    "activities": "Etkinlikler",
+    "profile": "Profil"
   },
   "Expenses": {
     "title": "Masraflar",
@@ -438,7 +442,10 @@
     "showLess": "Daha az göster",
     "yes": "Evet",
     "no": "Hayır",
-    "fieldChangesCount": "{count} alan değişikliği"
+    "fieldChangesCount": "{count} alan değişikliği",
+    "globalTitle": "Aktivite",
+    "globalDescription": "Gruplarınızdaki tüm aktivitelere genel bakış.",
+    "globalNoActivity": "Gruplarınızda henüz bir aktivite yok."
   },
   "Information": {
     "title": "Bilgi",
@@ -606,7 +613,9 @@
     "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
     "emailLabel": "Email",
     "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group."
+    "softCreateHint": "They can register later with this email to access the group.",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "ProfileSettings": {
     "title": "Profil ayarları",
@@ -614,6 +623,13 @@
     "emailDescription": "E-posta adresiniz değiştirilemez.",
     "displayNameTitle": "Görünen ad",
     "passwordTitle": "Parola",
+    "preferencesTitle": "Tercihler",
+    "preferencesDescription": "Dili ve görünümü özelleştirin.",
+    "languageLabel": "Dil",
+    "themeLabel": "Tema",
+    "accountTitle": "Hesap",
+    "signOut": "Çıkış yap",
+    "signingOut": "Çıkış yapılıyor…",
     "NameForm": {
       "nameRequired": "Ad gereklidir",
       "nameMaxLength": "Ad en fazla 100 karakter olmalıdır",
@@ -643,7 +659,92 @@
       "errorMissingUppercase": "En az bir büyük harf içermelidir",
       "errorMissingLowercase": "En az bir küçük harf içermelidir",
       "errorMissingDigit": "En az bir rakam içermelidir"
+    },
+    "blockedUsersTitle": "Engellenen Kullanıcılar",
+    "blockedUsersDescription": "Engellediğiniz kullanıcıları yönetin. Engellenen kullanıcılar sizi gruplara ekleyemez veya arkadaşlık isteği gönderemez.",
+    "Preferences": {
+      "timezoneLabel": "Saat Dilimi",
+      "timezoneSelect": "Saat dilimi seçin…",
+      "timezoneSearch": "Saat dilimi arayın…",
+      "timezoneEmpty": "Saat dilimi bulunamadı.",
+      "timezoneSaved": "Saat dilimi güncellendi.",
+      "currencyLabel": "Varsayılan Para Birimi",
+      "currencySaved": "Varsayılan para birimi güncellendi."
+    },
+    "SignOutAll": {
+      "button": "Tüm cihazlardan çıkış yap",
+      "dialogTitle": "Tüm cihazlardan çıkış yapılsın mı?",
+      "dialogDescription": "Bu işlem, bu oturum dahil tüm aktif oturumları sonlandıracaktır. Giriş sayfasına yönlendirileceksiniz.",
+      "cancel": "İptal",
+      "confirm": "Her yerden çıkış yap",
+      "signingOut": "Çıkış yapılıyor…",
+      "successToast": "Tüm oturumlar sonlandırıldı."
+    },
+    "BlockedUsers": {
+      "manage": "Engellenen kullanıcıları yönet",
+      "title": "Engellenen Kullanıcılar",
+      "description": "Bir arkadaşınızı seçerek veya e-posta adresini girerek kullanıcıları engelleyin.",
+      "blockFriendLabel": "Bir arkadaşını engelle",
+      "blockFriendPlaceholder": "Engellenecek bir arkadaş seçin…",
+      "or": "veya e-posta ile engelle",
+      "emailPlaceholder": "isim@örnek.com",
+      "block": "Engelle",
+      "unblock": "Engeli Kaldır",
+      "empty": "Hiç kimseyi engellemediniz.",
+      "blockedToast": "Kullanıcı başarıyla engellendi.",
+      "unblockedToast": "Kullanıcının engeli kaldırıldı.",
+      "confirmBlockTitle": "Bu arkadaşı engelle?",
+      "confirmBlockDescription": "{name} kullanıcısını engellemek, onu arkadaş listenizden de çıkaracaktır. Engellendiğine dair kendisine bildirim gitmeyecektir.",
+      "confirmBlockCancel": "İptal",
+      "confirmBlockAction": "Engelle ve arkadaşı çıkar"
     }
+  },
+  "Friends": {
+    "title": "Arkadaşlar",
+    "description": "Masrafları paylaştığınız kişileri kaydedin, böylece gruplara hızlıca ekleyebilirsiniz.",
+    "loading": "Arkadaşlar yükleniyor…",
+    "loadError": "Arkadaşlar yüklenemedi. Lütfen daha sonra tekrar deneyin.",
+    "listTitle": "Arkadaşlarınız",
+    "listDescription": "Grup oluştururken veya düzenlerken arkadaşlar e-posta ile gruplara eklenebilir.",
+    "empty": "Henüz arkadaş eklemediniz.",
+    "hasAccount": "Knots'ta",
+    "noAccount": "Henüz hesap yok",
+    "pending": "Beklemede",
+    "connected": "Bağlandı",
+    "addTitle": "Arkadaş ekle",
+    "addDescription": "E-posta adresini girin. Knots'ta bağlantı kurmak için bir davetiye göndereceğiz. İsteğe bağlı olarak bir görünen ad belirleyebilirsiniz.",
+    "addFriend": "Arkadaş ekle",
+    "nameLabel": "Görünen ad (isteğe bağlı)",
+    "namePlaceholder": "Onlara nasıl hitap ediyorsunuz",
+    "emailLabel": "E-posta",
+    "emailPlaceholder": "email@ornek.com",
+    "add": "Ekle",
+    "adding": "Ekleniyor…",
+    "cancel": "İptal",
+    "remove": "Kaldır",
+    "removeFriend": "Arkadaşı kaldır",
+    "removeFriendDescription": "{name} arkadaş listesinden kaldırılsın mı? Hiçbir gruptan kaldırılmayacak.",
+    "addedToast": "{name} arkadaş listesine eklendi.",
+    "removedToast": "Arkadaş kaldırıldı.",
+    "requestsTitle": "Bağlantı istekleri",
+    "requestsDescription": "Sizi Knots'ta ekleyen kişiler. Arkadaş listenize eklemek için kabul edin.",
+    "wantsToConnect": "Sizinle bağlantı kurmak istiyor",
+    "accept": "Kabul et",
+    "accepting": "Kabul ediliyor…",
+    "decline": "Reddet",
+    "acceptedToast": "{name} arkadaş listenize eklendi.",
+    "declinedToast": "Bağlantı isteği reddedildi.",
+    "pickerTitle": "Select a friend",
+    "pickerPlaceholder": "Select a friend…",
+    "pickerSearch": "Search friends…",
+    "pickerEmpty": "No friends found.",
+    "pickerInvited": "Invited",
+    "addByEmail": "Add by email instead",
+    "useEmail": "Use this email",
+    "unblockDialogTitle": "Bu kullanıcı engellendi",
+    "unblockDialogDescription": "{email} kullanıcısını engellediniz. Onu arkadaş olarak eklemek için önce engelini kaldırmalısınız.",
+    "unblockAndAdd": "Engeli kaldır ve ekle",
+    "unblocking": "Engeli kaldırılıyor…"
   },
   "Members": {
     "addedToGroup": "{name} gruba eklendi.",
@@ -660,7 +761,8 @@
     "leave": "Ayrıl",
     "removeFromGroup": "Gruptan kaldır",
     "promoteToOwner": "Sahip yap",
-    "demoteToMember": "Üyeye indir"
+    "demoteToMember": "Üyeye indir",
+    "pickFriend": "Choose from your friends or enter an email."
   },
   "MyGroups": {
     "title": "Gruplarım",
@@ -773,7 +875,9 @@
       "invalidJson": "Geçersiz JSON dosyası.",
       "invalidFormat": "Bu dosya geçerli bir Knots dışa aktarımı değil.",
       "noExpenses": "Dışa aktarımda gider yok."
-    }
+    },
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "GroupDangerZone": {
     "title": "Grup yönetimi",

@@ -8,7 +8,11 @@
     }
   },
   "Header": {
-    "groups": "Группы"
+    "navLabel": "Основная навигация",
+    "friends": "Друзья",
+    "groups": "Группы",
+    "activities": "Активность",
+    "profile": "Профиль"
   },
   "Expenses": {
     "title": "Расходы",
@@ -438,7 +442,10 @@
     "showLess": "Свернуть",
     "yes": "Да",
     "no": "Нет",
-    "fieldChangesCount": "{count} изменений полей"
+    "fieldChangesCount": "{count} изменений полей",
+    "globalTitle": "Активность",
+    "globalDescription": "Обзор всей активности во всех ваших группах.",
+    "globalNoActivity": "В ваших группах пока нет никакой активности."
   },
   "Information": {
     "title": "Информация",
@@ -606,7 +613,9 @@
     "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
     "emailLabel": "Email",
     "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group."
+    "softCreateHint": "They can register later with this email to access the group.",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "ProfileSettings": {
     "title": "Настройки профиля",
@@ -614,6 +623,13 @@
     "emailDescription": "Ваш адрес эл. почты нельзя изменить.",
     "displayNameTitle": "Отображаемое имя",
     "passwordTitle": "Пароль",
+    "preferencesTitle": "Настройки",
+    "preferencesDescription": "Настройте язык и внешний вид.",
+    "languageLabel": "Язык",
+    "themeLabel": "Тема",
+    "accountTitle": "Аккаунт",
+    "signOut": "Выйти",
+    "signingOut": "Выход…",
     "NameForm": {
       "nameRequired": "Имя обязательно",
       "nameMaxLength": "Имя должно содержать не более 100 символов",
@@ -643,7 +659,92 @@
       "errorMissingUppercase": "Должна быть хотя бы одна заглавная буква",
       "errorMissingLowercase": "Должна быть хотя бы одна строчная буква",
       "errorMissingDigit": "Должна быть хотя бы одна цифра"
+    },
+    "blockedUsersTitle": "Заблокированные пользователи",
+    "blockedUsersDescription": "Управление заблокированными пользователями. Заблокированные пользователи не могут добавлять вас в группы или отправлять вам запросы в друзья.",
+    "Preferences": {
+      "timezoneLabel": "Часовой пояс",
+      "timezoneSelect": "Выберите часовой пояс…",
+      "timezoneSearch": "Поиск часового пояса…",
+      "timezoneEmpty": "Часовой пояс не найден.",
+      "timezoneSaved": "Часовой пояс обновлен.",
+      "currencyLabel": "Валюта по умолчанию",
+      "currencySaved": "Валюта по умолчанию обновлена."
+    },
+    "SignOutAll": {
+      "button": "Выйти на всех устройствах",
+      "dialogTitle": "Выйти на всех устройствах?",
+      "dialogDescription": "Это завершит все активные сеансы, включая этот. Вы будете перенаправлены на страницу входа.",
+      "cancel": "Отмена",
+      "confirm": "Выйти везде",
+      "signingOut": "Выход из системы…",
+      "successToast": "Все сеансы были завершены."
+    },
+    "BlockedUsers": {
+      "manage": "Управление заблокированными пользователями",
+      "title": "Заблокированные пользователи",
+      "description": "Заблокируйте пользователя, выбрав друга или введя его адрес электронной почты.",
+      "blockFriendLabel": "Заблокировать друга",
+      "blockFriendPlaceholder": "Выберите друга для блокировки…",
+      "or": "или заблокировать по электронной почте",
+      "emailPlaceholder": "name@example.com",
+      "block": "Заблокировать",
+      "unblock": "Разблокировать",
+      "empty": "Вы никого не заблокировали.",
+      "blockedToast": "Пользователь успешно заблокирован.",
+      "unblockedToast": "Пользователь разблокирован.",
+      "confirmBlockTitle": "Заблокировать этого друга?",
+      "confirmBlockDescription": "Блокировка {name} также удалит его из вашего списка друзей. Он не получит уведомление о блокировке.",
+      "confirmBlockCancel": "Отмена",
+      "confirmBlockAction": "Заблокировать и удалить из друзей"
     }
+  },
+  "Friends": {
+    "title": "Друзья",
+    "description": "Сохраняйте людей, с которыми делите расходы, чтобы быстро добавлять их в группы.",
+    "loading": "Загрузка друзей…",
+    "loadError": "Не удалось загрузить друзей. Попробуйте позже.",
+    "listTitle": "Ваши друзья",
+    "listDescription": "Друзей можно добавлять в группы по e-mail при создании или редактировании группы.",
+    "empty": "Вы ещё не добавили ни одного друга.",
+    "hasAccount": "В Knots",
+    "noAccount": "Нет аккаунта",
+    "pending": "Ожидание",
+    "connected": "Подключён",
+    "addTitle": "Добавить друга",
+    "addDescription": "Введите адрес e-mail. Мы отправим приглашение подключиться в Knots. При желании укажите отображаемое имя.",
+    "addFriend": "Добавить друга",
+    "nameLabel": "Отображаемое имя (необязательно)",
+    "namePlaceholder": "Как вы их называете",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "email@example.com",
+    "add": "Добавить",
+    "adding": "Добавление…",
+    "cancel": "Отмена",
+    "remove": "Удалить",
+    "removeFriend": "Удалить друга",
+    "removeFriendDescription": "Удалить {name} из списка друзей? Они не будут удалены из групп.",
+    "addedToast": "{name} добавлен в список друзей.",
+    "removedToast": "Друг удалён.",
+    "requestsTitle": "Запросы на подключение",
+    "requestsDescription": "Люди, которые добавили вас в Knots. Примите, чтобы добавить их в список друзей.",
+    "wantsToConnect": "Хочет подключиться к вам",
+    "accept": "Принять",
+    "accepting": "Принимается…",
+    "decline": "Отклонить",
+    "acceptedToast": "{name} добавлен в список друзей.",
+    "declinedToast": "Запрос на подключение отклонён.",
+    "pickerTitle": "Select a friend",
+    "pickerPlaceholder": "Select a friend…",
+    "pickerSearch": "Search friends…",
+    "pickerEmpty": "No friends found.",
+    "pickerInvited": "Invited",
+    "addByEmail": "Add by email instead",
+    "useEmail": "Use this email",
+    "unblockDialogTitle": "Этот пользователь заблокирован",
+    "unblockDialogDescription": "Вы заблокировали пользователя {email}. Чтобы добавить его в друзья, сначала разблокируйте его.",
+    "unblockAndAdd": "Разблокировать и добавить",
+    "unblocking": "Разблокировка…"
   },
   "Members": {
     "addedToGroup": "{name} добавлен в группу.",
@@ -660,7 +761,8 @@
     "leave": "Покинуть",
     "removeFromGroup": "Удалить из группы",
     "promoteToOwner": "Повысить до владельца",
-    "demoteToMember": "Понизить до участника"
+    "demoteToMember": "Понизить до участника",
+    "pickFriend": "Choose from your friends or enter an email."
   },
   "MyGroups": {
     "title": "Мои группы",
@@ -773,7 +875,9 @@
       "invalidJson": "Недопустимый JSON-файл.",
       "invalidFormat": "Этот файл не является допустимым экспортом Knots.",
       "noExpenses": "В экспорте нет расходов."
-    }
+    },
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "GroupDangerZone": {
     "title": "Управление группой",

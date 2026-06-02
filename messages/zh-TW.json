@@ -8,7 +8,11 @@
     }
   },
   "Header": {
-    "groups": "群組"
+    "navLabel": "主導覽",
+    "friends": "好友",
+    "groups": "群組",
+    "activities": "活動",
+    "profile": "個人資料"
   },
   "Expenses": {
     "title": "消費",
@@ -438,7 +442,10 @@
     "showLess": "收合",
     "yes": "是",
     "no": "否",
-    "fieldChangesCount": "{count} 項欄位變更"
+    "fieldChangesCount": "{count} 項欄位變更",
+    "globalTitle": "動態",
+    "globalDescription": "您所有群組的動態概覽。",
+    "globalNoActivity": "您的群組中暫無動態。"
   },
   "Information": {
     "title": "資訊",
@@ -606,7 +613,9 @@
     "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
     "emailLabel": "Email",
     "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group."
+    "softCreateHint": "They can register later with this email to access the group.",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "ProfileSettings": {
     "title": "個人資料設定",
@@ -614,6 +623,13 @@
     "emailDescription": "您的電子郵件地址無法變更。",
     "displayNameTitle": "顯示名稱",
     "passwordTitle": "密碼",
+    "preferencesTitle": "偏好設定",
+    "preferencesDescription": "自訂語言與外觀。",
+    "languageLabel": "語言",
+    "themeLabel": "主題",
+    "accountTitle": "帳戶",
+    "signOut": "登出",
+    "signingOut": "登出中…",
     "NameForm": {
       "nameRequired": "名稱為必填",
       "nameMaxLength": "名稱最多 100 個字元",
@@ -643,7 +659,92 @@
       "errorMissingUppercase": "須包含至少一個大寫字母",
       "errorMissingLowercase": "須包含至少一個小寫字母",
       "errorMissingDigit": "須包含至少一個數字"
+    },
+    "blockedUsersTitle": "黑名單",
+    "blockedUsersDescription": "管理您已封鎖的用户。被封鎖的用戶無法將您加入群組，也無法向您發送好友邀請。",
+    "Preferences": {
+      "timezoneLabel": "時區",
+      "timezoneSelect": "選擇時區…",
+      "timezoneSearch": "搜尋時區…",
+      "timezoneEmpty": "未找到相關時區。",
+      "timezoneSaved": "時區已更新。",
+      "currencyLabel": "預設貨幣",
+      "currencySaved": "預設貨幣已更新。"
+    },
+    "SignOutAll": {
+      "button": "登出所有裝置",
+      "dialogTitle": "要登出所有裝置嗎？",
+      "dialogDescription": "這將結束包括當前裝置在内的所有活動工作階段。您將被重定向到登入頁面。",
+      "cancel": "取消",
+      "confirm": "在所有裝置上登出",
+      "signingOut": "正在登出…",
+      "successToast": "所有已登入的工作階段均已終止。"
+    },
+    "BlockedUsers": {
+      "manage": "管理黑名單",
+      "title": "黑名單",
+      "description": "透過選擇好友或輸入電子郵件地址來封鎖用戶。",
+      "blockFriendLabel": "封鎖好友",
+      "blockFriendPlaceholder": "選擇要封鎖的好友…",
+      "or": "或透過信箱封鎖",
+      "emailPlaceholder": "name@example.com",
+      "block": "封鎖",
+      "unblock": "解除封鎖",
+      "empty": "您尚未封鎖任何人。",
+      "blockedToast": "用戶封鎖成功。",
+      "unblockedToast": "用戶已解除封鎖。",
+      "confirmBlockTitle": "封鎖該好友？",
+      "confirmBlockDescription": "封鎖 {name} 將同時將其從您的好友名單中移除。系統不會通知對方此封鎖操作。",
+      "confirmBlockCancel": "取消",
+      "confirmBlockAction": "封鎖並移除好友"
     }
+  },
+  "Friends": {
+    "title": "好友",
+    "description": "儲存與你分攤費用的人，以便快速將他們加入群組。",
+    "loading": "正在載入好友…",
+    "loadError": "無法載入好友。請稍後再試。",
+    "listTitle": "你的好友",
+    "listDescription": "建立或編輯群組時，可以透過電子郵件將好友加入群組。",
+    "empty": "你尚未新增任何好友。",
+    "hasAccount": "已註冊 Knots",
+    "noAccount": "尚未註冊",
+    "pending": "待接受",
+    "connected": "已連線",
+    "addTitle": "新增好友",
+    "addDescription": "輸入他們的電子郵件地址。我們會寄出在 Knots 上建立連線的邀請。可選擇設定顯示名稱。",
+    "addFriend": "新增好友",
+    "nameLabel": "顯示名稱（選填）",
+    "namePlaceholder": "你如何稱呼他們",
+    "emailLabel": "電子郵件",
+    "emailPlaceholder": "email@example.com",
+    "add": "新增",
+    "adding": "新增中…",
+    "cancel": "取消",
+    "remove": "移除",
+    "removeFriend": "移除好友",
+    "removeFriendDescription": "從好友清單中移除 {name}？他們不會從任何群組中被移除。",
+    "addedToast": "已將 {name} 加入好友清單。",
+    "removedToast": "好友已移除。",
+    "requestsTitle": "連線請求",
+    "requestsDescription": "在 Knots 上新增了你的人。接受後將加入你的好友清單。",
+    "wantsToConnect": "想要與你建立連線",
+    "accept": "接受",
+    "accepting": "正在接受…",
+    "decline": "拒絕",
+    "acceptedToast": "已將 {name} 加入好友清單。",
+    "declinedToast": "已拒絕連線請求。",
+    "pickerTitle": "Select a friend",
+    "pickerPlaceholder": "Select a friend…",
+    "pickerSearch": "Search friends…",
+    "pickerEmpty": "No friends found.",
+    "pickerInvited": "Invited",
+    "addByEmail": "Add by email instead",
+    "useEmail": "Use this email",
+    "unblockDialogTitle": "該用戶已被封鎖",
+    "unblockDialogDescription": "您已封鎖 {email}。若要新增其為好友，您需要先解除封鎖。",
+    "unblockAndAdd": "解除封鎖並新增",
+    "unblocking": "正在解除封鎖…"
   },
   "Members": {
     "addedToGroup": "已將 {name} 加入群組。",
@@ -660,7 +761,8 @@
     "leave": "離開",
     "removeFromGroup": "從群組中移除",
     "promoteToOwner": "升為擁有者",
-    "demoteToMember": "降為成員"
+    "demoteToMember": "降為成員",
+    "pickFriend": "Choose from your friends or enter an email."
   },
   "MyGroups": {
     "title": "我的群組",
@@ -773,7 +875,9 @@
       "invalidJson": "無效的 JSON 檔案。",
       "invalidFormat": "此檔案不是有效的 Knots 匯出。",
       "noExpenses": "匯出中沒有支出。"
-    }
+    },
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "GroupDangerZone": {
     "title": "群組管理",

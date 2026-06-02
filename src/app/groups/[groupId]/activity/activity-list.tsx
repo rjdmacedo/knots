@@ -1,11 +1,11 @@
 'use client'
-import {
-  Activity,
-  ActivityItem,
-} from '@/app/groups/[groupId]/activity/activity-item'
+import { ActivityItem } from '@/app/groups/[groupId]/activity/activity-item'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  ACTIVITY_DATE_GROUP_ORDER,
+  groupActivitiesByDate,
+} from '@/lib/activity-date-groups'
 import { trpc } from '@/trpc/client'
-import dayjs, { type Dayjs } from 'dayjs'
 import { useTranslations } from 'next-intl'
 import { forwardRef, useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
@@ -13,55 +13,6 @@ import { useSpinDelay } from 'spin-delay'
 import { useCurrentGroup } from '../current-group-context'
 
 const PAGE_SIZE = 20
-
-const DATE_GROUPS = {
-  TODAY: 'today',
-  YESTERDAY: 'yesterday',
-  EARLIER_THIS_WEEK: 'earlierThisWeek',
-  LAST_WEEK: 'lastWeek',
-  EARLIER_THIS_MONTH: 'earlierThisMonth',
-  LAST_MONTH: 'lastMonth',
-  EARLIER_THIS_YEAR: 'earlierThisYear',
-  LAST_YEAR: 'lastYear',
-  OLDER: 'older',
-}
-
-function getDateGroup(date: Dayjs, today: Dayjs) {
-  if (today.isSame(date, 'day')) {
-    return DATE_GROUPS.TODAY
-  } else if (today.subtract(1, 'day').isSame(date, 'day')) {
-    return DATE_GROUPS.YESTERDAY
-  } else if (today.isSame(date, 'week')) {
-    return DATE_GROUPS.EARLIER_THIS_WEEK
-  } else if (today.subtract(1, 'week').isSame(date, 'week')) {
-    return DATE_GROUPS.LAST_WEEK
-  } else if (today.isSame(date, 'month')) {
-    return DATE_GROUPS.EARLIER_THIS_MONTH
-  } else if (today.subtract(1, 'month').isSame(date, 'month')) {
-    return DATE_GROUPS.LAST_MONTH
-  } else if (today.isSame(date, 'year')) {
-    return DATE_GROUPS.EARLIER_THIS_YEAR
-  } else if (today.subtract(1, 'year').isSame(date, 'year')) {
-    return DATE_GROUPS.LAST_YEAR
-  } else {
-    return DATE_GROUPS.OLDER
-  }
-}
-
-function getGroupedActivitiesByDate(activities: Activity[]) {
-  const today = dayjs()
-  return activities.reduce(
-    (result, activity) => {
-      const activityGroup = getDateGroup(dayjs(activity.time), today)
-      result[activityGroup] = result[activityGroup] ?? []
-      result[activityGroup].push(activity)
-      return result
-    },
-    {} as {
-      [key: string]: Activity[]
-    },
-  )
-}
 
 const ActivitiesLoading = forwardRef<HTMLDivElement>((_, ref) => {
   return (
@@ -120,15 +71,15 @@ export function ActivityList() {
 
   if (!activities || !group) return <ActivitiesLoading />
 
-  const groupedActivitiesByDate = getGroupedActivitiesByDate(activities)
+  const groupedActivitiesByDate = groupActivitiesByDate(activities)
 
   return activities.length > 0 ? (
     <>
-      {Object.values(DATE_GROUPS).map((dateGroup: string) => {
-        let groupActivities = groupedActivitiesByDate[dateGroup]
+      {ACTIVITY_DATE_GROUP_ORDER.map((dateGroup) => {
+        const groupActivities = groupedActivitiesByDate[dateGroup]
         if (!groupActivities || groupActivities.length === 0) return null
         const dateStyle =
-          dateGroup == DATE_GROUPS.TODAY || dateGroup == DATE_GROUPS.YESTERDAY
+          dateGroup === 'today' || dateGroup === 'yesterday'
             ? undefined
             : 'medium'
 
@@ -149,6 +100,7 @@ export function ActivityList() {
                   key={activity.id}
                   groupId={groupId}
                   activity={activity}
+                  group={group}
                   participant={participant}
                   dateStyle={dateStyle}
                   categories={categories}

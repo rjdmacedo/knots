@@ -24,7 +24,8 @@ import { trpc } from '@/trpc/client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CheckCircle2, Loader2 } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -43,6 +44,7 @@ const registerSchema = z
 type RegisterFormValues = z.infer<typeof registerSchema>
 
 export default function RegisterPage() {
+  const searchParams = useSearchParams()
   const [success, setSuccess] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
   const [passwordErrors, setPasswordErrors] = useState<string[]>([])
@@ -56,6 +58,16 @@ export default function RegisterPage() {
       confirmPassword: '',
     },
   })
+
+  useEffect(() => {
+    const emailFromQuery = searchParams.get('email')
+    if (!emailFromQuery) return
+
+    const parsedEmail = z.string().email().safeParse(emailFromQuery)
+    if (parsedEmail.success) {
+      form.setValue('email', parsedEmail.data)
+    }
+  }, [form, searchParams])
 
   const registerMutation = trpc.auth.register.useMutation({
     onSuccess: () => {

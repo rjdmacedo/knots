@@ -8,7 +8,11 @@
     }
   },
   "Header": {
-    "groups": "Ryhmät"
+    "navLabel": "Päänavigaatio",
+    "friends": "Ystävät",
+    "groups": "Ryhmät",
+    "activities": "Toiminnot",
+    "profile": "Profiili"
   },
   "Expenses": {
     "title": "Kulut",
@@ -438,7 +442,10 @@
     "showLess": "Näytä vähemmän",
     "yes": "Kyllä",
     "no": "Ei",
-    "fieldChangesCount": "{count} kentän muutosta"
+    "fieldChangesCount": "{count} kentän muutosta",
+    "globalTitle": "Tapahtumat",
+    "globalDescription": "Yleiskatsaus kaikista tapahtumista ryhmissäsi.",
+    "globalNoActivity": "Ryhmissäsi ei ole vielä tapahtumia."
   },
   "Information": {
     "title": "Tiedot",
@@ -606,7 +613,9 @@
     "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
     "emailLabel": "Email",
     "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group."
+    "softCreateHint": "They can register later with this email to access the group.",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "ProfileSettings": {
     "title": "Profiilin asetukset",
@@ -614,6 +623,13 @@
     "emailDescription": "Sähköpostiosoitettasi ei voi muuttaa.",
     "displayNameTitle": "Näyttönimi",
     "passwordTitle": "Salasana",
+    "preferencesTitle": "Asetukset",
+    "preferencesDescription": "Mukauta kieltä ja ulkoasua.",
+    "languageLabel": "Kieli",
+    "themeLabel": "Teema",
+    "accountTitle": "Tili",
+    "signOut": "Kirjaudu ulos",
+    "signingOut": "Kirjaudutaan ulos…",
     "NameForm": {
       "nameRequired": "Nimi on pakollinen",
       "nameMaxLength": "Nimi saa olla enintään 100 merkkiä",
@@ -643,7 +659,92 @@
       "errorMissingUppercase": "Sisältää vähintään yhden ison kirjaimen",
       "errorMissingLowercase": "Sisältää vähintään yhden pienen kirjaimen",
       "errorMissingDigit": "Sisältää vähintään yhden numeron"
+    },
+    "blockedUsersTitle": "Estetyt käyttäjät",
+    "blockedUsersDescription": "Hallitse estämiäsi käyttäjiä. Estetyt käyttäjät eivät voi lisätä sinua ryhmiin tai lähettää sinulle kaveripyyntöjä.",
+    "Preferences": {
+      "timezoneLabel": "Aikavyöhyke",
+      "timezoneSelect": "Valitse aikavyöhyke…",
+      "timezoneSearch": "Etsi aikavyöhykettä…",
+      "timezoneEmpty": "Aikavyöhykettä ei löytynyt.",
+      "timezoneSaved": "Aikavyöhyke päivitetty.",
+      "currencyLabel": "Oletusvaluutta",
+      "currencySaved": "Oletusvaluutta päivitetty."
+    },
+    "SignOutAll": {
+      "button": "Kirjaudu ulos kaikilta laitteilta",
+      "dialogTitle": "Kirjaudutaanko ulos kaikilta laitteilta?",
+      "dialogDescription": "Tämä lopettaa kaikki aktiiviset istunnot, mukaan lukien tämän. Sinut ohjataan kirjautumissivulle.",
+      "cancel": "Peruuta",
+      "confirm": "Kirjaudu ulos kaikkialta",
+      "signingOut": "Kirjaudutaan ulos…",
+      "successToast": "Kaikki istunnot on lopetettu."
+    },
+    "BlockedUsers": {
+      "manage": "Hallitse estettyjä käyttäjiä",
+      "title": "Estetyt käyttäjät",
+      "description": "Estä käyttäjiä valitsemalla kaveri tai kirjoittamalla heidän sähköpostiosoitteensa.",
+      "blockFriendLabel": "Estä kaveri",
+      "blockFriendPlaceholder": "Valitse estettävä kaveri…",
+      "or": "tai estä sähköpostilla",
+      "emailPlaceholder": "nimi@esimerkki.fi",
+      "block": "Estä",
+      "unblock": "Poista esto",
+      "empty": "Et ole estänyt ketään.",
+      "blockedToast": "Käyttäjä estetty onnistuneesti.",
+      "unblockedToast": "Käyttäjän esto poistettu.",
+      "confirmBlockTitle": "Estetäänkö tämä kaveri?",
+      "confirmBlockDescription": "Käyttäjän {name} estäminen poistaa hänet myös kaverilistaltasi. Hänelle ei ilmoiteta estosta.",
+      "confirmBlockCancel": "Peruuta",
+      "confirmBlockAction": "Estä ja poista kaveri"
     }
+  },
+  "Friends": {
+    "title": "Ystävät",
+    "description": "Tallenna ihmiset, joiden kanssa jaat kuluja, jotta voit lisätä heidät nopeasti ryhmiin.",
+    "loading": "Ladataan ystäviä…",
+    "loadError": "Ystävien lataaminen epäonnistui. Yritä myöhemmin uudelleen.",
+    "listTitle": "Ystäväsi",
+    "listDescription": "Ystäviä voi lisätä ryhmiin sähköpostitse ryhmää luodessa tai muokatessa.",
+    "empty": "Et ole vielä lisännyt yhtään ystävää.",
+    "hasAccount": "Knotsissa",
+    "noAccount": "Ei tiliä vielä",
+    "pending": "Odottaa",
+    "connected": "Yhdistetty",
+    "addTitle": "Lisää ystävä",
+    "addDescription": "Syötä sähköpostiosoite. Lähetämme kutsun yhdistää Knotsiin. Voit halutessasi asettaa näyttönimen.",
+    "addFriend": "Lisää ystävä",
+    "nameLabel": "Näyttönimi (valinnainen)",
+    "namePlaceholder": "Miten kutsut heitä",
+    "emailLabel": "Sähköposti",
+    "emailPlaceholder": "email@esimerkki.fi",
+    "add": "Lisää",
+    "adding": "Lisätään…",
+    "cancel": "Peruuta",
+    "remove": "Poista",
+    "removeFriend": "Poista ystävä",
+    "removeFriendDescription": "Poistetaanko {name} ystävälistalta? Heitä ei poisteta ryhmistä.",
+    "addedToast": "{name} lisätty ystävälistalle.",
+    "removedToast": "Ystävä poistettu.",
+    "requestsTitle": "Yhteyspyynnöt",
+    "requestsDescription": "Henkilöt, jotka lisäsivät sinut Knotsiin. Hyväksy lisätäksesi heidät ystävälistallesi.",
+    "wantsToConnect": "Haluaa muodostaa yhteyden",
+    "accept": "Hyväksy",
+    "accepting": "Hyväksytään…",
+    "decline": "Hylkää",
+    "acceptedToast": "{name} lisätty ystävälistalle.",
+    "declinedToast": "Yhteyspyyntö hylätty.",
+    "pickerTitle": "Select a friend",
+    "pickerPlaceholder": "Select a friend…",
+    "pickerSearch": "Search friends…",
+    "pickerEmpty": "No friends found.",
+    "pickerInvited": "Invited",
+    "addByEmail": "Add by email instead",
+    "useEmail": "Use this email",
+    "unblockDialogTitle": "Käyttäjä on estetty",
+    "unblockDialogDescription": "Olet estänyt käyttäjän {email}. Lisätäksesi hänet kaveriksi, sinun on ensin poistettava esto.",
+    "unblockAndAdd": "Poista esto ja lisää",
+    "unblocking": "Poistetaan estoa…"
   },
   "Members": {
     "addedToGroup": "{name} lisätty ryhmään.",
@@ -660,7 +761,8 @@
     "leave": "Poistu",
     "removeFromGroup": "Poista ryhmästä",
     "promoteToOwner": "Ylennä omistajaksi",
-    "demoteToMember": "Alenna jäseneksi"
+    "demoteToMember": "Alenna jäseneksi",
+    "pickFriend": "Choose from your friends or enter an email."
   },
   "MyGroups": {
     "title": "Omat ryhmät",
@@ -773,7 +875,9 @@
       "invalidJson": "Virheellinen JSON-tiedosto.",
       "invalidFormat": "Tämä tiedosto ei ole kelvollinen Knots-vienti.",
       "noExpenses": "Vienti ei sisällä kuluja."
-    }
+    },
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…"
   },
   "GroupDangerZone": {
     "title": "Ryhmän hallinta",

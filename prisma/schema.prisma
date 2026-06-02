@@ -179,13 +179,15 @@ model ExpenseCategoryMapping {
 // ─── Authentication Models ───────────────────────────────────────────────────
 
 model User {
-  id            String    @id @default(cuid())
-  name          String
-  email         String    @unique
-  emailVerified DateTime?
-  passwordHash  String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                String    @id @default(cuid())
+  name              String
+  email             String    @unique
+  emailVerified     DateTime?
+  passwordHash      String
+  timezone          String?
+  preferredCurrency String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   sessions        Session[]
   accounts        Account[]
@@ -194,6 +196,25 @@ model User {
   invitationsSent Invitation[]      @relation("InvitedBy")
   expensesPaidBy  Expense[]         @relation("ExpensesPaidBy")
   expensesPaidFor ExpensePaidFor[]  @relation("ExpensesPaidFor")
+  friendsOwned    Friend[]          @relation("FriendsOwned")
+  friendsLinked   Friend[]          @relation("FriendsLinked")
+  blockedUsers    BlockedUser[]     @relation("BlockedByUser")
+  blockedBy       BlockedUser[]     @relation("BlockedTargetUser")
+}
+
+model BlockedUser {
+  id            String   @id @default(cuid())
+  userId        String
+  blockedEmail  String
+  blockedUserId String?
+  createdAt     DateTime @default(now())
+
+  user        User  @relation("BlockedByUser", fields: [userId], references: [id], onDelete: Cascade)
+  blockedUser User? @relation("BlockedTargetUser", fields: [blockedUserId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, blockedEmail])
+  @@index([userId])
+  @@index([blockedEmail])
 }
 
 model Account {
@@ -288,6 +309,21 @@ enum InvitationStatus {
   PENDING
   ACCEPTED
   REVOKED
+}
+
+model Friend {
+  id           String   @id @default(cuid())
+  userId       String
+  email        String
+  friendUserId String?
+  name         String?
+  createdAt    DateTime @default(now())
+
+  owner  User  @relation("FriendsOwned", fields: [userId], references: [id], onDelete: Cascade)
+  friend User? @relation("FriendsLinked", fields: [friendUserId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, email])
+  @@index([userId])
 }
 
 model RateLimitAttempt {

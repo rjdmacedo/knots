@@ -1,5 +1,6 @@
 'use client'
 
+import { FriendPicker, type FriendSelection } from '@/components/friend-picker'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -33,8 +34,10 @@ import { toast } from 'sonner'
 const ADD_NEW_VALUE = '__add_new__'
 
 type ParticipantLink = {
-  userId: string | null
-  email: string
+  /** Mapped existing group member, when not adding someone new */
+  memberUserId: string | null
+  /** Friend picked on the "add new member" path */
+  newMember: FriendSelection | null
 }
 
 export function SplitwiseImportDialog({
@@ -126,8 +129,8 @@ export function SplitwiseImportDialog({
             result.csvParticipants.map((participant) => [
               participant.csvName,
               {
-                userId: participant.suggestedUserId,
-                email: '',
+                memberUserId: participant.suggestedUserId,
+                newMember: null,
               },
             ]),
           ),
@@ -167,7 +170,8 @@ export function SplitwiseImportDialog({
     const participantMappings: Record<string, string> = {}
     const membersToAdd: Array<{
       exportName: string
-      email: string
+      userId?: string
+      email?: string
       name?: string
     }> = []
 
@@ -182,12 +186,31 @@ export function SplitwiseImportDialog({
         return
       }
 
-      if (link.userId) {
-        participantMappings[participant.csvName] = link.userId
+      if (link.memberUserId) {
+        participantMappings[participant.csvName] = link.memberUserId
         continue
       }
 
-      const email = link.email.trim()
+      const newMember = link.newMember
+      if (!newMember) {
+        toast.error(t('toast.incompleteMapping.title'), {
+          description: t('toast.incompleteMapping.description', {
+            name: participant.csvName,
+          }),
+        })
+        return
+      }
+
+      if (newMember.userId) {
+        membersToAdd.push({
+          exportName: participant.csvName,
+          userId: newMember.userId,
+          name: newMember.name || participant.csvName,
+        })
+        continue
+      }
+
+      const email = newMember.email.trim()
       if (!email.includes('@')) {
         toast.error(t('toast.missingEmail.title'), {
           description: t('toast.missingEmail.description', {
@@ -200,7 +223,7 @@ export function SplitwiseImportDialog({
       membersToAdd.push({
         exportName: participant.csvName,
         email,
-        name: participant.csvName,
+        name: newMember.name || participant.csvName,
       })
     }
 
@@ -346,7 +369,7 @@ export function SplitwiseImportDialog({
               <div className="space-y-3 max-h-56 overflow-y-auto pr-1">
                 {csvParticipants.map((participant) => {
                   const link = participantLinks[participant.csvName]
-                  const selectValue = link?.userId ?? ADD_NEW_VALUE
+                  const selectValue = link?.memberUserId ?? ADD_NEW_VALUE
 
                   return (
                     <div
@@ -368,12 +391,12 @@ export function SplitwiseImportDialog({
                           onValueChange={(value) => {
                             if (value === ADD_NEW_VALUE) {
                               updateLink(participant.csvName, {
-                                userId: null,
+                                memberUserId: null,
                               })
                             } else {
                               updateLink(participant.csvName, {
-                                userId: value,
-                                email: '',
+                                memberUserId: value,
+                                newMember: null,
                               })
                             }
                           }}
@@ -398,19 +421,18 @@ export function SplitwiseImportDialog({
                       </div>
                       {selectValue === ADD_NEW_VALUE && (
                         <div className="space-y-1">
-                          <Label htmlFor={`email-${participant.csvName}`}>
-                            {t('emailLabel')}
-                          </Label>
-                          <Input
-                            id={`email-${participant.csvName}`}
-                            type="email"
-                            placeholder={t('emailPlaceholder')}
-                            value={link?.email ?? ''}
-                            onChange={(event) =>
+                          <Label>{t('friendLabel')}</Label>
+                          <FriendPicker
+                            value={link?.newMember ?? null}
+                            excludeUserIds={groupMembers.map(
+                              (member) => member.id,
+                            )}
+                            onSelect={(selection: FriendSelection) =>
                               updateLink(participant.csvName, {
-                                email: event.target.value,
+                                newMember: selection,
                               })
                             }
+                            placeholder={t('friendPlaceholder')}
                             disabled={isBusy}
                           />
                           <p className="text-xs text-muted-foreground">

@@ -1,5 +1,6 @@
 'use client'
 
+import { FriendPicker, type FriendSelection } from '@/components/friend-picker'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -68,7 +69,9 @@ export function KnotsImportDialog({
 }) {
   const t = useTranslations('KnotsImport')
   const [fileContent, setFileContent] = useState('')
-  const [memberEmails, setMemberEmails] = useState<Record<string, string>>({})
+  const [memberMappings, setMemberMappings] = useState<
+    Record<string, FriendSelection | null>
+  >({})
   const [isImporting, setIsImporting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const utils = trpc.useUtils()
@@ -101,7 +104,7 @@ export function KnotsImportDialog({
 
     setIsImporting(false)
     setFileContent('')
-    setMemberEmails({})
+    setMemberMappings({})
     resetAnalysis()
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
@@ -126,16 +129,16 @@ export function KnotsImportDialog({
     reader.onload = async (e) => {
       const content = e.target?.result as string
       setFileContent(content)
-      setMemberEmails({})
+      setMemberMappings({})
       resetAnalysis()
 
       try {
         const result = await previewImport({ groupId, fileContent: content })
-        setMemberEmails(
+        setMemberMappings(
           Object.fromEntries(
             result.missingParticipants.map((participant) => [
               participant.exportName,
-              '',
+              null,
             ]),
           ),
         )
@@ -148,7 +151,7 @@ export function KnotsImportDialog({
 
   const handleClear = () => {
     setFileContent('')
-    setMemberEmails({})
+    setMemberMappings({})
     resetAnalysis()
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
@@ -168,8 +171,11 @@ export function KnotsImportDialog({
 
     if (hasMissingParticipants) {
       const missingEmail = missingParticipants.find((participant) => {
-        const email = memberEmails[participant.exportName]?.trim()
-        return !email || !email.includes('@')
+        const mapping = memberMappings[participant.exportName]
+        if (!mapping) return true
+        if (mapping.userId) return false
+        const email = mapping.email.trim()
+        return !email.includes('@')
       })
 
       if (missingEmail) {
@@ -186,11 +192,16 @@ export function KnotsImportDialog({
       beginImport()
       setIsImporting(true)
 
-      const membersToAdd = missingParticipants.map((participant) => ({
-        exportName: participant.exportName,
-        email: memberEmails[participant.exportName].trim(),
-        name: participant.exportName,
-      }))
+      const membersToAdd = missingParticipants.map((participant) => {
+        const mapping = memberMappings[participant.exportName]!
+        return {
+          exportName: participant.exportName,
+          ...(mapping.userId
+            ? { userId: mapping.userId }
+            : { email: mapping.email.trim() }),
+          name: mapping.name || participant.exportName,
+        }
+      })
 
       const result = await utils.client.groups.expenses.importKnots.mutate(
         {
@@ -344,20 +355,16 @@ export function KnotsImportDialog({
                       </p>
                     </div>
                     <div className="space-y-1">
-                      <Label htmlFor={`email-${participant.exportName}`}>
-                        {t('emailLabel')}
-                      </Label>
-                      <Input
-                        id={`email-${participant.exportName}`}
-                        type="email"
-                        placeholder={t('emailPlaceholder')}
-                        value={memberEmails[participant.exportName] ?? ''}
-                        onChange={(event) =>
-                          setMemberEmails((current) => ({
+                      <Label>{t('friendLabel')}</Label>
+                      <FriendPicker
+                        value={memberMappings[participant.exportName] ?? null}
+                        onSelect={(selection) =>
+                          setMemberMappings((current) => ({
                             ...current,
-                            [participant.exportName]: event.target.value,
+                            [participant.exportName]: selection,
                           }))
                         }
+                        placeholder={t('friendPlaceholder')}
                         disabled={isBusy}
                       />
                     </div>

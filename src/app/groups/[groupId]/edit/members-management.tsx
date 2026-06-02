@@ -1,5 +1,6 @@
 'use client'
 
+import { FriendPicker } from '@/components/friend-picker'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,7 +26,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
 import {
   Tooltip,
   TooltipContent,
@@ -62,8 +62,6 @@ type Props = {
 export function MembersManagement({ groupId, members, currentUserId }: Props) {
   const t = useTranslations('Members')
   const tGroup = useTranslations('GroupForm')
-  const [email, setEmail] = useState('')
-  const [name, setName] = useState('')
   const [isAdding, setIsAdding] = useState(false)
   const utils = trpc.useUtils()
   const router = useRouter()
@@ -74,8 +72,6 @@ export function MembersManagement({ groupId, members, currentUserId }: Props) {
   const addMember = trpc.groups.members.add.useMutation({
     onSuccess: (data) => {
       toast.success(t('addedToGroup', { name: data.name }))
-      setEmail('')
-      setName('')
       setIsAdding(false)
       utils.groups.getDetails.invalidate({ groupId })
       utils.groups.get.invalidate({ groupId })
@@ -126,13 +122,17 @@ export function MembersManagement({ groupId, members, currentUserId }: Props) {
     },
   })
 
-  const handleAddMember = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email.trim()) return
+  const handlePickFriend = (selection: {
+    userId?: string
+    email: string
+    name: string
+  }) => {
     addMember.mutate({
       groupId,
-      email: email.trim(),
-      ...(name.trim() ? { name: name.trim() } : {}),
+      ...(selection.userId
+        ? { userId: selection.userId }
+        : { email: selection.email }),
+      name: selection.name,
     })
   }
 
@@ -266,46 +266,25 @@ export function MembersManagement({ groupId, members, currentUserId }: Props) {
         {isOwner && (
           <div>
             {isAdding ? (
-              <form onSubmit={handleAddMember} className="flex flex-col gap-2">
-                <div className="flex gap-2">
-                  <Input
-                    type="text"
-                    placeholder="Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="text-base flex-1"
-                    autoFocus
-                  />
-                  <Input
-                    type="email"
-                    placeholder="email@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="text-base flex-1"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    type="submit"
-                    size="sm"
-                    disabled={addMember.isPending || !email.trim()}
-                  >
-                    {addMember.isPending ? t('adding') : t('add')}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setIsAdding(false)
-                      setEmail('')
-                      setName('')
-                    }}
-                  >
-                    {t('cancel')}
-                  </Button>
-                </div>
-              </form>
+              <div className="flex flex-col gap-2">
+                <p className="text-sm text-muted-foreground">
+                  {t('pickFriend')}
+                </p>
+                <FriendPicker
+                  excludeUserIds={members.map((member) => member.id)}
+                  onSelect={handlePickFriend}
+                  disabled={addMember.isPending}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="self-start"
+                  onClick={() => setIsAdding(false)}
+                >
+                  {t('cancel')}
+                </Button>
+              </div>
             ) : (
               <Button
                 variant="outline"

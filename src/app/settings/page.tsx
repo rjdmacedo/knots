@@ -4,26 +4,20 @@ import { appRouter } from '@/trpc/routers/_app'
 import { Metadata } from 'next'
 import { useTranslations } from 'next-intl'
 import { redirect } from 'next/navigation'
+import { BlockedUsers } from './blocked-users'
 import { NameChangeForm } from './name-change-form'
 import { PasswordChangeForm } from './password-change-form'
+import { ProfilePreferences } from './profile-preferences'
+import { SignOutAllButton } from './sign-out-all-button'
+import { SignOutButton } from './sign-out-button'
 
 export const metadata: Metadata = {
   title: 'Profile Settings',
 }
 
-/**
- * Profile settings page at /settings.
- * - Middleware protects this route (redirects unauthenticated users to /login)
- * - Fetches user profile via tRPC server-side caller
- * - Displays current name and email (read-only)
- * - Includes NameChangeForm and PasswordChangeForm client components
- *
- * Requirements: 6.1, 6.2, 6.3, 6.4
- */
 export default async function ProfileSettingsPage() {
   const session = await auth()
 
-  // Safety net: middleware should handle this, but redirect if unauthenticated
   if (!session?.user?.id) {
     redirect('/login?callbackUrl=/settings')
   }
@@ -32,15 +26,26 @@ export default async function ProfileSettingsPage() {
   const caller = appRouter.createCaller(ctx)
   const profile = await caller.profile.getProfile()
 
-  return <ProfileSettingsContent email={profile.email} name={profile.name} />
+  return (
+    <ProfileSettingsContent
+      email={profile.email}
+      name={profile.name}
+      timezone={profile.timezone}
+      preferredCurrency={profile.preferredCurrency}
+    />
+  )
 }
 
 function ProfileSettingsContent({
   email,
   name,
+  timezone,
+  preferredCurrency,
 }: {
   email: string
   name: string
+  timezone: string | null
+  preferredCurrency: string | null
 }) {
   const t = useTranslations('ProfileSettings')
 
@@ -65,6 +70,33 @@ function ProfileSettingsContent({
         <section className="rounded-lg border p-4 space-y-4">
           <h2 className="font-semibold text-lg">{t('passwordTitle')}</h2>
           <PasswordChangeForm />
+        </section>
+
+        <section className="rounded-lg border p-4 space-y-4">
+          <h2 className="font-semibold text-lg">{t('preferencesTitle')}</h2>
+          <p className="text-sm text-muted-foreground">
+            {t('preferencesDescription')}
+          </p>
+          <ProfilePreferences
+            timezone={timezone}
+            preferredCurrency={preferredCurrency}
+          />
+        </section>
+
+        <section className="rounded-lg border p-4 space-y-4">
+          <h2 className="font-semibold text-lg">{t('blockedUsersTitle')}</h2>
+          <p className="text-sm text-muted-foreground">
+            {t('blockedUsersDescription')}
+          </p>
+          <BlockedUsers />
+        </section>
+
+        <section className="rounded-lg border p-4 space-y-4">
+          <h2 className="font-semibold text-lg">{t('accountTitle')}</h2>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <SignOutButton />
+            <SignOutAllButton />
+          </div>
         </section>
       </div>
     </>
