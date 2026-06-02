@@ -1,3 +1,10 @@
+## [1.35.1](https://github.com/rjdmacedo/knots/compare/v1.35.0...v1.35.1) (2026-06-02)
+
+
+### Bug Fixes
+
+* **ci:** trigger CD workflow with the correct release tag instead of original commit ([608eb4f](https://github.com/rjdmacedo/knots/commit/608eb4f9c557a5c076de6083b798307ca70395ff))
+
 # [1.35.0](https://github.com/rjdmacedo/knots/compare/v1.34.0...v1.35.0) (2026-06-02)
 
 
