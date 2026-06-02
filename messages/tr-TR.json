@@ -581,6 +581,10 @@
       "error": {
         "title": "Import failed",
         "description": "Failed to import CSV file."
+      },
+      "cancelled": {
+        "title": "İçe aktarma iptal edildi",
+        "description": "İçe aktarma tamamlanmadan durduruldu."
       }
     }
   },
@@ -653,7 +657,18 @@
     "leaveGroupConfirmTitle": "Gruptan ayrıl",
     "leaveGroupConfirmDescription": "\"{name}\" grubundan ayrılmak istediğinize emin misiniz? Geçmiş giderleriniz grup geçmişinde kalacaktır.",
     "leaveGroupConfirmCancel": "İptal",
-    "leaveGroupConfirmAction": "Ayrıl"
+    "leaveGroupConfirmAction": "Ayrıl",
+    "leaveGroupSuccess": "“{name}” grubundan ayrıldınız.",
+    "activeGroups": "Aktif gruplar",
+    "archivedGroups": "Arşivlenmiş gruplar",
+    "archiveSuccess": "Grup arşivlendi.",
+    "unarchiveSuccess": "Grup geri yüklendi.",
+    "deleteGroup": "Grubu sil",
+    "deleteSuccess": "Grup silindi.",
+    "deleteGroupConfirmTitle": "Grup kalıcı olarak silinsin mi?",
+    "deleteGroupConfirmDescription": "Bu işlem “{name}” grubunu ve tüm giderlerini, bakiyelerini ve geçmişini herkes için kalıcı olarak siler. Bu işlem geri alınamaz.",
+    "deleteGroupConfirmCancel": "İptal",
+    "deleteGroupConfirmAction": "Kalıcı olarak sil"
   },
   "UserMenu": {
     "profileSettings": "Profil ayarları",
@@ -683,5 +698,70 @@
     "eventUpdate": "Gider güncellendi",
     "eventDelete": "Gider silindi",
     "selectAtLeastOneFilter": "En az bir üye veya olay seçin."
+  },
+  "ExpenseImport": {
+    "button": "Giderleri içe aktar",
+    "fromKnots": "Knots’tan içe aktar",
+    "fromSplitwise": "Splitwise’dan içe aktar"
+  },
+  "KnotsImport": {
+    "title": "Knots’tan içe aktar",
+    "description": "Bir Knots dışa aktarma dosyası yükleyin. Dosyada henüz bu grupta olmayan kişiler varsa, içe aktarmadan önce onları burada ekleyebilirsiniz.",
+    "fileLabel": "Knots dışa aktarma dosyası",
+    "previewLabel": "Önizleme (ilk 10 satır)",
+    "clear": "Temizle",
+    "cancel": "İptal",
+    "import": "Giderleri içe aktar",
+    "addAndImport": "Üyeleri ekle ve içe aktar",
+    "importing": "İçe aktarılıyor...",
+    "analyzing": "Dışa aktarma analiz ediliyor…",
+    "expenseCount": "{count, plural, one {# gider bulundu} other {# gider bulundu}}",
+    "matchedParticipants": "Zaten grupta: {names}",
+    "missingParticipantsLabel": "Bu gruba eklenecek kişiler",
+    "missingParticipantsDescription": "Her kişi için bir e-posta girin. Yeni hesaplar otomatik olarak oluşturulur ve bu gruba bağlanır. Zaten hesapları varsa üye olarak eklenirler.",
+    "expenseReferences": "{count, plural, one {# gider} other {# gider}}",
+    "emailLabel": "E-posta",
+    "emailPlaceholder": "ad@example.com",
+    "softCreateHint": "Daha sonra bu e-posta ile kaydolup gruba erişebilirler.",
+    "toast": {
+      "invalidFileType": {
+        "title": "Geçersiz dosya türü",
+        "description": "Lütfen JSON veya CSV Knots dışa aktarma dosyası seçin."
+      },
+      "noContent": {
+        "title": "Dosya içeriği yok",
+        "description": "Lütfen önce bir Knots dışa aktarma dosyası seçin."
+      },
+      "missingEmail": {
+        "title": "E-posta gerekli",
+        "description": "{name} için bir e-posta girin."
+      },
+      "success": {
+        "title": "İçe aktarma başarılı",
+        "description": "Knots’tan {count} gider başarıyla içe aktarıldı."
+      },
+      "error": {
+        "title": "İçe aktarma başarısız",
+        "description": "Knots dışa aktarma dosyası içe aktarılamadı."
+      },
+      "cancelled": {
+        "title": "İçe aktarma iptal edildi",
+        "description": "İçe aktarma tamamlanmadan durduruldu."
+      }
+    }
+  },
+  "GroupDangerZone": {
+    "title": "Grup yönetimi",
+    "description": "Arşivleme, verileri silmeden bu grubu listenizden gizler. Silme, grubu herkes için kalıcı olarak kaldırır.",
+    "archive": "Grubu arşivle",
+    "unarchive": "Grubu geri yükle",
+    "delete": "Grubu sil",
+    "archiveSuccess": "Grup arşivlendi.",
+    "unarchiveSuccess": "Grup geri yüklendi.",
+    "deleteSuccess": "Grup silindi.",
+    "deleteConfirmTitle": "Grup kalıcı olarak silinsin mi?",
+    "deleteConfirmDescription": "Bu işlem “{name}” grubunu ve tüm giderlerini, bakiyelerini ve geçmişini herkes için kalıcı olarak siler. Bu işlem geri alınamaz.",
+    "cancel": "İptal",
+    "deleteConfirmAction": "Kalıcı olarak sil"
   }
 }

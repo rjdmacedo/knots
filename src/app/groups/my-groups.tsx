@@ -34,12 +34,15 @@ import { usePushNotificationSubscription } from '@/lib/push/use-push-notificatio
 import { trpc } from '@/trpc/client'
 import {
   AlertCircle,
+  Archive,
+  ArchiveRestore,
   Bell,
   BellOff,
   Loader2,
   LogOut,
   MoreVertical,
   Plus,
+  Trash2,
   Users,
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -51,6 +54,14 @@ import { toast } from 'sonner'
 const GROUP_NAME_MIN = 1
 const GROUP_NAME_MAX = 100
 
+type UserGroup = {
+  id: string
+  name: string
+  createdAt: Date
+  archivedAt: Date | null
+  role: 'OWNER' | 'MEMBER'
+}
+
 export function MyGroups() {
   const t = useTranslations('MyGroups')
   const { data: profile } = trpc.profile.getProfile.useQuery()
@@ -60,6 +71,10 @@ export function MyGroups() {
     error,
   } = trpc.groupMembership.getUserGroups.useQuery()
   const [dialogOpen, setDialogOpen] = useState(false)
+
+  const activeGroups = groups?.filter((group) => group.archivedAt == null) ?? []
+  const archivedGroups =
+    groups?.filter((group) => group.archivedAt != null) ?? []
 
   if (isLoading) {
     return (
@@ -95,58 +110,111 @@ export function MyGroups() {
           <p>{t('noGroupsHint')}</p>
         </div>
       ) : (
-        <ul className="grid gap-2 sm:grid-cols-2">
-          {groups?.map((group) => (
-            <li key={group.id}>
-              <GroupCard
-                groupId={group.id}
-                name={group.name}
-                currentUserId={profile?.id}
-              />
-            </li>
-          ))}
-        </ul>
+        <div className="space-y-8">
+          {activeGroups.length > 0 && (
+            <section className="space-y-3">
+              <h2 className="text-sm font-medium text-muted-foreground">
+                {t('activeGroups')}
+              </h2>
+              <ul className="grid gap-2 sm:grid-cols-2">
+                {activeGroups.map((group) => (
+                  <li key={group.id}>
+                    <GroupCard group={group} currentUserId={profile?.id} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {archivedGroups.length > 0 && (
+            <section className="space-y-3">
+              <h2 className="text-sm font-medium text-muted-foreground">
+                {t('archivedGroups')}
+              </h2>
+              <ul className="grid gap-2 sm:grid-cols-2">
+                {archivedGroups.map((group) => (
+                  <li key={group.id}>
+                    <GroupCard group={group} currentUserId={profile?.id} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </div>
       )}
     </MyGroupsLayout>
   )
 }
 
 function GroupCard({
-  groupId,
-  name,
+  group,
   currentUserId,
 }: {
-  groupId: string
-  name: string
+  group: UserGroup
   currentUserId: string | undefined
 }) {
   const t = useTranslations('MyGroups')
   const tGroups = useTranslations('Groups')
   const tNotifications = useTranslations('Notifications')
+  const router = useRouter()
   const [leaveDialogOpen, setLeaveDialogOpen] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const utils = trpc.useUtils()
   const pushConfigured = !!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
-  const notifications = usePushNotificationSubscription(groupId, currentUserId)
+  const notifications = usePushNotificationSubscription(group.id, currentUserId)
+  const isArchived = group.archivedAt != null
+  const isOwner = group.role === 'OWNER'
+
+  const invalidate = () => utils.groupMembership.getUserGroups.invalidate()
 
   const leaveGroup = trpc.groups.members.leave.useMutation({
     onSuccess: () => {
-      toast.success(`You left "${name}".`)
-      utils.groupMembership.getUserGroups.invalidate()
+      toast.success(t('leaveGroupSuccess', { name: group.name }))
+      invalidate()
     },
-    onError: (error) => {
-      toast.error(error.message)
-    },
+    onError: (error) => toast.error(error.message),
   })
+
+  const archiveGroup = trpc.groups.archive.useMutation({
+    onSuccess: () => {
+      toast.success(t('archiveSuccess'))
+      invalidate()
+    },
+    onError: (error) => toast.error(error.message),
+  })
+
+  const unarchiveGroup = trpc.groups.unarchive.useMutation({
+    onSuccess: () => {
+      toast.success(t('unarchiveSuccess'))
+      invalidate()
+    },
+    onError: (error) => toast.error(error.message),
+  })
+
+  const deleteGroup = trpc.groups.delete.useMutation({
+    onSuccess: () => {
+      toast.success(t('deleteSuccess'))
+      invalidate()
+      router.push('/groups')
+    },
+    onError: (error) => toast.error(error.message),
+  })
+
+  const isBusy =
+    leaveGroup.isPending ||
+    archiveGroup.isPending ||
+    unarchiveGroup.isPending ||
+    deleteGroup.isPending
 
   return (
     <>
       <div className="flex items-center rounded-lg border transition-colors hover:bg-accent">
         <Link
-          href={`/groups/${groupId}`}
+          href={`/groups/${group.id}`}
           className="flex flex-1 items-center gap-3 p-4"
         >
           <Users className="h-5 w-5 text-muted-foreground shrink-0" />
-          <span className="font-medium truncate">{name}</span>
+          <span className="font-medium truncate">{group.name}</span>
         </Link>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -155,7 +223,7 @@ function GroupCard({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {pushConfigured && notifications.isSupported && (
+            {pushConfigured && notifications.isSupported && !isArchived && (
               <>
                 <DropdownMenuItem
                   disabled={notifications.isLoading}
@@ -182,6 +250,34 @@ function GroupCard({
                 <DropdownMenuSeparator />
               </>
             )}
+            {isArchived ? (
+              <DropdownMenuItem
+                disabled={isBusy}
+                onClick={() => unarchiveGroup.mutate({ groupId: group.id })}
+              >
+                <ArchiveRestore className="h-4 w-4 mr-2" />
+                {tGroups('unarchive')}
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem
+                disabled={isBusy}
+                onClick={() => archiveGroup.mutate({ groupId: group.id })}
+              >
+                <Archive className="h-4 w-4 mr-2" />
+                {tGroups('archive')}
+              </DropdownMenuItem>
+            )}
+            {isOwner && (
+              <DropdownMenuItem
+                className="text-destructive focus:text-destructive"
+                disabled={isBusy}
+                onClick={() => setDeleteDialogOpen(true)}
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                {t('deleteGroup')}
+              </DropdownMenuItem>
+            )}
+            <DropdownMenuSeparator />
             <DropdownMenuItem
               className="text-destructive focus:text-destructive"
               onClick={() => setLeaveDialogOpen(true)}
@@ -198,15 +294,39 @@ function GroupCard({
           <AlertDialogHeader>
             <AlertDialogTitle>{t('leaveGroupConfirmTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('leaveGroupConfirmDescription', { name })}
+              {t('leaveGroupConfirmDescription', { name: group.name })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>
               {t('leaveGroupConfirmCancel')}
             </AlertDialogCancel>
-            <AlertDialogAction onClick={() => leaveGroup.mutate({ groupId })}>
+            <AlertDialogAction
+              onClick={() => leaveGroup.mutate({ groupId: group.id })}
+            >
               {t('leaveGroupConfirmAction')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('deleteGroupConfirmTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('deleteGroupConfirmDescription', { name: group.name })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteGroup.isPending}>
+              {t('deleteGroupConfirmCancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={deleteGroup.isPending}
+              onClick={() => deleteGroup.mutate({ groupId: group.id })}
+            >
+              {t('deleteGroupConfirmAction')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -581,6 +581,10 @@
       "error": {
         "title": "Import failed",
         "description": "Failed to import CSV file."
+      },
+      "cancelled": {
+        "title": "Importació cancel·lada",
+        "description": "La importació s’ha aturat abans d’acabar."
       }
     }
   },
@@ -653,7 +657,18 @@
     "leaveGroupConfirmTitle": "Abandona el grup",
     "leaveGroupConfirmDescription": "Segur que vols abandonar «{name}»? Les despeses anteriors romandran a l'historial del grup.",
     "leaveGroupConfirmCancel": "Cancel·la",
-    "leaveGroupConfirmAction": "Abandona"
+    "leaveGroupConfirmAction": "Abandona",
+    "leaveGroupSuccess": "Has sortit de “{name}”.",
+    "activeGroups": "Grups actius",
+    "archivedGroups": "Grups arxivats",
+    "archiveSuccess": "Grup arxivat.",
+    "unarchiveSuccess": "Grup restaurat.",
+    "deleteGroup": "Suprimeix el grup",
+    "deleteSuccess": "Grup suprimit.",
+    "deleteGroupConfirmTitle": "Vols suprimir el grup definitivament?",
+    "deleteGroupConfirmDescription": "Això suprimirà definitivament “{name}” i totes les seves despeses, saldos i historial per a tots els membres. No es pot desfer.",
+    "deleteGroupConfirmCancel": "Cancel·la",
+    "deleteGroupConfirmAction": "Suprimeix definitivament"
   },
   "UserMenu": {
     "profileSettings": "Configuració del perfil",
@@ -683,5 +698,70 @@
     "eventUpdate": "Despesa actualitzada",
     "eventDelete": "Despesa eliminada",
     "selectAtLeastOneFilter": "Selecciona almenys un membre o un esdeveniment."
+  },
+  "ExpenseImport": {
+    "button": "Importa despeses",
+    "fromKnots": "Importa des de Knots",
+    "fromSplitwise": "Importa des de Splitwise"
+  },
+  "KnotsImport": {
+    "title": "Importa des de Knots",
+    "description": "Puja un fitxer exportat de Knots. Si el fitxer inclou persones que encara no són al grup, les pots afegir aquí abans d’importar.",
+    "fileLabel": "Fitxer d’exportació de Knots",
+    "previewLabel": "Previsualització (primeres 10 línies)",
+    "clear": "Esborra",
+    "cancel": "Cancel·la",
+    "import": "Importa despeses",
+    "addAndImport": "Afegeix membres i importa",
+    "importing": "Important...",
+    "analyzing": "Analitzant l’exportació…",
+    "expenseCount": "{count, plural, one {S’ha trobat # despesa} other {S’han trobat # despeses}}",
+    "matchedParticipants": "Ja són al grup: {names}",
+    "missingParticipantsLabel": "Persones per afegir a aquest grup",
+    "missingParticipantsDescription": "Introdueix un correu electrònic per a cada persona. Els comptes nous es creen automàticament i s’enllacen amb aquest grup. Si ja tenen compte, s’afegeixen com a membres.",
+    "expenseReferences": "{count, plural, one {# despesa} other {# despeses}}",
+    "emailLabel": "Correu electrònic",
+    "emailPlaceholder": "nom@example.com",
+    "softCreateHint": "Es podran registrar més endavant amb aquest correu per accedir al grup.",
+    "toast": {
+      "invalidFileType": {
+        "title": "Tipus de fitxer no vàlid",
+        "description": "Selecciona un fitxer JSON o CSV exportat de Knots."
+      },
+      "noContent": {
+        "title": "Fitxer sense contingut",
+        "description": "Selecciona primer un fitxer d’exportació de Knots."
+      },
+      "missingEmail": {
+        "title": "Cal un correu electrònic",
+        "description": "Introdueix el correu electrònic de {name}."
+      },
+      "success": {
+        "title": "Importació completada",
+        "description": "S’han importat {count} despeses de Knots."
+      },
+      "error": {
+        "title": "Ha fallat la importació",
+        "description": "No s’ha pogut importar el fitxer de Knots."
+      },
+      "cancelled": {
+        "title": "Importació cancel·lada",
+        "description": "La importació s’ha aturat abans d’acabar."
+      }
+    }
+  },
+  "GroupDangerZone": {
+    "title": "Gestió del grup",
+    "description": "Arxivar amaga aquest grup de la teva llista sense esborrar-ne les dades. Suprimir elimina el grup definitivament per a tothom.",
+    "archive": "Arxiva el grup",
+    "unarchive": "Restaura el grup",
+    "delete": "Suprimeix el grup",
+    "archiveSuccess": "Grup arxivat.",
+    "unarchiveSuccess": "Grup restaurat.",
+    "deleteSuccess": "Grup suprimit.",
+    "deleteConfirmTitle": "Vols suprimir el grup definitivament?",
+    "deleteConfirmDescription": "Això suprimirà definitivament “{name}” i totes les seves despeses, saldos i historial per a tots els membres. No es pot desfer.",
+    "cancel": "Cancel·la",
+    "deleteConfirmAction": "Suprimeix definitivament"
   }
 }

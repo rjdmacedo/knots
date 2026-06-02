@@ -581,6 +581,10 @@
       "error": {
         "title": "Import failed",
         "description": "Failed to import CSV file."
+      },
+      "cancelled": {
+        "title": "Import anulowany",
+        "description": "Import został zatrzymany przed zakończeniem."
       }
     }
   },
@@ -653,7 +657,18 @@
     "leaveGroupConfirmTitle": "Opuść grupę",
     "leaveGroupConfirmDescription": "Czy na pewno chcesz opuścić „{name}”? Twoje wcześniejsze wydatki pozostaną w historii grupy.",
     "leaveGroupConfirmCancel": "Anuluj",
-    "leaveGroupConfirmAction": "Opuść"
+    "leaveGroupConfirmAction": "Opuść",
+    "leaveGroupSuccess": "Opuściłeś „{name}”.",
+    "activeGroups": "Aktywne grupy",
+    "archivedGroups": "Zarchiwizowane grupy",
+    "archiveSuccess": "Grupa zarchiwizowana.",
+    "unarchiveSuccess": "Grupa przywrócona.",
+    "deleteGroup": "Usuń grupę",
+    "deleteSuccess": "Grupa usunięta.",
+    "deleteGroupConfirmTitle": "Usunąć grupę trwale?",
+    "deleteGroupConfirmDescription": "Spowoduje to trwałe usunięcie „{name}” oraz wszystkich jej wydatków, sald i historii dla wszystkich członków. Tej operacji nie można cofnąć.",
+    "deleteGroupConfirmCancel": "Anuluj",
+    "deleteGroupConfirmAction": "Usuń trwale"
   },
   "UserMenu": {
     "profileSettings": "Ustawienia profilu",
@@ -683,5 +698,70 @@
     "eventUpdate": "Zaktualizowano wydatek",
     "eventDelete": "Usunięto wydatek",
     "selectAtLeastOneFilter": "Wybierz co najmniej jednego członka lub zdarzenie."
+  },
+  "ExpenseImport": {
+    "button": "Importuj wydatki",
+    "fromKnots": "Importuj z Knots",
+    "fromSplitwise": "Importuj ze Splitwise"
+  },
+  "KnotsImport": {
+    "title": "Importuj z Knots",
+    "description": "Prześlij plik eksportu Knots. Jeśli plik zawiera osoby, których nie ma jeszcze w tej grupie, możesz dodać je tutaj przed importem.",
+    "fileLabel": "Plik eksportu Knots",
+    "previewLabel": "Podgląd (pierwsze 10 wierszy)",
+    "clear": "Wyczyść",
+    "cancel": "Anuluj",
+    "import": "Importuj wydatki",
+    "addAndImport": "Dodaj członków i importuj",
+    "importing": "Importowanie...",
+    "analyzing": "Analizowanie eksportu…",
+    "expenseCount": "{count, plural, one {Znaleziono # wydatek} few {Znaleziono # wydatki} other {Znaleziono # wydatków}}",
+    "matchedParticipants": "Już w grupie: {names}",
+    "missingParticipantsLabel": "Osoby do dodania do tej grupy",
+    "missingParticipantsDescription": "Podaj adres e-mail dla każdej osoby. Nowe konta są tworzone automatycznie i łączone z tą grupą. Jeśli osoby mają już konto, zostaną dodane jako członkowie.",
+    "expenseReferences": "{count, plural, one {# wydatek} few {# wydatki} other {# wydatków}}",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "imie@example.com",
+    "softCreateHint": "Mogą zarejestrować się później przy użyciu tego e-maila, aby uzyskać dostęp do grupy.",
+    "toast": {
+      "invalidFileType": {
+        "title": "Nieprawidłowy typ pliku",
+        "description": "Wybierz plik eksportu Knots w formacie JSON lub CSV."
+      },
+      "noContent": {
+        "title": "Brak zawartości pliku",
+        "description": "Najpierw wybierz plik eksportu Knots."
+      },
+      "missingEmail": {
+        "title": "E-mail jest wymagany",
+        "description": "Podaj e-mail dla {name}."
+      },
+      "success": {
+        "title": "Import zakończony",
+        "description": "Pomyślnie zaimportowano {count} wydatków z Knots."
+      },
+      "error": {
+        "title": "Import nie powiódł się",
+        "description": "Nie udało się zaimportować pliku eksportu Knots."
+      },
+      "cancelled": {
+        "title": "Import anulowany",
+        "description": "Import został zatrzymany przed zakończeniem."
+      }
+    }
+  },
+  "GroupDangerZone": {
+    "title": "Zarządzanie grupą",
+    "description": "Archiwizacja ukrywa tę grupę na liście bez usuwania danych. Usunięcie trwale usuwa grupę dla wszystkich.",
+    "archive": "Zarchiwizuj grupę",
+    "unarchive": "Przywróć grupę",
+    "delete": "Usuń grupę",
+    "archiveSuccess": "Grupa zarchiwizowana.",
+    "unarchiveSuccess": "Grupa przywrócona.",
+    "deleteSuccess": "Grupa usunięta.",
+    "deleteConfirmTitle": "Usunąć grupę trwale?",
+    "deleteConfirmDescription": "Spowoduje to trwałe usunięcie „{name}” oraz wszystkich jej wydatków, sald i historii dla wszystkich członków. Tej operacji nie można cofnąć.",
+    "cancel": "Anuluj",
+    "deleteConfirmAction": "Usuń trwale"
   }
 }

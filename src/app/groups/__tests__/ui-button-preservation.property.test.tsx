@@ -12,7 +12,7 @@
  * - CreateFromReceiptButton: DialogTrigger/DrawerTrigger wraps the button → click opens dialog/drawer
  * - Edit button: Link component navigates to /edit
  * - Context menu: "Remove from recent groups" and "Archive" DropdownMenuItems with handlers
- * - Splitwise Import: Tooltip + DialogTrigger pattern (reference implementation)
+ * - Expense Import: Tooltip + DropdownMenuTrigger with Knots and Splitwise options
  *
  * These tests MUST PASS on UNFIXED code to confirm baseline behavior.
  * After the fix (adding Tooltip wrappers), these tests must STILL PASS
@@ -54,9 +54,13 @@ const RECENT_GROUP_LIST_CARD_PATH = path.resolve(
   __dirname,
   '../../groups/recent-group-list-card.tsx',
 )
-const SPLITWISE_IMPORT_PATH = path.resolve(
+const EXPENSE_IMPORT_PATH = path.resolve(
   __dirname,
-  '../../../components/splitwise-import.tsx',
+  '../../../components/expense-import.tsx',
+)
+const KNOTS_IMPORT_PATH = path.resolve(
+  __dirname,
+  '../../../components/knots-import-dialog.tsx',
 )
 
 // --- Constants ---
@@ -229,21 +233,25 @@ function contextMenuPreservesClickBehavior(fileContent: string): {
  * Verifies that the Splitwise Import button preserves its Tooltip + Dialog behavior.
  * This is the reference implementation that other buttons should follow.
  */
-function splitwiseImportPreservesTooltipBehavior(fileContent: string): {
+function expenseImportPreservesTooltipBehavior(fileContent: string): {
   hasTooltip: boolean
   hasTooltipTrigger: boolean
   hasTooltipContent: boolean
-  hasDialog: boolean
-  hasDialogTrigger: boolean
-  hasImportLogic: boolean
+  hasDropdownMenu: boolean
+  hasDropdownMenuTrigger: boolean
+  hasKnotsImport: boolean
+  hasSplitwiseImport: boolean
 } {
   return {
     hasTooltip: fileContent.includes('<Tooltip'),
     hasTooltipTrigger: fileContent.includes('<TooltipTrigger'),
     hasTooltipContent: fileContent.includes('<TooltipContent'),
-    hasDialog: fileContent.includes('<Dialog'),
-    hasDialogTrigger: fileContent.includes('<DialogTrigger'),
-    hasImportLogic: fileContent.includes('importSplitwise'),
+    hasDropdownMenu: fileContent.includes('<DropdownMenu'),
+    hasDropdownMenuTrigger: fileContent.includes('<DropdownMenuTrigger'),
+    hasKnotsImport:
+      fileContent.includes('importKnots') ||
+      fileContent.includes('previewKnotsImport'),
+    hasSplitwiseImport: fileContent.includes('importSplitwise'),
   }
 }
 
@@ -294,10 +302,10 @@ const PRESERVATION_TEST_CASES: PreservationTestCase[] = [
     requirement: '3.7',
   },
   {
-    name: 'SplitwiseImport',
-    filePath: SPLITWISE_IMPORT_PATH,
+    name: 'ExpenseImport',
+    filePath: EXPENSE_IMPORT_PATH,
     description:
-      'Hovering displays shadcn Tooltip correctly (reference implementation)',
+      'Hovering displays shadcn Tooltip; click opens import dropdown',
     requirement: '3.8',
   },
 ]
@@ -517,26 +525,35 @@ describe('UI Button Preservation Property Tests', () => {
     })
 
     /**
-     * Splitwise Import button: Hovering SHALL CONTINUE TO display its shadcn Tooltip correctly.
-     * This is the reference implementation that demonstrates the correct pattern.
+     * Expense Import button: Hovering SHALL CONTINUE TO display its shadcn Tooltip correctly.
      *
      * **Validates: Requirements 3.8**
      */
-    it('Splitwise Import button SHALL CONTINUE TO display shadcn Tooltip correctly', () => {
+    it('Expense Import button SHALL CONTINUE TO display shadcn Tooltip correctly', () => {
       fc.assert(
         fc.property(
           arbButtonState,
           arbInteractionSequence,
           (state, sequence) => {
-            const fileContent = fs.readFileSync(SPLITWISE_IMPORT_PATH, 'utf-8')
-            const result = splitwiseImportPreservesTooltipBehavior(fileContent)
+            const expenseImportContent = fs.readFileSync(
+              EXPENSE_IMPORT_PATH,
+              'utf-8',
+            )
+            const knotsImportContent = fs.readFileSync(
+              KNOTS_IMPORT_PATH,
+              'utf-8',
+            )
+            const result = expenseImportPreservesTooltipBehavior(
+              `${expenseImportContent}\n${knotsImportContent}`,
+            )
 
             expect(result.hasTooltip).toBe(true)
             expect(result.hasTooltipTrigger).toBe(true)
             expect(result.hasTooltipContent).toBe(true)
-            expect(result.hasDialog).toBe(true)
-            expect(result.hasDialogTrigger).toBe(true)
-            expect(result.hasImportLogic).toBe(true)
+            expect(result.hasDropdownMenu).toBe(true)
+            expect(result.hasDropdownMenuTrigger).toBe(true)
+            expect(result.hasKnotsImport).toBe(true)
+            expect(result.hasSplitwiseImport).toBe(true)
           },
         ),
         { numRuns: PBT_NUM_RUNS },
@@ -610,11 +627,22 @@ describe('UI Button Preservation Property Tests', () => {
                 expect(r.hasArchiveItem).toBe(true)
                 break
               }
-              case 'SplitwiseImport': {
-                const r = splitwiseImportPreservesTooltipBehavior(fileContent)
+              case 'ExpenseImport': {
+                const expenseImportContent = fs.readFileSync(
+                  EXPENSE_IMPORT_PATH,
+                  'utf-8',
+                )
+                const knotsImportContent = fs.readFileSync(
+                  KNOTS_IMPORT_PATH,
+                  'utf-8',
+                )
+                const r = expenseImportPreservesTooltipBehavior(
+                  `${expenseImportContent}\n${knotsImportContent}`,
+                )
                 expect(r.hasTooltip).toBe(true)
                 expect(r.hasTooltipTrigger).toBe(true)
                 expect(r.hasTooltipContent).toBe(true)
+                expect(r.hasDropdownMenu).toBe(true)
                 break
               }
             }

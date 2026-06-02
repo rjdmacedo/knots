@@ -581,6 +581,10 @@
       "error": {
         "title": "Import fehlgeschlagen",
         "description": "CSV-Datei konnte nicht importiert werden."
+      },
+      "cancelled": {
+        "title": "Import abgebrochen",
+        "description": "Der Import wurde vor Abschluss gestoppt."
       }
     }
   },
@@ -653,7 +657,18 @@
     "leaveGroupConfirmTitle": "Gruppe verlassen",
     "leaveGroupConfirmDescription": "Möchtest du „{name}“ wirklich verlassen? Deine bisherigen Ausgaben bleiben im Gruppenverlauf.",
     "leaveGroupConfirmCancel": "Abbrechen",
-    "leaveGroupConfirmAction": "Verlassen"
+    "leaveGroupConfirmAction": "Verlassen",
+    "leaveGroupSuccess": "Du hast „{name}“ verlassen.",
+    "activeGroups": "Aktive Gruppen",
+    "archivedGroups": "Archivierte Gruppen",
+    "archiveSuccess": "Gruppe archiviert.",
+    "unarchiveSuccess": "Gruppe wiederhergestellt.",
+    "deleteGroup": "Gruppe löschen",
+    "deleteSuccess": "Gruppe gelöscht.",
+    "deleteGroupConfirmTitle": "Gruppe dauerhaft löschen?",
+    "deleteGroupConfirmDescription": "Dadurch werden „{name}“ sowie alle Ausgaben, Salden und der Verlauf für alle Mitglieder dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden.",
+    "deleteGroupConfirmCancel": "Abbrechen",
+    "deleteGroupConfirmAction": "Dauerhaft löschen"
   },
   "UserMenu": {
     "profileSettings": "Profileinstellungen",
@@ -683,5 +698,70 @@
     "eventUpdate": "Ausgabe bearbeitet",
     "eventDelete": "Ausgabe gelöscht",
     "selectAtLeastOneFilter": "Wähle mindestens ein Mitglied oder ein Ereignis."
+  },
+  "ExpenseImport": {
+    "button": "Ausgaben importieren",
+    "fromKnots": "Aus Knots importieren",
+    "fromSplitwise": "Aus Splitwise importieren"
+  },
+  "KnotsImport": {
+    "title": "Aus Knots importieren",
+    "description": "Lade eine Knots-Exportdatei hoch. Wenn die Datei Personen enthält, die noch nicht in dieser Gruppe sind, kannst du sie vor dem Import hier hinzufügen.",
+    "fileLabel": "Knots-Exportdatei",
+    "previewLabel": "Vorschau (erste 10 Zeilen)",
+    "clear": "Leeren",
+    "cancel": "Abbrechen",
+    "import": "Ausgaben importieren",
+    "addAndImport": "Mitglieder hinzufügen und importieren",
+    "importing": "Import läuft...",
+    "analyzing": "Export wird analysiert…",
+    "expenseCount": "{count, plural, one {# Ausgabe gefunden} other {# Ausgaben gefunden}}",
+    "matchedParticipants": "Bereits in der Gruppe: {names}",
+    "missingParticipantsLabel": "Personen, die zu dieser Gruppe hinzugefügt werden",
+    "missingParticipantsDescription": "Gib für jede Person eine E-Mail-Adresse ein. Neue Konten werden automatisch erstellt und mit dieser Gruppe verknüpft. Wenn sie bereits ein Konto haben, werden sie als Mitglieder hinzugefügt.",
+    "expenseReferences": "{count, plural, one {# Ausgabe} other {# Ausgaben}}",
+    "emailLabel": "E-Mail",
+    "emailPlaceholder": "name@example.com",
+    "softCreateHint": "Sie können sich später mit dieser E-Mail-Adresse registrieren, um auf die Gruppe zuzugreifen.",
+    "toast": {
+      "invalidFileType": {
+        "title": "Ungültiger Dateityp",
+        "description": "Bitte wähle eine Knots-Exportdatei im JSON- oder CSV-Format aus."
+      },
+      "noContent": {
+        "title": "Kein Dateiinhalt",
+        "description": "Bitte wähle zuerst eine Knots-Exportdatei aus."
+      },
+      "missingEmail": {
+        "title": "E-Mail erforderlich",
+        "description": "Gib eine E-Mail-Adresse für {name} ein."
+      },
+      "success": {
+        "title": "Import erfolgreich",
+        "description": "{count} Ausgaben wurden erfolgreich aus Knots importiert."
+      },
+      "error": {
+        "title": "Import fehlgeschlagen",
+        "description": "Die Knots-Exportdatei konnte nicht importiert werden."
+      },
+      "cancelled": {
+        "title": "Import abgebrochen",
+        "description": "Der Import wurde vor Abschluss gestoppt."
+      }
+    }
+  },
+  "GroupDangerZone": {
+    "title": "Gruppenverwaltung",
+    "description": "Archivieren blendet diese Gruppe in deiner Liste aus, ohne Daten zu löschen. Löschen entfernt die Gruppe dauerhaft für alle.",
+    "archive": "Gruppe archivieren",
+    "unarchive": "Gruppe wiederherstellen",
+    "delete": "Gruppe löschen",
+    "archiveSuccess": "Gruppe archiviert.",
+    "unarchiveSuccess": "Gruppe wiederhergestellt.",
+    "deleteSuccess": "Gruppe gelöscht.",
+    "deleteConfirmTitle": "Gruppe dauerhaft löschen?",
+    "deleteConfirmDescription": "Dadurch werden „{name}“ sowie alle Ausgaben, Salden und der Verlauf für alle Mitglieder dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden.",
+    "cancel": "Abbrechen",
+    "deleteConfirmAction": "Dauerhaft löschen"
   }
 }

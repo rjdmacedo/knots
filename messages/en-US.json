@@ -555,6 +555,57 @@
       "heading": "Other currencies"
     }
   },
+  "ExpenseImport": {
+    "button": "Import expenses",
+    "fromKnots": "Import from Knots",
+    "fromSplitwise": "Import from Splitwise"
+  },
+  "KnotsImport": {
+    "title": "Import from Knots",
+    "description": "Upload a Knots export file. If the file includes people who are not in this group yet, you can add them here before importing.",
+    "fileLabel": "Knots export file",
+    "previewLabel": "Preview (first 10 lines)",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "import": "Import Expenses",
+    "addAndImport": "Add members & import",
+    "importing": "Importing...",
+    "analyzing": "Analyzing export…",
+    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
+    "matchedParticipants": "Already in group: {names}",
+    "missingParticipantsLabel": "People to add to this group",
+    "missingParticipantsDescription": "Enter an email for each person. New accounts are created automatically and linked to this group. If they already have an account, they are added as members.",
+    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "softCreateHint": "They can register later with this email to access the group.",
+    "toast": {
+      "invalidFileType": {
+        "title": "Invalid file type",
+        "description": "Please select a JSON or CSV Knots export file."
+      },
+      "noContent": {
+        "title": "No file content",
+        "description": "Please select a Knots export file first."
+      },
+      "missingEmail": {
+        "title": "Email required",
+        "description": "Enter an email for {name}."
+      },
+      "success": {
+        "title": "Import successful",
+        "description": "Successfully imported {count} expenses from Knots."
+      },
+      "error": {
+        "title": "Import failed",
+        "description": "Failed to import Knots export file."
+      },
+      "cancelled": {
+        "title": "Import cancelled",
+        "description": "The import was stopped before it finished."
+      }
+    }
+  },
   "SplitwiseImport": {
     "button": "Import from Splitwise",
     "title": "Import from Splitwise",
@@ -581,6 +632,10 @@
       "error": {
         "title": "Import failed",
         "description": "Failed to import CSV file."
+      },
+      "cancelled": {
+        "title": "Import cancelled",
+        "description": "The import was stopped before it finished."
       }
     }
   },
@@ -653,7 +708,32 @@
     "leaveGroupConfirmTitle": "Leave group",
     "leaveGroupConfirmDescription": "Are you sure you want to leave \"{name}\"? Your past expenses will remain in the group history.",
     "leaveGroupConfirmCancel": "Cancel",
-    "leaveGroupConfirmAction": "Leave"
+    "leaveGroupConfirmAction": "Leave",
+    "leaveGroupSuccess": "You left \"{name}\".",
+    "activeGroups": "Active groups",
+    "archivedGroups": "Archived groups",
+    "archiveSuccess": "Group archived.",
+    "unarchiveSuccess": "Group restored.",
+    "deleteGroup": "Delete group",
+    "deleteSuccess": "Group deleted.",
+    "deleteGroupConfirmTitle": "Delete group permanently?",
+    "deleteGroupConfirmDescription": "This will permanently delete \"{name}\" and all its expenses, balances, and history for every member. This cannot be undone.",
+    "deleteGroupConfirmCancel": "Cancel",
+    "deleteGroupConfirmAction": "Delete permanently"
+  },
+  "GroupDangerZone": {
+    "title": "Group management",
+    "description": "Archive hides this group from your list without deleting data. Delete permanently removes the group for everyone.",
+    "archive": "Archive group",
+    "unarchive": "Restore group",
+    "delete": "Delete group",
+    "archiveSuccess": "Group archived.",
+    "unarchiveSuccess": "Group restored.",
+    "deleteSuccess": "Group deleted.",
+    "deleteConfirmTitle": "Delete group permanently?",
+    "deleteConfirmDescription": "This will permanently delete \"{name}\" and all its expenses, balances, and history for every member. This cannot be undone.",
+    "cancel": "Cancel",
+    "deleteConfirmAction": "Delete permanently"
   },
   "UserMenu": {
     "profileSettings": "Profile settings",

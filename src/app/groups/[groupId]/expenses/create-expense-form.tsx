@@ -6,9 +6,11 @@ import { ExpenseForm } from './expense-form'
 
 export function CreateExpenseForm({
   groupId,
+  currentUserId,
   runtimeFeatureFlags,
 }: {
   groupId: string
+  currentUserId: string
   runtimeFeatureFlags: RuntimeFeatureFlags
 }) {
   const { data: groupData } = trpc.groups.get.useQuery({ groupId })
@@ -29,6 +31,7 @@ export function CreateExpenseForm({
     <ExpenseForm
       group={group}
       categories={categories}
+      currentUserId={currentUserId}
       onSubmit={async (expenseFormValues, participantId) => {
         await createExpenseMutateAsync({
           groupId,

@@ -13,9 +13,15 @@ export interface GroupService {
     name: string,
     userId: string,
   ): Promise<{ ok: true; groupId: string } | { ok: false; error: GroupError }>
-  getUserGroups(
-    userId: string,
-  ): Promise<Array<{ id: string; name: string; createdAt: Date }>>
+  getUserGroups(userId: string): Promise<
+    Array<{
+      id: string
+      name: string
+      createdAt: Date
+      archivedAt: Date | null
+      role: 'OWNER' | 'MEMBER'
+    }>
+  >
   isMember(userId: string, groupId: string): Promise<boolean>
 }
 
@@ -61,6 +67,7 @@ function createGroupService(): GroupService {
           data: {
             userId,
             groupId,
+            role: 'OWNER',
           },
         }),
       ])
@@ -68,9 +75,15 @@ function createGroupService(): GroupService {
       return { ok: true, groupId }
     },
 
-    async getUserGroups(
-      userId: string,
-    ): Promise<Array<{ id: string; name: string; createdAt: Date }>> {
+    async getUserGroups(userId: string): Promise<
+      Array<{
+        id: string
+        name: string
+        createdAt: Date
+        archivedAt: Date | null
+        role: 'OWNER' | 'MEMBER'
+      }>
+    > {
       const memberships = await prisma.groupMembership.findMany({
         where: { userId },
         include: {
@@ -86,8 +99,6 @@ function createGroupService(): GroupService {
         },
       })
 
-      // Sort by most recently active: use the latest expense createdAt,
-      // falling back to group createdAt if no expenses exist
       const groups = memberships.map((m) => {
         const lastExpenseAt = m.group.expenses[0]?.createdAt ?? null
         const lastActiveAt = lastExpenseAt ?? m.group.createdAt
@@ -95,14 +106,21 @@ function createGroupService(): GroupService {
           id: m.group.id,
           name: m.group.name,
           createdAt: m.group.createdAt,
+          archivedAt: m.archivedAt,
+          role: m.role,
           lastActiveAt,
         }
       })
 
-      // Sort descending by lastActiveAt (most recently active first)
       groups.sort((a, b) => b.lastActiveAt.getTime() - a.lastActiveAt.getTime())
 
-      return groups.map(({ id, name, createdAt }) => ({ id, name, createdAt }))
+      return groups.map(({ id, name, createdAt, archivedAt, role }) => ({
+        id,
+        name,
+        createdAt,
+        archivedAt,
+        role,
+      }))
     },
 
     async isMember(userId: string, groupId: string): Promise<boolean> {

@@ -158,6 +158,7 @@ export function ExpenseForm({
   group,
   categories,
   expense,
+  currentUserId,
   onSubmit,
   onDelete,
   runtimeFeatureFlags,
@@ -165,6 +166,7 @@ export function ExpenseForm({
   group: NonNullable<AppRouterOutput['groups']['get']['group']>
   categories: AppRouterOutput['categories']['list']['categories']
   expense?: AppRouterOutput['groups']['expenses']['get']['expense']
+  currentUserId?: string
   onSubmit: (value: ExpenseFormValues, participantId?: string) => Promise<void>
   onDelete?: (participantId?: string) => Promise<void>
   runtimeFeatureFlags: RuntimeFeatureFlags
@@ -174,14 +176,24 @@ export function ExpenseForm({
   const isCreate = expense === undefined
   const searchParams = useSearchParams()
 
-  const getSelectedPayer = (field?: { value: string }) => {
-    if (isCreate && typeof window !== 'undefined') {
+  const getDefaultPaidBy = (): string | undefined => {
+    if (!isCreate) return undefined
+
+    if (
+      currentUserId &&
+      group.participants.some(({ id }) => id === currentUserId)
+    ) {
+      return currentUserId
+    }
+
+    if (typeof window !== 'undefined') {
       const activeUser = localStorage.getItem(`${group.id}-activeUser`)
-      if (activeUser && activeUser !== 'None' && field?.value === undefined) {
+      if (activeUser && activeUser !== 'None') {
         return activeUser
       }
     }
-    return field?.value
+
+    return undefined
   }
 
   const getSelectedRecurrenceRule = (field?: { value: string }) => {
@@ -261,7 +273,7 @@ export function ExpenseForm({
               : 0, // category with id 0 is "General"
             // paid for all, split evenly
             paidFor: defaultSplittingOptions.paidFor,
-            paidBy: getSelectedPayer(),
+            paidBy: getDefaultPaidBy(),
             isReimbursement: false,
             splitMode: defaultSplittingOptions.splitMode,
             saveDefaultSplittingOptions: false,
@@ -822,7 +834,7 @@ export function ExpenseForm({
                   <FormLabel>{t(`${sExpense}.paidByField.label`)}</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={getSelectedPayer(field)}
+                    value={field.value ?? getDefaultPaidBy()}
                   >
                     <SelectTrigger>
                       <SelectValue

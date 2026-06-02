@@ -1,3 +1,5 @@
+import { parseCSVLine } from '@/lib/csv-parse'
+import { findMatchingParticipant } from '@/lib/participant-matching'
 import { prisma } from '@/lib/prisma'
 import { ExpenseFormValues } from '@/lib/schemas'
 import { SplitMode } from '@prisma/client'
@@ -119,28 +121,6 @@ export async function parseSplitwiseCSV(
   }
 
   return expenses
-}
-
-function parseCSVLine(line: string): string[] {
-  const result: string[] = []
-  let current = ''
-  let inQuotes = false
-
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i]
-
-    if (char === '"') {
-      inQuotes = !inQuotes
-    } else if (char === ',' && !inQuotes) {
-      result.push(current.trim().replace(/\r/g, '')) // Remove carriage returns
-      current = ''
-    } else {
-      current += char
-    }
-  }
-
-  result.push(current.trim().replace(/\r/g, '')) // Remove carriage returns
-  return result
 }
 
 function isTotalRow(row: string[], headers: string[]): boolean {
@@ -292,30 +272,4 @@ async function parseExpenseRow(
     notes: `Imported from Splitwise`,
     recurrenceRule: 'NONE' as const,
   }
-}
-
-function findMatchingParticipant(
-  userName: string,
-  participants: Array<{ id: string; name: string }>,
-): { id: string; name: string } | null {
-  // Try exact match first
-  let participant = participants.find((p) => p.name === userName)
-  if (participant) return participant
-
-  // Try case-insensitive match
-  participant = participants.find(
-    (p) => p.name.toLowerCase() === userName.toLowerCase(),
-  )
-  if (participant) return participant
-
-  // Try partial match (in case of slight name differences)
-  const normalizedUserName = userName.toLowerCase().trim()
-  participant = participants.find(
-    (p) =>
-      p.name.toLowerCase().trim() === normalizedUserName ||
-      p.name.toLowerCase().includes(normalizedUserName) ||
-      normalizedUserName.includes(p.name.toLowerCase()),
-  )
-
-  return participant || null
 }

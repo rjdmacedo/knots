@@ -581,6 +581,10 @@
       "error": {
         "title": "Import failed",
         "description": "Failed to import CSV file."
+      },
+      "cancelled": {
+        "title": "Tuonti peruutettu",
+        "description": "Tuonti pysäytettiin ennen valmistumista."
       }
     }
   },
@@ -653,7 +657,18 @@
     "leaveGroupConfirmTitle": "Poistu ryhmästä",
     "leaveGroupConfirmDescription": "Haluatko varmasti poistua ryhmästä \"{name}\"? Aiemmat kulut säilyvät ryhmän historiassa.",
     "leaveGroupConfirmCancel": "Peruuta",
-    "leaveGroupConfirmAction": "Poistu"
+    "leaveGroupConfirmAction": "Poistu",
+    "leaveGroupSuccess": "Poistuit ryhmästä “{name}”.",
+    "activeGroups": "Aktiiviset ryhmät",
+    "archivedGroups": "Arkistoidut ryhmät",
+    "archiveSuccess": "Ryhmä arkistoitu.",
+    "unarchiveSuccess": "Ryhmä palautettu.",
+    "deleteGroup": "Poista ryhmä",
+    "deleteSuccess": "Ryhmä poistettu.",
+    "deleteGroupConfirmTitle": "Poistetaanko ryhmä pysyvästi?",
+    "deleteGroupConfirmDescription": "Tämä poistaa pysyvästi ryhmän “{name}” sekä kaikki sen kulut, saldot ja historian kaikilta jäseniltä. Tätä ei voi kumota.",
+    "deleteGroupConfirmCancel": "Peruuta",
+    "deleteGroupConfirmAction": "Poista pysyvästi"
   },
   "UserMenu": {
     "profileSettings": "Profiilin asetukset",
@@ -683,5 +698,70 @@
     "eventUpdate": "Kulu päivitetty",
     "eventDelete": "Kulu poistettu",
     "selectAtLeastOneFilter": "Valitse vähintään yksi jäsen tai tapahtuma."
+  },
+  "ExpenseImport": {
+    "button": "Tuo kuluja",
+    "fromKnots": "Tuo Knotsista",
+    "fromSplitwise": "Tuo Splitwisesta"
+  },
+  "KnotsImport": {
+    "title": "Tuo Knotsista",
+    "description": "Lataa Knots-vientitiedosto. Jos tiedostossa on henkilöitä, jotka eivät vielä kuulu tähän ryhmään, voit lisätä heidät täällä ennen tuontia.",
+    "fileLabel": "Knots-vientitiedosto",
+    "previewLabel": "Esikatselu (ensimmäiset 10 riviä)",
+    "clear": "Tyhjennä",
+    "cancel": "Peruuta",
+    "import": "Tuo kulut",
+    "addAndImport": "Lisää jäsenet ja tuo",
+    "importing": "Tuodaan...",
+    "analyzing": "Analysoidaan vientiä…",
+    "expenseCount": "{count, plural, one {# kulu löytyi} other {# kulua löytyi}}",
+    "matchedParticipants": "Jo ryhmässä: {names}",
+    "missingParticipantsLabel": "Tähän ryhmään lisättävät henkilöt",
+    "missingParticipantsDescription": "Anna jokaiselle henkilölle sähköpostiosoite. Uudet tilit luodaan automaattisesti ja liitetään tähän ryhmään. Jos heillä on jo tili, heidät lisätään jäseniksi.",
+    "expenseReferences": "{count, plural, one {# kulu} other {# kulua}}",
+    "emailLabel": "Sähköposti",
+    "emailPlaceholder": "nimi@example.com",
+    "softCreateHint": "He voivat rekisteröityä myöhemmin tällä sähköpostilla päästäkseen ryhmään.",
+    "toast": {
+      "invalidFileType": {
+        "title": "Virheellinen tiedostotyyppi",
+        "description": "Valitse Knots-vientitiedosto JSON- tai CSV-muodossa."
+      },
+      "noContent": {
+        "title": "Ei tiedoston sisältöä",
+        "description": "Valitse ensin Knots-vientitiedosto."
+      },
+      "missingEmail": {
+        "title": "Sähköposti vaaditaan",
+        "description": "Anna sähköposti henkilölle {name}."
+      },
+      "success": {
+        "title": "Tuonti onnistui",
+        "description": "{count} kulua tuotiin onnistuneesti Knotsista."
+      },
+      "error": {
+        "title": "Tuonti epäonnistui",
+        "description": "Knots-vientitiedoston tuonti epäonnistui."
+      },
+      "cancelled": {
+        "title": "Tuonti peruutettu",
+        "description": "Tuonti pysäytettiin ennen valmistumista."
+      }
+    }
+  },
+  "GroupDangerZone": {
+    "title": "Ryhmän hallinta",
+    "description": "Arkistointi piilottaa ryhmän listaltasi poistamatta tietoja. Poistaminen poistaa ryhmän pysyvästi kaikilta.",
+    "archive": "Arkistoi ryhmä",
+    "unarchive": "Palauta ryhmä",
+    "delete": "Poista ryhmä",
+    "archiveSuccess": "Ryhmä arkistoitu.",
+    "unarchiveSuccess": "Ryhmä palautettu.",
+    "deleteSuccess": "Ryhmä poistettu.",
+    "deleteConfirmTitle": "Poistetaanko ryhmä pysyvästi?",
+    "deleteConfirmDescription": "Tämä poistaa pysyvästi ryhmän “{name}” sekä kaikki sen kulut, saldot ja historian kaikilta jäseniltä. Tätä ei voi kumota.",
+    "cancel": "Peruuta",
+    "deleteConfirmAction": "Poista pysyvästi"
   }
 }

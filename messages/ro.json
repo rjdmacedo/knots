@@ -581,6 +581,10 @@
       "error": {
         "title": "Import failed",
         "description": "Failed to import CSV file."
+      },
+      "cancelled": {
+        "title": "Import anulat",
+        "description": "Importul a fost oprit înainte să se termine."
       }
     }
   },
@@ -653,7 +657,18 @@
     "leaveGroupConfirmTitle": "Părăsește grupul",
     "leaveGroupConfirmDescription": "Sigur vrei să părăsești „{name}”? Cheltuielile tale anterioare vor rămâne în istoricul grupului.",
     "leaveGroupConfirmCancel": "Anulează",
-    "leaveGroupConfirmAction": "Părăsește"
+    "leaveGroupConfirmAction": "Părăsește",
+    "leaveGroupSuccess": "Ai părăsit „{name}”.",
+    "activeGroups": "Grupuri active",
+    "archivedGroups": "Grupuri arhivate",
+    "archiveSuccess": "Grup arhivat.",
+    "unarchiveSuccess": "Grup restaurat.",
+    "deleteGroup": "Șterge grupul",
+    "deleteSuccess": "Grup șters.",
+    "deleteGroupConfirmTitle": "Ștergi grupul definitiv?",
+    "deleteGroupConfirmDescription": "Aceasta va șterge definitiv „{name}” și toate cheltuielile, soldurile și istoricul său pentru toți membrii. Acțiunea nu poate fi anulată.",
+    "deleteGroupConfirmCancel": "Anulează",
+    "deleteGroupConfirmAction": "Șterge definitiv"
   },
   "UserMenu": {
     "profileSettings": "Setări profil",
@@ -683,5 +698,70 @@
     "eventUpdate": "Cheltuială actualizată",
     "eventDelete": "Cheltuială ștearsă",
     "selectAtLeastOneFilter": "Selectează cel puțin un membru sau un eveniment."
+  },
+  "ExpenseImport": {
+    "button": "Importă cheltuieli",
+    "fromKnots": "Importă din Knots",
+    "fromSplitwise": "Importă din Splitwise"
+  },
+  "KnotsImport": {
+    "title": "Importă din Knots",
+    "description": "Încarcă un fișier exportat din Knots. Dacă fișierul include persoane care nu sunt încă în acest grup, le poți adăuga aici înainte de import.",
+    "fileLabel": "Fișier de export Knots",
+    "previewLabel": "Previzualizare (primele 10 rânduri)",
+    "clear": "Șterge",
+    "cancel": "Anulează",
+    "import": "Importă cheltuieli",
+    "addAndImport": "Adaugă membri și importă",
+    "importing": "Se importă...",
+    "analyzing": "Se analizează exportul…",
+    "expenseCount": "{count, plural, one {# cheltuială găsită} few {# cheltuieli găsite} other {# de cheltuieli găsite}}",
+    "matchedParticipants": "Deja în grup: {names}",
+    "missingParticipantsLabel": "Persoane de adăugat în acest grup",
+    "missingParticipantsDescription": "Introdu un e-mail pentru fiecare persoană. Conturile noi sunt create automat și asociate cu acest grup. Dacă au deja un cont, sunt adăugate ca membri.",
+    "expenseReferences": "{count, plural, one {# cheltuială} few {# cheltuieli} other {# de cheltuieli}}",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "nume@example.com",
+    "softCreateHint": "Se pot înregistra mai târziu cu acest e-mail pentru a accesa grupul.",
+    "toast": {
+      "invalidFileType": {
+        "title": "Tip de fișier nevalid",
+        "description": "Selectează un fișier de export Knots în format JSON sau CSV."
+      },
+      "noContent": {
+        "title": "Fișier fără conținut",
+        "description": "Selectează mai întâi un fișier de export Knots."
+      },
+      "missingEmail": {
+        "title": "E-mail obligatoriu",
+        "description": "Introdu e-mailul pentru {name}."
+      },
+      "success": {
+        "title": "Import reușit",
+        "description": "Au fost importate cu succes {count} cheltuieli din Knots."
+      },
+      "error": {
+        "title": "Import eșuat",
+        "description": "Nu s-a putut importa fișierul de export Knots."
+      },
+      "cancelled": {
+        "title": "Import anulat",
+        "description": "Importul a fost oprit înainte să se termine."
+      }
+    }
+  },
+  "GroupDangerZone": {
+    "title": "Administrarea grupului",
+    "description": "Arhivarea ascunde acest grup din lista ta fără a șterge datele. Ștergerea elimină definitiv grupul pentru toată lumea.",
+    "archive": "Arhivează grupul",
+    "unarchive": "Restaurează grupul",
+    "delete": "Șterge grupul",
+    "archiveSuccess": "Grup arhivat.",
+    "unarchiveSuccess": "Grup restaurat.",
+    "deleteSuccess": "Grup șters.",
+    "deleteConfirmTitle": "Ștergi grupul definitiv?",
+    "deleteConfirmDescription": "Aceasta va șterge definitiv „{name}” și toate cheltuielile, soldurile și istoricul său pentru toți membrii. Acțiunea nu poate fi anulată.",
+    "cancel": "Anulează",
+    "deleteConfirmAction": "Șterge definitiv"
   }
 }

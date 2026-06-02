@@ -581,6 +581,10 @@
       "error": {
         "title": "Import failed",
         "description": "Failed to import CSV file."
+      },
+      "cancelled": {
+        "title": "Імпорт скасовано",
+        "description": "Імпорт було зупинено до завершення."
       }
     }
   },
@@ -653,7 +657,18 @@
     "leaveGroupConfirmTitle": "Покинути групу",
     "leaveGroupConfirmDescription": "Ви впевнені, що хочете покинути «{name}»? Ваші минулі витрати залишаться в історії групи.",
     "leaveGroupConfirmCancel": "Скасувати",
-    "leaveGroupConfirmAction": "Покинути"
+    "leaveGroupConfirmAction": "Покинути",
+    "leaveGroupSuccess": "Ви залишили «{name}».",
+    "activeGroups": "Активні групи",
+    "archivedGroups": "Архівовані групи",
+    "archiveSuccess": "Групу заархівовано.",
+    "unarchiveSuccess": "Групу відновлено.",
+    "deleteGroup": "Видалити групу",
+    "deleteSuccess": "Групу видалено.",
+    "deleteGroupConfirmTitle": "Видалити групу назавжди?",
+    "deleteGroupConfirmDescription": "Це назавжди видалить «{name}» і всі її витрати, баланси та історію для всіх учасників. Цю дію не можна скасувати.",
+    "deleteGroupConfirmCancel": "Скасувати",
+    "deleteGroupConfirmAction": "Видалити назавжди"
   },
   "UserMenu": {
     "profileSettings": "Налаштування профілю",
@@ -683,5 +698,70 @@
     "eventUpdate": "Витрату оновлено",
     "eventDelete": "Витрату видалено",
     "selectAtLeastOneFilter": "Оберіть принаймні одного учасника або подію."
+  },
+  "ExpenseImport": {
+    "button": "Імпортувати витрати",
+    "fromKnots": "Імпортувати з Knots",
+    "fromSplitwise": "Імпортувати зі Splitwise"
+  },
+  "KnotsImport": {
+    "title": "Імпорт з Knots",
+    "description": "Завантажте файл експорту Knots. Якщо файл містить людей, яких ще немає в цій групі, ви можете додати їх тут перед імпортом.",
+    "fileLabel": "Файл експорту Knots",
+    "previewLabel": "Попередній перегляд (перші 10 рядків)",
+    "clear": "Очистити",
+    "cancel": "Скасувати",
+    "import": "Імпортувати витрати",
+    "addAndImport": "Додати учасників та імпортувати",
+    "importing": "Імпортування...",
+    "analyzing": "Аналіз експорту…",
+    "expenseCount": "{count, plural, one {Знайдено # витрату} few {Знайдено # витрати} many {Знайдено # витрат} other {Знайдено # витрати}}",
+    "matchedParticipants": "Уже в групі: {names}",
+    "missingParticipantsLabel": "Люди для додавання до цієї групи",
+    "missingParticipantsDescription": "Введіть e-mail для кожної людини. Нові облікові записи створюються автоматично та прив’язуються до цієї групи. Якщо обліковий запис уже існує, людину буде додано як учасника.",
+    "expenseReferences": "{count, plural, one {# витрата} few {# витрати} many {# витрат} other {# витрати}}",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "name@example.com",
+    "softCreateHint": "Пізніше вони зможуть зареєструватися з цим e-mail, щоб отримати доступ до групи.",
+    "toast": {
+      "invalidFileType": {
+        "title": "Недійсний тип файлу",
+        "description": "Виберіть файл експорту Knots у форматі JSON або CSV."
+      },
+      "noContent": {
+        "title": "Немає вмісту файлу",
+        "description": "Спочатку виберіть файл експорту Knots."
+      },
+      "missingEmail": {
+        "title": "Потрібен e-mail",
+        "description": "Введіть e-mail для {name}."
+      },
+      "success": {
+        "title": "Імпорт успішний",
+        "description": "Успішно імпортовано {count} витрат з Knots."
+      },
+      "error": {
+        "title": "Помилка імпорту",
+        "description": "Не вдалося імпортувати файл експорту Knots."
+      },
+      "cancelled": {
+        "title": "Імпорт скасовано",
+        "description": "Імпорт було зупинено до завершення."
+      }
+    }
+  },
+  "GroupDangerZone": {
+    "title": "Керування групою",
+    "description": "Архівування приховує цю групу з вашого списку без видалення даних. Видалення назавжди прибирає групу для всіх.",
+    "archive": "Заархівувати групу",
+    "unarchive": "Відновити групу",
+    "delete": "Видалити групу",
+    "archiveSuccess": "Групу заархівовано.",
+    "unarchiveSuccess": "Групу відновлено.",
+    "deleteSuccess": "Групу видалено.",
+    "deleteConfirmTitle": "Видалити групу назавжди?",
+    "deleteConfirmDescription": "Це назавжди видалить «{name}» і всі її витрати, баланси та історію для всіх учасників. Цю дію не можна скасувати.",
+    "cancel": "Скасувати",
+    "deleteConfirmAction": "Видалити назавжди"
   }
 }

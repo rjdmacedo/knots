@@ -112,7 +112,7 @@ model ExpensePaidFor {
 
 model Activity {
   id            String           @id
-  group         Group            @relation(fields: [groupId], references: [id])
+  group         Group            @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId       String
   time          DateTime         @default(now())
   activityType  ActivityType
@@ -247,17 +247,19 @@ enum TokenType {
 }
 
 model GroupMembership {
-  id       String          @id @default(cuid())
-  userId   String
-  user     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  groupId  String
-  group    Group           @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  role     MembershipRole  @default(MEMBER)
-  joinedAt DateTime        @default(now())
+  id         String          @id @default(cuid())
+  userId     String
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  groupId    String
+  group      Group           @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  role       MembershipRole  @default(MEMBER)
+  joinedAt   DateTime        @default(now())
+  archivedAt DateTime?
 
   @@unique([userId, groupId])
   @@index([userId])
   @@index([groupId])
+  @@index([userId, archivedAt])
 }
 
 enum MembershipRole {

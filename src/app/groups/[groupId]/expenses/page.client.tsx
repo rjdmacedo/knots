@@ -3,7 +3,7 @@
 import { CreateFromReceiptButton } from '@/app/groups/[groupId]/expenses/create-from-receipt-button'
 import { ExpenseList } from '@/app/groups/[groupId]/expenses/expense-list'
 import ExportButton from '@/app/groups/[groupId]/export-button'
-import { SplitwiseImport } from '@/components/splitwise-import'
+import { ExpenseImport } from '@/components/expense-import'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -46,7 +46,7 @@ export default function GroupExpensesPageClient({
           <CardDescription>{t('description')}</CardDescription>
           <CardAction className="flex flex-row gap-2">
             <ExportButton groupId={groupId} />
-            <SplitwiseImport groupId={groupId} />
+            <ExpenseImport groupId={groupId} />
             {enableReceiptExtract && <CreateFromReceiptButton />}
             <Tooltip>
               <TooltipTrigger asChild>

@@ -581,6 +581,10 @@
       "error": {
         "title": "Import failed",
         "description": "Failed to import CSV file."
+      },
+      "cancelled": {
+        "title": "インポートをキャンセルしました",
+        "description": "インポートは完了前に停止されました。"
       }
     }
   },
@@ -653,7 +657,18 @@
     "leaveGroupConfirmTitle": "グループを退出",
     "leaveGroupConfirmDescription": "「{name}」を退出しますか？過去の支出はグループ履歴に残ります。",
     "leaveGroupConfirmCancel": "キャンセル",
-    "leaveGroupConfirmAction": "退出"
+    "leaveGroupConfirmAction": "退出",
+    "leaveGroupSuccess": "“{name}”から退出しました。",
+    "activeGroups": "アクティブなグループ",
+    "archivedGroups": "アーカイブ済みグループ",
+    "archiveSuccess": "グループをアーカイブしました。",
+    "unarchiveSuccess": "グループを復元しました。",
+    "deleteGroup": "グループを削除",
+    "deleteSuccess": "グループを削除しました。",
+    "deleteGroupConfirmTitle": "グループを完全に削除しますか？",
+    "deleteGroupConfirmDescription": "“{name}”と、そのすべての支出、残高、履歴が全メンバーに対して完全に削除されます。この操作は元に戻せません。",
+    "deleteGroupConfirmCancel": "キャンセル",
+    "deleteGroupConfirmAction": "完全に削除"
   },
   "UserMenu": {
     "profileSettings": "プロフィール設定",
@@ -683,5 +698,70 @@
     "eventUpdate": "支出の更新",
     "eventDelete": "支出の削除",
     "selectAtLeastOneFilter": "メンバーまたはイベントを1つ以上選択してください。"
+  },
+  "ExpenseImport": {
+    "button": "支出をインポート",
+    "fromKnots": "Knots からインポート",
+    "fromSplitwise": "Splitwise からインポート"
+  },
+  "KnotsImport": {
+    "title": "Knots からインポート",
+    "description": "Knots のエクスポートファイルをアップロードしてください。ファイルにまだこのグループにいない人が含まれている場合は、インポート前にここで追加できます。",
+    "fileLabel": "Knots エクスポートファイル",
+    "previewLabel": "プレビュー（最初の 10 行）",
+    "clear": "クリア",
+    "cancel": "キャンセル",
+    "import": "支出をインポート",
+    "addAndImport": "メンバーを追加してインポート",
+    "importing": "インポート中...",
+    "analyzing": "エクスポートを解析中…",
+    "expenseCount": "{count, plural, one {# 件の支出が見つかりました} other {# 件の支出が見つかりました}}",
+    "matchedParticipants": "すでにグループ内: {names}",
+    "missingParticipantsLabel": "このグループに追加する人",
+    "missingParticipantsDescription": "各人のメールアドレスを入力してください。新しいアカウントは自動的に作成され、このグループにリンクされます。すでにアカウントがある場合はメンバーとして追加されます。",
+    "expenseReferences": "{count, plural, one {# 件の支出} other {# 件の支出}}",
+    "emailLabel": "メール",
+    "emailPlaceholder": "name@example.com",
+    "softCreateHint": "後でこのメールアドレスで登録すると、グループにアクセスできます。",
+    "toast": {
+      "invalidFileType": {
+        "title": "無効なファイル形式",
+        "description": "Knots の JSON または CSV エクスポートファイルを選択してください。"
+      },
+      "noContent": {
+        "title": "ファイル内容がありません",
+        "description": "まず Knots エクスポートファイルを選択してください。"
+      },
+      "missingEmail": {
+        "title": "メールが必要です",
+        "description": "{name} のメールアドレスを入力してください。"
+      },
+      "success": {
+        "title": "インポート成功",
+        "description": "Knots から {count} 件の支出をインポートしました。"
+      },
+      "error": {
+        "title": "インポート失敗",
+        "description": "Knots エクスポートファイルをインポートできませんでした。"
+      },
+      "cancelled": {
+        "title": "インポートをキャンセルしました",
+        "description": "インポートは完了前に停止されました。"
+      }
+    }
+  },
+  "GroupDangerZone": {
+    "title": "グループ管理",
+    "description": "アーカイブするとデータを削除せずにリストから非表示にします。削除すると全員に対してグループが完全に削除されます。",
+    "archive": "グループをアーカイブ",
+    "unarchive": "グループを復元",
+    "delete": "グループを削除",
+    "archiveSuccess": "グループをアーカイブしました。",
+    "unarchiveSuccess": "グループを復元しました。",
+    "deleteSuccess": "グループを削除しました。",
+    "deleteConfirmTitle": "グループを完全に削除しますか？",
+    "deleteConfirmDescription": "“{name}”と、そのすべての支出、残高、履歴が全メンバーに対して完全に削除されます。この操作は元に戻せません。",
+    "cancel": "キャンセル",
+    "deleteConfirmAction": "完全に削除"
   }
 }

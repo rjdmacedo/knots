@@ -555,6 +555,57 @@
       "heading": "Outras moedas"
     }
   },
+  "ExpenseImport": {
+    "button": "Importar despesas",
+    "fromKnots": "Importar do Knots",
+    "fromSplitwise": "Importar do Splitwise"
+  },
+  "KnotsImport": {
+    "title": "Importar do Knots",
+    "description": "Carrega um export do Knots. Se o ficheiro incluir pessoas que ainda não estão neste grupo, podes adicioná-las aqui antes de importar.",
+    "fileLabel": "Ficheiro de exportação Knots",
+    "previewLabel": "Pré-visualização (primeiras 10 linhas)",
+    "clear": "Limpar",
+    "cancel": "Cancelar",
+    "import": "Importar despesas",
+    "addAndImport": "Adicionar membros e importar",
+    "importing": "A importar...",
+    "analyzing": "A analisar export…",
+    "expenseCount": "{count, plural, one {# despesa encontrada} other {# despesas encontradas}}",
+    "matchedParticipants": "Já no grupo: {names}",
+    "missingParticipantsLabel": "Pessoas a adicionar ao grupo",
+    "missingParticipantsDescription": "Indica o email de cada pessoa. Contas novas são criadas automaticamente e associadas a este grupo. Se já tiverem conta, são adicionadas como membros.",
+    "expenseReferences": "{count, plural, one {# despesa} other {# despesas}}",
+    "emailLabel": "Email",
+    "emailPlaceholder": "nome@example.com",
+    "softCreateHint": "Podem registar-se depois com este email para aceder ao grupo.",
+    "toast": {
+      "invalidFileType": {
+        "title": "Tipo de ficheiro inválido",
+        "description": "Seleciona um ficheiro JSON ou CSV exportado do Knots."
+      },
+      "noContent": {
+        "title": "Sem conteúdo",
+        "description": "Seleciona primeiro um ficheiro de exportação Knots."
+      },
+      "missingEmail": {
+        "title": "Email obrigatório",
+        "description": "Indica o email de {name}."
+      },
+      "success": {
+        "title": "Importação concluída",
+        "description": "Foram importadas {count} despesas do Knots."
+      },
+      "error": {
+        "title": "Falha na importação",
+        "description": "Não foi possível importar o ficheiro Knots."
+      },
+      "cancelled": {
+        "title": "Importação cancelada",
+        "description": "A importação foi interrompida antes de terminar."
+      }
+    }
+  },
   "SplitwiseImport": {
     "button": "Importar do Splitwise",
     "title": "Importar do Splitwise",
@@ -581,6 +632,10 @@
       "error": {
         "title": "Falha na importação",
         "description": "Não foi possível importar o ficheiro CSV."
+      },
+      "cancelled": {
+        "title": "Importação cancelada",
+        "description": "A importação foi interrompida antes de terminar."
       }
     }
   },
@@ -677,7 +732,32 @@
     "leaveGroupConfirmTitle": "Sair do grupo",
     "leaveGroupConfirmDescription": "Tens a certeza de que queres sair de \"{name}\"? As tuas despesas anteriores permanecerão no histórico do grupo.",
     "leaveGroupConfirmCancel": "Cancelar",
-    "leaveGroupConfirmAction": "Sair"
+    "leaveGroupConfirmAction": "Sair",
+    "leaveGroupSuccess": "Saíste de \"{name}\".",
+    "activeGroups": "Grupos ativos",
+    "archivedGroups": "Grupos arquivados",
+    "archiveSuccess": "Grupo arquivado.",
+    "unarchiveSuccess": "Grupo restaurado.",
+    "deleteGroup": "Apagar grupo",
+    "deleteSuccess": "Grupo apagado.",
+    "deleteGroupConfirmTitle": "Apagar grupo permanentemente?",
+    "deleteGroupConfirmDescription": "Isto apaga \"{name}\" de forma permanente, incluindo todas as despesas, saldos e histórico para todos os membros. Não pode ser revertido.",
+    "deleteGroupConfirmCancel": "Cancelar",
+    "deleteGroupConfirmAction": "Apagar permanentemente"
+  },
+  "GroupDangerZone": {
+    "title": "Gestão do grupo",
+    "description": "Arquivar esconde este grupo da tua lista sem apagar dados. Apagar remove o grupo permanentemente para todos.",
+    "archive": "Arquivar grupo",
+    "unarchive": "Restaurar grupo",
+    "delete": "Apagar grupo",
+    "archiveSuccess": "Grupo arquivado.",
+    "unarchiveSuccess": "Grupo restaurado.",
+    "deleteSuccess": "Grupo apagado.",
+    "deleteConfirmTitle": "Apagar grupo permanentemente?",
+    "deleteConfirmDescription": "Isto apaga \"{name}\" de forma permanente, incluindo todas as despesas, saldos e histórico para todos os membros. Não pode ser revertido.",
+    "cancel": "Cancelar",
+    "deleteConfirmAction": "Apagar permanentemente"
   },
   "UserMenu": {
     "profileSettings": "Definições de perfil",

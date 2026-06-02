@@ -581,6 +581,10 @@
       "error": {
         "title": "Import failed",
         "description": "Failed to import CSV file."
+      },
+      "cancelled": {
+        "title": "Import geannuleerd",
+        "description": "De import is gestopt voordat deze klaar was."
       }
     }
   },
@@ -653,7 +657,18 @@
     "leaveGroupConfirmTitle": "Groep verlaten",
     "leaveGroupConfirmDescription": "Weet je zeker dat je «{name}» wilt verlaten? Je eerdere uitgaven blijven in de groepsgeschiedenis.",
     "leaveGroupConfirmCancel": "Annuleren",
-    "leaveGroupConfirmAction": "Verlaten"
+    "leaveGroupConfirmAction": "Verlaten",
+    "leaveGroupSuccess": "Je hebt “{name}” verlaten.",
+    "activeGroups": "Actieve groepen",
+    "archivedGroups": "Gearchiveerde groepen",
+    "archiveSuccess": "Groep gearchiveerd.",
+    "unarchiveSuccess": "Groep hersteld.",
+    "deleteGroup": "Groep verwijderen",
+    "deleteSuccess": "Groep verwijderd.",
+    "deleteGroupConfirmTitle": "Groep permanent verwijderen?",
+    "deleteGroupConfirmDescription": "Dit verwijdert “{name}” permanent, inclusief alle uitgaven, saldi en geschiedenis voor alle leden. Dit kan niet ongedaan worden gemaakt.",
+    "deleteGroupConfirmCancel": "Annuleren",
+    "deleteGroupConfirmAction": "Permanent verwijderen"
   },
   "UserMenu": {
     "profileSettings": "Profielinstellingen",
@@ -683,5 +698,70 @@
     "eventUpdate": "Uitgave bijgewerkt",
     "eventDelete": "Uitgave verwijderd",
     "selectAtLeastOneFilter": "Selecteer minstens één lid of gebeurtenis."
+  },
+  "ExpenseImport": {
+    "button": "Uitgaven importeren",
+    "fromKnots": "Importeren uit Knots",
+    "fromSplitwise": "Importeren uit Splitwise"
+  },
+  "KnotsImport": {
+    "title": "Importeren uit Knots",
+    "description": "Upload een Knots-exportbestand. Als het bestand personen bevat die nog niet in deze groep zitten, kun je ze hier toevoegen voordat je importeert.",
+    "fileLabel": "Knots-exportbestand",
+    "previewLabel": "Voorbeeld (eerste 10 regels)",
+    "clear": "Wissen",
+    "cancel": "Annuleren",
+    "import": "Uitgaven importeren",
+    "addAndImport": "Leden toevoegen en importeren",
+    "importing": "Importeren...",
+    "analyzing": "Export analyseren…",
+    "expenseCount": "{count, plural, one {# uitgave gevonden} other {# uitgaven gevonden}}",
+    "matchedParticipants": "Al in de groep: {names}",
+    "missingParticipantsLabel": "Personen om aan deze groep toe te voegen",
+    "missingParticipantsDescription": "Voer voor elke persoon een e-mailadres in. Nieuwe accounts worden automatisch aangemaakt en aan deze groep gekoppeld. Als ze al een account hebben, worden ze als leden toegevoegd.",
+    "expenseReferences": "{count, plural, one {# uitgave} other {# uitgaven}}",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "naam@example.com",
+    "softCreateHint": "Ze kunnen zich later met dit e-mailadres registreren om toegang tot de groep te krijgen.",
+    "toast": {
+      "invalidFileType": {
+        "title": "Ongeldig bestandstype",
+        "description": "Selecteer een Knots-exportbestand in JSON- of CSV-formaat."
+      },
+      "noContent": {
+        "title": "Geen bestandsinhoud",
+        "description": "Selecteer eerst een Knots-exportbestand."
+      },
+      "missingEmail": {
+        "title": "E-mail verplicht",
+        "description": "Voer een e-mailadres in voor {name}."
+      },
+      "success": {
+        "title": "Import geslaagd",
+        "description": "{count} uitgaven succesvol geïmporteerd uit Knots."
+      },
+      "error": {
+        "title": "Import mislukt",
+        "description": "Het Knots-exportbestand kon niet worden geïmporteerd."
+      },
+      "cancelled": {
+        "title": "Import geannuleerd",
+        "description": "De import is gestopt voordat deze klaar was."
+      }
+    }
+  },
+  "GroupDangerZone": {
+    "title": "Groepsbeheer",
+    "description": "Archiveren verbergt deze groep in je lijst zonder gegevens te verwijderen. Verwijderen verwijdert de groep permanent voor iedereen.",
+    "archive": "Groep archiveren",
+    "unarchive": "Groep herstellen",
+    "delete": "Groep verwijderen",
+    "archiveSuccess": "Groep gearchiveerd.",
+    "unarchiveSuccess": "Groep hersteld.",
+    "deleteSuccess": "Groep verwijderd.",
+    "deleteConfirmTitle": "Groep permanent verwijderen?",
+    "deleteConfirmDescription": "Dit verwijdert “{name}” permanent, inclusief alle uitgaven, saldi en geschiedenis voor alle leden. Dit kan niet ongedaan worden gemaakt.",
+    "cancel": "Annuleren",
+    "deleteConfirmAction": "Permanent verwijderen"
   }
 }

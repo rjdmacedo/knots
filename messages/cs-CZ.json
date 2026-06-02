@@ -581,6 +581,10 @@
       "error": {
         "title": "Import failed",
         "description": "Failed to import CSV file."
+      },
+      "cancelled": {
+        "title": "Import zrušen",
+        "description": "Import byl zastaven před dokončením."
       }
     }
   },
@@ -653,7 +657,18 @@
     "leaveGroupConfirmTitle": "Opustit skupinu",
     "leaveGroupConfirmDescription": "Opravdu chcete opustit „{name}“? Vaše minulé výdaje zůstanou v historii skupiny.",
     "leaveGroupConfirmCancel": "Zrušit",
-    "leaveGroupConfirmAction": "Opustit"
+    "leaveGroupConfirmAction": "Opustit",
+    "leaveGroupSuccess": "Opustili jste „{name}“.",
+    "activeGroups": "Aktivní skupiny",
+    "archivedGroups": "Archivované skupiny",
+    "archiveSuccess": "Skupina archivována.",
+    "unarchiveSuccess": "Skupina obnovena.",
+    "deleteGroup": "Smazat skupinu",
+    "deleteSuccess": "Skupina smazána.",
+    "deleteGroupConfirmTitle": "Smazat skupinu trvale?",
+    "deleteGroupConfirmDescription": "Tím trvale smažete „{name}“ a všechny její výdaje, zůstatky a historii pro všechny členy. Tuto akci nelze vrátit zpět.",
+    "deleteGroupConfirmCancel": "Zrušit",
+    "deleteGroupConfirmAction": "Smazat trvale"
   },
   "UserMenu": {
     "profileSettings": "Nastavení profilu",
@@ -683,5 +698,70 @@
     "eventUpdate": "Výdaj upraven",
     "eventDelete": "Výdaj smazán",
     "selectAtLeastOneFilter": "Vyberte alespoň jednoho člena nebo událost."
+  },
+  "ExpenseImport": {
+    "button": "Importovat výdaje",
+    "fromKnots": "Importovat z Knots",
+    "fromSplitwise": "Importovat ze Splitwise"
+  },
+  "KnotsImport": {
+    "title": "Importovat z Knots",
+    "description": "Nahrajte exportní soubor z Knots. Pokud soubor obsahuje lidi, kteří ještě nejsou v této skupině, můžete je před importem přidat zde.",
+    "fileLabel": "Exportní soubor Knots",
+    "previewLabel": "Náhled (prvních 10 řádků)",
+    "clear": "Vymazat",
+    "cancel": "Zrušit",
+    "import": "Importovat výdaje",
+    "addAndImport": "Přidat členy a importovat",
+    "importing": "Importuje se...",
+    "analyzing": "Analyzuje se export…",
+    "expenseCount": "{count, plural, one {Nalezen # výdaj} few {Nalezeny # výdaje} other {Nalezeno # výdajů}}",
+    "matchedParticipants": "Již ve skupině: {names}",
+    "missingParticipantsLabel": "Lidé k přidání do této skupiny",
+    "missingParticipantsDescription": "Zadejte e-mail pro každou osobu. Nové účty se vytvoří automaticky a propojí se s touto skupinou. Pokud už účet mají, budou přidáni jako členové.",
+    "expenseReferences": "{count, plural, one {# výdaj} few {# výdaje} other {# výdajů}}",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "jmeno@example.com",
+    "softCreateHint": "Později se mohou s tímto e-mailem zaregistrovat a získat přístup ke skupině.",
+    "toast": {
+      "invalidFileType": {
+        "title": "Neplatný typ souboru",
+        "description": "Vyberte exportní soubor Knots ve formátu JSON nebo CSV."
+      },
+      "noContent": {
+        "title": "Soubor nemá obsah",
+        "description": "Nejprve vyberte exportní soubor Knots."
+      },
+      "missingEmail": {
+        "title": "E-mail je povinný",
+        "description": "Zadejte e-mail pro {name}."
+      },
+      "success": {
+        "title": "Import dokončen",
+        "description": "Úspěšně importováno {count} výdajů z Knots."
+      },
+      "error": {
+        "title": "Import se nezdařil",
+        "description": "Exportní soubor Knots se nepodařilo importovat."
+      },
+      "cancelled": {
+        "title": "Import zrušen",
+        "description": "Import byl zastaven před dokončením."
+      }
+    }
+  },
+  "GroupDangerZone": {
+    "title": "Správa skupiny",
+    "description": "Archivace skryje tuto skupinu ze seznamu bez odstranění dat. Smazání trvale odstraní skupinu pro všechny.",
+    "archive": "Archivovat skupinu",
+    "unarchive": "Obnovit skupinu",
+    "delete": "Smazat skupinu",
+    "archiveSuccess": "Skupina archivována.",
+    "unarchiveSuccess": "Skupina obnovena.",
+    "deleteSuccess": "Skupina smazána.",
+    "deleteConfirmTitle": "Smazat skupinu trvale?",
+    "deleteConfirmDescription": "Tím trvale smažete „{name}“ a všechny její výdaje, zůstatky a historii pro všechny členy. Tuto akci nelze vrátit zpět.",
+    "cancel": "Zrušit",
+    "deleteConfirmAction": "Smazat trvale"
   }
 }

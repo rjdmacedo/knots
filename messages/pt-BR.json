@@ -581,6 +581,10 @@
       "error": {
         "title": "Falha na importação",
         "description": "Falha ao importar o arquivo CSV."
+      },
+      "cancelled": {
+        "title": "Importação cancelada",
+        "description": "A importação foi interrompida antes de terminar."
       }
     }
   },
@@ -653,7 +657,18 @@
     "leaveGroupConfirmTitle": "Sair do grupo",
     "leaveGroupConfirmDescription": "Tem certeza de que deseja sair de \"{name}\"? Suas despesas anteriores permanecerão no histórico do grupo.",
     "leaveGroupConfirmCancel": "Cancelar",
-    "leaveGroupConfirmAction": "Sair"
+    "leaveGroupConfirmAction": "Sair",
+    "leaveGroupSuccess": "Você saiu de “{name}”.",
+    "activeGroups": "Grupos ativos",
+    "archivedGroups": "Grupos arquivados",
+    "archiveSuccess": "Grupo arquivado.",
+    "unarchiveSuccess": "Grupo restaurado.",
+    "deleteGroup": "Excluir grupo",
+    "deleteSuccess": "Grupo excluído.",
+    "deleteGroupConfirmTitle": "Excluir grupo permanentemente?",
+    "deleteGroupConfirmDescription": "Isso excluirá permanentemente “{name}” e todas as suas despesas, saldos e histórico para todos os membros. Esta ação não pode ser desfeita.",
+    "deleteGroupConfirmCancel": "Cancelar",
+    "deleteGroupConfirmAction": "Excluir permanentemente"
   },
   "UserMenu": {
     "profileSettings": "Configurações de perfil",
@@ -683,5 +698,70 @@
     "eventUpdate": "Despesa atualizada",
     "eventDelete": "Despesa excluída",
     "selectAtLeastOneFilter": "Selecione pelo menos um membro ou evento."
+  },
+  "ExpenseImport": {
+    "button": "Importar despesas",
+    "fromKnots": "Importar do Knots",
+    "fromSplitwise": "Importar do Splitwise"
+  },
+  "KnotsImport": {
+    "title": "Importar do Knots",
+    "description": "Envie um arquivo exportado do Knots. Se o arquivo incluir pessoas que ainda não estão neste grupo, você pode adicioná-las aqui antes de importar.",
+    "fileLabel": "Arquivo de exportação do Knots",
+    "previewLabel": "Prévia (primeiras 10 linhas)",
+    "clear": "Limpar",
+    "cancel": "Cancelar",
+    "import": "Importar despesas",
+    "addAndImport": "Adicionar membros e importar",
+    "importing": "Importando...",
+    "analyzing": "Analisando exportação…",
+    "expenseCount": "{count, plural, one {# despesa encontrada} other {# despesas encontradas}}",
+    "matchedParticipants": "Já no grupo: {names}",
+    "missingParticipantsLabel": "Pessoas para adicionar a este grupo",
+    "missingParticipantsDescription": "Informe um e-mail para cada pessoa. Novas contas são criadas automaticamente e vinculadas a este grupo. Se elas já tiverem uma conta, serão adicionadas como membros.",
+    "expenseReferences": "{count, plural, one {# despesa} other {# despesas}}",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "nome@example.com",
+    "softCreateHint": "Elas poderão se cadastrar depois com este e-mail para acessar o grupo.",
+    "toast": {
+      "invalidFileType": {
+        "title": "Tipo de arquivo inválido",
+        "description": "Selecione um arquivo JSON ou CSV exportado do Knots."
+      },
+      "noContent": {
+        "title": "Arquivo sem conteúdo",
+        "description": "Selecione primeiro um arquivo de exportação do Knots."
+      },
+      "missingEmail": {
+        "title": "E-mail obrigatório",
+        "description": "Informe o e-mail de {name}."
+      },
+      "success": {
+        "title": "Importação concluída",
+        "description": "{count} despesas importadas com sucesso do Knots."
+      },
+      "error": {
+        "title": "Falha na importação",
+        "description": "Não foi possível importar o arquivo do Knots."
+      },
+      "cancelled": {
+        "title": "Importação cancelada",
+        "description": "A importação foi interrompida antes de terminar."
+      }
+    }
+  },
+  "GroupDangerZone": {
+    "title": "Gerenciamento do grupo",
+    "description": "Arquivar oculta este grupo da sua lista sem apagar dados. Excluir remove permanentemente o grupo para todos.",
+    "archive": "Arquivar grupo",
+    "unarchive": "Restaurar grupo",
+    "delete": "Excluir grupo",
+    "archiveSuccess": "Grupo arquivado.",
+    "unarchiveSuccess": "Grupo restaurado.",
+    "deleteSuccess": "Grupo excluído.",
+    "deleteConfirmTitle": "Excluir grupo permanentemente?",
+    "deleteConfirmDescription": "Isso excluirá permanentemente “{name}” e todas as suas despesas, saldos e histórico para todos os membros. Esta ação não pode ser desfeita.",
+    "cancel": "Cancelar",
+    "deleteConfirmAction": "Excluir permanentemente"
   }
 }

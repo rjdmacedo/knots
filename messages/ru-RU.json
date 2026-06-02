@@ -581,6 +581,10 @@
       "error": {
         "title": "Import failed",
         "description": "Failed to import CSV file."
+      },
+      "cancelled": {
+        "title": "Импорт отменен",
+        "description": "Импорт был остановлен до завершения."
       }
     }
   },
@@ -653,7 +657,18 @@
     "leaveGroupConfirmTitle": "Покинуть группу",
     "leaveGroupConfirmDescription": "Вы уверены, что хотите покинуть «{name}»? Ваши прошлые расходы останутся в истории группы.",
     "leaveGroupConfirmCancel": "Отмена",
-    "leaveGroupConfirmAction": "Покинуть"
+    "leaveGroupConfirmAction": "Покинуть",
+    "leaveGroupSuccess": "Вы покинули «{name}».",
+    "activeGroups": "Активные группы",
+    "archivedGroups": "Архивированные группы",
+    "archiveSuccess": "Группа архивирована.",
+    "unarchiveSuccess": "Группа восстановлена.",
+    "deleteGroup": "Удалить группу",
+    "deleteSuccess": "Группа удалена.",
+    "deleteGroupConfirmTitle": "Удалить группу навсегда?",
+    "deleteGroupConfirmDescription": "Это навсегда удалит «{name}» и все ее расходы, балансы и историю для всех участников. Это действие нельзя отменить.",
+    "deleteGroupConfirmCancel": "Отмена",
+    "deleteGroupConfirmAction": "Удалить навсегда"
   },
   "UserMenu": {
     "profileSettings": "Настройки профиля",
@@ -683,5 +698,70 @@
     "eventUpdate": "Расход изменён",
     "eventDelete": "Расход удалён",
     "selectAtLeastOneFilter": "Выберите хотя бы одного участника или событие."
+  },
+  "ExpenseImport": {
+    "button": "Импортировать расходы",
+    "fromKnots": "Импортировать из Knots",
+    "fromSplitwise": "Импортировать из Splitwise"
+  },
+  "KnotsImport": {
+    "title": "Импорт из Knots",
+    "description": "Загрузите файл экспорта Knots. Если в файле есть люди, которых еще нет в этой группе, вы можете добавить их здесь перед импортом.",
+    "fileLabel": "Файл экспорта Knots",
+    "previewLabel": "Предпросмотр (первые 10 строк)",
+    "clear": "Очистить",
+    "cancel": "Отмена",
+    "import": "Импортировать расходы",
+    "addAndImport": "Добавить участников и импортировать",
+    "importing": "Импорт...",
+    "analyzing": "Анализ экспорта…",
+    "expenseCount": "{count, plural, one {Найден # расход} few {Найдено # расхода} many {Найдено # расходов} other {Найдено # расхода}}",
+    "matchedParticipants": "Уже в группе: {names}",
+    "missingParticipantsLabel": "Люди для добавления в эту группу",
+    "missingParticipantsDescription": "Введите e-mail для каждого человека. Новые аккаунты создаются автоматически и связываются с этой группой. Если аккаунт уже есть, человек будет добавлен как участник.",
+    "expenseReferences": "{count, plural, one {# расход} few {# расхода} many {# расходов} other {# расхода}}",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "name@example.com",
+    "softCreateHint": "Позже они смогут зарегистрироваться с этим e-mail, чтобы получить доступ к группе.",
+    "toast": {
+      "invalidFileType": {
+        "title": "Недопустимый тип файла",
+        "description": "Выберите файл экспорта Knots в формате JSON или CSV."
+      },
+      "noContent": {
+        "title": "Нет содержимого файла",
+        "description": "Сначала выберите файл экспорта Knots."
+      },
+      "missingEmail": {
+        "title": "Требуется e-mail",
+        "description": "Введите e-mail для {name}."
+      },
+      "success": {
+        "title": "Импорт завершен",
+        "description": "Успешно импортировано {count} расходов из Knots."
+      },
+      "error": {
+        "title": "Ошибка импорта",
+        "description": "Не удалось импортировать файл экспорта Knots."
+      },
+      "cancelled": {
+        "title": "Импорт отменен",
+        "description": "Импорт был остановлен до завершения."
+      }
+    }
+  },
+  "GroupDangerZone": {
+    "title": "Управление группой",
+    "description": "Архивация скрывает эту группу из вашего списка без удаления данных. Удаление навсегда удаляет группу для всех.",
+    "archive": "Архивировать группу",
+    "unarchive": "Восстановить группу",
+    "delete": "Удалить группу",
+    "archiveSuccess": "Группа архивирована.",
+    "unarchiveSuccess": "Группа восстановлена.",
+    "deleteSuccess": "Группа удалена.",
+    "deleteConfirmTitle": "Удалить группу навсегда?",
+    "deleteConfirmDescription": "Это навсегда удалит «{name}» и все ее расходы, балансы и историю для всех участников. Это действие нельзя отменить.",
+    "cancel": "Отмена",
+    "deleteConfirmAction": "Удалить навсегда"
   }
 }
