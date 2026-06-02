@@ -1,3 +1,10 @@
+# [1.33.0](https://github.com/rjdmacedo/knots/compare/v1.32.0...v1.33.0) (2026-06-02)
+
+
+### Features
+
+* map Splitwise CSV names to group members on import ([cdd1512](https://github.com/rjdmacedo/knots/commit/cdd1512f79c699f34361ace36211c8843a7f5e40))
+
 # [1.32.0](https://github.com/rjdmacedo/knots/compare/v1.31.0...v1.32.0) (2026-06-02)
 
 
