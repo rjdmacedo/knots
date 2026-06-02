@@ -1,3 +1,10 @@
+# [1.34.0](https://github.com/rjdmacedo/knots/compare/v1.33.0...v1.34.0) (2026-06-02)
+
+
+### Features
+
+* translate missing keys in localizations and implement user preferences, blocked users, friends, and activities ([f02dd78](https://github.com/rjdmacedo/knots/commit/f02dd78a8af9d7fdb6c069235325a3fe2e232a04))
+
 # [1.33.0](https://github.com/rjdmacedo/knots/compare/v1.32.0...v1.33.0) (2026-06-02)
 
 
