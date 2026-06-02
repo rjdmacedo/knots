@@ -16,6 +16,7 @@
     "create": "Adaugă o cheltuială",
     "createFirst": "Adaug-o pe prima",
     "noExpenses": "Grupul tău nu conține nicio cheltuială încă.",
+    "export": "Export",
     "exportJson": "Salvează în JSON",
     "exportCsv": "Salvează în CSV",
     "searchPlaceholder": "Caută o cheltuială…",
@@ -38,8 +39,10 @@
   },
   "ExpenseCard": {
     "paidBy": "Plătit de <strong>{paidBy}</strong> pentru <paidFor></paidFor>",
+    "everyone": "everyone",
     "receivedBy": "Primit de <strong>{paidBy}</strong> pentru <paidFor></paidFor>",
-    "yourBalance": "Soldul tău:"
+    "yourBalance": "Soldul tău:",
+    "notInvolved": "You are not involved"
   },
   "Groups": {
     "myGroups": "Grupurile mele",
@@ -56,6 +59,8 @@
     "archive": "Arhivează grupul",
     "unarchive": "Dezarhivează grupul",
     "removeRecent": "Șterge din ultimele grupuri",
+    "enableNotifications": "Activează notificările",
+    "disableNotifications": "Dezactivează notificările",
     "RecentRemovedToast": {
       "title": "Grupul a fost șters.",
       "description": "Grupul a fost șters din lista ta de grupuri recente.",
@@ -89,10 +94,17 @@
       "placeholder": "$, €, £, RON …",
       "description": "O vom folosi pentru a afișa sume."
     },
+    "CurrencyCodeField": {
+      "label": "Main currency",
+      "createDescription": "All amounts and balances will be in this currency.",
+      "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
+      "customOption": "Custom"
+    },
     "Participants": {
       "title": "Membri",
       "description": "Adaugă numele fiecărui membru.",
       "protectedParticipant": "Acest membru a luat parte la cheltuieli și nu poate să fie șters.",
+      "noLongerInGroup": "nu mai face parte din acest grup",
       "new": "Nou",
       "add": "Adaugă membru",
       "John": "John",
@@ -128,6 +140,10 @@
         "label": "Data venitului",
         "description": "Adaugă data la care venitul a fost primit."
       },
+      "currencyField": {
+        "label": "Moneda venitului",
+        "description": "Moneda în care a fost primit venitul."
+      },
       "categoryFieldDescription": "Selectează categoria venitului.",
       "paidByField": {
         "label": "Primit de către",
@@ -152,10 +168,23 @@
         "label": "Data cheltuielii",
         "description": "Adaugă data la care cheltuiala a fost facută."
       },
+      "currencyField": {
+        "label": "Moneda cheltuielii",
+        "description": "Moneda în care a fost plătită cheltuiala."
+      },
       "categoryFieldDescription": "Selectează categoria cheltuielii.",
       "paidByField": {
         "label": "Plătit de către",
+        "placeholder": "Select a participant",
         "description": "Selectează membrul care a plătit cheltuiala."
+      },
+      "recurrenceRule": {
+        "label": "Expense Recurrence",
+        "description": "Select how often the expense should repeat.",
+        "none": "None",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly"
       },
       "paidFor": {
         "title": "Plătit pentru",
@@ -166,6 +195,27 @@
     },
     "amountField": {
       "label": "Sumă"
+    },
+    "conversionUnavailable": "Pentru a seta o monedă diferită per cheltuială și a converti sumele, selectează o monedă nepersonalizată pentru grup.",
+    "originalAmountField": {
+      "label": "Sumă de convertit"
+    },
+    "conversionRateField": {
+      "useApi": "Folosește cursurile Frankfurter",
+      "useCustom": "Folosește curs personalizat",
+      "label": "Curs de schimb"
+    },
+    "conversionRateState": {
+      "loading": "Se obțin cursurile de schimb…",
+      "success": "Cursuri obținute:",
+      "error": "Nu am putut obține cele mai recente cursuri.",
+      "staleRate": "Curs folosit:",
+      "noRate": "Introdu un curs personalizat mai jos.",
+      "currencyNotFound": "Frankfurter nu are cursul pentru această monedă în acea zi.",
+      "noDate": "Introdu data cheltuielii pentru a obține un curs de conversie.",
+      "dateMismatch": "Cursuri la data: {date}",
+      "refresh": "Reîmprospătează",
+      "customRate": "Se folosește curs personalizat"
     },
     "isReimbursementField": {
       "label": "Aceasta este o rambursare."
@@ -178,6 +228,7 @@
     },
     "selectNone": "Nu selectez nimic",
     "selectAll": "Selectez tot",
+    "noLongerInGroup": "nu mai face parte din acest grup",
     "shares": "distribuiri",
     "advancedOptions": "Opțiuni avansate de împărțire…",
     "SplitModeField": {
@@ -366,7 +417,28 @@
       "earlierThisYear": "La începutul anului",
       "lastYear": "Anul trecut",
       "older": "Mai vechi"
-    }
+    },
+    "fieldLabels": {
+      "title": "Titlu",
+      "amount": "Sumă",
+      "expenseDate": "Dată",
+      "category": "Categorie",
+      "paidBy": "Plătit de",
+      "splitMode": "Mod de împărțire",
+      "isReimbursement": "Rambursare",
+      "notes": "Note",
+      "recurrenceRule": "Recurență",
+      "paidFor": "Plătit pentru",
+      "name": "Nume",
+      "information": "Informații",
+      "currency": "Monedă",
+      "participants": "Participanți"
+    },
+    "showMoreChanges": "Afișează încă {count} modificări",
+    "showLess": "Afișează mai puțin",
+    "yes": "Da",
+    "no": "Nu",
+    "fieldChangesCount": "{count} modificări de câmpuri"
   },
   "Information": {
     "title": "Informații",
@@ -394,6 +466,7 @@
     "amountRequired": "Trebuie să introduceți o sumă.",
     "amountNotZero": "Suma nu trebuie să fie zero.",
     "amountTenMillion": "Suma trebuie să fie mai mică de 10,000,000.",
+    "ratePositive": "Cursul trebuie să fie strict mai mare decât zero.",
     "paidByRequired": "Trebuie să selectați un membru.",
     "paidForMin1": "Cheltuiala trebuie plătită pentru cel puțin un membru.",
     "noZeroShares": "Toate părțile trebuie să fie mai mari de 0.",
@@ -439,6 +512,7 @@
       "heading": "Viață",
       "Childcare": "Îngrijirea copiilor",
       "Clothing": "Îmbrăcăminte",
+      "Donation": "Donation",
       "Education": "Educație",
       "Gifts": "Cadouri",
       "Insurance": "Asigurare",
@@ -468,6 +542,124 @@
       "Water": "Apă"
     }
   },
+  "Currencies": {
+    "search": "Search currency...",
+    "noCurrency": "No currencies found.",
+    "custom": {
+      "heading": "Custom"
+    },
+    "common": {
+      "heading": "Most common"
+    },
+    "other": {
+      "heading": "Other currencies"
+    }
+  },
+  "SplitwiseImport": {
+    "button": "Import from Splitwise",
+    "title": "Import from Splitwise",
+    "description": "Upload a CSV file exported from Splitwise to import expenses into this group. Make sure the participant names in the CSV match the names in this group.",
+    "fileLabel": "CSV File",
+    "previewLabel": "Preview (first 10 lines)",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "import": "Import Expenses",
+    "importing": "Importing...",
+    "toast": {
+      "invalidFileType": {
+        "title": "Invalid file type",
+        "description": "Please select a CSV file."
+      },
+      "noContent": {
+        "title": "No CSV content",
+        "description": "Please select a CSV file first."
+      },
+      "success": {
+        "title": "Import successful",
+        "description": "Successfully imported {count} expenses from Splitwise."
+      },
+      "error": {
+        "title": "Import failed",
+        "description": "Failed to import CSV file."
+      }
+    }
+  },
+  "ProfileSettings": {
+    "title": "Setări profil",
+    "emailTitle": "E-mail",
+    "emailDescription": "Adresa ta de e-mail nu poate fi schimbată.",
+    "displayNameTitle": "Nume afișat",
+    "passwordTitle": "Parolă",
+    "NameForm": {
+      "nameRequired": "Numele este obligatoriu",
+      "nameMaxLength": "Numele trebuie să aibă cel mult 100 de caractere",
+      "successToast": "Numele afișat a fost actualizat cu succes.",
+      "label": "Nume afișat",
+      "placeholder": "Introdu numele afișat",
+      "saving": "Se salvează…",
+      "submit": "Salvează numele"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "Parola actuală este obligatorie",
+      "newPasswordRequired": "Parola nouă este obligatorie",
+      "confirmPasswordRequired": "Confirmă parola nouă",
+      "passwordsDoNotMatch": "Parolele nu se potrivesc",
+      "successToast": "Parola a fost schimbată cu succes.",
+      "currentPasswordIncorrect": "Parola actuală este incorectă",
+      "newPasswordSameAsCurrent": "Parola nouă trebuie să fie diferită de cea actuală",
+      "passwordRequirementsNotMet": "Parola nu îndeplinește cerințele",
+      "currentPasswordLabel": "Parola actuală",
+      "newPasswordLabel": "Parolă nouă",
+      "confirmPasswordLabel": "Confirmă parola nouă",
+      "passwordHint": "Min. 8 caractere, max. 128. Trebuie să includă cel puțin o majusculă, o minusculă și o cifră.",
+      "changingPassword": "Se schimbă parola…",
+      "submit": "Schimbă parola",
+      "errorTooShort": "Trebuie să aibă cel puțin 8 caractere",
+      "errorTooLong": "Trebuie să aibă cel mult 128 de caractere",
+      "errorMissingUppercase": "Trebuie să conțină cel puțin o majusculă",
+      "errorMissingLowercase": "Trebuie să conțină cel puțin o minusculă",
+      "errorMissingDigit": "Trebuie să conțină cel puțin o cifră"
+    }
+  },
+  "Members": {
+    "addedToGroup": "{name} adăugat în grup.",
+    "memberRemoved": "Membru eliminat din grup.",
+    "youLeftGroup": "Ai părăsit grupul.",
+    "memberPromoted": "Membru promovat la proprietar.",
+    "memberDemoted": "Membru retrogradat la membru obișnuit.",
+    "addMember": "Adaugă membru",
+    "adding": "Se adaugă…",
+    "add": "Adaugă",
+    "cancel": "Anulează",
+    "leaveGroup": "Părăsește grupul",
+    "leaveGroupDescription": "Sigur vrei să părăsești acest grup? Cheltuielile tale anterioare vor rămâne în istoricul grupului.",
+    "leave": "Părăsește",
+    "removeFromGroup": "Elimină din grup",
+    "promoteToOwner": "Promovează la proprietar",
+    "demoteToMember": "Retrogradează la membru"
+  },
+  "MyGroups": {
+    "title": "Grupurile mele",
+    "loading": "Se încarcă grupurile tale…",
+    "loadError": "Grupurile nu au putut fi încărcate. Încearcă din nou mai târziu.",
+    "noGroups": "Nu ești încă membru al niciunui grup.",
+    "noGroupsHint": "Creează un grup pentru a începe să împarți cheltuielile cu alții.",
+    "createGroup": "Creează grup",
+    "createGroupTitle": "Creează un grup nou",
+    "createGroupDescription": "Introdu un nume pentru grup. Poți invita membri după creare.",
+    "groupNameLabel": "Numele grupului",
+    "characters": "caractere",
+    "leaveGroup": "Părăsește grupul",
+    "leaveGroupConfirmTitle": "Părăsește grupul",
+    "leaveGroupConfirmDescription": "Sigur vrei să părăsești „{name}”? Cheltuielile tale anterioare vor rămâne în istoricul grupului.",
+    "leaveGroupConfirmCancel": "Anulează",
+    "leaveGroupConfirmAction": "Părăsește"
+  },
+  "UserMenu": {
+    "profileSettings": "Setări profil",
+    "signingOut": "Deconectare…",
+    "signOut": "Deconectare"
+  },
   "Notifications": {
     "subscribe": "Activează notificările",
     "unsubscribe": "Dezactivează notificările",
@@ -475,12 +667,21 @@
     "noParticipant": "Toate modificările",
     "permissionDenied": "Permisiunea pentru notificări a fost refuzată. Activează-o din setările browserului.",
     "notSupported": "Notificările push nu sunt suportate pe acest dispozitiv.",
-    "error": "Nu s-au putut activa notificările. Te rugăm să încerci din nou.",
     "expenseCreated": "{actor} a adăugat \"{title}\"",
     "expenseUpdated": "{actor} a actualizat \"{title}\"",
     "expenseDeleted": "{actor} a șters \"{title}\"",
     "groupUpdated": "{actor} a actualizat grupul \"{group}\"",
     "notificationTitle": "Knots – {group}",
-    "defaultBody": "Activitate nouă în grupul tău"
+    "defaultBody": "Activitate nouă în grupul tău",
+    "filterHint": "Alege de la cine vrei alerte și ce evenimente să primești.",
+    "subscribeError": "Nu s-au putut activa notificările. Te rugăm să încerci din nou.",
+    "membersLabel": "Notifică-mă despre",
+    "notifyAllMembers": "Toată lumea din grup",
+    "notifySpecificMembers": "Sau doar acești membri:",
+    "eventsLabel": "Evenimente",
+    "eventCreate": "Cheltuială creată",
+    "eventUpdate": "Cheltuială actualizată",
+    "eventDelete": "Cheltuială ștearsă",
+    "selectAtLeastOneFilter": "Selectează cel puțin un membru sau un eveniment."
   }
 }

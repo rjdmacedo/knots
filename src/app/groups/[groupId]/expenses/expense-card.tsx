@@ -30,7 +30,7 @@ function Participants({
       expense.paidFor.map((paidFor, index) => (
         <Fragment key={index}>
           {index !== 0 && <>, </>}
-          <strong>{paidFor.participant.name}</strong>
+          <strong>{paidFor.user.name}</strong>
         </Fragment>
       ))
     )

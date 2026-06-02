@@ -63,6 +63,7 @@ jest.mock('../../env', () => ({
 }))
 
 import { dispatchNotifications } from '../dispatch-notifications'
+import { isPushSubscriptionEligible } from '../subscription-filters'
 
 const MockWebPushError = jest.requireMock('web-push').WebPushError as new (
   message: string,
@@ -91,9 +92,14 @@ const arbSubscription = (groupId: string) =>
     p256dh: fc.base64String({ minLength: 10, maxLength: 50 }),
     auth: fc.base64String({ minLength: 10, maxLength: 20 }),
     groupId: fc.constant(groupId),
-    participantName: fc.option(fc.string({ minLength: 1, maxLength: 50 }), {
-      nil: null,
+    subscriberUserId: fc.string({ minLength: 1, maxLength: 50 }),
+    notifyAllMembers: fc.boolean(),
+    includedUserIds: fc.array(fc.string({ minLength: 1, maxLength: 50 }), {
+      maxLength: 5,
     }),
+    notifyOnCreate: fc.boolean(),
+    notifyOnUpdate: fc.boolean(),
+    notifyOnDelete: fc.boolean(),
     createdAt: fc.constant(new Date()),
     updatedAt: fc.constant(new Date()),
   })
@@ -121,11 +127,9 @@ describe('Dispatch Notifications Property Tests', () => {
     /**
      * Validates: Requirements 5.2, 5.3
      *
-     * For any subscription and activity pair, the notification SHALL be sent
-     * if and only if the subscription has no associated participantName OR
-     * the subscription's associated participant ID differs from the activity's participantId.
+     * Notifications follow member and event preferences; never for the subscriber's own actions.
      */
-    it('notifications are sent only when subscription has no participantName or participantName differs from activity participantId', () => {
+    it('notifications are sent only for eligible subscriptions', () => {
       return fc.assert(
         fc.asyncProperty(
           arbActivityType,
@@ -134,7 +138,7 @@ describe('Dispatch Notifications Property Tests', () => {
           fc.option(fc.string({ minLength: 1, maxLength: 50 }), {
             nil: undefined,
           }),
-          async (activityType, groupId, subscriptions, participantId) => {
+          async (activityType, groupId, subscriptions, userId) => {
             jest.clearAllMocks()
             mockFindMany.mockResolvedValue(subscriptions)
             mockFindUniqueGroup.mockResolvedValue({ name: 'Test Group' })
@@ -142,16 +146,12 @@ describe('Dispatch Notifications Property Tests', () => {
             mockSendNotification.mockResolvedValue({})
 
             await dispatchNotifications(groupId, activityType, {
-              participantId,
+              userId,
               expenseId: 'expense-1',
             })
 
-            // Determine which subscriptions should be eligible
-            const eligible = subscriptions.filter(
-              (sub) =>
-                !sub.participantName ||
-                !participantId ||
-                sub.participantName !== participantId,
+            const eligible = subscriptions.filter((sub) =>
+              isPushSubscriptionEligible(sub, activityType, userId),
             )
 
             // Each eligible subscription should have received a notification
@@ -169,15 +169,14 @@ describe('Dispatch Notifications Property Tests', () => {
       )
     })
 
-    it('subscriptions with participantName matching activity participantId are never notified', () => {
+    it('subscriptions never receive pushes for the subscriber own actions', () => {
       return fc.assert(
         fc.asyncProperty(
           arbActivityType,
           fc.string({ minLength: 1, maxLength: 50 }),
-          async (activityType, participantId) => {
+          async (activityType, userId) => {
             jest.clearAllMocks()
 
-            // Create subscriptions where all have the same participantName as the activity
             const subscriptions = [
               {
                 id: 'sub-1',
@@ -185,17 +184,12 @@ describe('Dispatch Notifications Property Tests', () => {
                 p256dh: 'key1',
                 auth: 'auth1',
                 groupId: 'group-1',
-                participantName: participantId,
-                createdAt: new Date(),
-                updatedAt: new Date(),
-              },
-              {
-                id: 'sub-2',
-                endpoint: 'https://push.example.com/2',
-                p256dh: 'key2',
-                auth: 'auth2',
-                groupId: 'group-1',
-                participantName: participantId,
+                subscriberUserId: userId,
+                notifyAllMembers: true,
+                includedUserIds: [],
+                notifyOnCreate: true,
+                notifyOnUpdate: true,
+                notifyOnDelete: true,
                 createdAt: new Date(),
                 updatedAt: new Date(),
               },
@@ -207,11 +201,10 @@ describe('Dispatch Notifications Property Tests', () => {
             mockSendNotification.mockResolvedValue({})
 
             await dispatchNotifications('group-1', activityType, {
-              participantId,
+              userId,
               expenseId: 'expense-1',
             })
 
-            // No notifications should be sent since all subscriptions match the participant
             expect(mockSendNotification).not.toHaveBeenCalled()
           },
         ),
@@ -237,7 +230,7 @@ describe('Dispatch Notifications Property Tests', () => {
           fc.option(fc.string({ minLength: 1, maxLength: 50 }), {
             nil: undefined,
           }),
-          async (activityType, groupId, subscriptions, participantId) => {
+          async (activityType, groupId, subscriptions, userId) => {
             jest.clearAllMocks()
             mockFindMany.mockResolvedValue(subscriptions)
             mockFindUniqueGroup.mockResolvedValue({ name: 'Test Group' })
@@ -245,16 +238,12 @@ describe('Dispatch Notifications Property Tests', () => {
             mockSendNotification.mockResolvedValue({})
 
             await dispatchNotifications(groupId, activityType, {
-              participantId,
+              userId,
               expenseId: 'expense-1',
             })
 
-            // Count eligible subscriptions
-            const eligibleCount = subscriptions.filter(
-              (sub) =>
-                !sub.participantName ||
-                !participantId ||
-                sub.participantName !== participantId,
+            const eligibleCount = subscriptions.filter((sub) =>
+              isPushSubscriptionEligible(sub, activityType, userId),
             ).length
 
             expect(mockSendNotification).toHaveBeenCalledTimes(eligibleCount)

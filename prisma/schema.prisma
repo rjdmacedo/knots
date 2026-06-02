@@ -13,28 +13,18 @@ datasource db {
 }
 
 model Group {
-  id                String                    @id
+  id                String                   @id
   name              String
-  information       String?                   @db.Text
-  currency          String                    @default("$")
+  information       String?                  @db.Text
+  currency          String                   @default("$")
   currencyCode      String?
-  participants      Participant[]
   expenses          Expense[]
   activities        Activity[]
   pushSubscriptions PushSubscription[]
   categoryMappings  ExpenseCategoryMapping[]
   memberships       GroupMembership[]
   invitations       Invitation[]
-  createdAt         DateTime                  @default(now())
-}
-
-model Participant {
-  id              String           @id
-  name            String
-  group           Group            @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  groupId         String
-  expensesPaidBy  Expense[]
-  expensesPaidFor ExpensePaidFor[]
+  createdAt         DateTime                 @default(now())
 }
 
 model Category {
@@ -56,7 +46,7 @@ model Expense {
   originalAmount   Int?
   originalCurrency String?
   conversionRate   Decimal?
-  paidBy           Participant       @relation(fields: [paidById], references: [id], onDelete: Cascade)
+  paidBy           User              @relation("ExpensesPaidBy", fields: [paidById], references: [id])
   paidById         String
   paidFor          ExpensePaidFor[]
   groupId          String
@@ -111,13 +101,13 @@ enum RecurrenceRule {
 }
 
 model ExpensePaidFor {
-  expense       Expense     @relation(fields: [expenseId], references: [id], onDelete: Cascade)
-  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
-  expenseId     String
-  participantId String
-  shares        Int         @default(1)
+  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  user      User    @relation("ExpensesPaidFor", fields: [userId], references: [id], onDelete: Cascade)
+  expenseId String
+  userId    String
+  shares    Int     @default(1)
 
-  @@id([expenseId, participantId])
+  @@id([expenseId, userId])
 }
 
 model Activity {
@@ -151,15 +141,21 @@ enum ActivityType {
 }
 
 model PushSubscription {
-  id              String   @id @default(cuid())
-  endpoint        String   @db.VarChar(2048)
-  p256dh          String   @db.VarChar(256)
-  auth            String   @db.VarChar(256)
-  groupId         String
-  group           Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  participantName String?  @db.VarChar(200)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id               String   @id @default(cuid())
+  endpoint         String   @db.VarChar(2048)
+  p256dh           String   @db.VarChar(256)
+  auth             String   @db.VarChar(256)
+  groupId          String
+  group            Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  subscriberUserId String   @db.VarChar(200)
+  notifyAllMembers Boolean  @default(true)
+  /// Used when notifyAllMembers is false: only notify for these actors (never the subscriber).
+  includedUserIds  String[]
+  notifyOnCreate   Boolean  @default(true)
+  notifyOnUpdate   Boolean  @default(true)
+  notifyOnDelete   Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   @@unique([endpoint, groupId])
   @@index([groupId])
@@ -180,23 +176,24 @@ model ExpenseCategoryMapping {
   @@index([groupId, normalizedTitle])
 }
 
-
 // ─── Authentication Models ───────────────────────────────────────────────────
 
 model User {
-  id              String            @id @default(cuid())
-  name            String
-  email           String            @unique
-  emailVerified   DateTime?
-  passwordHash    String
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  emailVerified DateTime?
+  passwordHash  String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   sessions        Session[]
   accounts        Account[]
   tokens          Token[]
   memberships     GroupMembership[]
   invitationsSent Invitation[]      @relation("InvitedBy")
+  expensesPaidBy  Expense[]         @relation("ExpensesPaidBy")
+  expensesPaidFor ExpensePaidFor[]  @relation("ExpensesPaidFor")
 }
 
 model Account {
@@ -250,16 +247,22 @@ enum TokenType {
 }
 
 model GroupMembership {
-  id       String   @id @default(cuid())
+  id       String          @id @default(cuid())
   userId   String
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   groupId  String
-  group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  joinedAt DateTime @default(now())
+  group    Group           @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  role     MembershipRole  @default(MEMBER)
+  joinedAt DateTime        @default(now())
 
   @@unique([userId, groupId])
   @@index([userId])
   @@index([groupId])
+}
+
+enum MembershipRole {
+  OWNER
+  MEMBER
 }
 
 model Invitation {

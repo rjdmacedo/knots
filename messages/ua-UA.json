@@ -16,6 +16,7 @@
     "create": "Створити витрату",
     "createFirst": "Створіть першу витрату",
     "noExpenses": "У вашій групі ще немає витрат",
+    "export": "Export",
     "exportJson": "Експортувати у JSON",
     "exportCsv": "Експортувати у CSV",
     "searchPlaceholder": "Пошук витрат...",
@@ -38,8 +39,10 @@
   },
   "ExpenseCard": {
     "paidBy": "Сплачено <strong>{paidBy}</strong> за <paidFor></paidFor>",
+    "everyone": "everyone",
     "receivedBy": "Отримано <strong>{paidBy}</strong> за <paidFor></paidFor>",
-    "yourBalance": "Ваш баланс:"
+    "yourBalance": "Ваш баланс:",
+    "notInvolved": "You are not involved"
   },
   "Groups": {
     "myGroups": "Мої групи",
@@ -56,6 +59,8 @@
     "archive": "Архівувати групу",
     "unarchive": "Розархівувати групу",
     "removeRecent": "Видалити з останніх груп",
+    "enableNotifications": "Увімкнути сповіщення",
+    "disableNotifications": "Вимкнути сповіщення",
     "RecentRemovedToast": {
       "title": "Група була видалена",
       "description": "Група видалена зі списку ваших нещодавніх груп",
@@ -89,10 +94,17 @@
       "placeholder": "₴, $, €, £..",
       "description": "Ми будемо використовувати його для відображення сум"
     },
+    "CurrencyCodeField": {
+      "label": "Main currency",
+      "createDescription": "All amounts and balances will be in this currency.",
+      "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
+      "customOption": "Custom"
+    },
     "Participants": {
       "title": "Учасники",
       "description": "Введіть ім'я кожного учасника",
       "protectedParticipant": "Цей учасник бере участь у витратах і не може бути видалений",
+      "noLongerInGroup": "більше не в цій групі",
       "new": "Новий",
       "add": "Додати учасника",
       "John": "Андрій",
@@ -128,6 +140,10 @@
         "label": "Дата доходу",
         "description": "Введіть дату, коли було отримано дохід"
       },
+      "currencyField": {
+        "label": "Валюта доходу",
+        "description": "Валюта, в якій отримано дохід."
+      },
       "categoryFieldDescription": "Оберіть категорію доходу",
       "paidByField": {
         "label": "Отримав",
@@ -152,10 +168,23 @@
         "label": "Дата витрати",
         "description": "Введіть дату, коли було сплачено"
       },
+      "currencyField": {
+        "label": "Валюта витрати",
+        "description": "Валюта, в якій оплачено витрату."
+      },
       "categoryFieldDescription": "Оберіть категорію витрати",
       "paidByField": {
         "label": "Сплатив",
+        "placeholder": "Select a participant",
         "description": "Оберіть учасника, який сплатив"
+      },
+      "recurrenceRule": {
+        "label": "Expense Recurrence",
+        "description": "Select how often the expense should repeat.",
+        "none": "None",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly"
       },
       "paidFor": {
         "title": "Учасники",
@@ -166,6 +195,27 @@
     },
     "amountField": {
       "label": "Сума"
+    },
+    "conversionUnavailable": "Щоб встановити іншу валюту для кожної витрати та конвертувати суми, оберіть для групи валюту, відмінну від користувацької.",
+    "originalAmountField": {
+      "label": "Сума для конвертації"
+    },
+    "conversionRateField": {
+      "useApi": "Використати курси Frankfurter",
+      "useCustom": "Використати власний курс",
+      "label": "Обмінний курс"
+    },
+    "conversionRateState": {
+      "loading": "Отримання обмінних курсів…",
+      "success": "Отримані курси:",
+      "error": "Не вдалося отримати актуальні курси.",
+      "staleRate": "Використаний курс:",
+      "noRate": "Введіть власний курс нижче.",
+      "currencyNotFound": "У Frankfurter немає курсу для цієї валюти на цю дату.",
+      "noDate": "Введіть дату витрати, щоб отримати курс конвертації.",
+      "dateMismatch": "Курси на дату: {date}",
+      "refresh": "Оновити",
+      "customRate": "Використовується власний курс"
     },
     "isReimbursementField": {
       "label": "Це відшкодування"
@@ -178,6 +228,7 @@
     },
     "selectNone": "Обрати жодного",
     "selectAll": "Обрати всіх",
+    "noLongerInGroup": "більше не в цій групі",
     "shares": "частка(и)",
     "advancedOptions": "Розширені опції поділу..",
     "SplitModeField": {
@@ -366,7 +417,28 @@
       "earlierThisYear": "Раніше цього року",
       "lastYear": "Минулого року",
       "older": "Старіші"
-    }
+    },
+    "fieldLabels": {
+      "title": "Назва",
+      "amount": "Сума",
+      "expenseDate": "Дата",
+      "category": "Категорія",
+      "paidBy": "Оплатив",
+      "splitMode": "Режим поділу",
+      "isReimbursement": "Відшкодування",
+      "notes": "Нотатки",
+      "recurrenceRule": "Повторення",
+      "paidFor": "Оплачено за",
+      "name": "Ім'я",
+      "information": "Інформація",
+      "currency": "Валюта",
+      "participants": "Учасники"
+    },
+    "showMoreChanges": "Показати ще {count} змін",
+    "showLess": "Згорнути",
+    "yes": "Так",
+    "no": "Ні",
+    "fieldChangesCount": "{count} змін полів"
   },
   "Information": {
     "title": "Інформація",
@@ -394,6 +466,7 @@
     "amountRequired": "Необхідно ввести суму",
     "amountNotZero": "Сума не повинна дорівнювати нулю",
     "amountTenMillion": "Сума повинна бути меншою за 10,000,000",
+    "ratePositive": "Курс має бути суворо більшим за нуль.",
     "paidByRequired": "Ви повинні обрати учасника",
     "paidForMin1": "Витрата повинна бути сплачена принаймні для одного учасника",
     "noZeroShares": "Усі частки повинні бути більшими за 0",
@@ -439,6 +512,7 @@
       "heading": "Життя",
       "Childcare": "Догляд за дітьми",
       "Clothing": "Одяг",
+      "Donation": "Donation",
       "Education": "Освіта",
       "Gifts": "Подарунки",
       "Insurance": "Страхування",
@@ -468,6 +542,124 @@
       "Water": "Вода"
     }
   },
+  "Currencies": {
+    "search": "Search currency...",
+    "noCurrency": "No currencies found.",
+    "custom": {
+      "heading": "Custom"
+    },
+    "common": {
+      "heading": "Most common"
+    },
+    "other": {
+      "heading": "Other currencies"
+    }
+  },
+  "SplitwiseImport": {
+    "button": "Import from Splitwise",
+    "title": "Import from Splitwise",
+    "description": "Upload a CSV file exported from Splitwise to import expenses into this group. Make sure the participant names in the CSV match the names in this group.",
+    "fileLabel": "CSV File",
+    "previewLabel": "Preview (first 10 lines)",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "import": "Import Expenses",
+    "importing": "Importing...",
+    "toast": {
+      "invalidFileType": {
+        "title": "Invalid file type",
+        "description": "Please select a CSV file."
+      },
+      "noContent": {
+        "title": "No CSV content",
+        "description": "Please select a CSV file first."
+      },
+      "success": {
+        "title": "Import successful",
+        "description": "Successfully imported {count} expenses from Splitwise."
+      },
+      "error": {
+        "title": "Import failed",
+        "description": "Failed to import CSV file."
+      }
+    }
+  },
+  "ProfileSettings": {
+    "title": "Налаштування профілю",
+    "emailTitle": "Ел. пошта",
+    "emailDescription": "Вашу адресу ел. пошти не можна змінити.",
+    "displayNameTitle": "Відображуване ім'я",
+    "passwordTitle": "Пароль",
+    "NameForm": {
+      "nameRequired": "Ім'я обов'язкове",
+      "nameMaxLength": "Ім'я має містити не більше 100 символів",
+      "successToast": "Відображуване ім'я успішно оновлено.",
+      "label": "Відображуване ім'я",
+      "placeholder": "Введіть відображуване ім'я",
+      "saving": "Збереження…",
+      "submit": "Зберегти ім'я"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "Поточний пароль обов'язковий",
+      "newPasswordRequired": "Новий пароль обов'язковий",
+      "confirmPasswordRequired": "Підтвердіть новий пароль",
+      "passwordsDoNotMatch": "Паролі не збігаються",
+      "successToast": "Пароль успішно змінено.",
+      "currentPasswordIncorrect": "Поточний пароль невірний",
+      "newPasswordSameAsCurrent": "Новий пароль має відрізнятися від поточного",
+      "passwordRequirementsNotMet": "Пароль не відповідає вимогам",
+      "currentPasswordLabel": "Поточний пароль",
+      "newPasswordLabel": "Новий пароль",
+      "confirmPasswordLabel": "Підтвердіть новий пароль",
+      "passwordHint": "Від 8 до 128 символів. Має містити щонайменше одну велику, одну малу літеру та одну цифру.",
+      "changingPassword": "Зміна пароля…",
+      "submit": "Змінити пароль",
+      "errorTooShort": "Щонайменше 8 символів",
+      "errorTooLong": "Не більше 128 символів",
+      "errorMissingUppercase": "Має містити щонайменше одну велику літеру",
+      "errorMissingLowercase": "Має містити щонайменше одну малу літеру",
+      "errorMissingDigit": "Має містити щонайменше одну цифру"
+    }
+  },
+  "Members": {
+    "addedToGroup": "{name} додано до групи.",
+    "memberRemoved": "Учасника видалено з групи.",
+    "youLeftGroup": "Ви покинули групу.",
+    "memberPromoted": "Учасника підвищено до власника.",
+    "memberDemoted": "Учасника понижено до звичайного учасника.",
+    "addMember": "Додати учасника",
+    "adding": "Додавання…",
+    "add": "Додати",
+    "cancel": "Скасувати",
+    "leaveGroup": "Покинути групу",
+    "leaveGroupDescription": "Ви впевнені, що хочете покинути цю групу? Ваші минулі витрати залишаться в історії групи.",
+    "leave": "Покинути",
+    "removeFromGroup": "Видалити з групи",
+    "promoteToOwner": "Підвищити до власника",
+    "demoteToMember": "Понизити до учасника"
+  },
+  "MyGroups": {
+    "title": "Мої групи",
+    "loading": "Завантаження ваших груп…",
+    "loadError": "Не вдалося завантажити групи. Спробуйте пізніше.",
+    "noGroups": "Ви ще не є учасником жодної групи.",
+    "noGroupsHint": "Створіть групу, щоб почати ділити витрати з іншими.",
+    "createGroup": "Створити групу",
+    "createGroupTitle": "Створити нову групу",
+    "createGroupDescription": "Введіть назву групи. Після створення можна запросити учасників.",
+    "groupNameLabel": "Назва групи",
+    "characters": "символів",
+    "leaveGroup": "Покинути групу",
+    "leaveGroupConfirmTitle": "Покинути групу",
+    "leaveGroupConfirmDescription": "Ви впевнені, що хочете покинути «{name}»? Ваші минулі витрати залишаться в історії групи.",
+    "leaveGroupConfirmCancel": "Скасувати",
+    "leaveGroupConfirmAction": "Покинути"
+  },
+  "UserMenu": {
+    "profileSettings": "Налаштування профілю",
+    "signingOut": "Вихід…",
+    "signOut": "Вийти"
+  },
   "Notifications": {
     "subscribe": "Увімкнути сповіщення",
     "unsubscribe": "Вимкнути сповіщення",
@@ -475,12 +667,21 @@
     "noParticipant": "Усі зміни",
     "permissionDenied": "Дозвіл на сповіщення було відхилено. Увімкніть його в налаштуваннях браузера.",
     "notSupported": "Push-сповіщення не підтримуються на цьому пристрої.",
-    "error": "Не вдалося увімкнути сповіщення. Спробуйте ще раз.",
     "expenseCreated": "{actor} додав(ла) \"{title}\"",
     "expenseUpdated": "{actor} оновив(ла) \"{title}\"",
     "expenseDeleted": "{actor} видалив(ла) \"{title}\"",
     "groupUpdated": "{actor} оновив(ла) групу \"{group}\"",
     "notificationTitle": "Knots – {group}",
-    "defaultBody": "Нова активність у вашій групі"
+    "defaultBody": "Нова активність у вашій групі",
+    "filterHint": "Оберіть, від кого отримувати сповіщення та які події.",
+    "subscribeError": "Не вдалося увімкнути сповіщення. Спробуйте ще раз.",
+    "membersLabel": "Сповіщати мене про",
+    "notifyAllMembers": "Усі в групі",
+    "notifySpecificMembers": "Або лише ці учасники:",
+    "eventsLabel": "Події",
+    "eventCreate": "Витрату додано",
+    "eventUpdate": "Витрату оновлено",
+    "eventDelete": "Витрату видалено",
+    "selectAtLeastOneFilter": "Оберіть принаймні одного учасника або подію."
   }
 }

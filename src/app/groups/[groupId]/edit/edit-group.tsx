@@ -4,8 +4,9 @@ import { GroupForm } from '@/components/group-form'
 import { trpc } from '@/trpc/client'
 import { useSpinDelay } from 'spin-delay'
 import { useCurrentGroup } from '../current-group-context'
+import { MembersManagement } from './members-management'
 
-export const EditGroup = () => {
+export const EditGroup = ({ currentUserId }: { currentUserId: string }) => {
   const { groupId } = useCurrentGroup()
   const { data, isLoading: queryIsLoading } = trpc.groups.getDetails.useQuery({
     groupId,
@@ -20,13 +21,21 @@ export const EditGroup = () => {
   if (isLoading) return <></>
 
   return (
-    <GroupForm
-      group={data?.group}
-      onSubmit={async (groupFormValues, participantId) => {
-        await mutateAsync({ groupId, participantId, groupFormValues })
-        await utils.groups.invalidate()
-      }}
-      protectedParticipantIds={data?.participantsWithExpenses}
-    />
+    <>
+      <GroupForm
+        group={data?.group}
+        onSubmit={async (groupFormValues) => {
+          await mutateAsync({ groupId, groupFormValues })
+          await utils.groups.invalidate()
+        }}
+      />
+      {data?.group?.participants && (
+        <MembersManagement
+          groupId={groupId}
+          members={data.group.participants}
+          currentUserId={currentUserId}
+        />
+      )}
+    </>
   )
 }

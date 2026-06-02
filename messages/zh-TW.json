@@ -16,6 +16,7 @@
     "create": "新增消費紀錄",
     "createFirst": "新增第一筆消費紀錄",
     "noExpenses": "你的群組內目前沒有任何消費紀錄。",
+    "export": "Export",
     "exportJson": "匯出為 JSON",
     "exportCsv": "匯出為 CSV",
     "searchPlaceholder": "搜尋消費紀錄……",
@@ -38,8 +39,10 @@
   },
   "ExpenseCard": {
     "paidBy": "由 <strong>{paidBy}</strong> 支付 <paidFor></paidFor>。",
+    "everyone": "everyone",
     "receivedBy": "由 <strong>{paidBy}</strong> 收取 <paidFor></paidFor>。",
-    "yourBalance": "你的餘額："
+    "yourBalance": "你的餘額：",
+    "notInvolved": "You are not involved"
   },
   "Groups": {
     "myGroups": "我的群組",
@@ -56,6 +59,8 @@
     "archive": "將群組封存",
     "unarchive": "取消封存群組",
     "removeRecent": "從最近的群組中移除",
+    "enableNotifications": "啟用通知",
+    "disableNotifications": "停用通知",
     "RecentRemovedToast": {
       "title": "群組已被移除",
       "description": "該群組已從您的最近群組列表中移除。",
@@ -89,10 +94,17 @@
       "placeholder": "$, €, £…",
       "description": "我們根據它來顯示相應的金額。"
     },
+    "CurrencyCodeField": {
+      "label": "Main currency",
+      "createDescription": "All amounts and balances will be in this currency.",
+      "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
+      "customOption": "Custom"
+    },
     "Participants": {
       "title": "群組成員",
       "description": "輸入每位成員的名稱。",
       "protectedParticipant": "此成員已有登記支出，無法刪除。",
+      "noLongerInGroup": "已不在此群組中",
       "new": "新增",
       "add": "新增群組成員",
       "John": "林俊凱",
@@ -128,6 +140,10 @@
         "label": "收入日期",
         "description": "輸入收到這筆收入的日期。"
       },
+      "currencyField": {
+        "label": "收入貨幣",
+        "description": "收到收入時使用的貨幣。"
+      },
       "categoryFieldDescription": "選擇收入類別。",
       "paidByField": {
         "label": "接收人",
@@ -152,10 +168,23 @@
         "label": "消費日期",
         "description": "輸入支付此消費的日期。"
       },
+      "currencyField": {
+        "label": "支出貨幣",
+        "description": "支付支出時使用的貨幣。"
+      },
       "categoryFieldDescription": "選擇消費類別。",
       "paidByField": {
         "label": "支付人",
+        "placeholder": "Select a participant",
         "description": "选择支付这笔消费的群组成员。"
+      },
+      "recurrenceRule": {
+        "label": "Expense Recurrence",
+        "description": "Select how often the expense should repeat.",
+        "none": "None",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly"
       },
       "paidFor": {
         "title": "應支付人",
@@ -166,6 +195,27 @@
     },
     "amountField": {
       "label": "金額"
+    },
+    "conversionUnavailable": "若要為每筆支出設定不同貨幣並轉換金額，請為群組選擇非自訂貨幣。",
+    "originalAmountField": {
+      "label": "待轉換金額"
+    },
+    "conversionRateField": {
+      "useApi": "使用 Frankfurter 匯率",
+      "useCustom": "使用自訂匯率",
+      "label": "匯率"
+    },
+    "conversionRateState": {
+      "loading": "正在取得匯率…",
+      "success": "已取得匯率：",
+      "error": "抱歉，無法取得最新匯率。",
+      "staleRate": "使用的匯率：",
+      "noRate": "請在下方輸入自訂匯率。",
+      "currencyNotFound": "抱歉，Frankfurter 在該日期沒有此貨幣的匯率。",
+      "noDate": "請輸入支出日期以取得換算匯率。",
+      "dateMismatch": "日期匯率：{date}",
+      "refresh": "重新整理",
+      "customRate": "使用自訂匯率"
     },
     "isReimbursementField": {
       "label": "這是一筆報銷款"
@@ -178,6 +228,7 @@
     },
     "selectNone": "取消全選",
     "selectAll": "全選",
+    "noLongerInGroup": "已不在此群組中",
     "shares": "份額",
     "advancedOptions": "進階分帳選項……",
     "SplitModeField": {
@@ -366,7 +417,28 @@
       "earlierThisYear": "今年稍早",
       "lastYear": "去年",
       "older": "更早"
-    }
+    },
+    "fieldLabels": {
+      "title": "標題",
+      "amount": "金額",
+      "expenseDate": "日期",
+      "category": "類別",
+      "paidBy": "付款人",
+      "splitMode": "分攤方式",
+      "isReimbursement": "報銷",
+      "notes": "備註",
+      "recurrenceRule": "重複",
+      "paidFor": "付款對象",
+      "name": "名稱",
+      "information": "資訊",
+      "currency": "貨幣",
+      "participants": "參與者"
+    },
+    "showMoreChanges": "顯示另外 {count} 項變更",
+    "showLess": "收合",
+    "yes": "是",
+    "no": "否",
+    "fieldChangesCount": "{count} 項欄位變更"
   },
   "Information": {
     "title": "資訊",
@@ -394,6 +466,7 @@
     "amountRequired": "必須輸入一個金額。",
     "amountNotZero": "金額不可為 0。",
     "amountTenMillion": "金額需小於 10,000,000。",
+    "ratePositive": "匯率必須嚴格大於零。",
     "paidByRequired": "必須選擇一個成員。",
     "paidForMin1": "這筆消費必須包含至少一個成員。",
     "noZeroShares": "份額需大於 0。",
@@ -439,6 +512,7 @@
       "heading": "生活",
       "Childcare": "育兒",
       "Clothing": "衣服",
+      "Donation": "Donation",
       "Education": "教育",
       "Gifts": "禮物",
       "Insurance": "保險",
@@ -468,6 +542,124 @@
       "Water": "水費"
     }
   },
+  "Currencies": {
+    "search": "Search currency...",
+    "noCurrency": "No currencies found.",
+    "custom": {
+      "heading": "Custom"
+    },
+    "common": {
+      "heading": "Most common"
+    },
+    "other": {
+      "heading": "Other currencies"
+    }
+  },
+  "SplitwiseImport": {
+    "button": "Import from Splitwise",
+    "title": "Import from Splitwise",
+    "description": "Upload a CSV file exported from Splitwise to import expenses into this group. Make sure the participant names in the CSV match the names in this group.",
+    "fileLabel": "CSV File",
+    "previewLabel": "Preview (first 10 lines)",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "import": "Import Expenses",
+    "importing": "Importing...",
+    "toast": {
+      "invalidFileType": {
+        "title": "Invalid file type",
+        "description": "Please select a CSV file."
+      },
+      "noContent": {
+        "title": "No CSV content",
+        "description": "Please select a CSV file first."
+      },
+      "success": {
+        "title": "Import successful",
+        "description": "Successfully imported {count} expenses from Splitwise."
+      },
+      "error": {
+        "title": "Import failed",
+        "description": "Failed to import CSV file."
+      }
+    }
+  },
+  "ProfileSettings": {
+    "title": "個人資料設定",
+    "emailTitle": "電子郵件",
+    "emailDescription": "您的電子郵件地址無法變更。",
+    "displayNameTitle": "顯示名稱",
+    "passwordTitle": "密碼",
+    "NameForm": {
+      "nameRequired": "名稱為必填",
+      "nameMaxLength": "名稱最多 100 個字元",
+      "successToast": "顯示名稱已成功更新。",
+      "label": "顯示名稱",
+      "placeholder": "輸入您的顯示名稱",
+      "saving": "儲存中…",
+      "submit": "儲存名稱"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "目前密碼為必填",
+      "newPasswordRequired": "新密碼為必填",
+      "confirmPasswordRequired": "請確認您的新密碼",
+      "passwordsDoNotMatch": "密碼不相符",
+      "successToast": "密碼已成功變更。",
+      "currentPasswordIncorrect": "目前密碼不正確",
+      "newPasswordSameAsCurrent": "新密碼必須與目前密碼不同",
+      "passwordRequirementsNotMet": "密碼不符合要求",
+      "currentPasswordLabel": "目前密碼",
+      "newPasswordLabel": "新密碼",
+      "confirmPasswordLabel": "確認新密碼",
+      "passwordHint": "最少 8 個、最多 128 個字元。須包含至少一個大寫字母、一個小寫字母和一個數字。",
+      "changingPassword": "正在變更密碼…",
+      "submit": "變更密碼",
+      "errorTooShort": "至少需要 8 個字元",
+      "errorTooLong": "最多 128 個字元",
+      "errorMissingUppercase": "須包含至少一個大寫字母",
+      "errorMissingLowercase": "須包含至少一個小寫字母",
+      "errorMissingDigit": "須包含至少一個數字"
+    }
+  },
+  "Members": {
+    "addedToGroup": "已將 {name} 加入群組。",
+    "memberRemoved": "成員已從群組中移除。",
+    "youLeftGroup": "您已離開群組。",
+    "memberPromoted": "成員已升為擁有者。",
+    "memberDemoted": "成員已降為一般成員。",
+    "addMember": "新增成員",
+    "adding": "新增中…",
+    "add": "新增",
+    "cancel": "取消",
+    "leaveGroup": "離開群組",
+    "leaveGroupDescription": "確定要離開此群組嗎？您過去的支出將保留在群組記錄中。",
+    "leave": "離開",
+    "removeFromGroup": "從群組中移除",
+    "promoteToOwner": "升為擁有者",
+    "demoteToMember": "降為成員"
+  },
+  "MyGroups": {
+    "title": "我的群組",
+    "loading": "正在載入您的群組…",
+    "loadError": "無法載入群組。請稍後再試。",
+    "noGroups": "您還不是任何群組的成員。",
+    "noGroupsHint": "建立群組以開始與他人分攤支出。",
+    "createGroup": "建立群組",
+    "createGroupTitle": "建立新群組",
+    "createGroupDescription": "輸入群組名稱。建立後可以邀請成員。",
+    "groupNameLabel": "群組名稱",
+    "characters": "個字元",
+    "leaveGroup": "離開群組",
+    "leaveGroupConfirmTitle": "離開群組",
+    "leaveGroupConfirmDescription": "確定要離開「{name}」嗎？您過去的支出將保留在群組記錄中。",
+    "leaveGroupConfirmCancel": "取消",
+    "leaveGroupConfirmAction": "離開"
+  },
+  "UserMenu": {
+    "profileSettings": "個人資料設定",
+    "signingOut": "正在登出…",
+    "signOut": "登出"
+  },
   "Notifications": {
     "subscribe": "啟用通知",
     "unsubscribe": "停用通知",
@@ -475,12 +667,21 @@
     "noParticipant": "所有變更",
     "permissionDenied": "通知權限被拒絕。請在瀏覽器設定中啟用。",
     "notSupported": "此裝置不支援推播通知。",
-    "error": "無法啟用通知。請重試。",
     "expenseCreated": "{actor} 新增了「{title}」",
     "expenseUpdated": "{actor} 更新了「{title}」",
     "expenseDeleted": "{actor} 刪除了「{title}」",
     "groupUpdated": "{actor} 更新了群組「{group}」",
     "notificationTitle": "Knots – {group}",
-    "defaultBody": "您的群組有新活動"
+    "defaultBody": "您的群組有新活動",
+    "filterHint": "選擇要接收誰的通知以及哪些事件。",
+    "subscribeError": "無法啟用通知。請重試。",
+    "membersLabel": "通知我關於",
+    "notifyAllMembers": "群組所有人",
+    "notifySpecificMembers": "或僅這些成員：",
+    "eventsLabel": "事件",
+    "eventCreate": "已新增支出",
+    "eventUpdate": "已更新支出",
+    "eventDelete": "已刪除支出",
+    "selectAtLeastOneFilter": "請至少選擇一名成員或一種事件。"
   }
 }

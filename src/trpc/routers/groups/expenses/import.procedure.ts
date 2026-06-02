@@ -18,7 +18,7 @@ export const importSplitwiseCSVProcedure = baseProcedure
 
       const createdExpenses = []
       for (const expenseData of parsedExpenses) {
-        const expense = await createExpense(expenseData, groupId, participantId)
+        const expense = await createExpense(expenseData, groupId)
         createdExpenses.push(expense)
       }
 

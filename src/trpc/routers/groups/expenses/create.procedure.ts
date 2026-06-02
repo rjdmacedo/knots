@@ -2,27 +2,23 @@ import { createExpense } from '@/lib/api'
 import { upsertCategoryMapping } from '@/lib/category-mapping'
 import { notifyOnActivity } from '@/lib/push/notify-on-activity'
 import { expenseFormSchema } from '@/lib/schemas'
-import { baseProcedure } from '@/trpc/init'
+import { protectedProcedure } from '@/trpc/init'
 import { ActivityType } from '@prisma/client'
 import { z } from 'zod'
 
-export const createGroupExpenseProcedure = baseProcedure
+export const createGroupExpenseProcedure = protectedProcedure
   .input(
     z.object({
       groupId: z.string().min(1),
       expenseFormValues: expenseFormSchema,
-      participantId: z.string().optional(),
     }),
   )
   .mutation(
-    async ({ input: { groupId, expenseFormValues, participantId } }) => {
-      const expense = await createExpense(
-        expenseFormValues,
-        groupId,
-        participantId,
-      )
+    async ({ input: { groupId, expenseFormValues }, ctx }) => {
+      const userId = ctx.user.id
+      const expense = await createExpense(expenseFormValues, groupId)
       notifyOnActivity(groupId, ActivityType.CREATE_EXPENSE, {
-        participantId,
+        userId,
         expenseId: expense.id,
       })
 

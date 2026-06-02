@@ -74,7 +74,9 @@
     "NotFound": {
       "text": "Esse grupo não existe.",
       "link": "Ir para grupos visitados recentemente"
-    }
+    },
+    "enableNotifications": "Ativar notificações",
+    "disableNotifications": "Desativar notificações"
   },
   "GroupForm": {
     "title": "Informações do grupo",
@@ -100,7 +102,8 @@
       "add": "Adicionar participante",
       "John": "João",
       "Jane": "Maria",
-      "Jack": "José"
+      "Jack": "José",
+      "noLongerInGroup": "já não faz parte deste grupo"
     },
     "Settings": {
       "title": "Definições locais",
@@ -147,7 +150,11 @@
         "description": "Selecciona para quem foi recebida a receita."
       },
       "splitModeDescription": "Selecciona como dividir a receita.",
-      "attachDescription": "Vê e anexa recibos à receita."
+      "attachDescription": "Vê e anexa recibos à receita.",
+      "currencyField": {
+        "label": "Moeda da receita",
+        "description": "A moeda em que a receita foi recebida."
+      }
     },
     "Expense": {
       "create": "Criar despesa",
@@ -180,6 +187,10 @@
         "daily": "Diariamente",
         "weekly": "Semanalmente",
         "monthly": "Mensalmente"
+      },
+      "currencyField": {
+        "label": "Moeda da despesa",
+        "description": "A moeda em que a despesa foi paga."
       }
     },
     "amountField": {
@@ -219,7 +230,29 @@
     "save": "Guardar",
     "saving": "A guardar…",
     "cancel": "Cancelar",
-    "reimbursement": "Reembolso"
+    "reimbursement": "Reembolso",
+    "conversionUnavailable": "Para definir uma moeda diferente por despesa e converter valores, selecciona uma moeda não personalizada para o grupo.",
+    "originalAmountField": {
+      "label": "Valor a converter"
+    },
+    "conversionRateField": {
+      "useApi": "Usar taxas do Frankfurter",
+      "useCustom": "Usar taxa personalizada",
+      "label": "Taxa de câmbio"
+    },
+    "conversionRateState": {
+      "loading": "A obter taxas de câmbio…",
+      "success": "Taxas obtidas:",
+      "error": "Ups, não conseguimos obter as taxas mais recentes.",
+      "staleRate": "Taxa usada:",
+      "noRate": "Introduz uma taxa personalizada abaixo.",
+      "currencyNotFound": "Ups, o Frankfurter não tem a taxa para esta moeda nesta data.",
+      "noDate": "Introduz a data da despesa para obter uma taxa de conversão.",
+      "dateMismatch": "Taxas da data: {date}",
+      "refresh": "Actualizar",
+      "customRate": "A usar taxa personalizada"
+    },
+    "noLongerInGroup": "já não faz parte deste grupo"
   },
   "ExpenseDocumentsInput": {
     "TooBigToast": {
@@ -384,7 +417,28 @@
       "earlierThisYear": "Anteriormente este ano",
       "lastYear": "Ano passado",
       "older": "Mais antigas"
-    }
+    },
+    "fieldLabels": {
+      "title": "Título",
+      "amount": "Valor",
+      "expenseDate": "Data",
+      "category": "Categoria",
+      "paidBy": "Pago por",
+      "splitMode": "Modo de divisão",
+      "isReimbursement": "Reembolso",
+      "notes": "Notas",
+      "recurrenceRule": "Recorrência",
+      "paidFor": "Pago para",
+      "name": "Nome",
+      "information": "Informação",
+      "currency": "Moeda",
+      "participants": "Participantes"
+    },
+    "showMoreChanges": "Mostrar mais {count} alterações",
+    "showLess": "Mostrar menos",
+    "yes": "Sim",
+    "no": "Não",
+    "fieldChangesCount": "{count} alterações de campos"
   },
   "Information": {
     "title": "Informação",
@@ -416,7 +470,8 @@
     "paidForMin1": "A despesa deve ser paga para pelo menos um participante.",
     "noZeroShares": "Todas as partes têm de ser superiores a 0.",
     "amountSum": "A soma dos valores tem de ser igual ao valor da despesa.",
-    "percentageSum": "A soma das percentagens tem de ser igual a 100."
+    "percentageSum": "A soma das percentagens tem de ser igual a 100.",
+    "ratePositive": "A taxa tem de ser estritamente superior a zero."
   },
   "Categories": {
     "search": "Procurar categoria...",
@@ -536,12 +591,97 @@
     "noParticipant": "Todas as alterações",
     "permissionDenied": "A permissão de notificação foi negada. Ative-a nas definições do navegador.",
     "notSupported": "As notificações push não são suportadas neste dispositivo.",
-    "error": "Não foi possível ativar as notificações. Por favor, tente novamente.",
     "expenseCreated": "{actor} adicionou \"{title}\"",
     "expenseUpdated": "{actor} atualizou \"{title}\"",
     "expenseDeleted": "{actor} eliminou \"{title}\"",
     "groupUpdated": "{actor} atualizou o grupo \"{group}\"",
     "notificationTitle": "Knots – {group}",
-    "defaultBody": "Nova atividade no seu grupo"
+    "defaultBody": "Nova atividade no seu grupo",
+    "filterHint": "Escolhe de quem queres alertas e que eventos receber.",
+    "membersLabel": "Notificar-me sobre",
+    "notifyAllMembers": "Todos no grupo",
+    "notifySpecificMembers": "Ou apenas estes membros:",
+    "eventsLabel": "Eventos",
+    "eventCreate": "Despesa criada",
+    "eventUpdate": "Despesa atualizada",
+    "eventDelete": "Despesa eliminada",
+    "selectAtLeastOneFilter": "Selecciona pelo menos um membro ou evento.",
+    "subscribeError": "Não foi possível ativar as notificações. Por favor, tente novamente."
+  },
+  "ProfileSettings": {
+    "title": "Definições de Perfil",
+    "emailTitle": "E-mail",
+    "emailDescription": "O teu endereço de e-mail não pode ser alterado.",
+    "displayNameTitle": "Nome de Apresentação",
+    "passwordTitle": "Palavra-passe",
+    "NameForm": {
+      "nameRequired": "O nome é obrigatório",
+      "nameMaxLength": "O nome deve ter no máximo 100 caracteres",
+      "successToast": "Nome de apresentação actualizado com sucesso.",
+      "label": "Nome de Apresentação",
+      "placeholder": "Introduz o teu nome de apresentação",
+      "saving": "A guardar...",
+      "submit": "Guardar Nome"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "A palavra-passe actual é obrigatória",
+      "newPasswordRequired": "A nova palavra-passe é obrigatória",
+      "confirmPasswordRequired": "Por favor confirma a nova palavra-passe",
+      "passwordsDoNotMatch": "As palavras-passe não coincidem",
+      "successToast": "Palavra-passe alterada com sucesso.",
+      "currentPasswordIncorrect": "A palavra-passe actual está incorrecta",
+      "newPasswordSameAsCurrent": "A nova palavra-passe deve ser diferente da actual",
+      "passwordRequirementsNotMet": "A palavra-passe não cumpre os requisitos",
+      "currentPasswordLabel": "Palavra-passe actual",
+      "newPasswordLabel": "Nova palavra-passe",
+      "confirmPasswordLabel": "Confirmar nova palavra-passe",
+      "passwordHint": "Mínimo 8 caracteres, máximo 128. Deve incluir pelo menos uma letra maiúscula, uma letra minúscula e um dígito.",
+      "changingPassword": "A alterar palavra-passe…",
+      "submit": "Alterar palavra-passe",
+      "errorTooShort": "Deve ter pelo menos 8 caracteres",
+      "errorTooLong": "Deve ter no máximo 128 caracteres",
+      "errorMissingUppercase": "Deve conter pelo menos uma letra maiúscula",
+      "errorMissingLowercase": "Deve conter pelo menos uma letra minúscula",
+      "errorMissingDigit": "Deve conter pelo menos um dígito"
+    }
+  },
+  "Members": {
+    "addedToGroup": "{name} adicionado ao grupo.",
+    "memberRemoved": "Membro removido do grupo.",
+    "youLeftGroup": "Saíste do grupo.",
+    "memberPromoted": "Membro promovido a proprietário.",
+    "memberDemoted": "Membro despromovido a membro regular.",
+    "addMember": "Adicionar membro",
+    "adding": "A adicionar...",
+    "add": "Adicionar",
+    "cancel": "Cancelar",
+    "leaveGroup": "Sair do grupo",
+    "leaveGroupDescription": "Tens a certeza de que queres sair deste grupo? As tuas despesas anteriores permanecerão no histórico do grupo.",
+    "leave": "Sair",
+    "removeFromGroup": "Remover do grupo",
+    "promoteToOwner": "Promover a proprietário",
+    "demoteToMember": "Despromover a membro"
+  },
+  "MyGroups": {
+    "title": "Os Meus Grupos",
+    "loading": "A carregar os teus grupos…",
+    "loadError": "Não foi possível carregar os grupos. Tenta novamente mais tarde.",
+    "noGroups": "Ainda não és membro de nenhum grupo.",
+    "noGroupsHint": "Cria um grupo para começares a dividir despesas com outros.",
+    "createGroup": "Criar Grupo",
+    "createGroupTitle": "Criar um novo grupo",
+    "createGroupDescription": "Introduz um nome para o teu grupo. Podes convidar membros depois de o criar.",
+    "groupNameLabel": "Nome do grupo",
+    "characters": "caracteres",
+    "leaveGroup": "Sair do grupo",
+    "leaveGroupConfirmTitle": "Sair do grupo",
+    "leaveGroupConfirmDescription": "Tens a certeza de que queres sair de \"{name}\"? As tuas despesas anteriores permanecerão no histórico do grupo.",
+    "leaveGroupConfirmCancel": "Cancelar",
+    "leaveGroupConfirmAction": "Sair"
+  },
+  "UserMenu": {
+    "profileSettings": "Definições de perfil",
+    "signingOut": "A terminar sessão…",
+    "signOut": "Terminar sessão"
   }
 }

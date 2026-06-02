@@ -16,6 +16,7 @@
     "create": "Lisää kulu",
     "createFirst": "Lisää ensimmäinen kulu",
     "noExpenses": "Ryhmälläsi ei ole vielä yhtään kulua.",
+    "export": "Export",
     "exportJson": "Vie JSON-tiedostoon",
     "exportCsv": "Vie CSV-tiedostoon",
     "searchPlaceholder": "Etsi kulua…",
@@ -38,8 +39,10 @@
   },
   "ExpenseCard": {
     "paidBy": "<strong>{paidBy}</strong> maksoi {forCount, plural, =1 {henkilön} other {henkilöiden}} <paidFor></paidFor> puolesta",
+    "everyone": "everyone",
     "receivedBy": "<strong>{paidBy}</strong> sai rahaa {forCount, plural, =1 {henkilön} other {henkilöiden}} <paidFor></paidFor> puolesta",
-    "yourBalance": "Saldosi:"
+    "yourBalance": "Saldosi:",
+    "notInvolved": "You are not involved"
   },
   "Groups": {
     "myGroups": "Omat ryhmät",
@@ -56,6 +59,8 @@
     "archive": "Arkistoi ryhmä",
     "unarchive": "Palauta ryhmä arkistosta",
     "removeRecent": "Poista äskettäisistä",
+    "enableNotifications": "Ota ilmoitukset käyttöön",
+    "disableNotifications": "Poista ilmoitukset käytöstä",
     "RecentRemovedToast": {
       "title": "Ryhmä poistettu",
       "description": "Ryhmä poistettu äskettäisten listaltasi.",
@@ -89,12 +94,19 @@
       "placeholder": "$, €, £…",
       "description": "Näytetään rahasummien yhteydessä."
     },
+    "CurrencyCodeField": {
+      "label": "Main currency",
+      "createDescription": "All amounts and balances will be in this currency.",
+      "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
+      "customOption": "Custom"
+    },
     "Participants": {
       "title": "Osallistujat",
       "description": "Syötä jokaisen osallistujan nimi.",
       "protectedParticipant": "Tätä osallistujaa ei voida poistaa, koska hän osallistuu kuluihin.",
-      "add": "Lisää osallistuja",
+      "noLongerInGroup": "ei enää tässä ryhmässä",
       "new": "Uusi",
+      "add": "Lisää osallistuja",
       "John": "Antti",
       "Jane": "Laura",
       "Jack": "Jussi"
@@ -128,6 +140,10 @@
         "label": "Päivä",
         "description": "Valitse päivä jolloin tulo saatiin."
       },
+      "currencyField": {
+        "label": "Tulon valuutta",
+        "description": "Valuutta, jossa tulo vastaanotettiin."
+      },
       "categoryFieldDescription": "Valitse tulokategoria.",
       "paidByField": {
         "label": "Vastaanottaja",
@@ -152,10 +168,23 @@
         "label": "Päivä",
         "description": "Valitse päivä jolloin kulu maksettiin."
       },
+      "currencyField": {
+        "label": "Kulun valuutta",
+        "description": "Valuutta, jossa kulu maksettiin."
+      },
       "categoryFieldDescription": "Valitse kulukategoria.",
       "paidByField": {
         "label": "Maksaja",
+        "placeholder": "Select a participant",
         "description": "Valitse kuka maksoi kulun."
+      },
+      "recurrenceRule": {
+        "label": "Expense Recurrence",
+        "description": "Select how often the expense should repeat.",
+        "none": "None",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly"
       },
       "paidFor": {
         "title": "Kulun jakaminen",
@@ -166,6 +195,27 @@
     },
     "amountField": {
       "label": "Summa"
+    },
+    "conversionUnavailable": "Asettaaksesi eri valuutan kulua kohden ja muuntaaksesi summat, valitse ryhmälle muu kuin mukautettu valuutta.",
+    "originalAmountField": {
+      "label": "Muunnettava summa"
+    },
+    "conversionRateField": {
+      "useApi": "Käytä Frankfurter-kursseja",
+      "useCustom": "Käytä mukautettua kurssia",
+      "label": "Valuuttakurssi"
+    },
+    "conversionRateState": {
+      "loading": "Haetaan valuuttakursseja…",
+      "success": "Saadut kurssit:",
+      "error": "Emme voineet hakea uusimpia kursseja.",
+      "staleRate": "Käytetty kurssi:",
+      "noRate": "Syötä mukautettu kurssi alle.",
+      "currencyNotFound": "Frankfurterilla ei ole kurssia tälle valuutalle tänä päivänä.",
+      "noDate": "Syötä kulun päivämäärä saadaksesi muuntokurssin.",
+      "dateMismatch": "Kurssit päivältä: {date}",
+      "refresh": "Päivitä",
+      "customRate": "Käytetään mukautettua kurssia"
     },
     "isReimbursementField": {
       "label": "Tämä on velanmaksu"
@@ -178,6 +228,7 @@
     },
     "selectNone": "Tyhjennä valinnat",
     "selectAll": "Valitse kaikki",
+    "noLongerInGroup": "ei enää tässä ryhmässä",
     "shares": "osuutta",
     "advancedOptions": "Lisäasetuksia jakamiseen…",
     "SplitModeField": {
@@ -227,6 +278,16 @@
       "dateLabel": "Päivä:",
       "editNext": "Voit muokata kulun tietoja seuraavaksi.",
       "continue": "Jatka"
+    },
+    "unknown": "Unknown",
+    "TooBigToast": {
+      "title": "The file is too big",
+      "description": "The maximum file size you can upload is {maxSize}. Yours is {size}."
+    },
+    "ErrorToast": {
+      "title": "Error while uploading document",
+      "description": "Something wrong happened when uploading the document. Please retry later or select a different file.",
+      "retry": "Retry"
     }
   },
   "Balances": {
@@ -356,7 +417,28 @@
       "earlierThisYear": "Tänä vuonna",
       "lastYear": "Viime vuonna",
       "older": "Vanhemmat"
-    }
+    },
+    "fieldLabels": {
+      "title": "Otsikko",
+      "amount": "Summa",
+      "expenseDate": "Päivämäärä",
+      "category": "Kategoria",
+      "paidBy": "Maksaja",
+      "splitMode": "Jakotapa",
+      "isReimbursement": "Korvaus",
+      "notes": "Muistiinpanot",
+      "recurrenceRule": "Toisto",
+      "paidFor": "Maksettu puolesta",
+      "name": "Nimi",
+      "information": "Tiedot",
+      "currency": "Valuutta",
+      "participants": "Osallistujat"
+    },
+    "showMoreChanges": "Näytä {count} muutosta lisää",
+    "showLess": "Näytä vähemmän",
+    "yes": "Kyllä",
+    "no": "Ei",
+    "fieldChangesCount": "{count} kentän muutosta"
   },
   "Information": {
     "title": "Tiedot",
@@ -384,6 +466,7 @@
     "amountRequired": "Summa puuttuu.",
     "amountNotZero": "Summa ei voi olla nolla.",
     "amountTenMillion": "Summan pitää olla pienempi kuin 10 000 000.",
+    "ratePositive": "Kurssin on oltava ehdottomasti suurempi kuin nolla.",
     "paidByRequired": "Osallistuja puuttuu.",
     "paidForMin1": "Valitse vähintään yksi osallistuja.",
     "noZeroShares": "Jokaisen osuuden täytyy olla suurempi kuin 0.",
@@ -429,6 +512,7 @@
       "heading": "Elämä",
       "Childcare": "Lastenhoito",
       "Clothing": "Vaatteet",
+      "Donation": "Donation",
       "Education": "Opiskelu",
       "Gifts": "Lahjat",
       "Insurance": "Vakuutukset",
@@ -458,6 +542,124 @@
       "Water": "Vesi"
     }
   },
+  "Currencies": {
+    "search": "Search currency...",
+    "noCurrency": "No currencies found.",
+    "custom": {
+      "heading": "Custom"
+    },
+    "common": {
+      "heading": "Most common"
+    },
+    "other": {
+      "heading": "Other currencies"
+    }
+  },
+  "SplitwiseImport": {
+    "button": "Import from Splitwise",
+    "title": "Import from Splitwise",
+    "description": "Upload a CSV file exported from Splitwise to import expenses into this group. Make sure the participant names in the CSV match the names in this group.",
+    "fileLabel": "CSV File",
+    "previewLabel": "Preview (first 10 lines)",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "import": "Import Expenses",
+    "importing": "Importing...",
+    "toast": {
+      "invalidFileType": {
+        "title": "Invalid file type",
+        "description": "Please select a CSV file."
+      },
+      "noContent": {
+        "title": "No CSV content",
+        "description": "Please select a CSV file first."
+      },
+      "success": {
+        "title": "Import successful",
+        "description": "Successfully imported {count} expenses from Splitwise."
+      },
+      "error": {
+        "title": "Import failed",
+        "description": "Failed to import CSV file."
+      }
+    }
+  },
+  "ProfileSettings": {
+    "title": "Profiilin asetukset",
+    "emailTitle": "Sähköposti",
+    "emailDescription": "Sähköpostiosoitettasi ei voi muuttaa.",
+    "displayNameTitle": "Näyttönimi",
+    "passwordTitle": "Salasana",
+    "NameForm": {
+      "nameRequired": "Nimi on pakollinen",
+      "nameMaxLength": "Nimi saa olla enintään 100 merkkiä",
+      "successToast": "Näyttönimi päivitetty onnistuneesti.",
+      "label": "Näyttönimi",
+      "placeholder": "Syötä näyttönimesi",
+      "saving": "Tallennetaan…",
+      "submit": "Tallenna nimi"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "Nykyinen salasana on pakollinen",
+      "newPasswordRequired": "Uusi salasana on pakollinen",
+      "confirmPasswordRequired": "Vahvista uusi salasanasi",
+      "passwordsDoNotMatch": "Salasanat eivät täsmää",
+      "successToast": "Salasana vaihdettu onnistuneesti.",
+      "currentPasswordIncorrect": "Nykyinen salasana on virheellinen",
+      "newPasswordSameAsCurrent": "Uuden salasanan on oltava eri kuin nykyinen",
+      "passwordRequirementsNotMet": "Salasana ei täytä vaatimuksia",
+      "currentPasswordLabel": "Nykyinen salasana",
+      "newPasswordLabel": "Uusi salasana",
+      "confirmPasswordLabel": "Vahvista uusi salasana",
+      "passwordHint": "Vähintään 8, enintään 128 merkkiä. Sisältää vähintään yhden ison kirjaimen, pienen kirjaimen ja numeron.",
+      "changingPassword": "Vaihdetaan salasanaa…",
+      "submit": "Vaihda salasana",
+      "errorTooShort": "Vähintään 8 merkkiä",
+      "errorTooLong": "Enintään 128 merkkiä",
+      "errorMissingUppercase": "Sisältää vähintään yhden ison kirjaimen",
+      "errorMissingLowercase": "Sisältää vähintään yhden pienen kirjaimen",
+      "errorMissingDigit": "Sisältää vähintään yhden numeron"
+    }
+  },
+  "Members": {
+    "addedToGroup": "{name} lisätty ryhmään.",
+    "memberRemoved": "Jäsen poistettu ryhmästä.",
+    "youLeftGroup": "Poistuit ryhmästä.",
+    "memberPromoted": "Jäsen ylennetty omistajaksi.",
+    "memberDemoted": "Jäsen alennettu tavalliseksi jäseneksi.",
+    "addMember": "Lisää jäsen",
+    "adding": "Lisätään…",
+    "add": "Lisää",
+    "cancel": "Peruuta",
+    "leaveGroup": "Poistu ryhmästä",
+    "leaveGroupDescription": "Haluatko varmasti poistua tästä ryhmästä? Aiemmat kulut säilyvät ryhmän historiassa.",
+    "leave": "Poistu",
+    "removeFromGroup": "Poista ryhmästä",
+    "promoteToOwner": "Ylennä omistajaksi",
+    "demoteToMember": "Alenna jäseneksi"
+  },
+  "MyGroups": {
+    "title": "Omat ryhmät",
+    "loading": "Ladataan ryhmiäsi…",
+    "loadError": "Ryhmien lataus epäonnistui. Yritä myöhemmin uudelleen.",
+    "noGroups": "Et ole vielä minkään ryhmän jäsen.",
+    "noGroupsHint": "Luo ryhmä aloittaaksesi kulujen jakamisen muiden kanssa.",
+    "createGroup": "Luo ryhmä",
+    "createGroupTitle": "Luo uusi ryhmä",
+    "createGroupDescription": "Anna ryhmälle nimi. Voit kutsua jäseniä luomisen jälkeen.",
+    "groupNameLabel": "Ryhmän nimi",
+    "characters": "merkkiä",
+    "leaveGroup": "Poistu ryhmästä",
+    "leaveGroupConfirmTitle": "Poistu ryhmästä",
+    "leaveGroupConfirmDescription": "Haluatko varmasti poistua ryhmästä \"{name}\"? Aiemmat kulut säilyvät ryhmän historiassa.",
+    "leaveGroupConfirmCancel": "Peruuta",
+    "leaveGroupConfirmAction": "Poistu"
+  },
+  "UserMenu": {
+    "profileSettings": "Profiilin asetukset",
+    "signingOut": "Kirjaudutaan ulos…",
+    "signOut": "Kirjaudu ulos"
+  },
   "Notifications": {
     "subscribe": "Ota ilmoitukset käyttöön",
     "unsubscribe": "Poista ilmoitukset käytöstä",
@@ -465,12 +667,21 @@
     "noParticipant": "Kaikki muutokset",
     "permissionDenied": "Ilmoituslupa evättiin. Ota se käyttöön selaimen asetuksista.",
     "notSupported": "Push-ilmoituksia ei tueta tällä laitteella.",
-    "error": "Ilmoitusten käyttöönotto epäonnistui. Yritä uudelleen.",
     "expenseCreated": "{actor} lisäsi \"{title}\"",
     "expenseUpdated": "{actor} päivitti \"{title}\"",
     "expenseDeleted": "{actor} poisti \"{title}\"",
     "groupUpdated": "{actor} päivitti ryhmän \"{group}\"",
     "notificationTitle": "Knots – {group}",
-    "defaultBody": "Uutta toimintaa ryhmässäsi"
+    "defaultBody": "Uutta toimintaa ryhmässäsi",
+    "filterHint": "Valitse, keneltä haluat ilmoituksia ja mitkä tapahtumat.",
+    "subscribeError": "Ilmoitusten käyttöönotto epäonnistui. Yritä uudelleen.",
+    "membersLabel": "Ilmoita minulle",
+    "notifyAllMembers": "Kaikki ryhmässä",
+    "notifySpecificMembers": "Tai vain nämä jäsenet:",
+    "eventsLabel": "Tapahtumat",
+    "eventCreate": "Kulu luotu",
+    "eventUpdate": "Kulu päivitetty",
+    "eventDelete": "Kulu poistettu",
+    "selectAtLeastOneFilter": "Valitse vähintään yksi jäsen tai tapahtuma."
   }
 }

@@ -22,13 +22,14 @@ export const getGroupStatsProcedure = baseProcedure
   .input(
     z.object({
       groupId: z.string().min(1),
+      /** User ID to compute per-user statistics for (optional) */
       participantId: z.string().optional(),
     }),
   )
-  .query(async ({ input: { groupId, participantId } }) => {
+  .query(async ({ input: { groupId, participantId: userId } }) => {
     const expenses = await getGroupExpenses(groupId)
     const group = await getGroup(groupId)
-    const participants = (group?.participants ?? []).map((p) => ({
+    const members = (group?.participants ?? []).map((p) => ({
       id: p.id,
       name: p.name,
     }))
@@ -36,29 +37,26 @@ export const getGroupStatsProcedure = baseProcedure
     const totalGroupSpendings = getTotalGroupSpending(expenses)
 
     const totalParticipantSpendings =
-      participantId !== undefined
-        ? getTotalActiveUserPaidFor(participantId, expenses)
+      userId !== undefined
+        ? getTotalActiveUserPaidFor(userId, expenses)
         : undefined
     const totalParticipantShare =
-      participantId !== undefined
-        ? getTotalActiveUserShare(participantId, expenses)
+      userId !== undefined
+        ? getTotalActiveUserShare(userId, expenses)
         : undefined
 
-    // Compute enhanced stats
+    // Compute enhanced stats using group members (Users via GroupMembership)
     const categoryBreakdown = computeCategoryBreakdown(expenses)
-    const participantRanking = computeParticipantRanking(expenses, participants)
-    const expenseDistribution = computeExpenseDistribution(
-      expenses,
-      participants,
-    )
+    const participantRanking = computeParticipantRanking(expenses, members)
+    const expenseDistribution = computeExpenseDistribution(expenses, members)
     const spendingOverTime = computeSpendingOverTime(expenses)
     const monthOverMonth = computeMonthOverMonth(spendingOverTime)
     const dailyAverage = computeDailyAverage(expenses)
     const aggregateMetrics = computeAggregateMetrics(expenses)
-    const netBalances = computeNetBalances(expenses, participants)
+    const netBalances = computeNetBalances(expenses, members)
     const paidVsSharePercentages = computePaidVsSharePercentages(
       expenses,
-      participants,
+      members,
     )
 
     return {

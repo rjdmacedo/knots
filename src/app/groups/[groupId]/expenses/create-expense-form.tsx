@@ -33,7 +33,6 @@ export function CreateExpenseForm({
         await createExpenseMutateAsync({
           groupId,
           expenseFormValues,
-          participantId,
         })
         utils.groups.expenses.invalidate()
         utils.groups.activities.invalidate()

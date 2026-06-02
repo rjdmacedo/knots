@@ -39,8 +39,10 @@
   },
   "ExpenseCard": {
     "paidBy": "Opłacone przez <strong>{paidBy}</strong> dla <paidFor></paidFor>",
+    "everyone": "everyone",
     "receivedBy": "Otrzymane przez <strong>{paidBy}</strong> od <paidFor></paidFor>",
-    "yourBalance": "Twjoje saldo:"
+    "yourBalance": "Twjoje saldo:",
+    "notInvolved": "You are not involved"
   },
   "Groups": {
     "myGroups": "Moje grupy",
@@ -57,6 +59,8 @@
     "archive": "Zarchiwizuj grupę",
     "unarchive": "Cofnij archiwizację grupy",
     "removeRecent": "Usuń z ostatnich grup",
+    "enableNotifications": "Włącz powiadomienia",
+    "disableNotifications": "Wyłącz powiadomienia",
     "RecentRemovedToast": {
       "title": "Grupa została usunięta",
       "description": "Grupa została usunięta z listy twoich ostatnich grup.",
@@ -90,10 +94,17 @@
       "placeholder": "PLN, zł, $, €, £…",
       "description": "Użyjemy go do wyświetlania kwot."
     },
+    "CurrencyCodeField": {
+      "label": "Main currency",
+      "createDescription": "All amounts and balances will be in this currency.",
+      "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
+      "customOption": "Custom"
+    },
     "Participants": {
       "title": "Członkowie",
       "description": "Podaj nazwę dla każdego członka.",
       "protectedParticipant": "Ten członek wciąż bierze udział w rozliczeniach i nie może być usunięty.",
+      "noLongerInGroup": "nie jest już w tej grupie",
       "new": "Nowy",
       "add": "Dodaj członka",
       "John": "Jan",
@@ -129,6 +140,10 @@
         "label": "Data wpływu",
         "description": "Podaj datę otrzymania wpływu."
       },
+      "currencyField": {
+        "label": "Waluta przychodu",
+        "description": "Waluta, w której otrzymano przychód."
+      },
       "categoryFieldDescription": "Wybierz kategorię wpływu.",
       "paidByField": {
         "label": "Otrzymane przez",
@@ -153,9 +168,14 @@
         "label": "Data wydatku",
         "description": "Podaj datę wydatku."
       },
+      "currencyField": {
+        "label": "Waluta wydatku",
+        "description": "Waluta, w której opłacono wydatek."
+      },
       "categoryFieldDescription": "Podaj kategorię wydatku.",
       "paidByField": {
         "label": "Opłacone przez",
+        "placeholder": "Select a participant",
         "description": "Wybierz członka, który zapłacił."
       },
       "recurrenceRule": {
@@ -176,6 +196,27 @@
     "amountField": {
       "label": "Suma"
     },
+    "conversionUnavailable": "Aby ustawić inną walutę na wydatek i przeliczać kwoty, wybierz niestandardową walutę grupy.",
+    "originalAmountField": {
+      "label": "Kwota do przeliczenia"
+    },
+    "conversionRateField": {
+      "useApi": "Użyj kursów z Frankfurter",
+      "useCustom": "Użyj własnego kursu",
+      "label": "Kurs wymiany"
+    },
+    "conversionRateState": {
+      "loading": "Pobieranie kursów wymiany…",
+      "success": "Uzyskane kursy:",
+      "error": "Ups, nie udało się pobrać najnowszych kursów.",
+      "staleRate": "Używany kurs:",
+      "noRate": "Wprowadź własny kurs poniżej.",
+      "currencyNotFound": "Ups, Frankfurter nie ma kursu dla tej waluty w tym dniu.",
+      "noDate": "Wprowadź datę wydatku, aby uzyskać kurs przeliczenia.",
+      "dateMismatch": "Kursy z dnia: {date}",
+      "refresh": "Odśwież",
+      "customRate": "Używany własny kurs"
+    },
     "isReimbursementField": {
       "label": "Oznacz jako zwrot kosztów"
     },
@@ -187,6 +228,7 @@
     },
     "selectNone": "Nie wybieraj nikogo",
     "selectAll": "Wybierz wszystkich",
+    "noLongerInGroup": "nie jest już w tej grupie",
     "shares": "udział(y)",
     "advancedOptions": "Zaawansowane opcje podziału…",
     "SplitModeField": {
@@ -375,7 +417,28 @@
       "earlierThisYear": "Wcześniej w tym roku",
       "lastYear": "Poprzedni rok",
       "older": "Starsze"
-    }
+    },
+    "fieldLabels": {
+      "title": "Tytuł",
+      "amount": "Kwota",
+      "expenseDate": "Data",
+      "category": "Kategoria",
+      "paidBy": "Opłacone przez",
+      "splitMode": "Tryb podziału",
+      "isReimbursement": "Zwrot",
+      "notes": "Notatki",
+      "recurrenceRule": "Powtarzalność",
+      "paidFor": "Opłacone za",
+      "name": "Nazwa",
+      "information": "Informacje",
+      "currency": "Waluta",
+      "participants": "Uczestnicy"
+    },
+    "showMoreChanges": "Pokaż {count} więcej zmian",
+    "showLess": "Pokaż mniej",
+    "yes": "Tak",
+    "no": "Nie",
+    "fieldChangesCount": "{count} zmian pól"
   },
   "Information": {
     "title": "Informacje",
@@ -403,6 +466,7 @@
     "amountRequired": "Należy wprowadzić kwotę.",
     "amountNotZero": "Kwota nie może być zerem.",
     "amountTenMillion": "Kwota musi być niższa niż 10 000 000.",
+    "ratePositive": "Kurs musi być ściśle większy od zera.",
     "paidByRequired": "Musisz wybrać członka.",
     "paidForMin1": "Wydatek musi zostać opłacony za co najmniej jednego uczestnika.",
     "noZeroShares": "Wszystkie udziały muszą być większe niż 0.",
@@ -478,6 +542,124 @@
       "Water": "Woda"
     }
   },
+  "Currencies": {
+    "search": "Search currency...",
+    "noCurrency": "No currencies found.",
+    "custom": {
+      "heading": "Custom"
+    },
+    "common": {
+      "heading": "Most common"
+    },
+    "other": {
+      "heading": "Other currencies"
+    }
+  },
+  "SplitwiseImport": {
+    "button": "Import from Splitwise",
+    "title": "Import from Splitwise",
+    "description": "Upload a CSV file exported from Splitwise to import expenses into this group. Make sure the participant names in the CSV match the names in this group.",
+    "fileLabel": "CSV File",
+    "previewLabel": "Preview (first 10 lines)",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "import": "Import Expenses",
+    "importing": "Importing...",
+    "toast": {
+      "invalidFileType": {
+        "title": "Invalid file type",
+        "description": "Please select a CSV file."
+      },
+      "noContent": {
+        "title": "No CSV content",
+        "description": "Please select a CSV file first."
+      },
+      "success": {
+        "title": "Import successful",
+        "description": "Successfully imported {count} expenses from Splitwise."
+      },
+      "error": {
+        "title": "Import failed",
+        "description": "Failed to import CSV file."
+      }
+    }
+  },
+  "ProfileSettings": {
+    "title": "Ustawienia profilu",
+    "emailTitle": "E-mail",
+    "emailDescription": "Twój adres e-mail nie może zostać zmieniony.",
+    "displayNameTitle": "Nazwa wyświetlana",
+    "passwordTitle": "Hasło",
+    "NameForm": {
+      "nameRequired": "Nazwa jest wymagana",
+      "nameMaxLength": "Nazwa może mieć maksymalnie 100 znaków",
+      "successToast": "Nazwa wyświetlana została zaktualizowana.",
+      "label": "Nazwa wyświetlana",
+      "placeholder": "Wprowadź nazwę wyświetlaną",
+      "saving": "Zapisywanie…",
+      "submit": "Zapisz nazwę"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "Aktualne hasło jest wymagane",
+      "newPasswordRequired": "Nowe hasło jest wymagane",
+      "confirmPasswordRequired": "Potwierdź nowe hasło",
+      "passwordsDoNotMatch": "Hasła nie są zgodne",
+      "successToast": "Hasło zostało zmienione.",
+      "currentPasswordIncorrect": "Aktualne hasło jest nieprawidłowe",
+      "newPasswordSameAsCurrent": "Nowe hasło musi różnić się od aktualnego",
+      "passwordRequirementsNotMet": "Hasło nie spełnia wymagań",
+      "currentPasswordLabel": "Aktualne hasło",
+      "newPasswordLabel": "Nowe hasło",
+      "confirmPasswordLabel": "Potwierdź nowe hasło",
+      "passwordHint": "Min. 8 znaków, max. 128. Musi zawierać co najmniej jedną wielką literę, jedną małą literę i jedną cyfrę.",
+      "changingPassword": "Zmiana hasła…",
+      "submit": "Zmień hasło",
+      "errorTooShort": "Musi mieć co najmniej 8 znaków",
+      "errorTooLong": "Może mieć maksymalnie 128 znaków",
+      "errorMissingUppercase": "Musi zawierać co najmniej jedną wielką literę",
+      "errorMissingLowercase": "Musi zawierać co najmniej jedną małą literę",
+      "errorMissingDigit": "Musi zawierać co najmniej jedną cyfrę"
+    }
+  },
+  "Members": {
+    "addedToGroup": "{name} dodany do grupy.",
+    "memberRemoved": "Członek usunięty z grupy.",
+    "youLeftGroup": "Opuściłeś grupę.",
+    "memberPromoted": "Członek awansowany na właściciela.",
+    "memberDemoted": "Członek zdegradowany do zwykłego członka.",
+    "addMember": "Dodaj członka",
+    "adding": "Dodawanie…",
+    "add": "Dodaj",
+    "cancel": "Anuluj",
+    "leaveGroup": "Opuść grupę",
+    "leaveGroupDescription": "Czy na pewno chcesz opuścić tę grupę? Twoje wcześniejsze wydatki pozostaną w historii grupy.",
+    "leave": "Opuść",
+    "removeFromGroup": "Usuń z grupy",
+    "promoteToOwner": "Awansuj na właściciela",
+    "demoteToMember": "Zdegraduj do członka"
+  },
+  "MyGroups": {
+    "title": "Moje grupy",
+    "loading": "Ładowanie grup…",
+    "loadError": "Nie udało się załadować grup. Spróbuj ponownie później.",
+    "noGroups": "Nie jesteś jeszcze członkiem żadnej grupy.",
+    "noGroupsHint": "Utwórz grupę, aby zacząć dzielić wydatki z innymi.",
+    "createGroup": "Utwórz grupę",
+    "createGroupTitle": "Utwórz nową grupę",
+    "createGroupDescription": "Wprowadź nazwę grupy. Po utworzeniu możesz zaprosić członków.",
+    "groupNameLabel": "Nazwa grupy",
+    "characters": "znaków",
+    "leaveGroup": "Opuść grupę",
+    "leaveGroupConfirmTitle": "Opuść grupę",
+    "leaveGroupConfirmDescription": "Czy na pewno chcesz opuścić „{name}”? Twoje wcześniejsze wydatki pozostaną w historii grupy.",
+    "leaveGroupConfirmCancel": "Anuluj",
+    "leaveGroupConfirmAction": "Opuść"
+  },
+  "UserMenu": {
+    "profileSettings": "Ustawienia profilu",
+    "signingOut": "Wylogowywanie…",
+    "signOut": "Wyloguj się"
+  },
   "Notifications": {
     "subscribe": "Włącz powiadomienia",
     "unsubscribe": "Wyłącz powiadomienia",
@@ -485,12 +667,21 @@
     "noParticipant": "Wszystkie zmiany",
     "permissionDenied": "Uprawnienie do powiadomień zostało odrzucone. Włącz je w ustawieniach przeglądarki.",
     "notSupported": "Powiadomienia push nie są obsługiwane na tym urządzeniu.",
-    "error": "Nie udało się włączyć powiadomień. Spróbuj ponownie.",
     "expenseCreated": "{actor} dodał(a) \"{title}\"",
     "expenseUpdated": "{actor} zaktualizował(a) \"{title}\"",
     "expenseDeleted": "{actor} usunął/usunęła \"{title}\"",
     "groupUpdated": "{actor} zaktualizował(a) grupę \"{group}\"",
     "notificationTitle": "Knots – {group}",
-    "defaultBody": "Nowa aktywność w Twojej grupie"
+    "defaultBody": "Nowa aktywność w Twojej grupie",
+    "filterHint": "Wybierz, od kogo chcesz otrzymywać powiadomienia i jakie zdarzenia.",
+    "subscribeError": "Nie udało się włączyć powiadomień. Spróbuj ponownie.",
+    "membersLabel": "Powiadamiaj mnie o",
+    "notifyAllMembers": "Wszyscy w grupie",
+    "notifySpecificMembers": "Lub tylko ci członkowie:",
+    "eventsLabel": "Zdarzenia",
+    "eventCreate": "Dodano wydatek",
+    "eventUpdate": "Zaktualizowano wydatek",
+    "eventDelete": "Usunięto wydatek",
+    "selectAtLeastOneFilter": "Wybierz co najmniej jednego członka lub zdarzenie."
   }
 }

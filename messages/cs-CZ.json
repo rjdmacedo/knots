@@ -39,8 +39,10 @@
   },
   "ExpenseCard": {
     "paidBy": "Zaplatil/a <strong>{paidBy}</strong> za <paidFor></paidFor>",
+    "everyone": "everyone",
     "receivedBy": "Obdržel/a <strong>{paidBy}</strong> od <paidFor></paidFor>",
-    "yourBalance": "Váš zůstatek:"
+    "yourBalance": "Váš zůstatek:",
+    "notInvolved": "You are not involved"
   },
   "Groups": {
     "myGroups": "Moje skupiny",
@@ -57,6 +59,8 @@
     "archive": "Archivovat skupinu",
     "unarchive": "Zrušit archivaci skupiny",
     "removeRecent": "Odebrat z nedávných skupin",
+    "enableNotifications": "Povolit oznámení",
+    "disableNotifications": "Zakázat oznámení",
     "RecentRemovedToast": {
       "title": "Skupina byla odebrána",
       "description": "Skupina byla odebrána ze seznamu vašich nedávných skupin.",
@@ -90,10 +94,17 @@
       "placeholder": "CZK, Kč, $, €, £…",
       "description": "Použijeme ho pro zobrazení částek."
     },
+    "CurrencyCodeField": {
+      "label": "Main currency",
+      "createDescription": "All amounts and balances will be in this currency.",
+      "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
+      "customOption": "Custom"
+    },
     "Participants": {
       "title": "Účastníci",
       "description": "Zadejte jméno každého účastníka.",
       "protectedParticipant": "Tento účastník je součástí výdajů a nelze jej odebrat.",
+      "noLongerInGroup": "už není v této skupině",
       "new": "Nový",
       "add": "Přidat účastníka",
       "John": "Jan",
@@ -129,6 +140,10 @@
         "label": "Datum příjmu",
         "description": "Zadejte datum, kdy byl příjem přijat."
       },
+      "currencyField": {
+        "label": "Měna příjmu",
+        "description": "Měna, ve které byl příjem přijat."
+      },
       "categoryFieldDescription": "Vyberte kategorii příjmu.",
       "paidByField": {
         "label": "Obdržel/a",
@@ -153,9 +168,14 @@
         "label": "Datum výdaje",
         "description": "Zadejte datum, kdy byl výdaj zaplacen."
       },
+      "currencyField": {
+        "label": "Měna výdaje",
+        "description": "Měna, ve které byl výdaj zaplacen."
+      },
       "categoryFieldDescription": "Vyberte kategorii výdaje.",
       "paidByField": {
         "label": "Zaplatil/a",
+        "placeholder": "Select a participant",
         "description": "Vyberte účastníka, který výdaj zaplatil."
       },
       "recurrenceRule": {
@@ -176,6 +196,27 @@
     "amountField": {
       "label": "Částka"
     },
+    "conversionUnavailable": "Chcete-li nastavit jinou měnu pro každý výdaj a převádět částky, vyberte pro skupinu jinou než vlastní měnu.",
+    "originalAmountField": {
+      "label": "Částka k převodu"
+    },
+    "conversionRateField": {
+      "useApi": "Použít kurzy z Frankfurter",
+      "useCustom": "Použít vlastní kurz",
+      "label": "Směnný kurz"
+    },
+    "conversionRateState": {
+      "loading": "Načítání směnných kurzů…",
+      "success": "Získané kurzy:",
+      "error": "Nepodařilo se získat nejnovější kurzy.",
+      "staleRate": "Použitý kurz:",
+      "noRate": "Zadejte vlastní kurz níže.",
+      "currencyNotFound": "Frankfurter nemá kurz pro tuto měnu v tento den.",
+      "noDate": "Zadejte datum výdaje pro získání převodního kurzu.",
+      "dateMismatch": "Kurzy k datu: {date}",
+      "refresh": "Obnovit",
+      "customRate": "Používá se vlastní kurz"
+    },
     "isReimbursementField": {
       "label": "Toto je proplacení"
     },
@@ -187,6 +228,7 @@
     },
     "selectNone": "Nevybrat nic",
     "selectAll": "Vybrat vše",
+    "noLongerInGroup": "už není v této skupině",
     "shares": "podíl(y)",
     "advancedOptions": "Pokročilé možnosti rozdělení…",
     "SplitModeField": {
@@ -375,7 +417,28 @@
       "earlierThisYear": "Dříve tento rok",
       "lastYear": "Minulý rok",
       "older": "Starší"
-    }
+    },
+    "fieldLabels": {
+      "title": "Název",
+      "amount": "Částka",
+      "expenseDate": "Datum",
+      "category": "Kategorie",
+      "paidBy": "Zaplatil",
+      "splitMode": "Režim rozdělení",
+      "isReimbursement": "Úhrada",
+      "notes": "Poznámky",
+      "recurrenceRule": "Opakování",
+      "paidFor": "Zaplaceno za",
+      "name": "Jméno",
+      "information": "Informace",
+      "currency": "Měna",
+      "participants": "Účastníci"
+    },
+    "showMoreChanges": "Zobrazit dalších {count} změn",
+    "showLess": "Zobrazit méně",
+    "yes": "Ano",
+    "no": "Ne",
+    "fieldChangesCount": "{count} změn polí"
   },
   "Information": {
     "title": "Informace",
@@ -403,6 +466,7 @@
     "amountRequired": "Musíte zadat částku.",
     "amountNotZero": "Částka nesmí být nula.",
     "amountTenMillion": "Částka musí být nižší než 10 000 000.",
+    "ratePositive": "Kurz musí být striktně větší než nula.",
     "paidByRequired": "Musíte vybrat účastníka.",
     "paidForMin1": "Výdaj musí být zaplacen alespoň za jednoho účastníka.",
     "noZeroShares": "Všechny podíly musí být větší než 0.",
@@ -478,6 +542,124 @@
       "Water": "Voda"
     }
   },
+  "Currencies": {
+    "search": "Search currency...",
+    "noCurrency": "No currencies found.",
+    "custom": {
+      "heading": "Custom"
+    },
+    "common": {
+      "heading": "Most common"
+    },
+    "other": {
+      "heading": "Other currencies"
+    }
+  },
+  "SplitwiseImport": {
+    "button": "Import from Splitwise",
+    "title": "Import from Splitwise",
+    "description": "Upload a CSV file exported from Splitwise to import expenses into this group. Make sure the participant names in the CSV match the names in this group.",
+    "fileLabel": "CSV File",
+    "previewLabel": "Preview (first 10 lines)",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "import": "Import Expenses",
+    "importing": "Importing...",
+    "toast": {
+      "invalidFileType": {
+        "title": "Invalid file type",
+        "description": "Please select a CSV file."
+      },
+      "noContent": {
+        "title": "No CSV content",
+        "description": "Please select a CSV file first."
+      },
+      "success": {
+        "title": "Import successful",
+        "description": "Successfully imported {count} expenses from Splitwise."
+      },
+      "error": {
+        "title": "Import failed",
+        "description": "Failed to import CSV file."
+      }
+    }
+  },
+  "ProfileSettings": {
+    "title": "Nastavení profilu",
+    "emailTitle": "E-mail",
+    "emailDescription": "Vaši e-mailovou adresu nelze změnit.",
+    "displayNameTitle": "Zobrazované jméno",
+    "passwordTitle": "Heslo",
+    "NameForm": {
+      "nameRequired": "Jméno je povinné",
+      "nameMaxLength": "Jméno může mít maximálně 100 znaků",
+      "successToast": "Zobrazované jméno bylo úspěšně aktualizováno.",
+      "label": "Zobrazované jméno",
+      "placeholder": "Zadejte zobrazované jméno",
+      "saving": "Ukládání…",
+      "submit": "Uložit jméno"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "Aktuální heslo je povinné",
+      "newPasswordRequired": "Nové heslo je povinné",
+      "confirmPasswordRequired": "Potvrďte nové heslo",
+      "passwordsDoNotMatch": "Hesla se neshodují",
+      "successToast": "Heslo bylo úspěšně změněno.",
+      "currentPasswordIncorrect": "Aktuální heslo je nesprávné",
+      "newPasswordSameAsCurrent": "Nové heslo se musí lišit od aktuálního",
+      "passwordRequirementsNotMet": "Heslo nesplňuje požadavky",
+      "currentPasswordLabel": "Aktuální heslo",
+      "newPasswordLabel": "Nové heslo",
+      "confirmPasswordLabel": "Potvrďte nové heslo",
+      "passwordHint": "Min. 8 znaků, max. 128. Musí obsahovat alespoň jedno velké písmeno, jedno malé písmeno a jednu číslici.",
+      "changingPassword": "Změna hesla…",
+      "submit": "Změnit heslo",
+      "errorTooShort": "Musí mít alespoň 8 znaků",
+      "errorTooLong": "Může mít maximálně 128 znaků",
+      "errorMissingUppercase": "Musí obsahovat alespoň jedno velké písmeno",
+      "errorMissingLowercase": "Musí obsahovat alespoň jedno malé písmeno",
+      "errorMissingDigit": "Musí obsahovat alespoň jednu číslici"
+    }
+  },
+  "Members": {
+    "addedToGroup": "{name} přidán do skupiny.",
+    "memberRemoved": "Člen byl odebrán ze skupiny.",
+    "youLeftGroup": "Opustili jste skupinu.",
+    "memberPromoted": "Člen povýšen na vlastníka.",
+    "memberDemoted": "Člen degradován na běžného člena.",
+    "addMember": "Přidat člena",
+    "adding": "Přidávání…",
+    "add": "Přidat",
+    "cancel": "Zrušit",
+    "leaveGroup": "Opustit skupinu",
+    "leaveGroupDescription": "Opravdu chcete opustit tuto skupinu? Vaše minulé výdaje zůstanou v historii skupiny.",
+    "leave": "Opustit",
+    "removeFromGroup": "Odebrat ze skupiny",
+    "promoteToOwner": "Povýšit na vlastníka",
+    "demoteToMember": "Degradovat na člena"
+  },
+  "MyGroups": {
+    "title": "Moje skupiny",
+    "loading": "Načítání vašich skupin…",
+    "loadError": "Skupiny se nepodařilo načíst. Zkuste to později.",
+    "noGroups": "Zatím nejste členem žádné skupiny.",
+    "noGroupsHint": "Vytvořte skupinu a začněte dělit výdaje s ostatními.",
+    "createGroup": "Vytvořit skupinu",
+    "createGroupTitle": "Vytvořit novou skupinu",
+    "createGroupDescription": "Zadejte název skupiny. Po vytvoření můžete pozvat členy.",
+    "groupNameLabel": "Název skupiny",
+    "characters": "znaků",
+    "leaveGroup": "Opustit skupinu",
+    "leaveGroupConfirmTitle": "Opustit skupinu",
+    "leaveGroupConfirmDescription": "Opravdu chcete opustit „{name}“? Vaše minulé výdaje zůstanou v historii skupiny.",
+    "leaveGroupConfirmCancel": "Zrušit",
+    "leaveGroupConfirmAction": "Opustit"
+  },
+  "UserMenu": {
+    "profileSettings": "Nastavení profilu",
+    "signingOut": "Odhlašování…",
+    "signOut": "Odhlásit se"
+  },
   "Notifications": {
     "subscribe": "Povolit oznámení",
     "unsubscribe": "Zakázat oznámení",
@@ -485,12 +667,21 @@
     "noParticipant": "Všechny změny",
     "permissionDenied": "Oprávnění k oznámením bylo zamítnuto. Povolte ho v nastavení prohlížeče.",
     "notSupported": "Push oznámení nejsou na tomto zařízení podporována.",
-    "error": "Nepodařilo se povolit oznámení. Zkuste to prosím znovu.",
     "expenseCreated": "{actor} přidal(a) \"{title}\"",
     "expenseUpdated": "{actor} aktualizoval(a) \"{title}\"",
     "expenseDeleted": "{actor} smazal(a) \"{title}\"",
     "groupUpdated": "{actor} aktualizoval(a) skupinu \"{group}\"",
     "notificationTitle": "Knots – {group}",
-    "defaultBody": "Nová aktivita ve vaší skupině"
+    "defaultBody": "Nová aktivita ve vaší skupině",
+    "filterHint": "Vyberte, od koho chcete dostávat upozornění a které události.",
+    "subscribeError": "Nepodařilo se povolit oznámení. Zkuste to prosím znovu.",
+    "membersLabel": "Upozornit mě na",
+    "notifyAllMembers": "Všichni ve skupině",
+    "notifySpecificMembers": "Nebo pouze tito členové:",
+    "eventsLabel": "Události",
+    "eventCreate": "Výdaj vytvořen",
+    "eventUpdate": "Výdaj upraven",
+    "eventDelete": "Výdaj smazán",
+    "selectAtLeastOneFilter": "Vyberte alespoň jednoho člena nebo událost."
   }
 }

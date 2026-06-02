@@ -16,6 +16,7 @@
     "create": "Afegir despesa",
     "createFirst": "Crea la primera",
     "noExpenses": "El teu grup encara no té despeses.",
+    "export": "Export",
     "exportJson": "Exportar a JSON",
     "exportCsv": "Exportar a CSV",
     "searchPlaceholder": "Cerca una despesa.",
@@ -38,8 +39,10 @@
   },
   "ExpenseCard": {
     "paidBy": "Pagada per <strong>{paidBy}</strong> per a <paidFor></paidFor>",
+    "everyone": "everyone",
     "receivedBy": "Debuda per <strong>{paidBy}</strong> para <paidFor></paidFor>",
-    "yourBalance": "El teu balanç: balance:"
+    "yourBalance": "El teu balanç: balance:",
+    "notInvolved": "You are not involved"
   },
   "Groups": {
     "myGroups": "Els meus grups",
@@ -56,6 +59,8 @@
     "archive": "Arxivar el grup",
     "unarchive": "Desarxivar el grup",
     "removeRecent": "Suprimeix dels grups recents",
+    "enableNotifications": "Activa les notificacions",
+    "disableNotifications": "Desactiva les notificacions",
     "RecentRemovedToast": {
       "title": "El grup ha estat eliminat",
       "description": "El grup ha estat eliminat de la tebva llista de grups recents",
@@ -89,10 +94,17 @@
       "placeholder": "$, €, £…",
       "description": "Ho farem servir per mostrar el balanç."
     },
+    "CurrencyCodeField": {
+      "label": "Main currency",
+      "createDescription": "All amounts and balances will be in this currency.",
+      "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
+      "customOption": "Custom"
+    },
     "Participants": {
       "title": "Participants",
       "description": "Afegeix el nom de totes les participants.",
       "protectedParticipant": "Aquestes participants ténen despeses al seu nom i no poden ser esborrades.",
+      "noLongerInGroup": "ja no forma part d'aquest grup",
       "new": "Nou",
       "add": "Afegir participants",
       "John": "Ermessenda",
@@ -128,18 +140,14 @@
         "label": "Data de la despesa",
         "description": "Adegeix la data de la despesa."
       },
+      "currencyField": {
+        "label": "Moneda de l'ingrés",
+        "description": "La moneda en què es va rebre l'ingrés."
+      },
       "categoryFieldDescription": "Selecciona la categoria de la despesa.",
       "paidByField": {
         "label": "Pagat per",
         "description": "Selecciona la participant que ha fet el pagament."
-      },
-      "recurrenceRule": {
-        "label": "Recurrència de la despesa",
-        "description": "Selecciona amb quina freqüència cal que es repeteixi la despesa.",
-        "none": "Puntual",
-        "daily": "Diària",
-        "weekly": "Setmanal",
-        "monthly": "Mensual"
       },
       "paidFor": {
         "title": "Pagat per a",
@@ -160,10 +168,23 @@
         "label": "Data de la despesa",
         "description": "Afegeix la data en que es va realitzar la despesa."
       },
+      "currencyField": {
+        "label": "Moneda de la despesa",
+        "description": "La moneda en què es va pagar la despesa."
+      },
       "categoryFieldDescription": "Selecciona la cateogria de la despesa.",
       "paidByField": {
         "label": "Pagat per",
+        "placeholder": "Select a participant",
         "description": "Selecciona la participant que ha pagat la despesa."
+      },
+      "recurrenceRule": {
+        "label": "Expense Recurrence",
+        "description": "Select how often the expense should repeat.",
+        "none": "None",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly"
       },
       "paidFor": {
         "title": "Pagado per a",
@@ -174,6 +195,27 @@
     },
     "amountField": {
       "label": "Quantitat"
+    },
+    "conversionUnavailable": "Per definir una moneda diferent per despesa i convertir imports, selecciona una moneda no personalitzada per al grup.",
+    "originalAmountField": {
+      "label": "Import a convertir"
+    },
+    "conversionRateField": {
+      "useApi": "Utilitza els tipus de Frankfurter",
+      "useCustom": "Utilitza un tipus personalitzat",
+      "label": "Tipus de canvi"
+    },
+    "conversionRateState": {
+      "loading": "Obtenint tipus de canvi…",
+      "success": "Tipus obtinguts:",
+      "error": "Ups, no hem pogut obtenir els tipus més recents.",
+      "staleRate": "Tipus utilitzat:",
+      "noRate": "Introdueix un tipus personalitzat a sota.",
+      "currencyNotFound": "Ups, Frankfurter no té el tipus per a aquesta moneda en aquesta data.",
+      "noDate": "Introdueix la data de la despesa per obtenir un tipus de conversió.",
+      "dateMismatch": "Tipus de la data: {date}",
+      "refresh": "Actualitza",
+      "customRate": "S'està utilitzant un tipus personalitzat"
     },
     "isReimbursementField": {
       "label": "Això és un reemborsament"
@@ -186,6 +228,7 @@
     },
     "selectNone": "No en seleccionis cap",
     "selectAll": "Selecciona'ls tots",
+    "noLongerInGroup": "ja no forma part d'aquest grup",
     "shares": "parts",
     "advancedOptions": "Opciones avanzadas",
     "SplitModeField": {
@@ -374,7 +417,28 @@
       "earlierThisYear": "A inicis d'aquest any",
       "lastYear": "El darrer any",
       "older": "Més antigues"
-    }
+    },
+    "fieldLabels": {
+      "title": "Títol",
+      "amount": "Import",
+      "expenseDate": "Data",
+      "category": "Categoria",
+      "paidBy": "Pagat per",
+      "splitMode": "Mode de repartiment",
+      "isReimbursement": "Reemborsament",
+      "notes": "Notes",
+      "recurrenceRule": "Recurrència",
+      "paidFor": "Pagat per a",
+      "name": "Nom",
+      "information": "Informació",
+      "currency": "Moneda",
+      "participants": "Participants"
+    },
+    "showMoreChanges": "Mostra {count} canvis més",
+    "showLess": "Mostra menys",
+    "yes": "Sí",
+    "no": "No",
+    "fieldChangesCount": "{count} canvis de camps"
   },
   "Information": {
     "title": "Informació",
@@ -402,6 +466,7 @@
     "amountRequired": "Cal introduïr un import",
     "amountNotZero": "L'import no por ser zero.",
     "amountTenMillion": "L'import ha de ser inferior a 10.000.000.",
+    "ratePositive": "El tipus ha de ser estrictament superior a zero.",
     "paidByRequired": "Cal seleccionar una participant",
     "paidForMin1": "La despesa ha de ser pagada com a mínim per a una participant",
     "noZeroShares": "Totes les participacions han de ser superiors a 0",
@@ -447,6 +512,7 @@
       "heading": "Vida",
       "Childcare": "Cura de criatures",
       "Clothing": "Roba",
+      "Donation": "Donation",
       "Education": "Ensenyament",
       "Gifts": "Regals",
       "Insurance": "Assegurança",
@@ -476,6 +542,124 @@
       "Water": "Aigua"
     }
   },
+  "Currencies": {
+    "search": "Search currency...",
+    "noCurrency": "No currencies found.",
+    "custom": {
+      "heading": "Custom"
+    },
+    "common": {
+      "heading": "Most common"
+    },
+    "other": {
+      "heading": "Other currencies"
+    }
+  },
+  "SplitwiseImport": {
+    "button": "Import from Splitwise",
+    "title": "Import from Splitwise",
+    "description": "Upload a CSV file exported from Splitwise to import expenses into this group. Make sure the participant names in the CSV match the names in this group.",
+    "fileLabel": "CSV File",
+    "previewLabel": "Preview (first 10 lines)",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "import": "Import Expenses",
+    "importing": "Importing...",
+    "toast": {
+      "invalidFileType": {
+        "title": "Invalid file type",
+        "description": "Please select a CSV file."
+      },
+      "noContent": {
+        "title": "No CSV content",
+        "description": "Please select a CSV file first."
+      },
+      "success": {
+        "title": "Import successful",
+        "description": "Successfully imported {count} expenses from Splitwise."
+      },
+      "error": {
+        "title": "Import failed",
+        "description": "Failed to import CSV file."
+      }
+    }
+  },
+  "ProfileSettings": {
+    "title": "Configuració del perfil",
+    "emailTitle": "Correu electrònic",
+    "emailDescription": "La teva adreça de correu no es pot canviar.",
+    "displayNameTitle": "Nom per mostrar",
+    "passwordTitle": "Contrasenya",
+    "NameForm": {
+      "nameRequired": "El nom és obligatori",
+      "nameMaxLength": "El nom ha de tenir com a màxim 100 caràcters",
+      "successToast": "Nom per mostrar actualitzat correctament.",
+      "label": "Nom per mostrar",
+      "placeholder": "Introdueix el teu nom per mostrar",
+      "saving": "Desant…",
+      "submit": "Desa el nom"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "La contrasenya actual és obligatòria",
+      "newPasswordRequired": "La contrasenya nova és obligatòria",
+      "confirmPasswordRequired": "Confirma la contrasenya nova",
+      "passwordsDoNotMatch": "Les contrasenyes no coincideixen",
+      "successToast": "Contrasenya canviada correctament.",
+      "currentPasswordIncorrect": "La contrasenya actual és incorrecta",
+      "newPasswordSameAsCurrent": "La contrasenya nova ha de ser diferent de l'actual",
+      "passwordRequirementsNotMet": "La contrasenya no compleix els requisits",
+      "currentPasswordLabel": "Contrasenya actual",
+      "newPasswordLabel": "Contrasenya nova",
+      "confirmPasswordLabel": "Confirma la contrasenya nova",
+      "passwordHint": "Mín. 8 caràcters, màx. 128. Ha d'incloure almenys una majúscula, una minúscula i un dígit.",
+      "changingPassword": "Canviant la contrasenya…",
+      "submit": "Canvia la contrasenya",
+      "errorTooShort": "Ha de tenir almenys 8 caràcters",
+      "errorTooLong": "Ha de tenir com a màxim 128 caràcters",
+      "errorMissingUppercase": "Ha de contenir almenys una majúscula",
+      "errorMissingLowercase": "Ha de contenir almenys una minúscula",
+      "errorMissingDigit": "Ha de contenir almenys un dígit"
+    }
+  },
+  "Members": {
+    "addedToGroup": "{name} afegit al grup.",
+    "memberRemoved": "Membre eliminat del grup.",
+    "youLeftGroup": "Has abandonat el grup.",
+    "memberPromoted": "Membre promogut a propietari.",
+    "memberDemoted": "Membre degradat a membre regular.",
+    "addMember": "Afegeix un membre",
+    "adding": "Afegint…",
+    "add": "Afegeix",
+    "cancel": "Cancel·la",
+    "leaveGroup": "Abandona el grup",
+    "leaveGroupDescription": "Segur que vols abandonar aquest grup? Les despeses anteriors romandran a l'historial del grup.",
+    "leave": "Abandona",
+    "removeFromGroup": "Elimina del grup",
+    "promoteToOwner": "Promou a propietari",
+    "demoteToMember": "Degrada a membre"
+  },
+  "MyGroups": {
+    "title": "Els meus grups",
+    "loading": "Carregant els teus grups…",
+    "loadError": "No s'han pogut carregar els grups. Torna-ho a provar més tard.",
+    "noGroups": "Encara no ets membre de cap grup.",
+    "noGroupsHint": "Crea un grup per començar a repartir despeses amb altres.",
+    "createGroup": "Crea un grup",
+    "createGroupTitle": "Crea un grup nou",
+    "createGroupDescription": "Introdueix un nom per al grup. Pots convidar membres després de crear-lo.",
+    "groupNameLabel": "Nom del grup",
+    "characters": "caràcters",
+    "leaveGroup": "Abandona el grup",
+    "leaveGroupConfirmTitle": "Abandona el grup",
+    "leaveGroupConfirmDescription": "Segur que vols abandonar «{name}»? Les despeses anteriors romandran a l'historial del grup.",
+    "leaveGroupConfirmCancel": "Cancel·la",
+    "leaveGroupConfirmAction": "Abandona"
+  },
+  "UserMenu": {
+    "profileSettings": "Configuració del perfil",
+    "signingOut": "Tancant la sessió…",
+    "signOut": "Tanca la sessió"
+  },
   "Notifications": {
     "subscribe": "Activa les notificacions",
     "unsubscribe": "Desactiva les notificacions",
@@ -483,12 +667,21 @@
     "noParticipant": "Tots els canvis",
     "permissionDenied": "El permís de notificacions ha estat denegat. Activa'l a la configuració del navegador.",
     "notSupported": "Les notificacions push no estan disponibles en aquest dispositiu.",
-    "error": "No s'han pogut activar les notificacions. Torna-ho a provar.",
     "expenseCreated": "{actor} ha afegit \"{title}\"",
     "expenseUpdated": "{actor} ha actualitzat \"{title}\"",
     "expenseDeleted": "{actor} ha eliminat \"{title}\"",
     "groupUpdated": "{actor} ha actualitzat el grup \"{group}\"",
     "notificationTitle": "Knots – {group}",
-    "defaultBody": "Nova activitat al teu grup"
+    "defaultBody": "Nova activitat al teu grup",
+    "filterHint": "Tria de qui vols rebre alertes i quins esdeveniments vols rebre.",
+    "subscribeError": "No s'han pogut activar les notificacions. Torna-ho a provar.",
+    "membersLabel": "Notifica'm sobre",
+    "notifyAllMembers": "Tothom del grup",
+    "notifySpecificMembers": "O només aquests membres:",
+    "eventsLabel": "Esdeveniments",
+    "eventCreate": "Despesa creada",
+    "eventUpdate": "Despesa actualitzada",
+    "eventDelete": "Despesa eliminada",
+    "selectAtLeastOneFilter": "Selecciona almenys un membre o un esdeveniment."
   }
 }

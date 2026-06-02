@@ -55,12 +55,22 @@ export async function parseSplitwiseCSV(
   // Get group participants for user matching
   const group = await prisma.group.findUnique({
     where: { id: groupId },
-    include: { participants: true },
+    include: {
+      memberships: {
+        include: { user: { select: { id: true, name: true } } },
+      },
+    },
   })
 
   if (!group) {
     throw new Error('Group not found')
   }
+
+  // Map memberships to participants shape for backward compatibility
+  const participants = group.memberships.map((m) => ({
+    id: m.user.id,
+    name: m.user.name,
+  }))
 
   // Get categories for mapping
   const categories = await prisma.category.findMany()
@@ -98,7 +108,7 @@ export async function parseSplitwiseCSV(
         row,
         headers,
         userColumns,
-        group.participants,
+        participants,
         categoryMap,
       )
       expenses.push(expense)

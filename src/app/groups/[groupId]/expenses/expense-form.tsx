@@ -201,13 +201,13 @@ export function ExpenseForm({
           conversionRate: expense.conversionRate?.toNumber(),
           category: expense.categoryId,
           paidBy: expense.paidById,
-          paidFor: expense.paidFor.map(({ participantId, shares }) => {
+          paidFor: expense.paidFor.map(({ userId, shares }) => {
             const shareValue =
               expense.splitMode === 'BY_AMOUNT'
                 ? amountAsDecimal(shares, groupCurrency)
                 : shares / 100
             return {
-              participant: participantId,
+              participant: userId,
               shares: shareValue <= 0 ? 1 : shareValue,
               // Defensive NaN check removed: shares come from DB as number; NaN would indicate data corruption.
             }
@@ -1005,10 +1005,9 @@ export function ExpenseForm({
                                           ), // Convert to cents
                                           paidFor: field.value.map(
                                             ({ participant, shares }) => ({
-                                              participant: {
+                                              user: {
                                                 id: participant,
                                                 name: '',
-                                                groupId: '',
                                               },
                                               shares:
                                                 form.watch('splitMode') ===
@@ -1021,8 +1020,6 @@ export function ExpenseForm({
                                                         groupCurrency,
                                                       )
                                                     : shares,
-                                              expenseId: '',
-                                              participantId: '',
                                             }),
                                           ),
                                           splitMode: form.watch('splitMode'),
@@ -1244,6 +1241,113 @@ export function ExpenseForm({
                       }}
                     />
                   ))}
+
+                  {/* Show former members still in this expense's paidFor (can be unchecked to remove) */}
+                  {expense &&
+                    expense.paidFor
+                      .filter(
+                        (pf) =>
+                          !group.participants.some((p) => p.id === pf.userId),
+                      )
+                      .map((pf) => (
+                        <FormField
+                          key={pf.userId}
+                          control={form.control}
+                          name="paidFor"
+                          render={({ field }) => (
+                            <div
+                              className="flex flex-wrap gap-y-4 items-center border-t last-of-type:border-b last-of-type:!mb-4 -mx-6 px-6 py-3"
+                            >
+                              <FormItem className="flex-1 flex flex-row items-start space-x-3 space-y-0">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value?.some(
+                                      ({ participant }) =>
+                                        participant === pf.userId,
+                                    )}
+                                    onCheckedChange={(checked) => {
+                                      const options = {
+                                        shouldDirty: true,
+                                        shouldTouch: true,
+                                        shouldValidate: true,
+                                      }
+                                      checked
+                                        ? form.setValue(
+                                            'paidFor',
+                                            [
+                                              ...field.value,
+                                              {
+                                                participant: pf.userId,
+                                                shares: 1,
+                                              },
+                                            ],
+                                            options,
+                                          )
+                                        : form.setValue(
+                                            'paidFor',
+                                            field.value?.filter(
+                                              (value) =>
+                                                value.participant !== pf.userId,
+                                            ),
+                                            options,
+                                          )
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="text-sm font-normal flex-1">
+                                  {pf.user?.name ?? 'Unknown user'}
+                                  {field.value?.some(
+                                    ({ participant }) =>
+                                      participant === pf.userId,
+                                  ) &&
+                                    !form.watch('isReimbursement') && (
+                                      <span className="text-muted-foreground ml-2">
+                                        (
+                                        {formatCurrency(
+                                          groupCurrency,
+                                          calculateShare(pf.userId, {
+                                            amount: amountAsMinorUnits(
+                                              Number(form.watch('amount')),
+                                              groupCurrency,
+                                            ),
+                                            paidFor: field.value.map(
+                                              ({ participant, shares }) => ({
+                                                user: {
+                                                  id: participant,
+                                                  name: '',
+                                                },
+                                                shares:
+                                                  form.watch('splitMode') ===
+                                                  'BY_PERCENTAGE'
+                                                    ? Number(shares) * 100
+                                                    : form.watch('splitMode') ===
+                                                        'BY_AMOUNT'
+                                                      ? amountAsMinorUnits(
+                                                          shares,
+                                                          groupCurrency,
+                                                        )
+                                                      : shares,
+                                              }),
+                                            ),
+                                            splitMode: form.watch('splitMode'),
+                                            isReimbursement:
+                                              form.watch('isReimbursement'),
+                                          }),
+                                          locale,
+                                        )}
+                                        )
+                                      </span>
+                                    )}
+                                  <span className="ml-2 text-xs text-muted-foreground italic">
+                                    ({t('noLongerInGroup')})
+                                  </span>
+                                </FormLabel>
+                              </FormItem>
+                            </div>
+                          )}
+                        />
+                      ))}
+
                   <FormMessage />
                 </FormItem>
               )}

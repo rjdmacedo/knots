@@ -15,6 +15,17 @@ import { z } from 'zod'
 
 // --- Schemas (mirroring the router's Zod schemas for validation testing) ---
 
+const preferencesSchema = z
+  .object({
+    subscriberUserId: z.string().min(1).max(200),
+    notifyAllMembers: z.boolean(),
+    includedUserIds: z.array(z.string().min(1).max(200)).max(50),
+    notifyOnCreate: z.boolean(),
+    notifyOnUpdate: z.boolean(),
+    notifyOnDelete: z.boolean(),
+  })
+  .refine((p) => p.notifyAllMembers || p.includedUserIds.length > 0)
+
 const createInputSchema = z.object({
   endpoint: z.string().url().max(2048),
   keys: z.object({
@@ -22,7 +33,7 @@ const createInputSchema = z.object({
     auth: z.string().min(1),
   }),
   groupId: z.string().min(1),
-  participantName: z.string().max(50).optional(),
+  preferences: preferencesSchema,
 })
 
 const deleteInputSchema = z.object({
@@ -84,16 +95,28 @@ const arbValidKeys = fc.record({
 
 const arbGroupId = fc.string({ minLength: 1, maxLength: 30 })
 
-const arbParticipantName = fc.option(
-  fc.string({ minLength: 1, maxLength: 50 }),
-  { nil: undefined },
-)
+const arbPreferences = fc
+  .record({
+    subscriberUserId: fc.string({ minLength: 1, maxLength: 50 }),
+    notifyAllMembers: fc.boolean(),
+    includedUserIds: fc.array(fc.string({ minLength: 1, maxLength: 50 }), {
+      maxLength: 5,
+    }),
+    notifyOnCreate: fc.boolean(),
+    notifyOnUpdate: fc.boolean(),
+    notifyOnDelete: fc.boolean(),
+  })
+  .filter(
+    (p) =>
+      (p.notifyAllMembers || p.includedUserIds.length > 0) &&
+      (p.notifyOnCreate || p.notifyOnUpdate || p.notifyOnDelete),
+  )
 
 const arbValidCreateInput = fc.record({
   endpoint: arbValidEndpoint,
   keys: arbValidKeys,
   groupId: arbGroupId,
-  participantName: arbParticipantName,
+  preferences: arbPreferences,
 })
 
 // --- Helper to create a caller ---
@@ -118,7 +141,7 @@ describe('Push Subscriptions Router Property Tests', () => {
      *
      * For any subscription data, creating a subscription with the same (endpoint, groupId)
      * pair multiple times SHALL result in exactly one database record, with the keys and
-     * participantName reflecting the most recent call.
+     * preferences reflecting the most recent call.
      */
     it('calling create multiple times with same endpoint+groupId results in a single upsert each time', () => {
       return fc.assert(
@@ -146,28 +169,17 @@ describe('Push Subscriptions Router Property Tests', () => {
                 where: {
                   endpoint_groupId: { endpoint: string; groupId: string }
                 }
-                create: {
-                  endpoint: string
-                  p256dh: string
-                  auth: string
-                  groupId: string
-                  participantName: string | null
-                }
-                update: {
-                  p256dh: string
-                  auth: string
-                  participantName: string | null
-                }
+                create: { subscriberUserId: string }
+                update: { p256dh: string; auth: string; subscriberUserId: string }
               }
               expect(upsertArgs.where.endpoint_groupId).toEqual({
                 endpoint: input.endpoint,
                 groupId: input.groupId,
               })
-              // The update payload should always reflect the latest keys and participantName
               expect(upsertArgs.update.p256dh).toBe(input.keys.p256dh)
               expect(upsertArgs.update.auth).toBe(input.keys.auth)
-              expect(upsertArgs.update.participantName).toBe(
-                input.participantName ?? null,
+              expect(upsertArgs.update.subscriberUserId).toBe(
+                input.preferences.subscriberUserId,
               )
             }
           },
@@ -176,56 +188,42 @@ describe('Push Subscriptions Router Property Tests', () => {
       )
     })
 
-    it('upsert always stores the most recent keys and participantName', () => {
+    it('upsert always stores the most recent keys and preferences', () => {
       return fc.assert(
         fc.asyncProperty(
           arbValidEndpoint,
           arbGroupId,
           arbValidKeys,
           arbValidKeys,
-          arbParticipantName,
-          arbParticipantName,
-          async (
-            endpoint,
-            groupId,
-            keys1,
-            keys2,
-            participant1,
-            participant2,
-          ) => {
+          arbPreferences,
+          arbPreferences,
+          async (endpoint, groupId, keys1, keys2, prefs1, prefs2) => {
             jest.clearAllMocks()
             mockFindUnique.mockResolvedValue({ id: 'group-exists' })
             mockUpsert.mockResolvedValue({ id: 'sub-1' })
 
             const caller = await createCaller()
 
-            // First call
             await caller.create({
               endpoint,
               keys: keys1,
               groupId,
-              participantName: participant1,
+              preferences: prefs1,
             })
 
-            // Second call with different keys and participant
             await caller.create({
               endpoint,
               keys: keys2,
               groupId,
-              participantName: participant2,
+              preferences: prefs2,
             })
 
-            // The last upsert call should have the second set of keys/participant
             const lastCall = mockUpsert.mock.calls[1][0] as {
-              update: {
-                p256dh: string
-                auth: string
-                participantName: string | null
-              }
+              update: { p256dh: string; auth: string; notifyOnCreate: boolean }
             }
             expect(lastCall.update.p256dh).toBe(keys2.p256dh)
             expect(lastCall.update.auth).toBe(keys2.auth)
-            expect(lastCall.update.participantName).toBe(participant2 ?? null)
+            expect(lastCall.update.notifyOnCreate).toBe(prefs2.notifyOnCreate)
           },
         ),
         { numRuns: PBT_NUM_RUNS },
@@ -420,7 +418,7 @@ describe('Push Subscriptions Router Property Tests', () => {
      *
      * For any endpoint with subscriptions to groups G1, G2, ..., Gn, the list query
      * SHALL return exactly those n records with their corresponding groupId and
-     * participantName values.
+     * preference values.
      */
     it('list returns exactly the subscriptions stored for the given endpoint', () => {
       return fc.assert(
@@ -429,10 +427,12 @@ describe('Push Subscriptions Router Property Tests', () => {
           fc.array(
             fc.record({
               groupId: arbGroupId,
-              participantName: fc.option(
-                fc.string({ minLength: 1, maxLength: 50 }),
-                { nil: null },
-              ),
+              subscriberUserId: fc.string({ minLength: 1, maxLength: 50 }),
+              notifyAllMembers: fc.boolean(),
+              includedUserIds: fc.constant([]),
+              notifyOnCreate: fc.boolean(),
+              notifyOnUpdate: fc.boolean(),
+              notifyOnDelete: fc.boolean(),
             }),
             { minLength: 0, maxLength: 10 },
           ),
@@ -443,16 +443,19 @@ describe('Push Subscriptions Router Property Tests', () => {
             const caller = await createCaller()
             const result = await caller.list({ endpoint })
 
-            // Result should match exactly what the database returned
             expect(result).toEqual(subscriptions)
             expect(result).toHaveLength(subscriptions.length)
 
-            // Verify findMany was called with the correct endpoint filter
             expect(mockFindMany).toHaveBeenCalledWith({
               where: { endpoint },
               select: {
                 groupId: true,
-                participantName: true,
+                subscriberUserId: true,
+                notifyAllMembers: true,
+                includedUserIds: true,
+                notifyOnCreate: true,
+                notifyOnUpdate: true,
+                notifyOnDelete: true,
               },
             })
           },
@@ -477,17 +480,19 @@ describe('Push Subscriptions Router Property Tests', () => {
       )
     })
 
-    it('list returns subscriptions with correct groupId and participantName for each record', () => {
+    it('list returns subscriptions with correct groupId and preferences for each record', () => {
       return fc.assert(
         fc.asyncProperty(
           arbValidEndpoint,
           fc.array(
             fc.record({
               groupId: arbGroupId,
-              participantName: fc.option(
-                fc.string({ minLength: 1, maxLength: 50 }),
-                { nil: null },
-              ),
+              subscriberUserId: fc.string({ minLength: 1, maxLength: 50 }),
+              notifyAllMembers: fc.constant(true),
+              includedUserIds: fc.constant([]),
+              notifyOnCreate: fc.constant(true),
+              notifyOnUpdate: fc.constant(true),
+              notifyOnDelete: fc.constant(true),
             }),
             { minLength: 1, maxLength: 10 },
           ),
@@ -498,13 +503,10 @@ describe('Push Subscriptions Router Property Tests', () => {
             const caller = await createCaller()
             const result = await caller.list({ endpoint })
 
-            // Each returned record should have groupId and participantName
             for (let i = 0; i < result.length; i++) {
-              expect(result[i]).toHaveProperty('groupId')
-              expect(result[i]).toHaveProperty('participantName')
               expect(result[i].groupId).toBe(subscriptions[i].groupId)
-              expect(result[i].participantName).toBe(
-                subscriptions[i].participantName,
+              expect(result[i].subscriberUserId).toBe(
+                subscriptions[i].subscriberUserId,
               )
             }
           },

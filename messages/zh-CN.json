@@ -16,6 +16,7 @@
     "create": "创建消费",
     "createFirst": "创建首个消费",
     "noExpenses": "你的群组内目前没有任何消费。",
+    "export": "Export",
     "exportJson": "导出到JSON",
     "exportCsv": "导出到CSV",
     "searchPlaceholder": "查找消费……",
@@ -38,8 +39,10 @@
   },
   "ExpenseCard": {
     "paidBy": "<strong>{paidBy}</strong> 为 <paidFor></paidFor> 支付。",
+    "everyone": "everyone",
     "receivedBy": "<strong>{paidBy}</strong> 为 <paidFor></paidFor> 接收。",
-    "yourBalance": "你的余额："
+    "yourBalance": "你的余额：",
+    "notInvolved": "You are not involved"
   },
   "Groups": {
     "myGroups": "我的群组",
@@ -56,6 +59,8 @@
     "archive": "归档群组",
     "unarchive": "取消归档群组",
     "removeRecent": "从最近的群组中删除",
+    "enableNotifications": "启用通知",
+    "disableNotifications": "禁用通知",
     "RecentRemovedToast": {
       "title": "群组已删除",
       "description": "群组已从你的最近群组列表中删除。",
@@ -89,10 +94,17 @@
       "placeholder": "$, €, £…",
       "description": "我们根据这个显示相应的货币金额。"
     },
+    "CurrencyCodeField": {
+      "label": "Main currency",
+      "createDescription": "All amounts and balances will be in this currency.",
+      "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
+      "customOption": "Custom"
+    },
     "Participants": {
       "title": "群组成员",
       "description": "输入每位成员的名字。",
       "protectedParticipant": "群组成员是消费的一部分，不可删除。",
+      "noLongerInGroup": "已不在此群组中",
       "new": "新建",
       "add": "添加群组成员",
       "John": "John",
@@ -128,6 +140,10 @@
         "label": "收入日期",
         "description": "输入收到这笔收入的日期。"
       },
+      "currencyField": {
+        "label": "收入货币",
+        "description": "收到收入时使用的货币。"
+      },
       "categoryFieldDescription": "选择收入类别。",
       "paidByField": {
         "label": "接收到",
@@ -152,10 +168,23 @@
         "label": "消费日期",
         "description": "输入支付这笔消费的日期。"
       },
+      "currencyField": {
+        "label": "支出货币",
+        "description": "支付支出时使用的货币。"
+      },
       "categoryFieldDescription": "选择消费类别。",
       "paidByField": {
         "label": "支付自",
+        "placeholder": "Select a participant",
         "description": "选择支付这笔消费的群组成员。"
+      },
+      "recurrenceRule": {
+        "label": "Expense Recurrence",
+        "description": "Select how often the expense should repeat.",
+        "none": "None",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly"
       },
       "paidFor": {
         "title": "支付给",
@@ -166,6 +195,27 @@
     },
     "amountField": {
       "label": "金额"
+    },
+    "conversionUnavailable": "要为每笔支出设置不同货币并转换金额，请为群组选择非自定义货币。",
+    "originalAmountField": {
+      "label": "待转换金额"
+    },
+    "conversionRateField": {
+      "useApi": "使用 Frankfurter 汇率",
+      "useCustom": "使用自定义汇率",
+      "label": "汇率"
+    },
+    "conversionRateState": {
+      "loading": "正在获取汇率…",
+      "success": "已获取汇率：",
+      "error": "抱歉，无法获取最新汇率。",
+      "staleRate": "使用的汇率：",
+      "noRate": "请在下方输入自定义汇率。",
+      "currencyNotFound": "抱歉，Frankfurter 在该日期没有此货币的汇率。",
+      "noDate": "请输入支出日期以获取换算汇率。",
+      "dateMismatch": "日期汇率：{date}",
+      "refresh": "刷新",
+      "customRate": "使用自定义汇率"
     },
     "isReimbursementField": {
       "label": "这是一笔报销款"
@@ -178,6 +228,7 @@
     },
     "selectNone": "取消选中",
     "selectAll": "全选",
+    "noLongerInGroup": "已不在此群组中",
     "shares": "份额",
     "advancedOptions": "高级分账选项……",
     "SplitModeField": {
@@ -366,7 +417,28 @@
       "earlierThisYear": "这年早些时候",
       "lastYear": "上年",
       "older": "更早"
-    }
+    },
+    "fieldLabels": {
+      "title": "标题",
+      "amount": "金额",
+      "expenseDate": "日期",
+      "category": "类别",
+      "paidBy": "付款人",
+      "splitMode": "分摊方式",
+      "isReimbursement": "报销",
+      "notes": "备注",
+      "recurrenceRule": "重复",
+      "paidFor": "付款对象",
+      "name": "名称",
+      "information": "信息",
+      "currency": "货币",
+      "participants": "参与者"
+    },
+    "showMoreChanges": "显示另外 {count} 项更改",
+    "showLess": "收起",
+    "yes": "是",
+    "no": "否",
+    "fieldChangesCount": "{count} 项字段更改"
   },
   "Information": {
     "title": "信息",
@@ -394,6 +466,7 @@
     "amountRequired": "你必须输入一个金额。",
     "amountNotZero": "金额不可以为0。",
     "amountTenMillion": "金额必须小于10,000,000。",
+    "ratePositive": "汇率必须严格大于零。",
     "paidByRequired": "你必须选择一个群组成员。",
     "paidForMin1": "这项消费必须支付给至少1名群组成员。",
     "noZeroShares": "所有份额必须大于0。",
@@ -439,6 +512,7 @@
       "heading": "生活",
       "Childcare": "儿童保育",
       "Clothing": "衣物",
+      "Donation": "Donation",
       "Education": "教育",
       "Gifts": "礼物",
       "Insurance": "保险",
@@ -468,6 +542,124 @@
       "Water": "水"
     }
   },
+  "Currencies": {
+    "search": "Search currency...",
+    "noCurrency": "No currencies found.",
+    "custom": {
+      "heading": "Custom"
+    },
+    "common": {
+      "heading": "Most common"
+    },
+    "other": {
+      "heading": "Other currencies"
+    }
+  },
+  "SplitwiseImport": {
+    "button": "Import from Splitwise",
+    "title": "Import from Splitwise",
+    "description": "Upload a CSV file exported from Splitwise to import expenses into this group. Make sure the participant names in the CSV match the names in this group.",
+    "fileLabel": "CSV File",
+    "previewLabel": "Preview (first 10 lines)",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "import": "Import Expenses",
+    "importing": "Importing...",
+    "toast": {
+      "invalidFileType": {
+        "title": "Invalid file type",
+        "description": "Please select a CSV file."
+      },
+      "noContent": {
+        "title": "No CSV content",
+        "description": "Please select a CSV file first."
+      },
+      "success": {
+        "title": "Import successful",
+        "description": "Successfully imported {count} expenses from Splitwise."
+      },
+      "error": {
+        "title": "Import failed",
+        "description": "Failed to import CSV file."
+      }
+    }
+  },
+  "ProfileSettings": {
+    "title": "个人资料设置",
+    "emailTitle": "电子邮件",
+    "emailDescription": "您的电子邮件地址无法更改。",
+    "displayNameTitle": "显示名称",
+    "passwordTitle": "密码",
+    "NameForm": {
+      "nameRequired": "名称为必填项",
+      "nameMaxLength": "名称最多 100 个字符",
+      "successToast": "显示名称已成功更新。",
+      "label": "显示名称",
+      "placeholder": "输入您的显示名称",
+      "saving": "保存中…",
+      "submit": "保存名称"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "当前密码为必填项",
+      "newPasswordRequired": "新密码为必填项",
+      "confirmPasswordRequired": "请确认您的新密码",
+      "passwordsDoNotMatch": "密码不匹配",
+      "successToast": "密码已成功更改。",
+      "currentPasswordIncorrect": "当前密码不正确",
+      "newPasswordSameAsCurrent": "新密码必须与当前密码不同",
+      "passwordRequirementsNotMet": "密码不符合要求",
+      "currentPasswordLabel": "当前密码",
+      "newPasswordLabel": "新密码",
+      "confirmPasswordLabel": "确认新密码",
+      "passwordHint": "最少 8 个、最多 128 个字符。须包含至少一个大写字母、一个小写字母和一个数字。",
+      "changingPassword": "正在更改密码…",
+      "submit": "更改密码",
+      "errorTooShort": "至少需要 8 个字符",
+      "errorTooLong": "最多 128 个字符",
+      "errorMissingUppercase": "须包含至少一个大写字母",
+      "errorMissingLowercase": "须包含至少一个小写字母",
+      "errorMissingDigit": "须包含至少一个数字"
+    }
+  },
+  "Members": {
+    "addedToGroup": "已将 {name} 添加到群组。",
+    "memberRemoved": "成员已从群组中移除。",
+    "youLeftGroup": "您已离开群组。",
+    "memberPromoted": "成员已提升为所有者。",
+    "memberDemoted": "成员已降为普通成员。",
+    "addMember": "添加成员",
+    "adding": "添加中…",
+    "add": "添加",
+    "cancel": "取消",
+    "leaveGroup": "离开群组",
+    "leaveGroupDescription": "确定要离开此群组吗？您过去的支出将保留在群组记录中。",
+    "leave": "离开",
+    "removeFromGroup": "从群组中移除",
+    "promoteToOwner": "提升为所有者",
+    "demoteToMember": "降为成员"
+  },
+  "MyGroups": {
+    "title": "我的群组",
+    "loading": "正在加载您的群组…",
+    "loadError": "无法加载群组。请稍后再试。",
+    "noGroups": "您还不是任何群组的成员。",
+    "noGroupsHint": "创建群组以开始与他人分摊支出。",
+    "createGroup": "创建群组",
+    "createGroupTitle": "创建新群组",
+    "createGroupDescription": "输入群组名称。创建后可以邀请成员。",
+    "groupNameLabel": "群组名称",
+    "characters": "个字符",
+    "leaveGroup": "离开群组",
+    "leaveGroupConfirmTitle": "离开群组",
+    "leaveGroupConfirmDescription": "确定要离开「{name}」吗？您过去的支出将保留在群组记录中。",
+    "leaveGroupConfirmCancel": "取消",
+    "leaveGroupConfirmAction": "离开"
+  },
+  "UserMenu": {
+    "profileSettings": "个人资料设置",
+    "signingOut": "正在退出…",
+    "signOut": "退出登录"
+  },
   "Notifications": {
     "subscribe": "启用通知",
     "unsubscribe": "禁用通知",
@@ -475,12 +667,21 @@
     "noParticipant": "所有更改",
     "permissionDenied": "通知权限被拒绝。请在浏览器设置中启用。",
     "notSupported": "此设备不支持推送通知。",
-    "error": "无法启用通知。请重试。",
     "expenseCreated": "{actor} 添加了「{title}」",
     "expenseUpdated": "{actor} 更新了「{title}」",
     "expenseDeleted": "{actor} 删除了「{title}」",
     "groupUpdated": "{actor} 更新了群组「{group}」",
     "notificationTitle": "Knots – {group}",
-    "defaultBody": "您的群组有新活动"
+    "defaultBody": "您的群组有新活动",
+    "filterHint": "选择要接收谁的通知以及哪些事件。",
+    "subscribeError": "无法启用通知。请重试。",
+    "membersLabel": "通知我关于",
+    "notifyAllMembers": "群组所有人",
+    "notifySpecificMembers": "或仅这些成员：",
+    "eventsLabel": "事件",
+    "eventCreate": "已创建支出",
+    "eventUpdate": "已更新支出",
+    "eventDelete": "已删除支出",
+    "selectAtLeastOneFilter": "请至少选择一名成员或一种事件。"
   }
 }

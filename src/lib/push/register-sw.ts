@@ -9,9 +9,9 @@
  * Checks whether the browser supports push notifications.
  *
  * Returns true only when all three prerequisites are met:
- * - `serviceWorker` is available in `navigator`
- * - `PushManager` is available in `window`
- * - `Notification` is available in `window`
+ * - `serviceWorker` in navigator
+ * - `PushManager` in window
+ * - `Notification` in window
  */
 export function isPushSupported(): boolean {
   return (
@@ -33,9 +33,27 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 
   try {
     const registration = await navigator.serviceWorker.register('/sw.js')
+    await navigator.serviceWorker.ready
     return registration
   } catch (error) {
     console.warn('[push] Service worker registration failed:', error)
     return null
   }
+}
+
+/**
+ * Returns the existing push subscription for this registration, or creates one.
+ */
+export async function getOrCreatePushSubscription(
+  registration: ServiceWorkerRegistration,
+  vapidPublicKey: string | undefined,
+): Promise<PushSubscription | null> {
+  const existing = await registration.pushManager.getSubscription()
+  if (existing) return existing
+  if (!vapidPublicKey) return null
+
+  return registration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: vapidPublicKey,
+  })
 }

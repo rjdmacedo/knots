@@ -63,7 +63,7 @@ describe('logActivity changes persistence', () => {
       })
 
       await logActivity('group-1', ActivityType.UPDATE_EXPENSE, {
-        participantId: 'participant-1',
+        userId: 'participant-1',
         expenseId: 'expense-1',
         data: 'Lunch',
         changes,
@@ -182,7 +182,7 @@ describe('logActivity changes persistence', () => {
   describe('Requirement 4.3: backward compatibility when no changes provided', () => {
     it('does not include changes in Prisma call when changes is undefined', async () => {
       await logActivity('group-1', ActivityType.UPDATE_EXPENSE, {
-        participantId: 'participant-1',
+        userId: 'participant-1',
         expenseId: 'expense-1',
       })
 
@@ -199,7 +199,7 @@ describe('logActivity changes persistence', () => {
 
     it('does not include changes in Prisma call when changes is an empty array', async () => {
       await logActivity('group-1', ActivityType.UPDATE_EXPENSE, {
-        participantId: 'participant-1',
+        userId: 'participant-1',
         changes: [],
       })
 
@@ -209,7 +209,7 @@ describe('logActivity changes persistence', () => {
 
     it('still creates the activity record with other extra fields when no changes', async () => {
       await logActivity('group-1', ActivityType.CREATE_EXPENSE, {
-        participantId: 'participant-1',
+        userId: 'participant-1',
         expenseId: 'expense-1',
         data: 'Test Expense',
       })

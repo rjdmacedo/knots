@@ -143,8 +143,11 @@ function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
   let body: React.ReactNode = props.children
   if (error) {
     const errorMessage = error?.message ?? ''
-    // Try to translate the error message if it exists in SchemaErrors
-    body = t(errorMessage as any, { defaultValue: errorMessage })
+    // Try to translate the error message if a key exists in SchemaErrors,
+    // otherwise show the raw message as-is
+    body = t.has(errorMessage as any)
+      ? t(errorMessage as any)
+      : errorMessage
   }
 
   if (!body) {

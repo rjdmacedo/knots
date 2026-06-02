@@ -36,7 +36,7 @@ export function calculateShare(
 
   const paidFors = expense.paidFor
   const userPaidFor = paidFors.find(
-    (paidFor) => paidFor.participant.id === participantId,
+    (paidFor) => paidFor.user.id === participantId,
   )
 
   if (!userPaidFor) return 0

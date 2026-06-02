@@ -27,7 +27,7 @@ function toFormValues(expense: {
   isReimbursement: boolean
   notes?: string | null
   recurrenceRule?: string | null
-  paidFor: Array<{ participantId: string }>
+  paidFor: Array<{ userId: string }>
 }) {
   return {
     title: expense.title,
@@ -39,7 +39,7 @@ function toFormValues(expense: {
     isReimbursement: expense.isReimbursement,
     notes: expense.notes ?? null,
     recurrenceRule: expense.recurrenceRule ?? null,
-    paidFor: expense.paidFor.map((p) => ({ participant: p.participantId })),
+    paidFor: expense.paidFor.map((p) => ({ participant: p.userId })),
   }
 }
 
@@ -47,7 +47,7 @@ function toFormValues(expense: {
 
 const arbParticipantId = fc.uuid()
 
-const arbPaidFor = fc.array(fc.record({ participantId: arbParticipantId }), {
+const arbPaidFor = fc.array(fc.record({ userId: arbParticipantId }), {
   minLength: 1,
   maxLength: 5,
 })

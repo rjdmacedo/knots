@@ -1,293 +1,422 @@
 'use client'
 
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { Switch } from '@/components/ui/switch'
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { registerServiceWorker } from '@/lib/push/register-sw'
-import { trpc } from '@/trpc/client'
-import { Bell, BellOff, Loader2 } from 'lucide-react'
+import {
+  defaultPushPreferences,
+  type PushSubscriptionPreferences,
+} from '@/lib/push/subscription-filters'
+import { usePushNotificationSubscription } from '@/lib/push/use-push-notification-subscription'
+import { AlertCircle, Bell, BellOff, Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useMemo, useState } from 'react'
 
 interface PushNotificationToggleProps {
   groupId: string
-  participants: Array<{ id: string; name: string }>
+  members: Array<{ id: string; name: string }>
+  currentUserId: string | undefined
 }
 
-function isPushSupported(): boolean {
-  if (typeof window === 'undefined') return false
-  return (
-    'serviceWorker' in navigator &&
-    'PushManager' in window &&
-    'Notification' in window
-  )
+/** If specific members are chosen but none remain, fall back to everyone (except self). */
+function normalizeMemberSelection(
+  notifyAllOthers: boolean,
+  selectedMemberIds: string[],
+): { notifyAllOthers: boolean; selectedMemberIds: string[] } {
+  if (!notifyAllOthers && selectedMemberIds.length === 0) {
+    return { notifyAllOthers: true, selectedMemberIds: [] }
+  }
+  return { notifyAllOthers, selectedMemberIds }
+}
+
+function preferencesFromState(
+  currentUserId: string,
+  notifyAllOthers: boolean,
+  selectedMemberIds: string[],
+  notifyOnCreate: boolean,
+  notifyOnUpdate: boolean,
+  notifyOnDelete: boolean,
+): PushSubscriptionPreferences {
+  const members = normalizeMemberSelection(notifyAllOthers, selectedMemberIds)
+  return {
+    subscriberUserId: currentUserId,
+    notifyAllMembers: members.notifyAllOthers,
+    includedUserIds: members.notifyAllOthers ? [] : members.selectedMemberIds,
+    notifyOnCreate,
+    notifyOnUpdate,
+    notifyOnDelete,
+  }
 }
 
 export function PushNotificationToggle({
   groupId,
-  participants,
+  members,
+  currentUserId,
 }: PushNotificationToggleProps) {
   const t = useTranslations('Notifications')
-  const [isSupported, setIsSupported] = useState(false)
-  const [isSubscribed, setIsSubscribed] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [participantName, setParticipantName] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const checkedRef = useRef(false)
+  const panelId = useId()
+  const {
+    isSupported,
+    isSubscribed,
+    isLoading,
+    preferences,
+    error,
+    subscribe,
+    unsubscribe,
+    updatePreferences,
+    clearError,
+  } = usePushNotificationSubscription(groupId, currentUserId)
 
-  const createMutation = trpc.pushSubscriptions.create.useMutation()
-  const deleteMutation = trpc.pushSubscriptions.delete.useMutation()
+  const otherMembers = useMemo(
+    () => members.filter((m) => m.id !== currentUserId),
+    [members, currentUserId],
+  )
+
+  const [notifyAllOthers, setNotifyAllOthers] = useState(true)
+  const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>([])
+  const [notifyOnCreate, setNotifyOnCreate] = useState(true)
+  const [notifyOnUpdate, setNotifyOnUpdate] = useState(true)
+  const [notifyOnDelete, setNotifyOnDelete] = useState(true)
 
   useEffect(() => {
-    if (checkedRef.current) return
-    checkedRef.current = true
+    if (!preferences) return
+    setNotifyAllOthers(preferences.notifyAllMembers)
+    setSelectedMemberIds(preferences.includedUserIds)
+    setNotifyOnCreate(preferences.notifyOnCreate)
+    setNotifyOnUpdate(preferences.notifyOnUpdate)
+    setNotifyOnDelete(preferences.notifyOnDelete)
+  }, [preferences])
 
-    const supported = isPushSupported()
-    setIsSupported(supported)
+  const buildPrefs = useCallback(() => {
+    if (!currentUserId) return null
+    return preferencesFromState(
+      currentUserId,
+      notifyAllOthers,
+      selectedMemberIds,
+      notifyOnCreate,
+      notifyOnUpdate,
+      notifyOnDelete,
+    )
+  }, [
+    currentUserId,
+    notifyAllOthers,
+    selectedMemberIds,
+    notifyOnCreate,
+    notifyOnUpdate,
+    notifyOnDelete,
+  ])
 
-    if (supported) {
-      registerServiceWorker()
-        .then((registration) => registration?.pushManager.getSubscription())
-        .then(async (subscription) => {
-          if (!subscription) return
+  const canSavePreferences =
+    (notifyOnCreate || notifyOnUpdate || notifyOnDelete) &&
+    (notifyAllOthers || selectedMemberIds.length > 0)
 
-          const res = await fetch(
-            `/api/trpc/pushSubscriptions.list?batch=1&input=${encodeURIComponent(
-              JSON.stringify({
-                '0': { json: { endpoint: subscription.endpoint } },
-              }),
-            )}`,
-          )
-          if (!res.ok) return
-
-          const json = (await res.json()) as Array<{
-            result?: {
-              data?: {
-                json?: Array<{
-                  groupId: string
-                  participantName: string | null
-                }>
-              }
-            }
-          }>
-          const subscriptions = json?.[0]?.result?.data?.json
-          if (Array.isArray(subscriptions)) {
-            const groupSub = subscriptions.find(
-              (s: { groupId: string; participantName: string | null }) =>
-                s.groupId === groupId,
-            )
-            if (groupSub) {
-              setIsSubscribed(true)
-              setParticipantName(groupSub.participantName ?? null)
-            }
-          }
-        })
-        .catch(() => {
-          // Silently handle errors during status check
-        })
-    }
-  }, [groupId])
-
-  const subscribe = useCallback(
-    async (selectedParticipant?: string) => {
-      setIsLoading(true)
-      setError(null)
-
-      try {
-        const permission = await Notification.requestPermission()
-        if (permission !== 'granted') {
-          setError(t('permissionDenied'))
-          setIsLoading(false)
-          return
-        }
-
-        const registration = await registerServiceWorker()
-        if (!registration) {
-          setError(t('error'))
-          setIsLoading(false)
-          return
-        }
-
-        const subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-        })
-
-        const json = subscription.toJSON()
-        await createMutation.mutateAsync({
-          endpoint: subscription.endpoint,
-          keys: {
-            p256dh: json.keys?.p256dh ?? '',
-            auth: json.keys?.auth ?? '',
-          },
-          groupId,
-          participantName: selectedParticipant ?? undefined,
-        })
-
-        setIsSubscribed(true)
-        setParticipantName(selectedParticipant ?? null)
-      } catch {
-        setError(t('error'))
-      } finally {
-        setIsLoading(false)
-      }
+  const savePreferences = useCallback(
+    async (prefs: PushSubscriptionPreferences) => {
+      const valid =
+        (prefs.notifyOnCreate ||
+          prefs.notifyOnUpdate ||
+          prefs.notifyOnDelete) &&
+        (prefs.notifyAllMembers || prefs.includedUserIds.length > 0)
+      if (!valid || !isSubscribed) return
+      clearError()
+      await updatePreferences(prefs)
     },
-    [groupId, createMutation, t],
-  )
-
-  const unsubscribe = useCallback(async () => {
-    setIsLoading(true)
-    setError(null)
-
-    try {
-      const registration = await registerServiceWorker()
-      const subscription = await registration?.pushManager.getSubscription()
-
-      if (subscription) {
-        await deleteMutation.mutateAsync({
-          endpoint: subscription.endpoint,
-          groupId,
-        })
-        await subscription.unsubscribe()
-      }
-
-      setIsSubscribed(false)
-      setParticipantName(null)
-    } catch {
-      setError(t('error'))
-    } finally {
-      setIsLoading(false)
-    }
-  }, [groupId, deleteMutation, t])
-
-  const handleToggleNotifications = useCallback(
-    async (checked: boolean) => {
-      if (checked) {
-        await subscribe(participantName ?? undefined)
-      } else {
-        await unsubscribe()
-      }
-    },
-    [subscribe, unsubscribe, participantName],
-  )
-
-  const handleParticipantChange = useCallback(
-    async (name: string) => {
-      if (!isSubscribed) return
-
-      const newValue = participantName === name ? null : name
-      setIsLoading(true)
-      setError(null)
-
-      try {
-        const registration = await registerServiceWorker()
-        const subscription = await registration?.pushManager.getSubscription()
-
-        if (subscription) {
-          const json = subscription.toJSON()
-          await createMutation.mutateAsync({
-            endpoint: subscription.endpoint,
-            keys: {
-              p256dh: json.keys?.p256dh ?? '',
-              auth: json.keys?.auth ?? '',
-            },
-            groupId,
-            participantName: newValue ?? undefined,
-          })
-        }
-
-        setParticipantName(newValue)
-      } catch {
-        setError(t('error'))
-      } finally {
-        setIsLoading(false)
-      }
-    },
-    [isSubscribed, participantName, groupId, createMutation, t],
+    [clearError, isSubscribed, updatePreferences],
   )
 
   if (!isSupported) {
     return null
   }
 
+  const showFilters = isSubscribed && !!currentUserId
+
   return (
-    <DropdownMenu>
+    <Popover>
       <Tooltip>
         <TooltipTrigger asChild>
-          <DropdownMenuTrigger asChild>
+          <PopoverTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
               className="shrink-0"
               disabled={isLoading}
+              aria-controls={panelId}
             >
               {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="size-4 animate-spin" />
               ) : isSubscribed ? (
-                <Bell className="h-4 w-4" />
+                <Bell className="size-4" />
               ) : (
-                <BellOff className="h-4 w-4" />
+                <BellOff className="size-4" />
               )}
             </Button>
-          </DropdownMenuTrigger>
+          </PopoverTrigger>
         </TooltipTrigger>
         <TooltipContent>
           <p>{isSubscribed ? t('unsubscribe') : t('subscribe')}</p>
         </TooltipContent>
       </Tooltip>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>{t('subscribe')}</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuCheckboxItem
-          checked={isSubscribed}
-          onCheckedChange={handleToggleNotifications}
-          disabled={isLoading}
-        >
-          {isSubscribed ? t('unsubscribe') : t('subscribe')}
-        </DropdownMenuCheckboxItem>
 
-        {isSubscribed && participants.length > 0 && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel>{t('selectParticipant')}</DropdownMenuLabel>
-            <DropdownMenuCheckboxItem
-              checked={participantName === null}
-              onCheckedChange={() => handleParticipantChange('__none__')}
-              disabled={isLoading}
-            >
-              {t('noParticipant')}
-            </DropdownMenuCheckboxItem>
-            {participants.map((p) => (
-              <DropdownMenuCheckboxItem
-                key={p.id}
-                checked={participantName === p.name}
-                onCheckedChange={() => handleParticipantChange(p.name)}
-                disabled={isLoading}
-              >
-                {p.name}
-              </DropdownMenuCheckboxItem>
-            ))}
-          </>
-        )}
+      <PopoverContent
+        id={panelId}
+        align="end"
+        className="w-80 p-0"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
+        <div className="flex flex-col">
+          <div className="flex items-start justify-between gap-4 border-b px-4 py-3">
+            <div className="flex min-w-0 flex-col gap-1">
+              <p className="text-sm leading-none font-medium">
+                {t('subscribe')}
+              </p>
+              {!isSubscribed && (
+                <p className="text-xs text-muted-foreground">
+                  {t('filterHint')}
+                </p>
+              )}
+            </div>
+            <Switch
+              checked={isSubscribed}
+              disabled={isLoading || !currentUserId}
+              aria-label={isSubscribed ? t('unsubscribe') : t('subscribe')}
+              onCheckedChange={async (checked) => {
+                clearError()
+                if (checked) {
+                  const prefs =
+                    buildPrefs() ??
+                    (currentUserId
+                      ? defaultPushPreferences(currentUserId)
+                      : null)
+                  if (prefs) await subscribe(prefs)
+                } else {
+                  await unsubscribe()
+                }
+              }}
+            />
+          </div>
 
-        {error && (
-          <>
-            <DropdownMenuSeparator />
-            <p className="px-2 py-1.5 text-sm text-destructive">{error}</p>
-          </>
-        )}
-      </DropdownMenuContent>
-    </DropdownMenu>
+          {showFilters && (
+            <div className="flex max-h-[min(24rem,70vh)] flex-col gap-4 overflow-y-auto px-4 py-3">
+              <div className="flex flex-col gap-2">
+                <p className="text-sm font-medium">{t('membersLabel')}</p>
+                <div className="flex items-start gap-2">
+                  <Checkbox
+                    id={`${panelId}-all`}
+                    checked={notifyAllOthers}
+                    disabled={isLoading}
+                    onCheckedChange={(checked) => {
+                      const on = checked === true
+                      const nextIds = on ? [] : selectedMemberIds
+                      setNotifyAllOthers(on)
+                      if (on) setSelectedMemberIds([])
+                      if (currentUserId) {
+                        void savePreferences(
+                          preferencesFromState(
+                            currentUserId,
+                            on,
+                            nextIds,
+                            notifyOnCreate,
+                            notifyOnUpdate,
+                            notifyOnDelete,
+                          ),
+                        )
+                      }
+                    }}
+                  />
+                  <Label
+                    htmlFor={`${panelId}-all`}
+                    className="cursor-pointer font-normal leading-snug"
+                  >
+                    {t('notifyAllMembers')}
+                  </Label>
+                </div>
+                {otherMembers.length > 0 && (
+                  <div className="flex flex-col gap-2 pl-1">
+                    <p className="text-xs text-muted-foreground">
+                      {t('notifySpecificMembers')}
+                    </p>
+                    {otherMembers.map((member) => {
+                      const checked =
+                        !notifyAllOthers &&
+                        selectedMemberIds.includes(member.id)
+                      return (
+                        <div
+                          key={member.id}
+                          className="flex items-center gap-2"
+                        >
+                          <Checkbox
+                            id={`${panelId}-member-${member.id}`}
+                            checked={checked}
+                            disabled={isLoading}
+                            onCheckedChange={(value) => {
+                              const on = value === true
+                              let nextIds = on
+                                ? Array.from(
+                                    new Set([
+                                      ...selectedMemberIds,
+                                      member.id,
+                                    ]),
+                                  )
+                                : selectedMemberIds.filter(
+                                    (id) => id !== member.id,
+                                  )
+                              let nextAllOthers = false
+                              const normalized = normalizeMemberSelection(
+                                nextAllOthers,
+                                nextIds,
+                              )
+                              nextAllOthers = normalized.notifyAllOthers
+                              nextIds = normalized.selectedMemberIds
+                              setNotifyAllOthers(nextAllOthers)
+                              setSelectedMemberIds(nextIds)
+                              if (currentUserId) {
+                                void savePreferences(
+                                  preferencesFromState(
+                                    currentUserId,
+                                    nextAllOthers,
+                                    nextIds,
+                                    notifyOnCreate,
+                                    notifyOnUpdate,
+                                    notifyOnDelete,
+                                  ),
+                                )
+                              }
+                            }}
+                          />
+                          <Label
+                            htmlFor={`${panelId}-member-${member.id}`}
+                            className="cursor-pointer truncate font-normal"
+                          >
+                            {member.name}
+                          </Label>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-2 border-t pt-3">
+                <p className="text-sm font-medium">{t('eventsLabel')}</p>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id={`${panelId}-create`}
+                    checked={notifyOnCreate}
+                    disabled={isLoading}
+                    onCheckedChange={(checked) => {
+                      const on = checked === true
+                      setNotifyOnCreate(on)
+                      if (currentUserId) {
+                        void savePreferences(
+                          preferencesFromState(
+                            currentUserId,
+                            notifyAllOthers,
+                            selectedMemberIds,
+                            on,
+                            notifyOnUpdate,
+                            notifyOnDelete,
+                          ),
+                        )
+                      }
+                    }}
+                  />
+                  <Label
+                    htmlFor={`${panelId}-create`}
+                    className="cursor-pointer font-normal"
+                  >
+                    {t('eventCreate')}
+                  </Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id={`${panelId}-update`}
+                    checked={notifyOnUpdate}
+                    disabled={isLoading}
+                    onCheckedChange={(checked) => {
+                      const on = checked === true
+                      setNotifyOnUpdate(on)
+                      if (currentUserId) {
+                        void savePreferences(
+                          preferencesFromState(
+                            currentUserId,
+                            notifyAllOthers,
+                            selectedMemberIds,
+                            notifyOnCreate,
+                            on,
+                            notifyOnDelete,
+                          ),
+                        )
+                      }
+                    }}
+                  />
+                  <Label
+                    htmlFor={`${panelId}-update`}
+                    className="cursor-pointer font-normal"
+                  >
+                    {t('eventUpdate')}
+                  </Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id={`${panelId}-delete`}
+                    checked={notifyOnDelete}
+                    disabled={isLoading}
+                    onCheckedChange={(checked) => {
+                      const on = checked === true
+                      setNotifyOnDelete(on)
+                      if (currentUserId) {
+                        void savePreferences(
+                          preferencesFromState(
+                            currentUserId,
+                            notifyAllOthers,
+                            selectedMemberIds,
+                            notifyOnCreate,
+                            notifyOnUpdate,
+                            on,
+                          ),
+                        )
+                      }
+                    }}
+                  />
+                  <Label
+                    htmlFor={`${panelId}-delete`}
+                    className="cursor-pointer font-normal"
+                  >
+                    {t('eventDelete')}
+                  </Label>
+                </div>
+              </div>
+
+              {!canSavePreferences && (
+                <p className="text-xs text-destructive">
+                  {t('selectAtLeastOneFilter')}
+                </p>
+              )}
+            </div>
+          )}
+
+          {error && (
+            <div className="border-t px-4 py-3">
+              <Alert variant="destructive" className="py-2">
+                <AlertCircle className="size-4" />
+                <AlertDescription>{t(error)}</AlertDescription>
+              </Alert>
+            </div>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
   )
 }

@@ -39,8 +39,10 @@
   },
   "ExpenseCard": {
     "paidBy": "<strong>{paidBy}</strong>が<paidFor></paidFor>のために支払いました",
+    "everyone": "everyone",
     "receivedBy": "<strong>{paidBy}</strong>が<paidFor></paidFor>のために受け取りました",
-    "yourBalance": "あなたの残高:"
+    "yourBalance": "あなたの残高:",
+    "notInvolved": "You are not involved"
   },
   "Groups": {
     "myGroups": "マイグループ",
@@ -57,6 +59,8 @@
     "archive": "グループをアーカイブ",
     "unarchive": "グループのアーカイブを解除",
     "removeRecent": "最近のグループから削除",
+    "enableNotifications": "通知を有効にする",
+    "disableNotifications": "通知を無効にする",
     "RecentRemovedToast": {
       "title": "グループが削除されました",
       "description": "グループは最近のグループリストから削除されました。",
@@ -90,10 +94,17 @@
       "placeholder": "$, €, £...",
       "description": "金額の表示に使用します。"
     },
+    "CurrencyCodeField": {
+      "label": "Main currency",
+      "createDescription": "All amounts and balances will be in this currency.",
+      "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
+      "customOption": "Custom"
+    },
     "Participants": {
       "title": "参加者",
       "description": "各参加者の名前を入力してください。",
       "protectedParticipant": "この参加者は支出の一部であり、削除できません。",
+      "noLongerInGroup": "このグループにいません",
       "new": "新規",
       "add": "参加者を追加",
       "John": "John",
@@ -129,6 +140,10 @@
         "label": "収入日",
         "description": "収入を受け取った日付を入力してください。"
       },
+      "currencyField": {
+        "label": "収入の通貨",
+        "description": "収入を受け取った通貨です。"
+      },
       "categoryFieldDescription": "収入カテゴリーを選択してください。",
       "paidByField": {
         "label": "受取人",
@@ -153,9 +168,14 @@
         "label": "支出日",
         "description": "支出が支払われた日付を入力してください。"
       },
+      "currencyField": {
+        "label": "支出の通貨",
+        "description": "支出の支払いに使った通貨です。"
+      },
       "categoryFieldDescription": "支出カテゴリーを選択してください。",
       "paidByField": {
         "label": "支払者",
+        "placeholder": "Select a participant",
         "description": "支出を支払った参加者を選択してください。"
       },
       "recurrenceRule": {
@@ -176,6 +196,27 @@
     "amountField": {
       "label": "金額"
     },
+    "conversionUnavailable": "支出ごとに異なる通貨を設定して金額を換算するには、グループでカスタム以外の通貨を選択してください。",
+    "originalAmountField": {
+      "label": "換算する金額"
+    },
+    "conversionRateField": {
+      "useApi": "Frankfurter のレートを使用",
+      "useCustom": "カスタムレートを使用",
+      "label": "為替レート"
+    },
+    "conversionRateState": {
+      "loading": "為替レートを取得中…",
+      "success": "取得したレート:",
+      "error": "最新のレートを取得できませんでした。",
+      "staleRate": "使用中のレート:",
+      "noRate": "下にカスタムレートを入力してください。",
+      "currencyNotFound": "Frankfurter にこの日付のこの通貨のレートがありません。",
+      "noDate": "換算レートを取得するには支出の日付を入力してください。",
+      "dateMismatch": "日付のレート: {date}",
+      "refresh": "更新",
+      "customRate": "カスタムレートを使用中"
+    },
     "isReimbursementField": {
       "label": "これは払い戻しです"
     },
@@ -187,6 +228,7 @@
     },
     "selectNone": "選択解除",
     "selectAll": "すべて選択",
+    "noLongerInGroup": "このグループにいません",
     "shares": "シェア",
     "advancedOptions": "詳細な分割オプション...",
     "SplitModeField": {
@@ -375,7 +417,28 @@
       "earlierThisYear": "今年初め",
       "lastYear": "昨年",
       "older": "それ以前"
-    }
+    },
+    "fieldLabels": {
+      "title": "タイトル",
+      "amount": "金額",
+      "expenseDate": "日付",
+      "category": "カテゴリ",
+      "paidBy": "支払者",
+      "splitMode": "分割モード",
+      "isReimbursement": "精算",
+      "notes": "メモ",
+      "recurrenceRule": "繰り返し",
+      "paidFor": "対象",
+      "name": "名前",
+      "information": "情報",
+      "currency": "通貨",
+      "participants": "参加者"
+    },
+    "showMoreChanges": "さらに {count} 件の変更を表示",
+    "showLess": "折りたたむ",
+    "yes": "はい",
+    "no": "いいえ",
+    "fieldChangesCount": "{count} 件のフィールド変更"
   },
   "Information": {
     "title": "情報",
@@ -403,6 +466,7 @@
     "amountRequired": "金額を入力する必要があります。",
     "amountNotZero": "金額はゼロであってはなりません。",
     "amountTenMillion": "金額は10,000,000未満である必要があります。",
+    "ratePositive": "レートはゼロより大きい必要があります。",
     "paidByRequired": "参加者を選択する必要があります。",
     "paidForMin1": "支出は少なくとも1人の参加者のために支払われている必要があります。",
     "noZeroShares": "すべてのシェアは0より大きくなければなりません。",
@@ -478,6 +542,124 @@
       "Water": "水道"
     }
   },
+  "Currencies": {
+    "search": "Search currency...",
+    "noCurrency": "No currencies found.",
+    "custom": {
+      "heading": "Custom"
+    },
+    "common": {
+      "heading": "Most common"
+    },
+    "other": {
+      "heading": "Other currencies"
+    }
+  },
+  "SplitwiseImport": {
+    "button": "Import from Splitwise",
+    "title": "Import from Splitwise",
+    "description": "Upload a CSV file exported from Splitwise to import expenses into this group. Make sure the participant names in the CSV match the names in this group.",
+    "fileLabel": "CSV File",
+    "previewLabel": "Preview (first 10 lines)",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "import": "Import Expenses",
+    "importing": "Importing...",
+    "toast": {
+      "invalidFileType": {
+        "title": "Invalid file type",
+        "description": "Please select a CSV file."
+      },
+      "noContent": {
+        "title": "No CSV content",
+        "description": "Please select a CSV file first."
+      },
+      "success": {
+        "title": "Import successful",
+        "description": "Successfully imported {count} expenses from Splitwise."
+      },
+      "error": {
+        "title": "Import failed",
+        "description": "Failed to import CSV file."
+      }
+    }
+  },
+  "ProfileSettings": {
+    "title": "プロフィール設定",
+    "emailTitle": "メール",
+    "emailDescription": "メールアドレスは変更できません。",
+    "displayNameTitle": "表示名",
+    "passwordTitle": "パスワード",
+    "NameForm": {
+      "nameRequired": "名前は必須です",
+      "nameMaxLength": "名前は100文字以内にしてください",
+      "successToast": "表示名を更新しました。",
+      "label": "表示名",
+      "placeholder": "表示名を入力",
+      "saving": "保存中…",
+      "submit": "名前を保存"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "現在のパスワードは必須です",
+      "newPasswordRequired": "新しいパスワードは必須です",
+      "confirmPasswordRequired": "新しいパスワードを確認してください",
+      "passwordsDoNotMatch": "パスワードが一致しません",
+      "successToast": "パスワードを変更しました。",
+      "currentPasswordIncorrect": "現在のパスワードが正しくありません",
+      "newPasswordSameAsCurrent": "新しいパスワードは現在のものと異なる必要があります",
+      "passwordRequirementsNotMet": "パスワードが要件を満たしていません",
+      "currentPasswordLabel": "現在のパスワード",
+      "newPasswordLabel": "新しいパスワード",
+      "confirmPasswordLabel": "新しいパスワードを確認",
+      "passwordHint": "8〜128文字。大文字・小文字・数字をそれぞれ1文字以上含めてください。",
+      "changingPassword": "パスワードを変更中…",
+      "submit": "パスワードを変更",
+      "errorTooShort": "8文字以上必要です",
+      "errorTooLong": "128文字以内にしてください",
+      "errorMissingUppercase": "大文字を1文字以上含めてください",
+      "errorMissingLowercase": "小文字を1文字以上含めてください",
+      "errorMissingDigit": "数字を1文字以上含めてください"
+    }
+  },
+  "Members": {
+    "addedToGroup": "{name} をグループに追加しました。",
+    "memberRemoved": "メンバーをグループから削除しました。",
+    "youLeftGroup": "グループを退出しました。",
+    "memberPromoted": "メンバーをオーナーに昇格しました。",
+    "memberDemoted": "メンバーを通常メンバーに降格しました。",
+    "addMember": "メンバーを追加",
+    "adding": "追加中…",
+    "add": "追加",
+    "cancel": "キャンセル",
+    "leaveGroup": "グループを退出",
+    "leaveGroupDescription": "このグループを退出しますか？過去の支出はグループ履歴に残ります。",
+    "leave": "退出",
+    "removeFromGroup": "グループから削除",
+    "promoteToOwner": "オーナーに昇格",
+    "demoteToMember": "メンバーに降格"
+  },
+  "MyGroups": {
+    "title": "マイグループ",
+    "loading": "グループを読み込み中…",
+    "loadError": "グループを読み込めませんでした。後でもう一度お試しください。",
+    "noGroups": "まだどのグループのメンバーでもありません。",
+    "noGroupsHint": "グループを作成して、他の人と支出を分担しましょう。",
+    "createGroup": "グループを作成",
+    "createGroupTitle": "新しいグループを作成",
+    "createGroupDescription": "グループ名を入力してください。作成後にメンバーを招待できます。",
+    "groupNameLabel": "グループ名",
+    "characters": "文字",
+    "leaveGroup": "グループを退出",
+    "leaveGroupConfirmTitle": "グループを退出",
+    "leaveGroupConfirmDescription": "「{name}」を退出しますか？過去の支出はグループ履歴に残ります。",
+    "leaveGroupConfirmCancel": "キャンセル",
+    "leaveGroupConfirmAction": "退出"
+  },
+  "UserMenu": {
+    "profileSettings": "プロフィール設定",
+    "signingOut": "サインアウト中…",
+    "signOut": "サインアウト"
+  },
   "Notifications": {
     "subscribe": "通知を有効にする",
     "unsubscribe": "通知を無効にする",
@@ -485,12 +667,21 @@
     "noParticipant": "すべての変更",
     "permissionDenied": "通知の許可が拒否されました。ブラウザの設定で有効にしてください。",
     "notSupported": "このデバイスではプッシュ通知がサポートされていません。",
-    "error": "通知を有効にできませんでした。もう一度お試しください。",
     "expenseCreated": "{actor}が「{title}」を追加しました",
     "expenseUpdated": "{actor}が「{title}」を更新しました",
     "expenseDeleted": "{actor}が「{title}」を削除しました",
     "groupUpdated": "{actor}がグループ「{group}」を更新しました",
     "notificationTitle": "Knots – {group}",
-    "defaultBody": "グループに新しいアクティビティがあります"
+    "defaultBody": "グループに新しいアクティビティがあります",
+    "filterHint": "通知を受け取るメンバーとイベントを選択してください。",
+    "subscribeError": "通知を有効にできませんでした。もう一度お試しください。",
+    "membersLabel": "通知対象",
+    "notifyAllMembers": "グループ全員",
+    "notifySpecificMembers": "または次のメンバーのみ：",
+    "eventsLabel": "イベント",
+    "eventCreate": "支出の作成",
+    "eventUpdate": "支出の更新",
+    "eventDelete": "支出の削除",
+    "selectAtLeastOneFilter": "メンバーまたはイベントを1つ以上選択してください。"
   }
 }

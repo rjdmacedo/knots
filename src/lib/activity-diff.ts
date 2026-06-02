@@ -27,13 +27,11 @@ export function computeGroupChanges(
     name: string
     information: string | null
     currency: string
-    participants: Array<{ name: string }>
   },
   updated: {
     name: string
     information?: string
     currency: string
-    participants: Array<{ name: string }>
   },
 ): FieldChange[] {
   const changes: FieldChange[] = []
@@ -62,18 +60,6 @@ export function computeGroupChanges(
     })
   }
 
-  // Track participant additions and removals
-  const existingNames = existing.participants.map((p) => p.name).sort()
-  const updatedNames = updated.participants.map((p) => p.name).sort()
-
-  if (JSON.stringify(existingNames) !== JSON.stringify(updatedNames)) {
-    changes.push({
-      field: 'participants',
-      oldValue: existingNames.join(', '),
-      newValue: updatedNames.join(', '),
-    })
-  }
-
   return changes
 }
 
@@ -92,7 +78,7 @@ export function computeExpenseChanges(
     isReimbursement: boolean
     notes?: string | null
     recurrenceRule?: string | null
-    paidFor: Array<{ participantId: string }>
+    paidFor: Array<{ userId: string }>
   },
   updated: {
     title: string
@@ -163,7 +149,7 @@ export function computeExpenseChanges(
   }
 
   // Track paidFor changes (participants involved in split)
-  const oldPaidFor = existing.paidFor.map((p) => p.participantId).sort()
+  const oldPaidFor = existing.paidFor.map((p) => p.userId).sort()
   const newPaidFor = updated.paidFor.map((p) => p.participant).sort()
 
   if (JSON.stringify(oldPaidFor) !== JSON.stringify(newPaidFor)) {

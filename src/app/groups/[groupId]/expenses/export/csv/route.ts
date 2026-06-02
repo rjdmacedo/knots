@@ -44,18 +44,26 @@ export async function GET(
           originalCurrency: true,
           conversionRate: true,
           paidById: true,
-          paidFor: { select: { participantId: true, shares: true } },
+          paidFor: { select: { userId: true, shares: true } },
           isReimbursement: true,
           splitMode: true,
         },
       },
-      participants: { select: { id: true, name: true } },
+      memberships: {
+        include: { user: { select: { id: true, name: true } } },
+      },
     },
   })
 
   if (!group) {
     return NextResponse.json({ error: 'Invalid group ID' }, { status: 404 })
   }
+
+  // Map memberships to participants shape for backward compatibility
+  const participants = group.memberships.map((m) => ({
+    id: m.user.id,
+    name: m.user.name,
+  }))
 
   /*
 
@@ -94,7 +102,7 @@ export async function GET(
     { label: 'Conversion rate', value: 'conversionRate' },
     { label: 'Is Reimbursement', value: 'isReimbursement' },
     { label: 'Split mode', value: 'splitMode' },
-    ...group.participants.map((participant) => ({
+    ...participants.map((participant) => ({
       label: participant.name,
       value: participant.name,
     })),
@@ -121,11 +129,11 @@ export async function GET(
     isReimbursement: expense.isReimbursement ? 'Yes' : 'No',
     splitMode: splitModeLabel[expense.splitMode],
     ...Object.fromEntries(
-      group.participants.map((participant) => {
+      participants.map((participant) => {
         const { totalShares, participantShare } = expense.paidFor.reduce(
-          (acc, { participantId, shares }) => {
+          (acc, { userId, shares }) => {
             acc.totalShares += shares
-            if (participantId === participant.id) {
+            if (userId === participant.id) {
               acc.participantShare = shares
             }
             return acc

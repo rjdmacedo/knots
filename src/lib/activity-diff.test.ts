@@ -12,8 +12,8 @@ describe('computeExpenseChanges', () => {
     notes: null,
     recurrenceRule: null,
     paidFor: [
-      { participantId: 'participant-1' },
-      { participantId: 'participant-2' },
+      { userId: 'participant-1' },
+      { userId: 'participant-2' },
     ],
   }
 
@@ -85,8 +85,8 @@ describe('computeExpenseChanges', () => {
         {
           ...baseExpense,
           paidFor: [
-            { participantId: 'participant-2' },
-            { participantId: 'participant-1' },
+            { userId: 'participant-2' },
+            { userId: 'participant-1' },
           ],
         },
         {
@@ -140,14 +140,12 @@ describe('computeGroupChanges', () => {
     name: 'Trip',
     information: null,
     currency: 'USD',
-    participants: [{ name: 'Alice' }, { name: 'Bob' }],
   }
 
   const baseUpdated = {
     name: 'Trip',
     information: undefined,
     currency: 'USD',
-    participants: [{ name: 'Alice' }, { name: 'Bob' }],
   }
 
   describe('unchanged group fields produce no FieldChange entries', () => {
@@ -190,19 +188,6 @@ describe('computeGroupChanges', () => {
       expect(currencyChange).toBeUndefined()
     })
 
-    it('produces no entry when participants are unchanged (same order)', () => {
-      const changes = computeGroupChanges(baseGroup, baseUpdated)
-      expect(changes.find((c) => c.field === 'participants')).toBeUndefined()
-    })
-
-    it('produces no entry when participants are unchanged (different order)', () => {
-      const changes = computeGroupChanges(
-        { ...baseGroup, participants: [{ name: 'Bob' }, { name: 'Alice' }] },
-        { ...baseUpdated, participants: [{ name: 'Alice' }, { name: 'Bob' }] },
-      )
-      expect(changes.find((c) => c.field === 'participants')).toBeUndefined()
-    })
-
     it('only produces entries for fields that actually changed', () => {
       const changes = computeGroupChanges(baseGroup, {
         ...baseUpdated,
@@ -214,7 +199,6 @@ describe('computeGroupChanges', () => {
       const changedFields = changes.map((c) => c.field)
       expect(changedFields).not.toContain('information')
       expect(changedFields).not.toContain('currency')
-      expect(changedFields).not.toContain('participants')
     })
   })
 
@@ -279,87 +263,6 @@ describe('computeGroupChanges', () => {
         { ...baseUpdated, information: undefined },
       )
       expect(changes).toEqual([])
-    })
-
-    it('returns empty array when participants are in different order but same set', () => {
-      const changes = computeGroupChanges(
-        {
-          ...baseGroup,
-          participants: [
-            { name: 'Charlie' },
-            { name: 'Alice' },
-            { name: 'Bob' },
-          ],
-        },
-        {
-          ...baseUpdated,
-          participants: [
-            { name: 'Bob' },
-            { name: 'Charlie' },
-            { name: 'Alice' },
-          ],
-        },
-      )
-      expect(changes).toEqual([])
-    })
-  })
-
-  describe('participant changes serialized as comma-separated name lists', () => {
-    it('serializes multiple participants as comma-separated names', () => {
-      const changes = computeGroupChanges(baseGroup, {
-        ...baseUpdated,
-        participants: [{ name: 'Alice' }, { name: 'Charlie' }],
-      })
-      const participantChange = changes.find((c) => c.field === 'participants')
-      expect(participantChange).toBeDefined()
-      expect(participantChange!.oldValue).toBe('Alice, Bob')
-      expect(participantChange!.newValue).toBe('Alice, Charlie')
-    })
-
-    it('serializes a single participant without trailing comma', () => {
-      const changes = computeGroupChanges(
-        { ...baseGroup, participants: [{ name: 'Alice' }, { name: 'Bob' }] },
-        { ...baseUpdated, participants: [{ name: 'Alice' }] },
-      )
-      const participantChange = changes.find((c) => c.field === 'participants')
-      expect(participantChange).toBeDefined()
-      expect(participantChange!.oldValue).toBe('Alice, Bob')
-      expect(participantChange!.newValue).toBe('Alice')
-    })
-
-    it('serializes an empty participant list as an empty string', () => {
-      const changes = computeGroupChanges(baseGroup, {
-        ...baseUpdated,
-        participants: [],
-      })
-      const participantChange = changes.find((c) => c.field === 'participants')
-      expect(participantChange).toBeDefined()
-      expect(participantChange!.oldValue).toBe('Alice, Bob')
-      expect(participantChange!.newValue).toBe('')
-    })
-
-    it('sorts participant names before comparing (order-independent)', () => {
-      const changes = computeGroupChanges(
-        { ...baseGroup, participants: [{ name: 'Bob' }, { name: 'Alice' }] },
-        { ...baseUpdated, participants: [{ name: 'Alice' }, { name: 'Bob' }] },
-      )
-      expect(changes.find((c) => c.field === 'participants')).toBeUndefined()
-    })
-
-    it('produces no participant change when lists are identical', () => {
-      const changes = computeGroupChanges(baseGroup, baseUpdated)
-      expect(changes.find((c) => c.field === 'participants')).toBeUndefined()
-    })
-
-    it('detects participant additions', () => {
-      const changes = computeGroupChanges(baseGroup, {
-        ...baseUpdated,
-        participants: [{ name: 'Alice' }, { name: 'Bob' }, { name: 'Charlie' }],
-      })
-      const participantChange = changes.find((c) => c.field === 'participants')
-      expect(participantChange).toBeDefined()
-      expect(participantChange!.oldValue).toBe('Alice, Bob')
-      expect(participantChange!.newValue).toBe('Alice, Bob, Charlie')
     })
   })
 })

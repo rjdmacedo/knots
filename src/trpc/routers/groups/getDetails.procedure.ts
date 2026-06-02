@@ -1,4 +1,4 @@
-import { getGroup, getGroupExpensesParticipants } from '@/lib/api'
+ import { getGroup, getGroupExpenseUserIds } from '@/lib/api'
 import { baseProcedure } from '@/trpc/init'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
@@ -14,6 +14,25 @@ export const getGroupDetailsProcedure = baseProcedure
       })
     }
 
-    const participantsWithExpenses = await getGroupExpensesParticipants(groupId)
-    return { group, participantsWithExpenses }
+    // Return members from GroupMembership → User with { id, name, email, role }
+    const members = group.memberships.map((m) => ({
+      id: m.user.id,
+      name: m.user.name,
+      email: m.user.email,
+      role: m.role as string,
+    }))
+
+    const participantsWithExpenses = await getGroupExpenseUserIds(groupId)
+    return {
+      group: {
+        id: group.id,
+        name: group.name,
+        information: group.information,
+        currency: group.currency,
+        currencyCode: group.currencyCode,
+        createdAt: group.createdAt,
+        participants: members,
+      },
+      participantsWithExpenses,
+    }
   })

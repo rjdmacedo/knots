@@ -41,7 +41,7 @@ const arbParticipant = fc.record({
 const arbPaidFor = (participantIds: string[]) =>
   fc.array(
     fc.record({
-      participant: fc.record({
+      user: fc.record({
         id: fc.constantFrom(...participantIds),
         name: fc.string({ minLength: 1, maxLength: 50 }),
       }),
@@ -319,7 +319,7 @@ describe('Enhanced Stats Dashboard — Property-Based Tests', () => {
               isReimbursement: false,
               paidBy: { id: ids[0], name: 'Test' },
               paidFor: [
-                { participant: { id: ids[0], name: 'Test' }, shares: 1 },
+                { user: { id: ids[0], name: 'Test' }, shares: 1 },
               ],
               splitMode: 'EVENLY' as const,
               title: 'Test expense',
@@ -449,7 +449,7 @@ describe('Enhanced Stats Dashboard — Property-Based Tests', () => {
                 }),
                 paidFor: fc.array(
                   fc.record({
-                    participant: fc.record({
+                    user: fc.record({
                       id: fc.constantFrom(...ids),
                       name: fc.string({ minLength: 1, maxLength: 50 }),
                     }),
@@ -489,7 +489,7 @@ describe('Enhanced Stats Dashboard — Property-Based Tests', () => {
                 }),
                 paidFor: fc.array(
                   fc.record({
-                    participant: fc.record({
+                    user: fc.record({
                       id: fc.constantFrom(...ids),
                       name: fc.string({ minLength: 1, maxLength: 50 }),
                     }),
@@ -766,20 +766,20 @@ describe('Property 3: Conservation of money (net balances sum to zero)', () => {
               sharesArr,
             ]) => {
               let paidFor: Array<{
-                participant: { id: string; name: string }
+                user: { id: string; name: string }
                 shares: number
               }>
 
               switch (splitMode) {
                 case 'EVENLY':
                   paidFor = participants.map((p) => ({
-                    participant: { id: p.id, name: p.name },
+                    user: { id: p.id, name: p.name },
                     shares: 1,
                   }))
                   break
                 case 'BY_SHARES':
                   paidFor = participants.map((p, i) => ({
-                    participant: { id: p.id, name: p.name },
+                    user: { id: p.id, name: p.name },
                     shares: sharesArr[i],
                   }))
                   break
@@ -788,7 +788,7 @@ describe('Property 3: Conservation of money (net balances sum to zero)', () => {
                   const equalShare = Math.floor(10000 / participants.length)
                   const remainder = 10000 - equalShare * participants.length
                   paidFor = participants.map((p, i) => ({
-                    participant: { id: p.id, name: p.name },
+                    user: { id: p.id, name: p.name },
                     shares: equalShare + (i === 0 ? remainder : 0),
                   }))
                   break
@@ -798,7 +798,7 @@ describe('Property 3: Conservation of money (net balances sum to zero)', () => {
                   const equalAmount = Math.floor(amount / participants.length)
                   const remainder = amount - equalAmount * participants.length
                   paidFor = participants.map((p, i) => ({
-                    participant: { id: p.id, name: p.name },
+                    user: { id: p.id, name: p.name },
                     shares: equalAmount + (i === 0 ? remainder : 0),
                   }))
                   break
@@ -971,7 +971,7 @@ describe('Property 11: Extreme expense identification', () => {
       }),
       paidFor: fc.array(
         fc.record({
-          participant: fc.record({
+          user: fc.record({
             id: fc.constantFrom(...participantIds),
             name: fc.string({ minLength: 1, maxLength: 50 }),
           }),
@@ -1113,7 +1113,7 @@ describe('Property 12: Net balance descending sort', () => {
           .tuple(...subset.map(() => fc.integer({ min: 1, max: 100 })))
           .map((shares) =>
             subset.map((p, i) => ({
-              participant: { id: p.id, name: p.name },
+              user: { id: p.id, name: p.name },
               shares: shares[i],
             })),
           ),

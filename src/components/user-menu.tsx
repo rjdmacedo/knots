@@ -10,7 +10,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { logoutAction } from '@/lib/auth/actions'
-import { LogOut, User } from 'lucide-react'
+import { LogOut, Settings, User } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import Link from 'next/link'
 import { useTransition } from 'react'
 
 interface UserMenuProps {
@@ -19,6 +21,7 @@ interface UserMenuProps {
 }
 
 export function UserMenu({ name, email }: UserMenuProps) {
+  const t = useTranslations('UserMenu')
   const [isPending, startTransition] = useTransition()
 
   if (!name && !email) return null
@@ -49,9 +52,15 @@ export function UserMenu({ name, email }: UserMenuProps) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/settings">
+            <Settings className="h-4 w-4 mr-2" />
+            {t('profileSettings')}
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleLogout} disabled={isPending}>
           <LogOut className="h-4 w-4 mr-2" />
-          {isPending ? 'Signing out…' : 'Sign out'}
+          {isPending ? t('signingOut') : t('signOut')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -130,15 +130,43 @@ function createAuthService(emailService: EmailService): AuthService {
         }
       }
 
-      // Check email uniqueness
+      // Check email uniqueness — or claim a placeholder account
       const existingUser = await prisma.user.findUnique({
         where: { email: normalizedEmail },
       })
       if (existingUser) {
+        // If the existing user is a placeholder (empty passwordHash, not verified),
+        // upgrade it to a real account
+        if (!existingUser.passwordHash && !existingUser.emailVerified) {
+          const passwordHash = await hashPassword(input.password)
+          const user = await prisma.user.update({
+            where: { id: existingUser.id },
+            data: {
+              name: input.name.trim(),
+              passwordHash,
+            },
+          })
+
+          // Create verification token and send email
+          const token = await tokenManager.createVerificationToken(user.id)
+          const emailResult2 = await emailService.sendVerificationEmail(
+            normalizedEmail,
+            token,
+          )
+
+          if (!emailResult2.ok) {
+            console.error(
+              `[AuthService] Failed to send verification email to ${normalizedEmail}`,
+            )
+          }
+
+          return { ok: true, userId: user.id }
+        }
+
         return {
           ok: false,
           error: {
-            code: 'EMAIL_EXISTS',
+            code: 'EMAIL_EXISTS' as const,
             message: 'An account with this email already exists.',
           },
         }

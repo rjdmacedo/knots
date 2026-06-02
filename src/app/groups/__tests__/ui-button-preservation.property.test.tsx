@@ -6,7 +6,7 @@
  * enabling click behavior are present:
  *
  * - ShareButton: PopoverTrigger wraps the button → click opens share popover with group URL
- * - PushNotificationToggle: DropdownMenuTrigger wraps the button → click opens notification dropdown
+ * - PushNotificationToggle: PopoverTrigger wraps the button → click opens notification popover
  * - ExportButton: DropdownMenuTrigger wraps the button → click opens export dropdown with JSON/CSV
  * - Create Expense: Link component navigates to /expenses/create
  * - CreateFromReceiptButton: DialogTrigger/DrawerTrigger wraps the button → click opens dialog/drawer
@@ -97,25 +97,25 @@ function shareButtonPreservesClickBehavior(fileContent: string): {
 }
 
 /**
- * Verifies that the PushNotificationToggle preserves its DropdownMenu click behavior.
- * The button must be wrapped in a DropdownMenu with DropdownMenuTrigger and content
- * containing subscribe/unsubscribe checkbox items and participant selection.
+ * Verifies that the PushNotificationToggle preserves its Popover click behavior.
+ * The button must open a panel with Switch for subscribe/unsubscribe and
+ * RadioGroup for participant selection.
  */
 function notificationButtonPreservesClickBehavior(fileContent: string): {
-  hasDropdownMenu: boolean
-  hasDropdownMenuTrigger: boolean
-  hasDropdownMenuContent: boolean
+  hasPopover: boolean
+  hasPopoverTrigger: boolean
+  hasPopoverContent: boolean
   hasSubscribeToggle: boolean
   hasParticipantSelection: boolean
 } {
   return {
-    hasDropdownMenu: fileContent.includes('<DropdownMenu'),
-    hasDropdownMenuTrigger: fileContent.includes('<DropdownMenuTrigger'),
-    hasDropdownMenuContent: fileContent.includes('<DropdownMenuContent'),
-    hasSubscribeToggle: fileContent.includes('DropdownMenuCheckboxItem'),
+    hasPopover: fileContent.includes('<Popover'),
+    hasPopoverTrigger: fileContent.includes('<PopoverTrigger'),
+    hasPopoverContent: fileContent.includes('<PopoverContent'),
+    hasSubscribeToggle: fileContent.includes('<Switch'),
     hasParticipantSelection:
-      fileContent.includes('handleParticipantChange') ||
-      fileContent.includes('participants.map'),
+      fileContent.includes('<RadioGroup') &&
+      fileContent.includes('members.map'),
   }
 }
 
@@ -354,12 +354,12 @@ describe('UI Button Preservation Property Tests', () => {
     })
 
     /**
-     * PushNotificationToggle: Clicking SHALL CONTINUE TO open the notification dropdown
+     * PushNotificationToggle: Clicking SHALL CONTINUE TO open the notification popover
      * with subscribe/unsubscribe and participant selection options.
      *
      * **Validates: Requirements 3.2**
      */
-    it('PushNotificationToggle click SHALL CONTINUE TO open notification dropdown', () => {
+    it('PushNotificationToggle click SHALL CONTINUE TO open notification popover', () => {
       fc.assert(
         fc.property(
           arbButtonState,
@@ -371,9 +371,9 @@ describe('UI Button Preservation Property Tests', () => {
             )
             const result = notificationButtonPreservesClickBehavior(fileContent)
 
-            expect(result.hasDropdownMenu).toBe(true)
-            expect(result.hasDropdownMenuTrigger).toBe(true)
-            expect(result.hasDropdownMenuContent).toBe(true)
+            expect(result.hasPopover).toBe(true)
+            expect(result.hasPopoverTrigger).toBe(true)
+            expect(result.hasPopoverContent).toBe(true)
             expect(result.hasSubscribeToggle).toBe(true)
             expect(result.hasParticipantSelection).toBe(true)
           },
@@ -573,9 +573,9 @@ describe('UI Button Preservation Property Tests', () => {
               }
               case 'PushNotificationToggle': {
                 const r = notificationButtonPreservesClickBehavior(fileContent)
-                expect(r.hasDropdownMenu).toBe(true)
-                expect(r.hasDropdownMenuTrigger).toBe(true)
-                expect(r.hasDropdownMenuContent).toBe(true)
+                expect(r.hasPopover).toBe(true)
+                expect(r.hasPopoverTrigger).toBe(true)
+                expect(r.hasPopoverContent).toBe(true)
                 break
               }
               case 'ExportButton': {

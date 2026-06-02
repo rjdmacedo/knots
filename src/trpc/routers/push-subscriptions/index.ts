@@ -1,7 +1,22 @@
 import { prisma } from '@/lib/prisma'
+import { defaultPushPreferences } from '@/lib/push/subscription-filters'
 import { baseProcedure, createTRPCRouter } from '@/trpc/init'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
+
+const preferencesSchema = z
+  .object({
+    subscriberUserId: z.string().min(1).max(200),
+    notifyAllMembers: z.boolean(),
+    includedUserIds: z.array(z.string().min(1).max(200)).max(50),
+    notifyOnCreate: z.boolean(),
+    notifyOnUpdate: z.boolean(),
+    notifyOnDelete: z.boolean(),
+  })
+  .refine(
+    (p) => p.notifyAllMembers || p.includedUserIds.length > 0,
+    { message: 'Select at least one member.' },
+  )
 
 const createInputSchema = z.object({
   endpoint: z.string().url().max(2048),
@@ -10,7 +25,7 @@ const createInputSchema = z.object({
     auth: z.string().min(1),
   }),
   groupId: z.string().min(1),
-  participantName: z.string().max(50).optional(),
+  preferences: preferencesSchema,
 })
 
 const deleteInputSchema = z.object({
@@ -35,6 +50,19 @@ export const pushSubscriptionsRouter = createTRPCRouter({
       })
     }
 
+    const { preferences } = input
+    const hasEventFilter =
+      preferences.notifyOnCreate ||
+      preferences.notifyOnUpdate ||
+      preferences.notifyOnDelete
+
+    if (!hasEventFilter) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'Select at least one event type.',
+      })
+    }
+
     const subscription = await prisma.pushSubscription.upsert({
       where: {
         endpoint_groupId: {
@@ -47,12 +75,22 @@ export const pushSubscriptionsRouter = createTRPCRouter({
         p256dh: input.keys.p256dh,
         auth: input.keys.auth,
         groupId: input.groupId,
-        participantName: input.participantName ?? null,
+        subscriberUserId: preferences.subscriberUserId,
+        notifyAllMembers: preferences.notifyAllMembers,
+        includedUserIds: preferences.includedUserIds,
+        notifyOnCreate: preferences.notifyOnCreate,
+        notifyOnUpdate: preferences.notifyOnUpdate,
+        notifyOnDelete: preferences.notifyOnDelete,
       },
       update: {
         p256dh: input.keys.p256dh,
         auth: input.keys.auth,
-        participantName: input.participantName ?? null,
+        subscriberUserId: preferences.subscriberUserId,
+        notifyAllMembers: preferences.notifyAllMembers,
+        includedUserIds: preferences.includedUserIds,
+        notifyOnCreate: preferences.notifyOnCreate,
+        notifyOnUpdate: preferences.notifyOnUpdate,
+        notifyOnDelete: preferences.notifyOnDelete,
       },
     })
 
@@ -75,10 +113,16 @@ export const pushSubscriptionsRouter = createTRPCRouter({
       where: { endpoint: input.endpoint },
       select: {
         groupId: true,
-        participantName: true,
+        subscriberUserId: true,
+        notifyAllMembers: true,
+        includedUserIds: true,
+        notifyOnCreate: true,
+        notifyOnUpdate: true,
+        notifyOnDelete: true,
       },
     })
 
     return subscriptions
   }),
 })
+

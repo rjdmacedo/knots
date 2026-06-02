@@ -3,8 +3,6 @@ import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
@@ -17,38 +15,29 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from '@/components/ui/hover-card'
 import { Input } from '@/components/ui/input'
 import { Locale } from '@/i18n'
-import { getGroup } from '@/lib/api'
 import { defaultCurrencyList, getCurrency } from '@/lib/currency'
 import { GroupFormValues, groupFormSchema } from '@/lib/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Save, Trash2 } from 'lucide-react'
+import { Save } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { useFieldArray, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { CurrencySelector } from './currency-selector'
 import { Textarea } from './ui/textarea'
 
 export type Props = {
-  group?: NonNullable<Awaited<ReturnType<typeof getGroup>>>
-  onSubmit: (
-    groupFormValues: GroupFormValues,
-    participantId?: string,
-  ) => Promise<void>
-  protectedParticipantIds?: string[]
+  group?: {
+    name: string
+    information: string | null
+    currency: string
+    currencyCode: string | null
+  }
+  onSubmit: (groupFormValues: GroupFormValues) => Promise<void>
 }
 
-export function GroupForm({
-  group,
-  onSubmit,
-  protectedParticipantIds = [],
-}: Props) {
+export function GroupForm({ group, onSubmit }: Props) {
   const locale = useLocale()
   const t = useTranslations('GroupForm')
   const form = useForm<GroupFormValues>({
@@ -59,7 +48,6 @@ export function GroupForm({
           information: group.information ?? '',
           currency: group.currency,
           currencyCode: group.currencyCode,
-          participants: group.participants,
         }
       : {
           name: '',
@@ -67,18 +55,8 @@ export function GroupForm({
           currency: getCurrency(
             process.env.NEXT_PUBLIC_DEFAULT_CURRENCY_CODE || 'USD',
           ).symbol,
-          currencyCode: process.env.NEXT_PUBLIC_DEFAULT_CURRENCY_CODE || 'USD', // TODO: If NEXT_PUBLIC_DEFAULT_CURRENCY_CODE, is not set, determine the default currency code based on locale
-          participants: [
-            { name: t('Participants.John') },
-            { name: t('Participants.Jane') },
-            { name: t('Participants.Jack') },
-          ],
+          currencyCode: process.env.NEXT_PUBLIC_DEFAULT_CURRENCY_CODE || 'USD',
         },
-  })
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: 'participants',
-    keyName: 'key',
   })
 
   return (
@@ -200,85 +178,6 @@ export function GroupForm({
               )}
             />
           </CardContent>
-        </Card>
-
-        <Card className="mb-4">
-          <CardHeader>
-            <CardTitle>{t('Participants.title')}</CardTitle>
-            <CardDescription>{t('Participants.description')}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ul className="flex flex-col gap-2">
-              {fields.map((item, index) => (
-                <li key={item.key}>
-                  <FormField
-                    control={form.control}
-                    name={`participants.${index}.name`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="sr-only">
-                          Participant #{index + 1}
-                        </FormLabel>
-                        <FormControl>
-                          <div className="flex gap-2">
-                            <Input
-                              className="text-base"
-                              {...field}
-                              placeholder={t('Participants.new')}
-                            />
-                            {item.id &&
-                            protectedParticipantIds.includes(item.id) ? (
-                              <HoverCard>
-                                <HoverCardTrigger>
-                                  <Button
-                                    variant="ghost"
-                                    className="text-destructive-"
-                                    type="button"
-                                    size="icon"
-                                    disabled
-                                  >
-                                    <Trash2 className="w-4 h-4 text-destructive opacity-50" />
-                                  </Button>
-                                </HoverCardTrigger>
-                                <HoverCardContent
-                                  align="end"
-                                  className="text-sm"
-                                >
-                                  {t('Participants.protectedParticipant')}
-                                </HoverCardContent>
-                              </HoverCard>
-                            ) : (
-                              <Button
-                                variant="ghost"
-                                className="text-destructive"
-                                onClick={() => remove(index)}
-                                type="button"
-                                size="icon"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            )}
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-          <CardFooter>
-            <Button
-              variant="secondary"
-              onClick={() => {
-                append({ name: '' })
-              }}
-              type="button"
-            >
-              {t('Participants.add')}
-            </Button>
-          </CardFooter>
         </Card>
 
         <div className="flex mt-4 gap-2">

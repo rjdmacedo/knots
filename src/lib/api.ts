@@ -11,6 +11,7 @@ import {
   RecurrenceRule,
   RecurringExpenseLink,
 } from '@prisma/client'
+import { TRPCError } from '@trpc/server'
 import { nanoid } from 'nanoid'
 
 export function randomId() {
@@ -25,33 +26,31 @@ export async function createGroup(groupFormValues: GroupFormValues) {
       information: groupFormValues.information,
       currency: groupFormValues.currency,
       currencyCode: groupFormValues.currencyCode,
-      participants: {
-        createMany: {
-          data: groupFormValues.participants.map(({ name }) => ({
-            id: randomId(),
-            name,
-          })),
-        },
+    },
+    include: {
+      memberships: {
+        include: { user: { select: { id: true, name: true, email: true } } },
       },
     },
-    include: { participants: true },
   })
 }
 
 export async function createExpense(
   expenseFormValues: ExpenseFormValues,
   groupId: string,
-  participantId?: string,
 ): Promise<Expense> {
   const group = await getGroup(groupId)
-  if (!group) throw new Error(`Invalid group ID: ${groupId}`)
+  if (!group) throw new TRPCError({ code: 'NOT_FOUND', message: `Group not found: ${groupId}` })
 
-  for (const participant of [
-    expenseFormValues.paidBy,
-    ...expenseFormValues.paidFor.map((p) => p.participant),
-  ]) {
-    if (!group.participants.some((p) => p.id === participant))
-      throw new Error(`Invalid participant ID: ${participant}`)
+  const memberIds = new Set(group.participants.map((p) => p.id))
+
+  if (!memberIds.has(expenseFormValues.paidBy)) {
+    throw new TRPCError({ code: 'BAD_REQUEST', message: 'paidBy user is not a group member' })
+  }
+  for (const pf of expenseFormValues.paidFor) {
+    if (!memberIds.has(pf.participant)) {
+      throw new TRPCError({ code: 'BAD_REQUEST', message: `User ${pf.participant} is not a group member` })
+    }
   }
 
   const expenseId = randomId()
@@ -66,7 +65,6 @@ export async function createExpense(
   ]
 
   await logActivity(groupId, ActivityType.CREATE_EXPENSE, {
-    participantId,
     expenseId,
     data: expenseFormValues.title,
     changes,
@@ -104,7 +102,7 @@ export async function createExpense(
       paidFor: {
         createMany: {
           data: expenseFormValues.paidFor.map((paidFor) => ({
-            participantId: paidFor.participant,
+            userId: paidFor.participant,
             shares: paidFor.shares,
           })),
         },
@@ -128,7 +126,7 @@ export async function createExpense(
 export async function deleteExpense(
   groupId: string,
   expenseId: string,
-  participantId?: string,
+  userId?: string,
 ) {
   const existingExpense = await getExpense(groupId, expenseId)
 
@@ -147,7 +145,7 @@ export async function deleteExpense(
   ]
 
   await logActivity(groupId, ActivityType.DELETE_EXPENSE, {
-    participantId,
+    userId,
     expenseId,
     data: existingExpense?.title,
     changes,
@@ -159,13 +157,14 @@ export async function deleteExpense(
   })
 }
 
-export async function getGroupExpensesParticipants(groupId: string) {
+/** Returns the set of User IDs that appear in any expense for the group (as payer or payee) */
+export async function getGroupExpenseUserIds(groupId: string) {
   const expenses = await getGroupExpenses(groupId)
   return Array.from(
     new Set(
       expenses.flatMap((e) => [
         e.paidBy.id,
-        ...e.paidFor.map((pf) => pf.participant.id),
+        ...e.paidFor.map((pf) => pf.user.id),
       ]),
     ),
   )
@@ -175,10 +174,11 @@ export async function getGroups(groupIds: string[]) {
   return (
     await prisma.group.findMany({
       where: { id: { in: groupIds } },
-      include: { _count: { select: { participants: true } } },
+      include: { _count: { select: { memberships: true } } },
     })
   ).map((group) => ({
     ...group,
+    _count: { participants: group._count.memberships },
     createdAt: group.createdAt.toISOString(),
   }))
 }
@@ -187,24 +187,27 @@ export async function updateExpense(
   groupId: string,
   expenseId: string,
   expenseFormValues: ExpenseFormValues,
-  participantId?: string,
+  userId?: string,
 ) {
   const group = await getGroup(groupId)
-  if (!group) throw new Error(`Invalid group ID: ${groupId}`)
+  if (!group) throw new TRPCError({ code: 'NOT_FOUND', message: `Group not found: ${groupId}` })
 
   const existingExpense = await getExpense(groupId, expenseId)
-  if (!existingExpense) throw new Error(`Invalid expense ID: ${expenseId}`)
+  if (!existingExpense) throw new TRPCError({ code: 'NOT_FOUND', message: `Expense not found: ${expenseId}` })
 
-  for (const participant of [
-    expenseFormValues.paidBy,
-    ...expenseFormValues.paidFor.map((p) => p.participant),
-  ]) {
-    if (!group.participants.some((p) => p.id === participant))
-      throw new Error(`Invalid participant ID: ${participant}`)
+  const memberIds = new Set(group.participants.map((p) => p.id))
+
+  if (!memberIds.has(expenseFormValues.paidBy)) {
+    throw new TRPCError({ code: 'BAD_REQUEST', message: 'paidBy user is not a group member' })
+  }
+  for (const pf of expenseFormValues.paidFor) {
+    if (!memberIds.has(pf.participant)) {
+      throw new TRPCError({ code: 'BAD_REQUEST', message: `User ${pf.participant} is not a group member` })
+    }
   }
 
   await logActivity(groupId, ActivityType.UPDATE_EXPENSE, {
-    participantId,
+    userId,
     expenseId,
     data: expenseFormValues.title,
     changes: computeExpenseChanges(existingExpense, expenseFormValues),
@@ -255,30 +258,32 @@ export async function updateExpense(
           .filter(
             (p) =>
               !existingExpense.paidFor.some(
-                (pp) => pp.participantId === p.participant,
+                (pp) => pp.userId === p.participant,
               ),
           )
           .map((paidFor) => ({
-            participantId: paidFor.participant,
+            userId: paidFor.participant,
             shares: paidFor.shares,
           })),
         update: expenseFormValues.paidFor.map((paidFor) => ({
           where: {
-            expenseId_participantId: {
+            expenseId_userId: {
               expenseId,
-              participantId: paidFor.participant,
+              userId: paidFor.participant,
             },
           },
           data: {
             shares: paidFor.shares,
           },
         })),
-        deleteMany: existingExpense.paidFor.filter(
-          (paidFor) =>
-            !expenseFormValues.paidFor.some(
-              (pf) => pf.participant === paidFor.participantId,
-            ),
-        ),
+        deleteMany: existingExpense.paidFor
+          .filter(
+            (paidFor) =>
+              !expenseFormValues.paidFor.some(
+                (pf) => pf.participant === paidFor.userId,
+              ),
+          )
+          .map((pf) => ({ expenseId: pf.expenseId, userId: pf.userId })),
       },
       recurringExpenseLink: {
         ...(isCreateRecurrenceExpenseLink
@@ -320,7 +325,6 @@ export async function updateExpense(
 export async function updateGroup(
   groupId: string,
   groupFormValues: GroupFormValues,
-  participantId?: string,
 ) {
   const existingGroup = await getGroup(groupId)
   if (!existingGroup) throw new Error('Invalid group ID')
@@ -328,7 +332,6 @@ export async function updateGroup(
   const changes = computeGroupChanges(existingGroup, groupFormValues)
 
   await logActivity(groupId, ActivityType.UPDATE_GROUP, {
-    participantId,
     changes,
   })
 
@@ -339,36 +342,31 @@ export async function updateGroup(
       information: groupFormValues.information,
       currency: groupFormValues.currency,
       currencyCode: groupFormValues.currencyCode,
-      participants: {
-        deleteMany: existingGroup.participants.filter(
-          (p) => !groupFormValues.participants.some((p2) => p2.id === p.id),
-        ),
-        updateMany: groupFormValues.participants
-          .filter((participant) => participant.id !== undefined)
-          .map((participant) => ({
-            where: { id: participant.id },
-            data: {
-              name: participant.name,
-            },
-          })),
-        createMany: {
-          data: groupFormValues.participants
-            .filter((participant) => participant.id === undefined)
-            .map((participant) => ({
-              id: randomId(),
-              name: participant.name,
-            })),
-        },
-      },
     },
   })
 }
 
 export async function getGroup(groupId: string) {
-  return prisma.group.findUnique({
+  const group = await prisma.group.findUnique({
     where: { id: groupId },
-    include: { participants: true },
+    include: {
+      memberships: {
+        include: { user: { select: { id: true, name: true, email: true } } },
+      },
+    },
   })
+
+  if (!group) return null
+
+  // Map memberships to a participants-compatible shape for backward compatibility
+  return {
+    ...group,
+    participants: group.memberships.map((m) => ({
+      id: m.user.id,
+      name: m.user.name,
+      email: m.user.email,
+    })),
+  }
 }
 
 export async function getCategories() {
@@ -392,7 +390,7 @@ export async function getGroupExpenses(
       paidBy: { select: { id: true, name: true } },
       paidFor: {
         select: {
-          participant: { select: { id: true, name: true } },
+          user: { select: { id: true, name: true } },
           shares: true,
         },
       },
@@ -421,8 +419,12 @@ export async function getExpense(groupId: string, expenseId: string) {
   return prisma.expense.findUnique({
     where: { id: expenseId },
     include: {
-      paidBy: true,
-      paidFor: true,
+      paidBy: { select: { id: true, name: true, email: true } },
+      paidFor: {
+        include: {
+          user: { select: { id: true, name: true, email: true } },
+        },
+      },
       category: true,
       documents: true,
       recurringExpenseLink: true,
@@ -465,19 +467,22 @@ export async function logActivity(
   groupId: string,
   activityType: ActivityType,
   extra?: {
-    participantId?: string
+    /** User ID of the actor performing the activity */
+    userId?: string
     expenseId?: string
     data?: string
     changes?: FieldChange[]
   },
 ) {
-  const { changes, ...activityExtra } = extra ?? {}
+  const { changes, userId, ...activityExtra } = extra ?? {}
 
   const activity = await prisma.activity.create({
     data: {
       id: randomId(),
       groupId,
       activityType,
+      // Activity.participantId column stores the User ID of the actor
+      participantId: userId,
       ...activityExtra,
       ...(changes && changes.length > 0
         ? {
@@ -567,7 +572,7 @@ async function createRecurringExpenses() {
               paidFor: {
                 createMany: {
                   data: currentExpenseRecord.paidFor.map((paidFor) => ({
-                    participantId: paidFor.participantId,
+                    userId: paidFor.userId,
                     shares: paidFor.shares,
                   })),
                 },

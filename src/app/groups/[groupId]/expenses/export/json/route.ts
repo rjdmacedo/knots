@@ -25,22 +25,34 @@ export async function GET(
           originalCurrency: true,
           conversionRate: true,
           paidById: true,
-          paidFor: { select: { participantId: true, shares: true } },
+          paidFor: { select: { userId: true, shares: true } },
           isReimbursement: true,
           splitMode: true,
           recurrenceRule: true,
         },
         orderBy: [{ expenseDate: 'asc' }, { createdAt: 'asc' }],
       },
-      participants: { select: { id: true, name: true } },
+      memberships: {
+        include: { user: { select: { id: true, name: true } } },
+      },
     },
   })
   if (!group)
     return NextResponse.json({ error: 'Invalid group ID' }, { status: 404 })
 
+  // Map to backward-compatible export shape
+  const exportData = {
+    ...group,
+    participants: group.memberships.map((m) => ({
+      id: m.user.id,
+      name: m.user.name,
+    })),
+    memberships: undefined,
+  }
+
   const date = new Date().toISOString().split('T')[0]
   const filename = `Knots Export - ${date}`
-  return NextResponse.json(group, {
+  return NextResponse.json(exportData, {
     headers: {
       'content-type': 'application/json',
       'content-disposition': contentDisposition(`${filename}.json`),

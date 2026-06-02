@@ -11,14 +11,14 @@ import { dispatchNotifications } from './dispatch-notifications'
 export function notifyOnActivity(
   groupId: string,
   activityType: ActivityType,
-  extra?: { participantId?: string; expenseId?: string; data?: string },
+  extra?: { userId?: string; expenseId?: string; data?: string },
 ): void {
   if (!env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY) {
     return
   }
 
   dispatchNotifications(groupId, activityType, {
-    participantId: extra?.participantId,
+    userId: extra?.userId,
     expenseId: extra?.expenseId,
     data: extra?.data,
   }).catch((error) => {

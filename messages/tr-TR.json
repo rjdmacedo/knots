@@ -16,6 +16,7 @@
     "create": "Masraf oluştur",
     "createFirst": "İlk masrafı oluştur",
     "noExpenses": "Grubunuzda henüz herhangi bir masraf yok.",
+    "export": "Export",
     "exportJson": "JSON olarak dışa aktar",
     "exportCsv": "CSV olarak dışa aktar",
     "searchPlaceholder": "Bir masraf arayın…",
@@ -38,8 +39,10 @@
   },
   "ExpenseCard": {
     "paidBy": "<strong>{paidBy}</strong> tarafından ödendi, <paidFor></paidFor> için",
+    "everyone": "everyone",
     "receivedBy": "<strong>{paidBy}</strong> tarafından alındı, <paidFor></paidFor> için",
-    "yourBalance": "Bakiyeniz:"
+    "yourBalance": "Bakiyeniz:",
+    "notInvolved": "You are not involved"
   },
   "Groups": {
     "myGroups": "Gruplarım",
@@ -56,6 +59,8 @@
     "archive": "Grubu arşivle",
     "unarchive": "Arşivden çıkar",
     "removeRecent": "Son gruplardan kaldır",
+    "enableNotifications": "Bildirimleri etkinleştir",
+    "disableNotifications": "Bildirimleri devre dışı bırak",
     "RecentRemovedToast": {
       "title": "Grup kaldırıldı",
       "description": "Grup son gruplar listenizden kaldırıldı.",
@@ -89,10 +94,17 @@
       "placeholder": "$, €, £…",
       "description": "Tutarları göstermek için kullanacağız."
     },
+    "CurrencyCodeField": {
+      "label": "Main currency",
+      "createDescription": "All amounts and balances will be in this currency.",
+      "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
+      "customOption": "Custom"
+    },
     "Participants": {
       "title": "Katılımcılar",
       "description": "Her katılımcı için bir ad girin.",
       "protectedParticipant": "Bu katılımcı masraflara dahil olduğundan kaldırılamaz.",
+      "noLongerInGroup": "artık bu grupta değil",
       "new": "Yeni",
       "add": "Katılımcı ekle",
       "John": "John",
@@ -128,6 +140,10 @@
         "label": "Gelir tarihi",
         "description": "Gelirin alındığı tarihi girin."
       },
+      "currencyField": {
+        "label": "Gelir para birimi",
+        "description": "Gelirin alındığı para birimi."
+      },
       "categoryFieldDescription": "Gelir kategorisini seçin.",
       "paidByField": {
         "label": "Geliri alan",
@@ -152,10 +168,23 @@
         "label": "Masraf tarihi",
         "description": "Masrafın ödendiği tarihi girin."
       },
+      "currencyField": {
+        "label": "Gider para birimi",
+        "description": "Giderin ödendiği para birimi."
+      },
       "categoryFieldDescription": "Masraf kategorisini seçin.",
       "paidByField": {
         "label": "Ödeyen",
+        "placeholder": "Select a participant",
         "description": "Masrafı ödeyen katılımcıyı seçin."
+      },
+      "recurrenceRule": {
+        "label": "Expense Recurrence",
+        "description": "Select how often the expense should repeat.",
+        "none": "None",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly"
       },
       "paidFor": {
         "title": "Masraf kimin için ödendi",
@@ -166,6 +195,27 @@
     },
     "amountField": {
       "label": "Tutar"
+    },
+    "conversionUnavailable": "Gider başına farklı para birimi belirlemek ve tutarları dönüştürmek için grup için özel olmayan bir para birimi seçin.",
+    "originalAmountField": {
+      "label": "Dönüştürülecek tutar"
+    },
+    "conversionRateField": {
+      "useApi": "Frankfurter kurlarını kullan",
+      "useCustom": "Özel kur kullan",
+      "label": "Döviz kuru"
+    },
+    "conversionRateState": {
+      "loading": "Döviz kurları alınıyor…",
+      "success": "Alınan kurlar:",
+      "error": "En güncel kurlar alınamadı.",
+      "staleRate": "Kullanılan kur:",
+      "noRate": "Aşağıya özel bir kur girin.",
+      "currencyNotFound": "Frankfurter bu tarihte bu para birimi için kur sunmuyor.",
+      "noDate": "Dönüşüm kuru için gider tarihini girin.",
+      "dateMismatch": "Tarih kurları: {date}",
+      "refresh": "Yenile",
+      "customRate": "Özel kur kullanılıyor"
     },
     "isReimbursementField": {
       "label": "Bu bir geri ödeme"
@@ -178,6 +228,7 @@
     },
     "selectNone": "Hiçbirini seçme",
     "selectAll": "Hepsini seç",
+    "noLongerInGroup": "artık bu grupta değil",
     "shares": "pay",
     "advancedOptions": "Gelişmiş paylaşım seçenekleri…",
     "SplitModeField": {
@@ -366,7 +417,28 @@
       "earlierThisYear": "Bu yılın başlarında",
       "lastYear": "Geçen yıl",
       "older": "Daha eski"
-    }
+    },
+    "fieldLabels": {
+      "title": "Başlık",
+      "amount": "Tutar",
+      "expenseDate": "Tarih",
+      "category": "Kategori",
+      "paidBy": "Ödeyen",
+      "splitMode": "Bölme modu",
+      "isReimbursement": "Geri ödeme",
+      "notes": "Notlar",
+      "recurrenceRule": "Tekrar",
+      "paidFor": "Ödenen",
+      "name": "Ad",
+      "information": "Bilgi",
+      "currency": "Para birimi",
+      "participants": "Katılımcılar"
+    },
+    "showMoreChanges": "{count} değişiklik daha göster",
+    "showLess": "Daha az göster",
+    "yes": "Evet",
+    "no": "Hayır",
+    "fieldChangesCount": "{count} alan değişikliği"
   },
   "Information": {
     "title": "Bilgi",
@@ -394,6 +466,7 @@
     "amountRequired": "Bir tutar girmelisiniz.",
     "amountNotZero": "Tutar sıfır olamaz.",
     "amountTenMillion": "Tutar 10.000.000'dan düşük olmalı.",
+    "ratePositive": "Kur sıfırdan büyük olmalıdır.",
     "paidByRequired": "Bir katılımcı seçmelisiniz.",
     "paidForMin1": "Masraf en az bir katılımcı için ödenmiş olmalıdır.",
     "noZeroShares": "Tüm paylar 0'dan büyük olmalıdır.",
@@ -439,6 +512,7 @@
       "heading": "Yaşam",
       "Childcare": "Çocuk Bakımı",
       "Clothing": "Giyim",
+      "Donation": "Donation",
       "Education": "Eğitim",
       "Gifts": "Hediyeler",
       "Insurance": "Sigorta",
@@ -468,6 +542,124 @@
       "Water": "Su"
     }
   },
+  "Currencies": {
+    "search": "Search currency...",
+    "noCurrency": "No currencies found.",
+    "custom": {
+      "heading": "Custom"
+    },
+    "common": {
+      "heading": "Most common"
+    },
+    "other": {
+      "heading": "Other currencies"
+    }
+  },
+  "SplitwiseImport": {
+    "button": "Import from Splitwise",
+    "title": "Import from Splitwise",
+    "description": "Upload a CSV file exported from Splitwise to import expenses into this group. Make sure the participant names in the CSV match the names in this group.",
+    "fileLabel": "CSV File",
+    "previewLabel": "Preview (first 10 lines)",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "import": "Import Expenses",
+    "importing": "Importing...",
+    "toast": {
+      "invalidFileType": {
+        "title": "Invalid file type",
+        "description": "Please select a CSV file."
+      },
+      "noContent": {
+        "title": "No CSV content",
+        "description": "Please select a CSV file first."
+      },
+      "success": {
+        "title": "Import successful",
+        "description": "Successfully imported {count} expenses from Splitwise."
+      },
+      "error": {
+        "title": "Import failed",
+        "description": "Failed to import CSV file."
+      }
+    }
+  },
+  "ProfileSettings": {
+    "title": "Profil ayarları",
+    "emailTitle": "E-posta",
+    "emailDescription": "E-posta adresiniz değiştirilemez.",
+    "displayNameTitle": "Görünen ad",
+    "passwordTitle": "Parola",
+    "NameForm": {
+      "nameRequired": "Ad gereklidir",
+      "nameMaxLength": "Ad en fazla 100 karakter olmalıdır",
+      "successToast": "Görünen ad başarıyla güncellendi.",
+      "label": "Görünen ad",
+      "placeholder": "Görünen adınızı girin",
+      "saving": "Kaydediliyor…",
+      "submit": "Adı kaydet"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "Mevcut parola gereklidir",
+      "newPasswordRequired": "Yeni parola gereklidir",
+      "confirmPasswordRequired": "Lütfen yeni parolanızı onaylayın",
+      "passwordsDoNotMatch": "Parolalar eşleşmiyor",
+      "successToast": "Parola başarıyla değiştirildi.",
+      "currentPasswordIncorrect": "Mevcut parola yanlış",
+      "newPasswordSameAsCurrent": "Yeni parola mevcut olandan farklı olmalıdır",
+      "passwordRequirementsNotMet": "Parola gereksinimleri karşılanmıyor",
+      "currentPasswordLabel": "Mevcut parola",
+      "newPasswordLabel": "Yeni parola",
+      "confirmPasswordLabel": "Yeni parolayı onayla",
+      "passwordHint": "En az 8, en fazla 128 karakter. En az bir büyük harf, bir küçük harf ve bir rakam içermelidir.",
+      "changingPassword": "Parola değiştiriliyor…",
+      "submit": "Parolayı değiştir",
+      "errorTooShort": "En az 8 karakter olmalıdır",
+      "errorTooLong": "En fazla 128 karakter olmalıdır",
+      "errorMissingUppercase": "En az bir büyük harf içermelidir",
+      "errorMissingLowercase": "En az bir küçük harf içermelidir",
+      "errorMissingDigit": "En az bir rakam içermelidir"
+    }
+  },
+  "Members": {
+    "addedToGroup": "{name} gruba eklendi.",
+    "memberRemoved": "Üye gruptan kaldırıldı.",
+    "youLeftGroup": "Gruptan ayrıldınız.",
+    "memberPromoted": "Üye sahip olarak yükseltildi.",
+    "memberDemoted": "Üye normal üyeye indirildi.",
+    "addMember": "Üye ekle",
+    "adding": "Ekleniyor…",
+    "add": "Ekle",
+    "cancel": "İptal",
+    "leaveGroup": "Gruptan ayrıl",
+    "leaveGroupDescription": "Bu gruptan ayrılmak istediğinize emin misiniz? Geçmiş giderleriniz grup geçmişinde kalacaktır.",
+    "leave": "Ayrıl",
+    "removeFromGroup": "Gruptan kaldır",
+    "promoteToOwner": "Sahip yap",
+    "demoteToMember": "Üyeye indir"
+  },
+  "MyGroups": {
+    "title": "Gruplarım",
+    "loading": "Gruplarınız yükleniyor…",
+    "loadError": "Gruplar yüklenemedi. Lütfen daha sonra tekrar deneyin.",
+    "noGroups": "Henüz hiçbir grubun üyesi değilsiniz.",
+    "noGroupsHint": "Başkalarıyla gider paylaşmaya başlamak için bir grup oluşturun.",
+    "createGroup": "Grup oluştur",
+    "createGroupTitle": "Yeni grup oluştur",
+    "createGroupDescription": "Grubunuz için bir ad girin. Oluşturduktan sonra üye davet edebilirsiniz.",
+    "groupNameLabel": "Grup adı",
+    "characters": "karakter",
+    "leaveGroup": "Gruptan ayrıl",
+    "leaveGroupConfirmTitle": "Gruptan ayrıl",
+    "leaveGroupConfirmDescription": "\"{name}\" grubundan ayrılmak istediğinize emin misiniz? Geçmiş giderleriniz grup geçmişinde kalacaktır.",
+    "leaveGroupConfirmCancel": "İptal",
+    "leaveGroupConfirmAction": "Ayrıl"
+  },
+  "UserMenu": {
+    "profileSettings": "Profil ayarları",
+    "signingOut": "Çıkış yapılıyor…",
+    "signOut": "Çıkış yap"
+  },
   "Notifications": {
     "subscribe": "Bildirimleri etkinleştir",
     "unsubscribe": "Bildirimleri devre dışı bırak",
@@ -475,12 +667,21 @@
     "noParticipant": "Tüm değişiklikler",
     "permissionDenied": "Bildirim izni reddedildi. Tarayıcı ayarlarınızdan etkinleştirin.",
     "notSupported": "Bu cihazda push bildirimleri desteklenmiyor.",
-    "error": "Bildirimler etkinleştirilemedi. Lütfen tekrar deneyin.",
     "expenseCreated": "{actor} \"{title}\" ekledi",
     "expenseUpdated": "{actor} \"{title}\" güncelledi",
     "expenseDeleted": "{actor} \"{title}\" sildi",
     "groupUpdated": "{actor} \"{group}\" grubunu güncelledi",
     "notificationTitle": "Knots – {group}",
-    "defaultBody": "Grubunuzda yeni etkinlik"
+    "defaultBody": "Grubunuzda yeni etkinlik",
+    "filterHint": "Kimin değişikliklerinden haberdar olacağınızı ve hangi olayları seçin.",
+    "subscribeError": "Bildirimler etkinleştirilemedi. Lütfen tekrar deneyin.",
+    "membersLabel": "Beni şunlar hakkında bilgilendir",
+    "notifyAllMembers": "Gruptaki herkes",
+    "notifySpecificMembers": "Veya yalnızca bu üyeler:",
+    "eventsLabel": "Olaylar",
+    "eventCreate": "Gider oluşturuldu",
+    "eventUpdate": "Gider güncellendi",
+    "eventDelete": "Gider silindi",
+    "selectAtLeastOneFilter": "En az bir üye veya olay seçin."
   }
 }

@@ -39,8 +39,10 @@
   },
   "ExpenseCard": {
     "paidBy": "Pagado por <strong>{paidBy}</strong> para <paidFor></paidFor>",
+    "everyone": "everyone",
     "receivedBy": "Recibido por <strong>{paidBy}</strong> para <paidFor></paidFor>",
-    "yourBalance": "Tu balance:"
+    "yourBalance": "Tu balance:",
+    "notInvolved": "You are not involved"
   },
   "Groups": {
     "myGroups": "Mis grupos",
@@ -57,6 +59,8 @@
     "archive": "Archivar grupo",
     "unarchive": "Desarchivar groupo",
     "removeRecent": "Remove from recent groups",
+    "enableNotifications": "Activar notificaciones",
+    "disableNotifications": "Desactivar notificaciones",
     "RecentRemovedToast": {
       "title": "El grupo fue eliminado",
       "description": "El grupo ha sido eliminado de tu lista de grupos recientes.",
@@ -90,10 +94,17 @@
       "placeholder": "$, €, £…",
       "description": "Lo usaremos para mostrar balances."
     },
+    "CurrencyCodeField": {
+      "label": "Main currency",
+      "createDescription": "All amounts and balances will be in this currency.",
+      "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
+      "customOption": "Custom"
+    },
     "Participants": {
       "title": "Participantes",
       "description": "Ingresa el nombre de cada participante.",
       "protectedParticipant": "Estos participantes forman parte de gastos y no pueden ser eliminados.",
+      "noLongerInGroup": "ya no está en este grupo",
       "new": "Nuevo",
       "add": "Añadir participante",
       "John": "Juan",
@@ -129,6 +140,10 @@
         "label": "Fecha del ingreso",
         "description": "Ingresa la fecha en que se recibio el ingreso."
       },
+      "currencyField": {
+        "label": "Moneda del ingreso",
+        "description": "La moneda en la que se recibió el ingreso."
+      },
       "categoryFieldDescription": "Seleccione la categoría de ingresos.",
       "paidByField": {
         "label": "Recibido por",
@@ -153,9 +168,14 @@
         "label": "Fecha del gasto",
         "description": "Ingresa la fecha en que se recibio el gasto."
       },
+      "currencyField": {
+        "label": "Moneda del gasto",
+        "description": "La moneda en la que se pagó el gasto."
+      },
       "categoryFieldDescription": "Select the expense category.",
       "paidByField": {
         "label": "Pagado por",
+        "placeholder": "Select a participant",
         "description": "Seleccione el participante que pagó el gasto."
       },
       "recurrenceRule": {
@@ -176,6 +196,27 @@
     "amountField": {
       "label": "Cantidad"
     },
+    "conversionUnavailable": "Para establecer una moneda diferente por gasto y convertir importes, selecciona una moneda no personalizada para el grupo.",
+    "originalAmountField": {
+      "label": "Importe a convertir"
+    },
+    "conversionRateField": {
+      "useApi": "Usar tipos de Frankfurter",
+      "useCustom": "Usar tipo personalizado",
+      "label": "Tipo de cambio"
+    },
+    "conversionRateState": {
+      "loading": "Obteniendo tipos de cambio…",
+      "success": "Tipos obtenidos:",
+      "error": "Vaya, no pudimos obtener los tipos más recientes.",
+      "staleRate": "Tipo usado:",
+      "noRate": "Introduce un tipo personalizado abajo.",
+      "currencyNotFound": "Vaya, Frankfurter no tiene el tipo para esta moneda en esa fecha.",
+      "noDate": "Introduce la fecha del gasto para obtener un tipo de conversión.",
+      "dateMismatch": "Tipos de la fecha: {date}",
+      "refresh": "Actualizar",
+      "customRate": "Usando tipo personalizado"
+    },
     "isReimbursementField": {
       "label": "Esto es un reembolso"
     },
@@ -187,6 +228,7 @@
     },
     "selectNone": "Seleccionar ninguno",
     "selectAll": "Seleccionar todos",
+    "noLongerInGroup": "ya no está en este grupo",
     "shares": "partes",
     "advancedOptions": "Opciones avanzadas",
     "SplitModeField": {
@@ -375,7 +417,28 @@
       "earlierThisYear": "A principios de este año",
       "lastYear": "El ultimo año",
       "older": "Más antiguos"
-    }
+    },
+    "fieldLabels": {
+      "title": "Título",
+      "amount": "Importe",
+      "expenseDate": "Fecha",
+      "category": "Categoría",
+      "paidBy": "Pagado por",
+      "splitMode": "Modo de reparto",
+      "isReimbursement": "Reembolso",
+      "notes": "Notas",
+      "recurrenceRule": "Recurrencia",
+      "paidFor": "Pagado para",
+      "name": "Nombre",
+      "information": "Información",
+      "currency": "Moneda",
+      "participants": "Participantes"
+    },
+    "showMoreChanges": "Mostrar {count} cambios más",
+    "showLess": "Mostrar menos",
+    "yes": "Sí",
+    "no": "No",
+    "fieldChangesCount": "{count} cambios de campos"
   },
   "Information": {
     "title": "Información",
@@ -403,6 +466,7 @@
     "amountRequired": "Debe introducir un importe",
     "amountNotZero": "El importe no debe ser cero.",
     "amountTenMillion": "El importe debe ser inferior a 10.000.000.",
+    "ratePositive": "El tipo debe ser estrictamente mayor que cero.",
     "paidByRequired": "Debe seleccionar un participante",
     "paidForMin1": "El gasto debe ser pagado por al menos un participante",
     "noZeroShares": "Todas las participaciones deben ser superiores a 0",
@@ -448,6 +512,7 @@
       "heading": "Vida",
       "Childcare": "Cuidado de niños",
       "Clothing": "Ropa",
+      "Donation": "Donation",
       "Education": "Educación",
       "Gifts": "Regalos",
       "Insurance": "Seguro",
@@ -475,6 +540,19 @@
       "Trash": "Basura",
       "TV/Phone/Internet": "TV/Teléfono/Internet",
       "Water": "Agua"
+    }
+  },
+  "Currencies": {
+    "search": "Search currency...",
+    "noCurrency": "No currencies found.",
+    "custom": {
+      "heading": "Custom"
+    },
+    "common": {
+      "heading": "Most common"
+    },
+    "other": {
+      "heading": "Other currencies"
     }
   },
   "SplitwiseImport": {
@@ -506,6 +584,82 @@
       }
     }
   },
+  "ProfileSettings": {
+    "title": "Configuración del perfil",
+    "emailTitle": "Correo electrónico",
+    "emailDescription": "Tu dirección de correo no se puede cambiar.",
+    "displayNameTitle": "Nombre para mostrar",
+    "passwordTitle": "Contraseña",
+    "NameForm": {
+      "nameRequired": "El nombre es obligatorio",
+      "nameMaxLength": "El nombre debe tener como máximo 100 caracteres",
+      "successToast": "Nombre para mostrar actualizado correctamente.",
+      "label": "Nombre para mostrar",
+      "placeholder": "Introduce tu nombre para mostrar",
+      "saving": "Guardando…",
+      "submit": "Guardar nombre"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "La contraseña actual es obligatoria",
+      "newPasswordRequired": "La nueva contraseña es obligatoria",
+      "confirmPasswordRequired": "Confirma tu nueva contraseña",
+      "passwordsDoNotMatch": "Las contraseñas no coinciden",
+      "successToast": "Contraseña cambiada correctamente.",
+      "currentPasswordIncorrect": "La contraseña actual es incorrecta",
+      "newPasswordSameAsCurrent": "La nueva contraseña debe ser diferente de la actual",
+      "passwordRequirementsNotMet": "La contraseña no cumple los requisitos",
+      "currentPasswordLabel": "Contraseña actual",
+      "newPasswordLabel": "Nueva contraseña",
+      "confirmPasswordLabel": "Confirmar nueva contraseña",
+      "passwordHint": "Mín. 8 caracteres, máx. 128. Debe incluir al menos una mayúscula, una minúscula y un dígito.",
+      "changingPassword": "Cambiando contraseña…",
+      "submit": "Cambiar contraseña",
+      "errorTooShort": "Debe tener al menos 8 caracteres",
+      "errorTooLong": "Debe tener como máximo 128 caracteres",
+      "errorMissingUppercase": "Debe contener al menos una mayúscula",
+      "errorMissingLowercase": "Debe contener al menos una minúscula",
+      "errorMissingDigit": "Debe contener al menos un dígito"
+    }
+  },
+  "Members": {
+    "addedToGroup": "{name} añadido al grupo.",
+    "memberRemoved": "Miembro eliminado del grupo.",
+    "youLeftGroup": "Has abandonado el grupo.",
+    "memberPromoted": "Miembro ascendido a propietario.",
+    "memberDemoted": "Miembro degradado a miembro regular.",
+    "addMember": "Añadir miembro",
+    "adding": "Añadiendo…",
+    "add": "Añadir",
+    "cancel": "Cancelar",
+    "leaveGroup": "Abandonar grupo",
+    "leaveGroupDescription": "¿Seguro que quieres abandonar este grupo? Tus gastos anteriores permanecerán en el historial del grupo.",
+    "leave": "Abandonar",
+    "removeFromGroup": "Eliminar del grupo",
+    "promoteToOwner": "Ascender a propietario",
+    "demoteToMember": "Degradar a miembro"
+  },
+  "MyGroups": {
+    "title": "Mis grupos",
+    "loading": "Cargando tus grupos…",
+    "loadError": "No se pudieron cargar los grupos. Inténtalo de nuevo más tarde.",
+    "noGroups": "Aún no eres miembro de ningún grupo.",
+    "noGroupsHint": "Crea un grupo para empezar a repartir gastos con otros.",
+    "createGroup": "Crear grupo",
+    "createGroupTitle": "Crear un nuevo grupo",
+    "createGroupDescription": "Introduce un nombre para tu grupo. Puedes invitar miembros después de crearlo.",
+    "groupNameLabel": "Nombre del grupo",
+    "characters": "caracteres",
+    "leaveGroup": "Abandonar grupo",
+    "leaveGroupConfirmTitle": "Abandonar grupo",
+    "leaveGroupConfirmDescription": "¿Seguro que quieres abandonar «{name}»? Tus gastos anteriores permanecerán en el historial del grupo.",
+    "leaveGroupConfirmCancel": "Cancelar",
+    "leaveGroupConfirmAction": "Abandonar"
+  },
+  "UserMenu": {
+    "profileSettings": "Configuración del perfil",
+    "signingOut": "Cerrando sesión…",
+    "signOut": "Cerrar sesión"
+  },
   "Notifications": {
     "subscribe": "Activar notificaciones",
     "unsubscribe": "Desactivar notificaciones",
@@ -513,12 +667,21 @@
     "noParticipant": "Todos los cambios",
     "permissionDenied": "El permiso de notificaciones fue denegado. Actívalo en la configuración de tu navegador.",
     "notSupported": "Las notificaciones push no son compatibles con este dispositivo.",
-    "error": "No se pudieron activar las notificaciones. Por favor, inténtalo de nuevo.",
     "expenseCreated": "{actor} añadió \"{title}\"",
     "expenseUpdated": "{actor} actualizó \"{title}\"",
     "expenseDeleted": "{actor} eliminó \"{title}\"",
     "groupUpdated": "{actor} actualizó el grupo \"{group}\"",
     "notificationTitle": "Knots – {group}",
-    "defaultBody": "Nueva actividad en tu grupo"
+    "defaultBody": "Nueva actividad en tu grupo",
+    "filterHint": "Elige de quién quieres alertas y qué eventos recibir.",
+    "subscribeError": "No se pudieron activar las notificaciones. Por favor, inténtalo de nuevo.",
+    "membersLabel": "Notificarme sobre",
+    "notifyAllMembers": "Todos en el grupo",
+    "notifySpecificMembers": "O solo estos miembros:",
+    "eventsLabel": "Eventos",
+    "eventCreate": "Gasto creado",
+    "eventUpdate": "Gasto actualizado",
+    "eventDelete": "Gasto eliminado",
+    "selectAtLeastOneFilter": "Selecciona al menos un miembro o un evento."
   }
 }

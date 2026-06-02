@@ -59,6 +59,8 @@
     "archive": "Archiveer groep",
     "unarchive": "Herstel groep",
     "removeRecent": "Verwijder uit recente groepen",
+    "enableNotifications": "Meldingen inschakelen",
+    "disableNotifications": "Meldingen uitschakelen",
     "RecentRemovedToast": {
       "title": "Groep verwijderd",
       "description": "Deze groep is verwijderd uit je recente groepen.",
@@ -92,10 +94,17 @@
       "placeholder": "€, $, £…",
       "description": "Die gebruiken we om de bedragen in de groep aan te geven."
     },
+    "CurrencyCodeField": {
+      "label": "Hoofdvaluta",
+      "createDescription": "Alle hoeveelheden en saldi worden in deze valuta weergegeven.",
+      "editDescription": "Alle bedragen en saldi worden in deze valuta weergegeven. Als je dit wijzigt, worden reeds ingevoerde uitgaven NIET omgerekend, behalve wanneer de valuta andere \"kleinste eenheden\" heeft dan de huidige (bijvoorbeeld bij een wijziging van Amerikaanse dollar naar Japanse yen)",
+      "customOption": "Aangepast"
+    },
     "Participants": {
       "title": "Deelnemers",
       "description": "Voer de naam in van de deelnemers in de groep.",
       "protectedParticipant": "Deze deelnemer maakt deel uit van de uitgaven en kan niet worden verwijderd.",
+      "noLongerInGroup": "niet meer in deze groep",
       "new": "Nieuwe deelnemer",
       "add": "Voeg deelnemer toe",
       "John": "Jan",
@@ -116,12 +125,6 @@
       "create": "Groep maken",
       "creating": "Aan het maken…",
       "cancel": "Annuleren"
-    },
-    "CurrencyCodeField": {
-      "label": "Hoofdvaluta",
-      "createDescription": "Alle hoeveelheden en saldi worden in deze valuta weergegeven.",
-      "editDescription": "Alle bedragen en saldi worden in deze valuta weergegeven. Als je dit wijzigt, worden reeds ingevoerde uitgaven NIET omgerekend, behalve wanneer de valuta andere \"kleinste eenheden\" heeft dan de huidige (bijvoorbeeld bij een wijziging van Amerikaanse dollar naar Japanse yen)",
-      "customOption": "Aangepast"
     }
   },
   "ExpenseForm": {
@@ -137,29 +140,21 @@
         "label": "Datum inkomen",
         "description": "Voer de datum in waarop het inkomen is ontvangen."
       },
+      "currencyField": {
+        "label": "Valuta van inkomst",
+        "description": "De valuta waarin de inkomst is ontvangen."
+      },
       "categoryFieldDescription": "Selecteer de inkomencategorie.",
       "paidByField": {
         "label": "Ontvangen door",
         "description": "Selecteer de deelnemer die het inkomen heeft ontvangen."
-      },
-      "recurrenceRule": {
-        "label": "Terugkerend inkomen",
-        "description": "Kies hoe vaak het inkomen herhaald wordt.",
-        "none": "Niet",
-        "daily": "Dagelijks",
-        "weekly": "Wekelijks",
-        "monthly": "Maandelijks"
       },
       "paidFor": {
         "title": "Ontvangen voor",
         "description": "Selecteer voor wie het inkomen is ontvangen."
       },
       "splitModeDescription": "Selecteer hoe het inkomen verdeeld moet worden.",
-      "attachDescription": "Bekijk en voeg bijlagen toe aan het inkomen.",
-      "currencyField": {
-        "label": "Munteenheid van inkomen",
-        "description": "De munteenheid waar het inkomen in is ontvangen."
-      }
+      "attachDescription": "Bekijk en voeg bijlagen toe aan het inkomen."
     },
     "Expense": {
       "create": "Maak uitgave",
@@ -173,11 +168,15 @@
         "label": "Datum uitgave",
         "description": "Voer de datum in waarop de uitgave is gedaan."
       },
+      "currencyField": {
+        "label": "Valuta van uitgave",
+        "description": "De valuta waarin de uitgave is betaald."
+      },
       "categoryFieldDescription": "Selecteer de uitgavecategorie.",
       "paidByField": {
         "label": "Betaald door",
-        "description": "Selecteer de deelnemer die de uitgave heeft gedaan.",
-        "placeholder": "Selecteer een deelnemer"
+        "placeholder": "Selecteer een deelnemer",
+        "description": "Selecteer de deelnemer die de uitgave heeft gedaan."
       },
       "recurrenceRule": {
         "label": "Terugkerende uitgave",
@@ -192,14 +191,31 @@
         "description": "Selecteer voor wie de uitgave is gedaan."
       },
       "splitModeDescription": "Selecteer hoe de uitgave verdeeld moet worden.",
-      "attachDescription": "Bekijk en voeg bijlagen toe aan de uitgave.",
-      "currencyField": {
-        "label": "Munteenheid van uitgave",
-        "description": "De munteenheid waar de uitgave in is betaald."
-      }
+      "attachDescription": "Bekijk en voeg bijlagen toe aan de uitgave."
     },
     "amountField": {
       "label": "Bedrag"
+    },
+    "conversionUnavailable": "Om per uitgave een andere valuta in te stellen en bedragen om te rekenen, selecteer een niet-aangepaste valuta voor de groep.",
+    "originalAmountField": {
+      "label": "Om te rekenen bedrag"
+    },
+    "conversionRateField": {
+      "useApi": "Koersen van Frankfurter gebruiken",
+      "useCustom": "Aangepaste koers gebruiken",
+      "label": "Wisselkoers"
+    },
+    "conversionRateState": {
+      "loading": "Wisselkoersen ophalen…",
+      "success": "Koersen verkregen:",
+      "error": "Oeps, we konden de meest recente koersen niet ophalen.",
+      "staleRate": "Gebruikte koers:",
+      "noRate": "Voer hieronder een aangepaste koers in.",
+      "currencyNotFound": "Oeps, Frankfurter heeft geen koers voor deze valuta op die datum.",
+      "noDate": "Voer de datum van de uitgave in om een wisselkoers te krijgen.",
+      "dateMismatch": "Koersen van datum: {date}",
+      "refresh": "Vernieuwen",
+      "customRate": "Aangepaste koers gebruikt"
     },
     "isReimbursementField": {
       "label": "Dit is een terugbetaling"
@@ -212,6 +228,7 @@
     },
     "selectNone": "Selecteer niemand",
     "selectAll": "Selecteer iedereen",
+    "noLongerInGroup": "niet meer in deze groep",
     "shares": "deel/delen",
     "advancedOptions": "Andere split-opties…",
     "SplitModeField": {
@@ -235,28 +252,7 @@
     "save": "Opslaan",
     "saving": "Aan het opslaan…",
     "cancel": "Annuleren",
-    "reimbursement": "Terugbetaling",
-    "conversionUnavailable": "Om een andere munteenheid in te stellen voor een uitgave en bedragen om te rekenen, kies een standaard munteenheid voor de groep.",
-    "originalAmountField": {
-      "label": "Om te rekenen bedrag"
-    },
-    "conversionRateField": {
-      "useApi": "Gebruik koersen van Frankfurter",
-      "useCustom": "Gebruik aangepaste koers",
-      "label": "Wisselkoers"
-    },
-    "conversionRateState": {
-      "loading": "Wisselkoers aan het ophalen…",
-      "success": "Verkregen wisselkoers:",
-      "error": "Oeps, we konden de nieuwste wisselkoersen niet verkrijgen.",
-      "staleRate": "Gebruikte wisselkoers:",
-      "noRate": "Voer hieronder een aangepaste koers in.",
-      "currencyNotFound": "Oeps, Frankfurter heeft geen koersen voor deze munteenheid op deze dag.",
-      "noDate": "Voer de datum van de uitgave in om een wisselkoers te krijgen.",
-      "dateMismatch": "Wisselkoers van: {date}",
-      "refresh": "Ververs",
-      "customRate": "Aangepaste wisselkoers wordt gebruikt"
-    }
+    "reimbursement": "Terugbetaling"
   },
   "ExpenseDocumentsInput": {
     "TooBigToast": {
@@ -421,7 +417,28 @@
       "earlierThisYear": "Eerder dit jaar",
       "lastYear": "Vorig jaar",
       "older": "Ouder"
-    }
+    },
+    "fieldLabels": {
+      "title": "Titel",
+      "amount": "Bedrag",
+      "expenseDate": "Datum",
+      "category": "Categorie",
+      "paidBy": "Betaald door",
+      "splitMode": "Verdeelmodus",
+      "isReimbursement": "Terugbetaling",
+      "notes": "Notities",
+      "recurrenceRule": "Herhaling",
+      "paidFor": "Betaald voor",
+      "name": "Naam",
+      "information": "Informatie",
+      "currency": "Valuta",
+      "participants": "Deelnemers"
+    },
+    "showMoreChanges": "Toon {count} meer wijzigingen",
+    "showLess": "Minder tonen",
+    "yes": "Ja",
+    "no": "Nee",
+    "fieldChangesCount": "{count} veldwijzigingen"
   },
   "Information": {
     "title": "Informatie",
@@ -449,12 +466,12 @@
     "amountRequired": "Vul een bedrag in.",
     "amountNotZero": "Het bedrag moet hoger zijn dan 0.",
     "amountTenMillion": "Het bedrag mag niet hoger zijn dan 10,000,000.",
+    "ratePositive": "De koers moet strikt groter zijn dan nul.",
     "paidByRequired": "Selecteer een deelnemer die de uitgave heeft gedaan.",
     "paidForMin1": "De uitgave moet voor ten minste één deelnemer zijn gedaan.",
     "noZeroShares": "Een deel mag niet 0 zijn.",
     "amountSum": "Het totaalbedrag moet gelijk zijn aan het uitgavebedrag.",
-    "percentageSum": "Het totaalpercentage moet gelijk zijn aan 100%.",
-    "ratePositive": "De koers moet groter dan nul zijn."
+    "percentageSum": "Het totaalpercentage moet gelijk zijn aan 100%."
   },
   "Categories": {
     "search": "Categorie zoeken…",
@@ -526,6 +543,7 @@
     }
   },
   "Currencies": {
+    "search": "Valuta zoeken...",
     "noCurrency": "Geen valuta gevonden.",
     "custom": {
       "heading": "Aangepast"
@@ -535,8 +553,112 @@
     },
     "other": {
       "heading": "Andere valuta"
+    }
+  },
+  "SplitwiseImport": {
+    "button": "Import from Splitwise",
+    "title": "Import from Splitwise",
+    "description": "Upload a CSV file exported from Splitwise to import expenses into this group. Make sure the participant names in the CSV match the names in this group.",
+    "fileLabel": "CSV File",
+    "previewLabel": "Preview (first 10 lines)",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "import": "Import Expenses",
+    "importing": "Importing...",
+    "toast": {
+      "invalidFileType": {
+        "title": "Invalid file type",
+        "description": "Please select a CSV file."
+      },
+      "noContent": {
+        "title": "No CSV content",
+        "description": "Please select a CSV file first."
+      },
+      "success": {
+        "title": "Import successful",
+        "description": "Successfully imported {count} expenses from Splitwise."
+      },
+      "error": {
+        "title": "Import failed",
+        "description": "Failed to import CSV file."
+      }
+    }
+  },
+  "ProfileSettings": {
+    "title": "Profielinstellingen",
+    "emailTitle": "E-mail",
+    "emailDescription": "Je e-mailadres kan niet worden gewijzigd.",
+    "displayNameTitle": "Weergavenaam",
+    "passwordTitle": "Wachtwoord",
+    "NameForm": {
+      "nameRequired": "Naam is verplicht",
+      "nameMaxLength": "Naam mag maximaal 100 tekens bevatten",
+      "successToast": "Weergavenaam succesvol bijgewerkt.",
+      "label": "Weergavenaam",
+      "placeholder": "Voer je weergavenaam in",
+      "saving": "Opslaan…",
+      "submit": "Naam opslaan"
     },
-    "search": "Valuta zoeken..."
+    "PasswordForm": {
+      "currentPasswordRequired": "Huidig wachtwoord is verplicht",
+      "newPasswordRequired": "Nieuw wachtwoord is verplicht",
+      "confirmPasswordRequired": "Bevestig je nieuwe wachtwoord",
+      "passwordsDoNotMatch": "Wachtwoorden komen niet overeen",
+      "successToast": "Wachtwoord succesvol gewijzigd.",
+      "currentPasswordIncorrect": "Huidig wachtwoord is onjuist",
+      "newPasswordSameAsCurrent": "Nieuw wachtwoord moet verschillen van het huidige",
+      "passwordRequirementsNotMet": "Wachtwoord voldoet niet aan de vereisten",
+      "currentPasswordLabel": "Huidig wachtwoord",
+      "newPasswordLabel": "Nieuw wachtwoord",
+      "confirmPasswordLabel": "Bevestig nieuw wachtwoord",
+      "passwordHint": "Min. 8 tekens, max. 128. Moet minstens één hoofdletter, één kleine letter en één cijfer bevatten.",
+      "changingPassword": "Wachtwoord wijzigen…",
+      "submit": "Wachtwoord wijzigen",
+      "errorTooShort": "Moet minstens 8 tekens bevatten",
+      "errorTooLong": "Mag maximaal 128 tekens bevatten",
+      "errorMissingUppercase": "Moet minstens één hoofdletter bevatten",
+      "errorMissingLowercase": "Moet minstens één kleine letter bevatten",
+      "errorMissingDigit": "Moet minstens één cijfer bevatten"
+    }
+  },
+  "Members": {
+    "addedToGroup": "{name} toegevoegd aan de groep.",
+    "memberRemoved": "Lid verwijderd uit de groep.",
+    "youLeftGroup": "Je hebt de groep verlaten.",
+    "memberPromoted": "Lid bevorderd tot eigenaar.",
+    "memberDemoted": "Lid gedegradeerd tot regulier lid.",
+    "addMember": "Lid toevoegen",
+    "adding": "Toevoegen…",
+    "add": "Toevoegen",
+    "cancel": "Annuleren",
+    "leaveGroup": "Groep verlaten",
+    "leaveGroupDescription": "Weet je zeker dat je deze groep wilt verlaten? Je eerdere uitgaven blijven in de groepsgeschiedenis.",
+    "leave": "Verlaten",
+    "removeFromGroup": "Uit groep verwijderen",
+    "promoteToOwner": "Bevorderen tot eigenaar",
+    "demoteToMember": "Degraderen tot lid"
+  },
+  "MyGroups": {
+    "title": "Mijn groepen",
+    "loading": "Je groepen laden…",
+    "loadError": "Groepen laden mislukt. Probeer het later opnieuw.",
+    "noGroups": "Je bent nog geen lid van een groep.",
+    "noGroupsHint": "Maak een groep om uitgaven met anderen te delen.",
+    "createGroup": "Groep maken",
+    "createGroupTitle": "Nieuwe groep maken",
+    "createGroupDescription": "Voer een naam in voor je groep. Je kunt na het aanmaken leden uitnodigen.",
+    "groupNameLabel": "Groepsnaam",
+    "characters": "tekens",
+    "leaveGroup": "Groep verlaten",
+    "leaveGroupConfirmTitle": "Groep verlaten",
+    "leaveGroupConfirmDescription": "Weet je zeker dat je «{name}» wilt verlaten? Je eerdere uitgaven blijven in de groepsgeschiedenis.",
+    "leaveGroupConfirmCancel": "Annuleren",
+    "leaveGroupConfirmAction": "Verlaten"
+  },
+  "UserMenu": {
+    "profileSettings": "Profielinstellingen",
+    "signingOut": "Uitloggen…",
+    "signOut": "Uitloggen"
   },
   "Notifications": {
     "subscribe": "Meldingen inschakelen",
@@ -545,12 +667,21 @@
     "noParticipant": "Alle wijzigingen",
     "permissionDenied": "Toestemming voor meldingen is geweigerd. Schakel het in via je browserinstellingen.",
     "notSupported": "Pushmeldingen worden niet ondersteund op dit apparaat.",
-    "error": "Kon meldingen niet inschakelen. Probeer het opnieuw.",
     "expenseCreated": "{actor} heeft \"{title}\" toegevoegd",
     "expenseUpdated": "{actor} heeft \"{title}\" bijgewerkt",
     "expenseDeleted": "{actor} heeft \"{title}\" verwijderd",
     "groupUpdated": "{actor} heeft de groep \"{group}\" bijgewerkt",
     "notificationTitle": "Knots – {group}",
-    "defaultBody": "Nieuwe activiteit in je groep"
+    "defaultBody": "Nieuwe activiteit in je groep",
+    "filterHint": "Kies van wie je meldingen wilt ontvangen en welke gebeurtenissen.",
+    "subscribeError": "Kon meldingen niet inschakelen. Probeer het opnieuw.",
+    "membersLabel": "Stuur mij meldingen over",
+    "notifyAllMembers": "Iedereen in de groep",
+    "notifySpecificMembers": "Of alleen deze leden:",
+    "eventsLabel": "Gebeurtenissen",
+    "eventCreate": "Uitgave aangemaakt",
+    "eventUpdate": "Uitgave bijgewerkt",
+    "eventDelete": "Uitgave verwijderd",
+    "selectAtLeastOneFilter": "Selecteer minstens één lid of gebeurtenis."
   }
 }

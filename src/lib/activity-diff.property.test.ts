@@ -25,7 +25,7 @@ const participantIdArb = fc.string({ minLength: 1, maxLength: 20 })
 
 // Arbitrary for a paidFor entry in existing shape
 const existingPaidForArb = fc.array(
-  participantIdArb.map((id) => ({ participantId: id })),
+  participantIdArb.map((id) => ({ userId: id })),
   { minLength: 0, maxLength: 5 },
 )
 
@@ -112,7 +112,7 @@ function computeExpectedChangedFields(
     isReimbursement: boolean
     notes: string | null | undefined
     recurrenceRule: string | null | undefined
-    paidFor: Array<{ participantId: string }>
+    paidFor: Array<{ userId: string }>
   },
   updated: {
     title: string
@@ -173,7 +173,7 @@ function computeExpectedChangedFields(
   }
 
   // paidFor comparison
-  const oldPaidFor = existing.paidFor.map((p) => p.participantId).sort()
+  const oldPaidFor = existing.paidFor.map((p) => p.userId).sort()
   const newPaidFor = updated.paidFor.map((p) => p.participant).sort()
   if (JSON.stringify(oldPaidFor) !== JSON.stringify(newPaidFor)) {
     changedFields.add('paidFor')

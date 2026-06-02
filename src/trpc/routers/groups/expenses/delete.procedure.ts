@@ -1,21 +1,20 @@
 import { deleteExpense } from '@/lib/api'
 import { notifyOnActivity } from '@/lib/push/notify-on-activity'
-import { baseProcedure } from '@/trpc/init'
+import { protectedProcedure } from '@/trpc/init'
 import { ActivityType } from '@prisma/client'
 import { z } from 'zod'
 
-export const deleteGroupExpenseProcedure = baseProcedure
+export const deleteGroupExpenseProcedure = protectedProcedure
   .input(
     z.object({
       expenseId: z.string().min(1),
       groupId: z.string().min(1),
-      participantId: z.string().optional(),
     }),
   )
-  .mutation(async ({ input: { expenseId, groupId, participantId } }) => {
-    await deleteExpense(groupId, expenseId, participantId)
+  .mutation(async ({ input: { expenseId, groupId }, ctx: { user } }) => {
+    await deleteExpense(groupId, expenseId, user.id)
     notifyOnActivity(groupId, ActivityType.DELETE_EXPENSE, {
-      participantId,
+      userId: user.id,
       expenseId,
     })
     return {}

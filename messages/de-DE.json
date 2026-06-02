@@ -16,6 +16,7 @@
     "create": "Ausgabe hinzufügen",
     "createFirst": "Erstelle die Erste",
     "noExpenses": "Deine Gruppe hat noch keine Ausgaben.",
+    "export": "Exportieren",
     "exportJson": "Als JSON exportieren",
     "exportCsv": "Als CSV exportieren",
     "searchPlaceholder": "Suche nach einer Ausgabe…",
@@ -34,14 +35,13 @@
       "earlierThisYear": "Dieses Jahr",
       "lastYear": "Letztes Jahr",
       "older": "Älter"
-    },
-    "export": "Exportieren"
+    }
   },
   "ExpenseCard": {
     "paidBy": "Gezahlt von <strong>{paidBy}</strong> für <paidFor></paidFor>",
+    "everyone": "jeder",
     "receivedBy": "Empfangen von <strong>{paidBy}</strong> für <paidFor></paidFor>",
     "yourBalance": "Deine Bilanz:",
-    "everyone": "jeder",
     "notInvolved": "Du bist nicht involviert"
   },
   "Groups": {
@@ -59,6 +59,8 @@
     "archive": "Gruppe archivieren",
     "unarchive": "Gruppe wiederherstellen",
     "removeRecent": "Aus letzten Gruppen entfernen",
+    "enableNotifications": "Benachrichtigungen aktivieren",
+    "disableNotifications": "Benachrichtigungen deaktivieren",
     "RecentRemovedToast": {
       "title": "Gruppe wurde entfernt",
       "description": "Die Gruppe wurde von deiner Liste der letzten Gruppen entfernt.",
@@ -92,10 +94,17 @@
       "placeholder": "€, $, £…",
       "description": "Wir benutzen es, um Beträge anzuzeigen."
     },
+    "CurrencyCodeField": {
+      "label": "Hauptwährung",
+      "createDescription": "Alle Beträge und Salden werden in dieser Währung angegeben.",
+      "editDescription": "Alle Beträge und Salden werden in dieser Währung angegeben. Bei Änderung dieser, werden bereits eingegebene Ausgaben NICHT umgerechnet, es sei denn, die Währung hat andere \"kleinere Einheiten\" als die aktuelle (z. B. Wechsel von US-Dollar zu Japanischem Yen)",
+      "customOption": "benutzerdefiniert"
+    },
     "Participants": {
       "title": "Mitglieder",
       "description": "Füge einen Namen für jedes Gruppenmitglied hinzu.",
       "protectedParticipant": "Dieses Mitglied ist Teil der Ausgaben und kann nicht entfernt werden.",
+      "noLongerInGroup": "nicht mehr in dieser Gruppe",
       "new": "Neu",
       "add": "Mitglied hinzufügen",
       "John": "Johannes",
@@ -116,12 +125,6 @@
       "create": "Erstellen",
       "creating": "Erstellt…",
       "cancel": "Abbrechen"
-    },
-    "CurrencyCodeField": {
-      "label": "Hauptwährung",
-      "createDescription": "Alle Beträge und Salden werden in dieser Währung angegeben.",
-      "customOption": "benutzerdefiniert",
-      "editDescription": "Alle Beträge und Salden werden in dieser Währung angegeben. Bei Änderung dieser, werden bereits eingegebene Ausgaben NICHT umgerechnet, es sei denn, die Währung hat andere \"kleinere Einheiten\" als die aktuelle (z. B. Wechsel von US-Dollar zu Japanischem Yen)"
     }
   },
   "ExpenseForm": {
@@ -137,18 +140,14 @@
         "label": "Datum der Einnahme",
         "description": "Füge ein Datum hinzu für wann die Einnahme erhalten wurde."
       },
+      "currencyField": {
+        "label": "Währung der Einnahme",
+        "description": "Die Währung, in der die Einnahme empfangen wurde."
+      },
       "categoryFieldDescription": "Wähle die Kategorie der Einnahme.",
       "paidByField": {
         "label": "Empfangen von",
         "description": "Wähle das Mitglied, das die Einnahme erhalten hat."
-      },
-      "recurrenceRule": {
-        "label": "Wiederholung der Einnahme",
-        "description": "Wähle aus, wie oft die Einnahme wiederholt werden soll.",
-        "none": "Keine Wiederholung",
-        "daily": "Täglich",
-        "weekly": "Wöchentlich",
-        "monthly": "Monatlich"
       },
       "paidFor": {
         "title": "Empfangen für",
@@ -168,6 +167,10 @@
       "DateField": {
         "label": "Datum der Ausgabe",
         "description": "Füge das Datum ein, zu dem die Ausgabe getätigt wurde."
+      },
+      "currencyField": {
+        "label": "Währung der Ausgabe",
+        "description": "Die Währung, in der die Ausgabe bezahlt wurde."
       },
       "categoryFieldDescription": "Wähle eine Kategorie für die Ausgabe.",
       "paidByField": {
@@ -193,6 +196,27 @@
     "amountField": {
       "label": "Betrag"
     },
+    "conversionUnavailable": "Um eine andere Währung pro Ausgabe festzulegen und Beträge umzurechnen, wähle eine nicht benutzerdefinierte Währung für die Gruppe.",
+    "originalAmountField": {
+      "label": "Umzurechnender Betrag"
+    },
+    "conversionRateField": {
+      "useApi": "Kurse von Frankfurter verwenden",
+      "useCustom": "Benutzerdefinierten Kurs verwenden",
+      "label": "Wechselkurs"
+    },
+    "conversionRateState": {
+      "loading": "Wechselkurse werden abgerufen…",
+      "success": "Kurse erhalten:",
+      "error": "Hoppla, wir konnten die aktuellen Kurse nicht abrufen.",
+      "staleRate": "Verwendeter Kurs:",
+      "noRate": "Gib unten einen benutzerdefinierten Kurs ein.",
+      "currencyNotFound": "Hoppla, Frankfurter hat an diesem Tag keinen Kurs für diese Währung.",
+      "noDate": "Gib das Ausgabedatum ein, um einen Wechselkurs zu erhalten.",
+      "dateMismatch": "Kurse vom Datum: {date}",
+      "refresh": "Aktualisieren",
+      "customRate": "Benutzerdefinierter Kurs wird verwendet"
+    },
     "isReimbursementField": {
       "label": "Das ist eine Rückzahlung"
     },
@@ -204,6 +228,7 @@
     },
     "selectNone": "Keine auswählen",
     "selectAll": "Alle auswählen",
+    "noLongerInGroup": "nicht mehr in dieser Gruppe",
     "shares": "Anteil(e)",
     "advancedOptions": "Fortgeschrittene Aufteilungsoptionen…",
     "SplitModeField": {
@@ -392,7 +417,28 @@
       "earlierThisYear": "Dieses Jahr",
       "lastYear": "Letztes Jahr",
       "older": "Älter"
-    }
+    },
+    "fieldLabels": {
+      "title": "Titel",
+      "amount": "Betrag",
+      "expenseDate": "Datum",
+      "category": "Kategorie",
+      "paidBy": "Bezahlt von",
+      "splitMode": "Aufteilungsmodus",
+      "isReimbursement": "Erstattung",
+      "notes": "Notizen",
+      "recurrenceRule": "Wiederholung",
+      "paidFor": "Bezahlt für",
+      "name": "Name",
+      "information": "Informationen",
+      "currency": "Währung",
+      "participants": "Teilnehmer"
+    },
+    "showMoreChanges": "{count} weitere Änderungen anzeigen",
+    "showLess": "Weniger anzeigen",
+    "yes": "Ja",
+    "no": "Nein",
+    "fieldChangesCount": "{count} Feldänderungen"
   },
   "Information": {
     "title": "Informationen",
@@ -420,6 +466,7 @@
     "amountRequired": "Du musst einen Betrag angeben.",
     "amountNotZero": "Der Betrag darf nicht 0 sein.",
     "amountTenMillion": "Der Betrag muss kleiner als 10.000.000 sein.",
+    "ratePositive": "Der Kurs muss strikt größer als null sein.",
     "paidByRequired": "Du musst ein Mitglied auswählen.",
     "paidForMin1": "Die Ausgabe muss mindestens für ein Mitglied bezahlt werden.",
     "noZeroShares": "Alle Anteile müssen größer als 0 sein.",
@@ -498,15 +545,120 @@
   "Currencies": {
     "search": "Währung suchen...",
     "noCurrency": "Keine Währungen gefunden.",
-    "other": {
-      "heading": "Andere Währungen"
-    },
     "custom": {
       "heading": "Benutzerdefinierte"
     },
     "common": {
       "heading": "Geläufigste"
+    },
+    "other": {
+      "heading": "Andere Währungen"
     }
+  },
+  "SplitwiseImport": {
+    "button": "Aus Splitwise importieren",
+    "title": "Aus Splitwise importieren",
+    "description": "Lade eine aus Splitwise exportierte CSV-Datei hoch, um Ausgaben in diese Gruppe zu importieren. Stelle sicher, dass die Teilnehmernamen in der CSV mit den Namen in dieser Gruppe übereinstimmen.",
+    "fileLabel": "CSV-Datei",
+    "previewLabel": "Vorschau (erste 10 Zeilen)",
+    "clear": "Löschen",
+    "cancel": "Abbrechen",
+    "import": "Ausgaben importieren",
+    "importing": "Importiere…",
+    "toast": {
+      "invalidFileType": {
+        "title": "Ungültiger Dateityp",
+        "description": "Bitte wähle eine CSV-Datei."
+      },
+      "noContent": {
+        "title": "Kein CSV-Inhalt",
+        "description": "Bitte wähle zuerst eine CSV-Datei."
+      },
+      "success": {
+        "title": "Import erfolgreich",
+        "description": "{count} Ausgaben aus Splitwise erfolgreich importiert."
+      },
+      "error": {
+        "title": "Import fehlgeschlagen",
+        "description": "CSV-Datei konnte nicht importiert werden."
+      }
+    }
+  },
+  "ProfileSettings": {
+    "title": "Profileinstellungen",
+    "emailTitle": "E-Mail",
+    "emailDescription": "Deine E-Mail-Adresse kann nicht geändert werden.",
+    "displayNameTitle": "Anzeigename",
+    "passwordTitle": "Passwort",
+    "NameForm": {
+      "nameRequired": "Name ist erforderlich",
+      "nameMaxLength": "Der Name darf höchstens 100 Zeichen lang sein",
+      "successToast": "Anzeigename erfolgreich aktualisiert.",
+      "label": "Anzeigename",
+      "placeholder": "Gib deinen Anzeigenamen ein",
+      "saving": "Speichere…",
+      "submit": "Name speichern"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "Aktuelles Passwort ist erforderlich",
+      "newPasswordRequired": "Neues Passwort ist erforderlich",
+      "confirmPasswordRequired": "Bitte bestätige dein neues Passwort",
+      "passwordsDoNotMatch": "Passwörter stimmen nicht überein",
+      "successToast": "Passwort erfolgreich geändert.",
+      "currentPasswordIncorrect": "Aktuelles Passwort ist falsch",
+      "newPasswordSameAsCurrent": "Das neue Passwort muss sich vom aktuellen unterscheiden",
+      "passwordRequirementsNotMet": "Passwort erfüllt die Anforderungen nicht",
+      "currentPasswordLabel": "Aktuelles Passwort",
+      "newPasswordLabel": "Neues Passwort",
+      "confirmPasswordLabel": "Neues Passwort bestätigen",
+      "passwordHint": "Min. 8, max. 128 Zeichen. Mindestens ein Großbuchstabe, ein Kleinbuchstabe und eine Ziffer.",
+      "changingPassword": "Passwort wird geändert…",
+      "submit": "Passwort ändern",
+      "errorTooShort": "Mindestens 8 Zeichen erforderlich",
+      "errorTooLong": "Höchstens 128 Zeichen erlaubt",
+      "errorMissingUppercase": "Mindestens ein Großbuchstabe erforderlich",
+      "errorMissingLowercase": "Mindestens ein Kleinbuchstabe erforderlich",
+      "errorMissingDigit": "Mindestens eine Ziffer erforderlich"
+    }
+  },
+  "Members": {
+    "addedToGroup": "{name} zur Gruppe hinzugefügt.",
+    "memberRemoved": "Mitglied aus der Gruppe entfernt.",
+    "youLeftGroup": "Du hast die Gruppe verlassen.",
+    "memberPromoted": "Mitglied zum Eigentümer befördert.",
+    "memberDemoted": "Mitglied zum regulären Mitglied herabgestuft.",
+    "addMember": "Mitglied hinzufügen",
+    "adding": "Hinzufügen…",
+    "add": "Hinzufügen",
+    "cancel": "Abbrechen",
+    "leaveGroup": "Gruppe verlassen",
+    "leaveGroupDescription": "Möchtest du diese Gruppe wirklich verlassen? Deine bisherigen Ausgaben bleiben im Gruppenverlauf.",
+    "leave": "Verlassen",
+    "removeFromGroup": "Aus Gruppe entfernen",
+    "promoteToOwner": "Zum Eigentümer befördern",
+    "demoteToMember": "Zum Mitglied herabstufen"
+  },
+  "MyGroups": {
+    "title": "Meine Gruppen",
+    "loading": "Gruppen werden geladen…",
+    "loadError": "Gruppen konnten nicht geladen werden. Bitte versuche es später erneut.",
+    "noGroups": "Du bist noch in keiner Gruppe.",
+    "noGroupsHint": "Erstelle eine Gruppe, um Ausgaben mit anderen zu teilen.",
+    "createGroup": "Gruppe erstellen",
+    "createGroupTitle": "Neue Gruppe erstellen",
+    "createGroupDescription": "Gib einen Namen für deine Gruppe ein. Du kannst nach dem Erstellen Mitglieder einladen.",
+    "groupNameLabel": "Gruppenname",
+    "characters": "Zeichen",
+    "leaveGroup": "Gruppe verlassen",
+    "leaveGroupConfirmTitle": "Gruppe verlassen",
+    "leaveGroupConfirmDescription": "Möchtest du „{name}“ wirklich verlassen? Deine bisherigen Ausgaben bleiben im Gruppenverlauf.",
+    "leaveGroupConfirmCancel": "Abbrechen",
+    "leaveGroupConfirmAction": "Verlassen"
+  },
+  "UserMenu": {
+    "profileSettings": "Profileinstellungen",
+    "signingOut": "Abmelden…",
+    "signOut": "Abmelden"
   },
   "Notifications": {
     "subscribe": "Benachrichtigungen aktivieren",
@@ -515,12 +667,21 @@
     "noParticipant": "Alle Änderungen",
     "permissionDenied": "Die Berechtigung für Benachrichtigungen wurde verweigert. Aktiviere sie in deinen Browsereinstellungen.",
     "notSupported": "Push-Benachrichtigungen werden auf diesem Gerät nicht unterstützt.",
-    "error": "Benachrichtigungen konnten nicht aktiviert werden. Bitte versuche es erneut.",
     "expenseCreated": "{actor} hat \"{title}\" hinzugefügt",
     "expenseUpdated": "{actor} hat \"{title}\" aktualisiert",
     "expenseDeleted": "{actor} hat \"{title}\" gelöscht",
     "groupUpdated": "{actor} hat die Gruppe \"{group}\" aktualisiert",
     "notificationTitle": "Knots – {group}",
-    "defaultBody": "Neue Aktivität in deiner Gruppe"
+    "defaultBody": "Neue Aktivität in deiner Gruppe",
+    "filterHint": "Wähle, von wem du Benachrichtigungen erhalten möchtest und welche Ereignisse.",
+    "subscribeError": "Benachrichtigungen konnten nicht aktiviert werden. Bitte versuche es erneut.",
+    "membersLabel": "Benachrichtige mich über",
+    "notifyAllMembers": "Alle in der Gruppe",
+    "notifySpecificMembers": "Oder nur diese Mitglieder:",
+    "eventsLabel": "Ereignisse",
+    "eventCreate": "Ausgabe erstellt",
+    "eventUpdate": "Ausgabe bearbeitet",
+    "eventDelete": "Ausgabe gelöscht",
+    "selectAtLeastOneFilter": "Wähle mindestens ein Mitglied oder ein Ereignis."
   }
 }

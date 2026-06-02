@@ -4,11 +4,13 @@ import { GroupTabs } from '@/app/groups/[groupId]/group-tabs'
 import { ShareButton } from '@/app/groups/[groupId]/share-button'
 import { PushNotificationToggle } from '@/components/push-notification-toggle'
 import { Skeleton } from '@/components/ui/skeleton'
+import { trpc } from '@/trpc/client'
 import Link from 'next/link'
 import { useCurrentGroup } from './current-group-context'
 
 export const GroupHeader = () => {
   const { isLoading, groupId, group } = useCurrentGroup()
+  const { data: profile } = trpc.profile.getProfile.useQuery()
 
   return (
     <div className="flex flex-col justify-between gap-3">
@@ -27,7 +29,8 @@ export const GroupHeader = () => {
           {group && process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && (
             <PushNotificationToggle
               groupId={groupId}
-              participants={group.participants.map((p) => ({
+              currentUserId={profile?.id}
+              members={group.participants.map((p) => ({
                 id: p.id,
                 name: p.name,
               }))}

@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { ActivityType } from '@prisma/client'
 import webpush, { WebPushError } from 'web-push'
 import { buildPushPayload } from './build-payload'
+import { isPushSubscriptionEligible } from './subscription-filters'
 
 const EXPENSE_ACTIVITY_TYPES: Set<ActivityType> = new Set([
   ActivityType.CREATE_EXPENSE,
@@ -18,7 +19,7 @@ const EXPENSE_ACTIVITY_TYPES: Set<ActivityType> = new Set([
 export async function dispatchNotifications(
   groupId: string,
   activityType: ActivityType,
-  extra: { participantId?: string; expenseId?: string; data?: string },
+  extra: { userId?: string; expenseId?: string; data?: string },
 ): Promise<void> {
   const vapidPublicKey = env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
   const vapidPrivateKey = env.VAPID_PRIVATE_KEY
@@ -41,13 +42,8 @@ export async function dispatchNotifications(
     return
   }
 
-  // Filter out self-notifications: exclude subscriptions where
-  // participantName matches the activity's participantId
-  const eligible = subscriptions.filter(
-    (sub) =>
-      !sub.participantName ||
-      !extra.participantId ||
-      sub.participantName !== extra.participantId,
+  const eligible = subscriptions.filter((sub) =>
+    isPushSubscriptionEligible(sub, activityType, extra.userId),
   )
 
   if (eligible.length === 0) {
@@ -58,14 +54,20 @@ export async function dispatchNotifications(
   // Fetch group name and expense title for the payload
   const group = await prisma.group.findUnique({
     where: { id: groupId },
-    select: { name: true, participants: { select: { id: true, name: true } } },
+    select: {
+      name: true,
+      memberships: {
+        include: { user: { select: { id: true, name: true } } },
+      },
+    },
   })
 
   const groupName = group?.name ?? ''
 
-  // Resolve actor name from participantId
-  const actorName = extra.participantId
-    ? group?.participants?.find((p) => p.id === extra.participantId)?.name
+  // Resolve actor name from userId
+  const actorName = extra.userId
+    ? group?.memberships?.find((m) => m.user.id === extra.userId)?.user
+        .name
     : undefined
 
   let expenseTitle: string | undefined

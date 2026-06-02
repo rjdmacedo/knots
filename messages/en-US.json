@@ -104,6 +104,7 @@
       "title": "Participants",
       "description": "Enter the name for each participant.",
       "protectedParticipant": "This participant is part of expenses, and can not be removed.",
+      "noLongerInGroup": "no longer in this group",
       "new": "New",
       "add": "Add participant",
       "John": "John",
@@ -227,6 +228,7 @@
     },
     "selectNone": "Select none",
     "selectAll": "Select all",
+    "noLongerInGroup": "no longer in this group",
     "shares": "share(s)",
     "advancedOptions": "Advanced splitting options…",
     "SplitModeField": {
@@ -582,6 +584,82 @@
       }
     }
   },
+  "ProfileSettings": {
+    "title": "Profile Settings",
+    "emailTitle": "Email",
+    "emailDescription": "Your email address cannot be changed.",
+    "displayNameTitle": "Display Name",
+    "passwordTitle": "Password",
+    "NameForm": {
+      "nameRequired": "Name is required",
+      "nameMaxLength": "Name must be at most 100 characters",
+      "successToast": "Display name updated successfully.",
+      "label": "Display Name",
+      "placeholder": "Enter your display name",
+      "saving": "Saving...",
+      "submit": "Save Name"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "Current password is required",
+      "newPasswordRequired": "New password is required",
+      "confirmPasswordRequired": "Please confirm your new password",
+      "passwordsDoNotMatch": "Passwords do not match",
+      "successToast": "Password changed successfully.",
+      "currentPasswordIncorrect": "Current password is incorrect",
+      "newPasswordSameAsCurrent": "New password must be different from current password",
+      "passwordRequirementsNotMet": "Password does not meet requirements",
+      "currentPasswordLabel": "Current password",
+      "newPasswordLabel": "New password",
+      "confirmPasswordLabel": "Confirm new password",
+      "passwordHint": "Min 8 characters, max 128. Must include at least one uppercase letter, one lowercase letter, and one digit.",
+      "changingPassword": "Changing password…",
+      "submit": "Change password",
+      "errorTooShort": "Must be at least 8 characters",
+      "errorTooLong": "Must be no more than 128 characters",
+      "errorMissingUppercase": "Must contain at least one uppercase letter",
+      "errorMissingLowercase": "Must contain at least one lowercase letter",
+      "errorMissingDigit": "Must contain at least one digit"
+    }
+  },
+  "Members": {
+    "addedToGroup": "{name} added to the group.",
+    "memberRemoved": "Member removed from the group.",
+    "youLeftGroup": "You left the group.",
+    "memberPromoted": "Member promoted to owner.",
+    "memberDemoted": "Member demoted to regular member.",
+    "addMember": "Add member",
+    "adding": "Adding...",
+    "add": "Add",
+    "cancel": "Cancel",
+    "leaveGroup": "Leave group",
+    "leaveGroupDescription": "Are you sure you want to leave this group? Your past expenses will remain in the group history.",
+    "leave": "Leave",
+    "removeFromGroup": "Remove from group",
+    "promoteToOwner": "Promote to owner",
+    "demoteToMember": "Demote to member"
+  },
+  "MyGroups": {
+    "title": "My Groups",
+    "loading": "Loading your groups…",
+    "loadError": "Failed to load groups. Please try again later.",
+    "noGroups": "You are not a member of any groups yet.",
+    "noGroupsHint": "Create a group to start splitting expenses with others.",
+    "createGroup": "Create Group",
+    "createGroupTitle": "Create a new group",
+    "createGroupDescription": "Enter a name for your group. You can invite members after creating it.",
+    "groupNameLabel": "Group name",
+    "characters": "characters",
+    "leaveGroup": "Leave group",
+    "leaveGroupConfirmTitle": "Leave group",
+    "leaveGroupConfirmDescription": "Are you sure you want to leave \"{name}\"? Your past expenses will remain in the group history.",
+    "leaveGroupConfirmCancel": "Cancel",
+    "leaveGroupConfirmAction": "Leave"
+  },
+  "UserMenu": {
+    "profileSettings": "Profile settings",
+    "signingOut": "Signing out…",
+    "signOut": "Sign out"
+  },
   "Notifications": {
     "subscribe": "Enable notifications",
     "unsubscribe": "Disable notifications",
@@ -589,12 +667,21 @@
     "noParticipant": "All changes",
     "permissionDenied": "Notification permission was denied. Enable it in your browser settings.",
     "notSupported": "Push notifications are not supported on this device.",
-    "error": "Could not enable notifications. Please try again.",
     "expenseCreated": "{actor} added \"{title}\" on {group}",
     "expenseUpdated": "{actor} edited \"{title}\" on {group}",
     "expenseDeleted": "{actor} deleted \"{title}\" on {group}",
     "groupUpdated": "{actor} updated the group \"{group}\"",
     "notificationTitle": "Knots – {group}",
-    "defaultBody": "New activity in your group"
+    "defaultBody": "New activity in your group",
+    "filterHint": "Choose whose changes to follow and which events to receive.",
+    "membersLabel": "Notify me about",
+    "notifyAllMembers": "Everyone in the group",
+    "notifySpecificMembers": "Or only these members:",
+    "eventsLabel": "Events",
+    "eventCreate": "Expense created",
+    "eventUpdate": "Expense updated",
+    "eventDelete": "Expense deleted",
+    "selectAtLeastOneFilter": "Select at least one member or event.",
+    "subscribeError": "Could not enable notifications. Please try again."
   }
 }

@@ -9,7 +9,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Balances, Reimbursement } from '@/lib/balances'
 import { Currency } from '@/lib/currency'
 import { formatCurrency } from '@/lib/utils'
-import { Participant } from '@prisma/client'
 import { BarChart3, LayoutList } from 'lucide-react'
 import { useLocale } from 'next-intl'
 import {
@@ -24,7 +23,7 @@ import {
 
 type Props = {
   balances: Balances
-  participants: Participant[]
+  participants: { id: string; name: string }[]
   currency: Currency
   reimbursements: Reimbursement[]
 }

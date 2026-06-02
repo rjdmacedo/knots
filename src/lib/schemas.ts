@@ -1,34 +1,12 @@
 import { RecurrenceRule, SplitMode } from '@prisma/client'
 import * as z from 'zod'
 
-export const groupFormSchema = z
-  .object({
-    name: z.string().min(2, 'min2').max(50, 'max50'),
-    information: z.string().optional(),
-    currency: z.string().min(1, 'min1').max(5, 'max5'),
-    currencyCode: z.union([z.string().length(3).nullish(), z.literal('')]), // ISO-4217 currency code
-    participants: z
-      .array(
-        z.object({
-          id: z.string().optional(),
-          name: z.string().min(2, 'min2').max(50, 'max50'),
-        }),
-      )
-      .min(1),
-  })
-  .superRefine(({ participants }, ctx) => {
-    participants.forEach((participant, i) => {
-      participants.slice(0, i).forEach((otherParticipant) => {
-        if (otherParticipant.name === participant.name) {
-          ctx.addIssue({
-            code: 'custom',
-            message: 'duplicateParticipantName',
-            path: ['participants', i, 'name'],
-          })
-        }
-      })
-    })
-  })
+export const groupFormSchema = z.object({
+  name: z.string().min(2, 'min2').max(50, 'max50'),
+  information: z.string().optional(),
+  currency: z.string().min(1, 'min1').max(5, 'max5'),
+  currencyCode: z.union([z.string().length(3).nullish(), z.literal('')]), // ISO-4217 currency code
+})
 
 export type GroupFormValues = z.infer<typeof groupFormSchema>
 

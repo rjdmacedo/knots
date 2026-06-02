@@ -1,5 +1,15 @@
 'use client'
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,18 +21,39 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { trpc } from '@/trpc/client'
-import { AlertCircle, Loader2, Plus, Users } from 'lucide-react'
+import { usePushNotificationSubscription } from '@/lib/push/use-push-notification-subscription'
+import {
+  AlertCircle,
+  Bell,
+  BellOff,
+  Loader2,
+  LogOut,
+  MoreVertical,
+  Plus,
+  Users,
+} from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 const GROUP_NAME_MIN = 1
 const GROUP_NAME_MAX = 100
 
 export function MyGroups() {
+  const t = useTranslations('MyGroups')
+  const { data: profile } = trpc.profile.getProfile.useQuery()
   const {
     data: groups,
     isLoading,
@@ -35,7 +66,7 @@ export function MyGroups() {
       <MyGroupsLayout>
         <div className="flex items-center gap-2 text-muted-foreground">
           <Loader2 className="h-4 w-4 animate-spin" />
-          <span>Loading your groups…</span>
+          <span>{t('loading')}</span>
         </div>
       </MyGroupsLayout>
     )
@@ -47,7 +78,7 @@ export function MyGroups() {
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            Failed to load groups. Please try again later.
+            {t('loadError')}
           </AlertDescription>
         </Alert>
       </MyGroupsLayout>
@@ -62,25 +93,130 @@ export function MyGroups() {
     >
       {groups && groups.length === 0 ? (
         <div className="text-sm space-y-2 text-muted-foreground">
-          <p>You are not a member of any groups yet.</p>
-          <p>Create a group to start splitting expenses with others.</p>
+          <p>{t('noGroups')}</p>
+          <p>{t('noGroupsHint')}</p>
         </div>
       ) : (
         <ul className="grid gap-2 sm:grid-cols-2">
           {groups?.map((group) => (
             <li key={group.id}>
-              <Link
-                href={`/groups/${group.id}`}
-                className="flex items-center gap-3 rounded-lg border p-4 transition-colors hover:bg-accent"
-              >
-                <Users className="h-5 w-5 text-muted-foreground shrink-0" />
-                <span className="font-medium truncate">{group.name}</span>
-              </Link>
+              <GroupCard
+                groupId={group.id}
+                name={group.name}
+                currentUserId={profile?.id}
+              />
             </li>
           ))}
         </ul>
       )}
     </MyGroupsLayout>
+  )
+}
+
+function GroupCard({
+  groupId,
+  name,
+  currentUserId,
+}: {
+  groupId: string
+  name: string
+  currentUserId: string | undefined
+}) {
+  const t = useTranslations('MyGroups')
+  const tGroups = useTranslations('Groups')
+  const tNotifications = useTranslations('Notifications')
+  const [leaveDialogOpen, setLeaveDialogOpen] = useState(false)
+  const utils = trpc.useUtils()
+  const pushConfigured = !!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+  const notifications = usePushNotificationSubscription(
+    groupId,
+    currentUserId,
+  )
+
+  const leaveGroup = trpc.groups.members.leave.useMutation({
+    onSuccess: () => {
+      toast.success(`You left "${name}".`)
+      utils.groupMembership.getUserGroups.invalidate()
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+  })
+
+  return (
+    <>
+      <div className="flex items-center rounded-lg border transition-colors hover:bg-accent">
+        <Link
+          href={`/groups/${groupId}`}
+          className="flex flex-1 items-center gap-3 p-4"
+        >
+          <Users className="h-5 w-5 text-muted-foreground shrink-0" />
+          <span className="font-medium truncate">{name}</span>
+        </Link>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-8 w-8 mr-2">
+              <MoreVertical className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {pushConfigured && notifications.isSupported && (
+              <>
+                <DropdownMenuItem
+                  disabled={notifications.isLoading}
+                  onSelect={async (e) => {
+                    e.preventDefault()
+                    notifications.clearError()
+                    const errorCode = await notifications.toggle()
+                    if (errorCode) {
+                      toast.error(tNotifications(errorCode))
+                    }
+                  }}
+                >
+                  {notifications.isLoading ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : notifications.isSubscribed ? (
+                    <BellOff className="h-4 w-4 mr-2" />
+                  ) : (
+                    <Bell className="h-4 w-4 mr-2" />
+                  )}
+                  {notifications.isSubscribed
+                    ? tGroups('disableNotifications')
+                    : tGroups('enableNotifications')}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+              </>
+            )}
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onClick={() => setLeaveDialogOpen(true)}
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              {t('leaveGroup')}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      <AlertDialog open={leaveDialogOpen} onOpenChange={setLeaveDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('leaveGroupConfirmTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('leaveGroupConfirmDescription', { name })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('leaveGroupConfirmCancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => leaveGroup.mutate({ groupId })}
+            >
+              {t('leaveGroupConfirmAction')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }
 
@@ -91,10 +227,11 @@ function MyGroupsLayout({
   children: React.ReactNode
   action?: React.ReactNode
 }) {
+  const t = useTranslations('MyGroups')
   return (
     <>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <h1 className="font-bold text-2xl">My Groups</h1>
+        <h1 className="font-bold text-2xl">{t('title')}</h1>
         {action}
       </div>
       <div>{children}</div>
@@ -109,6 +246,7 @@ function CreateGroupDialog({
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const t = useTranslations('MyGroups')
   const [name, setName] = useState('')
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
@@ -161,15 +299,14 @@ function CreateGroupDialog({
       <DialogTrigger asChild>
         <Button>
           <Plus className="h-4 w-4 mr-2" />
-          Create Group
+          {t('createGroup')}
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create a new group</DialogTitle>
+          <DialogTitle>{t('createGroupTitle')}</DialogTitle>
           <DialogDescription>
-            Enter a name for your group. You can invite members after creating
-            it.
+            {t('createGroupDescription')}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="grid gap-4">
@@ -180,7 +317,7 @@ function CreateGroupDialog({
             </Alert>
           )}
           <div className="grid gap-2">
-            <Label htmlFor="group-name">Group name</Label>
+            <Label htmlFor="group-name">{t('groupNameLabel')}</Label>
             <Input
               id="group-name"
               placeholder="e.g. Household, Trip to Paris"
@@ -194,7 +331,7 @@ function CreateGroupDialog({
               autoFocus
             />
             <p className="text-xs text-muted-foreground">
-              {name.trim().length}/{GROUP_NAME_MAX} characters
+              {name.trim().length}/{GROUP_NAME_MAX} {t('characters')}
             </p>
           </div>
           <DialogFooter>
@@ -202,7 +339,7 @@ function CreateGroupDialog({
               {createGroup.isPending && (
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
               )}
-              Create Group
+              {t('createGroup')}
             </Button>
           </DialogFooter>
         </form>

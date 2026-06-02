@@ -24,7 +24,6 @@ async function main() {
   await prisma.activity.deleteMany()
   await prisma.recurringExpenseLink.deleteMany()
   await prisma.expense.deleteMany()
-  await prisma.participant.deleteMany()
   await prisma.groupMembership.deleteMany()
   await prisma.invitation.deleteMany()
   await prisma.token.deleteMany()
@@ -77,13 +76,15 @@ async function main() {
     },
   })
 
-  // Create group memberships for all users
+  // Create group memberships — Rafael is the owner, others are members
+  const rafael = users.find((u) => u.email === 'rafaelmacedo4@gmail.com')!
   await Promise.all(
     users.map((user) =>
       prisma.groupMembership.create({
         data: {
           userId: user.id,
           groupId: group.id,
+          role: user.id === rafael.id ? 'OWNER' : 'MEMBER',
         },
       }),
     ),
@@ -91,21 +92,11 @@ async function main() {
 
   console.log(`Seed: all users added as members of "${group.name}"`)
 
-  // Participants (linked to user names)
-  const participants = await Promise.all(
-    SEED_USERS.map((u) =>
-      prisma.participant.create({
-        data: {
-          id: randomUUID(),
-          name: u.name,
-          groupId: group.id,
-        },
-      }),
-    ),
-  )
+  // Use users directly as participants (no more Participant model)
+  const participants = users.map((u) => ({ id: u.id, name: u.name }))
 
   console.log(
-    `Seed: created group "${group.name}" with participants ${participants
+    `Seed: created group "${group.name}" with members ${participants
       .map((p) => p.name)
       .join(', ')}`,
   )
@@ -198,7 +189,7 @@ async function main() {
     await prisma.expensePaidFor.createMany({
       data: participants.map((p) => ({
         expenseId: expense.id,
-        participantId: p.id,
+        userId: p.id,
         shares: 1,
       })),
     })

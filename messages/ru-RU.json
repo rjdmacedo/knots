@@ -16,6 +16,7 @@
     "create": "Создать расход",
     "createFirst": "Создать первый расход",
     "noExpenses": "У вашей группы пока что нет расходов.",
+    "export": "Export",
     "exportJson": "Экспортировать в JSON",
     "exportCsv": "Экспортировать в CSV",
     "searchPlaceholder": "Поиск расходов…",
@@ -38,8 +39,10 @@
   },
   "ExpenseCard": {
     "paidBy": "Потратил <strong>{paidBy}</strong> за <paidFor></paidFor>",
+    "everyone": "everyone",
     "receivedBy": "Получил <strong>{paidBy}</strong> за <paidFor></paidFor>",
-    "yourBalance": "Изменение баланса участника:"
+    "yourBalance": "Изменение баланса участника:",
+    "notInvolved": "You are not involved"
   },
   "Groups": {
     "myGroups": "Мои группы",
@@ -56,6 +59,8 @@
     "archive": "Архивировать группу",
     "unarchive": "Восстановить группу",
     "removeRecent": "Убрать группу из недавних",
+    "enableNotifications": "Включить уведомления",
+    "disableNotifications": "Отключить уведомления",
     "RecentRemovedToast": {
       "title": "Группа убрана",
       "description": "Группа была убрана из вашего списка недавних групп.",
@@ -89,10 +94,17 @@
       "placeholder": "$, €, £…",
       "description": "Этот символ будет использован для отображений денежных сумм."
     },
+    "CurrencyCodeField": {
+      "label": "Main currency",
+      "createDescription": "All amounts and balances will be in this currency.",
+      "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
+      "customOption": "Custom"
+    },
     "Participants": {
       "title": "Участники",
       "description": "Введите имя каждого участника.",
       "protectedParticipant": "Этот участник — часть расходов, и поэтому не может быть удален.",
+      "noLongerInGroup": "больше не в этой группе",
       "new": "Новый участник",
       "add": "Добавить участника",
       "John": "Александр",
@@ -128,6 +140,10 @@
         "label": "Дата дохода",
         "description": "Введите дату, когда этот доход был получен."
       },
+      "currencyField": {
+        "label": "Валюта дохода",
+        "description": "Валюта, в которой был получен доход."
+      },
       "categoryFieldDescription": "Выберите категорию дохода.",
       "paidByField": {
         "label": "Получивший",
@@ -152,10 +168,23 @@
         "label": "Дата расхода",
         "description": "Введите дату, когда этот расход был совершен."
       },
+      "currencyField": {
+        "label": "Валюта расхода",
+        "description": "Валюта, в которой был оплачен расход."
+      },
       "categoryFieldDescription": "Выберите категорию расхода.",
       "paidByField": {
         "label": "Оплативший",
+        "placeholder": "Select a participant",
         "description": "Выберите участника, который оплатил этот расход."
+      },
+      "recurrenceRule": {
+        "label": "Expense Recurrence",
+        "description": "Select how often the expense should repeat.",
+        "none": "None",
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly"
       },
       "paidFor": {
         "title": "Участники",
@@ -166,6 +195,27 @@
     },
     "amountField": {
       "label": "Сумма"
+    },
+    "conversionUnavailable": "Чтобы задать другую валюту для каждого расхода и конвертировать суммы, выберите для группы валюту, отличную от пользовательской.",
+    "originalAmountField": {
+      "label": "Сумма для конвертации"
+    },
+    "conversionRateField": {
+      "useApi": "Использовать курсы Frankfurter",
+      "useCustom": "Использовать свой курс",
+      "label": "Обменный курс"
+    },
+    "conversionRateState": {
+      "loading": "Получение обменных курсов…",
+      "success": "Получены курсы:",
+      "error": "Не удалось получить актуальные курсы.",
+      "staleRate": "Используемый курс:",
+      "noRate": "Введите свой курс ниже.",
+      "currencyNotFound": "У Frankfurter нет курса для этой валюты на эту дату.",
+      "noDate": "Введите дату расхода, чтобы получить курс конвертации.",
+      "dateMismatch": "Курсы на дату: {date}",
+      "refresh": "Обновить",
+      "customRate": "Используется свой курс"
     },
     "isReimbursementField": {
       "label": "Этот расход является возмещением"
@@ -178,6 +228,7 @@
     },
     "selectNone": "Выбрать никого",
     "selectAll": "Выбрать всех",
+    "noLongerInGroup": "больше не в этой группе",
     "shares": "доля(и)",
     "advancedOptions": "Дополнительные настройки распределения…",
     "SplitModeField": {
@@ -366,7 +417,28 @@
       "earlierThisYear": "Ранее в этом году",
       "lastYear": "В прошлом году",
       "older": "Очень давно"
-    }
+    },
+    "fieldLabels": {
+      "title": "Название",
+      "amount": "Сумма",
+      "expenseDate": "Дата",
+      "category": "Категория",
+      "paidBy": "Оплатил",
+      "splitMode": "Режим разделения",
+      "isReimbursement": "Возмещение",
+      "notes": "Заметки",
+      "recurrenceRule": "Повторение",
+      "paidFor": "Оплачено за",
+      "name": "Имя",
+      "information": "Информация",
+      "currency": "Валюта",
+      "participants": "Участники"
+    },
+    "showMoreChanges": "Показать ещё {count} изменений",
+    "showLess": "Свернуть",
+    "yes": "Да",
+    "no": "Нет",
+    "fieldChangesCount": "{count} изменений полей"
   },
   "Information": {
     "title": "Информация",
@@ -394,6 +466,7 @@
     "amountRequired": "Пожалуйста, введите сумму.",
     "amountNotZero": "Сумма не может быть нулевой.",
     "amountTenMillion": "Сумма должна быть меньше 10 000 000.",
+    "ratePositive": "Курс должен быть строго больше нуля.",
     "paidByRequired": "Пожалуйста, выберите участника.",
     "paidForMin1": "За этот расход должен заплатить как минимум один участник.",
     "noZeroShares": "Все доли должны быть больше 0.",
@@ -439,6 +512,7 @@
       "heading": "Жизнь",
       "Childcare": "Дети",
       "Clothing": "Одежда",
+      "Donation": "Donation",
       "Education": "Образование",
       "Gifts": "Подарки",
       "Insurance": "Страховки",
@@ -468,6 +542,124 @@
       "Water": "Вода"
     }
   },
+  "Currencies": {
+    "search": "Search currency...",
+    "noCurrency": "No currencies found.",
+    "custom": {
+      "heading": "Custom"
+    },
+    "common": {
+      "heading": "Most common"
+    },
+    "other": {
+      "heading": "Other currencies"
+    }
+  },
+  "SplitwiseImport": {
+    "button": "Import from Splitwise",
+    "title": "Import from Splitwise",
+    "description": "Upload a CSV file exported from Splitwise to import expenses into this group. Make sure the participant names in the CSV match the names in this group.",
+    "fileLabel": "CSV File",
+    "previewLabel": "Preview (first 10 lines)",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "import": "Import Expenses",
+    "importing": "Importing...",
+    "toast": {
+      "invalidFileType": {
+        "title": "Invalid file type",
+        "description": "Please select a CSV file."
+      },
+      "noContent": {
+        "title": "No CSV content",
+        "description": "Please select a CSV file first."
+      },
+      "success": {
+        "title": "Import successful",
+        "description": "Successfully imported {count} expenses from Splitwise."
+      },
+      "error": {
+        "title": "Import failed",
+        "description": "Failed to import CSV file."
+      }
+    }
+  },
+  "ProfileSettings": {
+    "title": "Настройки профиля",
+    "emailTitle": "Эл. почта",
+    "emailDescription": "Ваш адрес эл. почты нельзя изменить.",
+    "displayNameTitle": "Отображаемое имя",
+    "passwordTitle": "Пароль",
+    "NameForm": {
+      "nameRequired": "Имя обязательно",
+      "nameMaxLength": "Имя должно содержать не более 100 символов",
+      "successToast": "Отображаемое имя успешно обновлено.",
+      "label": "Отображаемое имя",
+      "placeholder": "Введите отображаемое имя",
+      "saving": "Сохранение…",
+      "submit": "Сохранить имя"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "Текущий пароль обязателен",
+      "newPasswordRequired": "Новый пароль обязателен",
+      "confirmPasswordRequired": "Подтвердите новый пароль",
+      "passwordsDoNotMatch": "Пароли не совпадают",
+      "successToast": "Пароль успешно изменён.",
+      "currentPasswordIncorrect": "Текущий пароль неверен",
+      "newPasswordSameAsCurrent": "Новый пароль должен отличаться от текущего",
+      "passwordRequirementsNotMet": "Пароль не соответствует требованиям",
+      "currentPasswordLabel": "Текущий пароль",
+      "newPasswordLabel": "Новый пароль",
+      "confirmPasswordLabel": "Подтвердите новый пароль",
+      "passwordHint": "От 8 до 128 символов. Должен содержать хотя бы одну заглавную, одну строчную букву и одну цифру.",
+      "changingPassword": "Изменение пароля…",
+      "submit": "Изменить пароль",
+      "errorTooShort": "Не менее 8 символов",
+      "errorTooLong": "Не более 128 символов",
+      "errorMissingUppercase": "Должна быть хотя бы одна заглавная буква",
+      "errorMissingLowercase": "Должна быть хотя бы одна строчная буква",
+      "errorMissingDigit": "Должна быть хотя бы одна цифра"
+    }
+  },
+  "Members": {
+    "addedToGroup": "{name} добавлен в группу.",
+    "memberRemoved": "Участник удалён из группы.",
+    "youLeftGroup": "Вы покинули группу.",
+    "memberPromoted": "Участник повышен до владельца.",
+    "memberDemoted": "Участник понижен до обычного участника.",
+    "addMember": "Добавить участника",
+    "adding": "Добавление…",
+    "add": "Добавить",
+    "cancel": "Отмена",
+    "leaveGroup": "Покинуть группу",
+    "leaveGroupDescription": "Вы уверены, что хотите покинуть эту группу? Ваши прошлые расходы останутся в истории группы.",
+    "leave": "Покинуть",
+    "removeFromGroup": "Удалить из группы",
+    "promoteToOwner": "Повысить до владельца",
+    "demoteToMember": "Понизить до участника"
+  },
+  "MyGroups": {
+    "title": "Мои группы",
+    "loading": "Загрузка ваших групп…",
+    "loadError": "Не удалось загрузить группы. Попробуйте позже.",
+    "noGroups": "Вы ещё не состоите ни в одной группе.",
+    "noGroupsHint": "Создайте группу, чтобы начать делить расходы с другими.",
+    "createGroup": "Создать группу",
+    "createGroupTitle": "Создать новую группу",
+    "createGroupDescription": "Введите название группы. После создания можно пригласить участников.",
+    "groupNameLabel": "Название группы",
+    "characters": "символов",
+    "leaveGroup": "Покинуть группу",
+    "leaveGroupConfirmTitle": "Покинуть группу",
+    "leaveGroupConfirmDescription": "Вы уверены, что хотите покинуть «{name}»? Ваши прошлые расходы останутся в истории группы.",
+    "leaveGroupConfirmCancel": "Отмена",
+    "leaveGroupConfirmAction": "Покинуть"
+  },
+  "UserMenu": {
+    "profileSettings": "Настройки профиля",
+    "signingOut": "Выход…",
+    "signOut": "Выйти"
+  },
   "Notifications": {
     "subscribe": "Включить уведомления",
     "unsubscribe": "Отключить уведомления",
@@ -475,12 +667,21 @@
     "noParticipant": "Все изменения",
     "permissionDenied": "Разрешение на уведомления отклонено. Включите его в настройках браузера.",
     "notSupported": "Push-уведомления не поддерживаются на этом устройстве.",
-    "error": "Не удалось включить уведомления. Попробуйте ещё раз.",
     "expenseCreated": "{actor} добавил(а) «{title}»",
     "expenseUpdated": "{actor} обновил(а) «{title}»",
     "expenseDeleted": "{actor} удалил(а) «{title}»",
     "groupUpdated": "{actor} обновил(а) группу «{group}»",
     "notificationTitle": "Knots – {group}",
-    "defaultBody": "Новая активность в вашей группе"
+    "defaultBody": "Новая активность в вашей группе",
+    "filterHint": "Выберите, от кого получать уведомления и о каких событиях.",
+    "subscribeError": "Не удалось включить уведомления. Попробуйте ещё раз.",
+    "membersLabel": "Уведомлять меня о",
+    "notifyAllMembers": "Все в группе",
+    "notifySpecificMembers": "Или только эти участники:",
+    "eventsLabel": "События",
+    "eventCreate": "Расход добавлен",
+    "eventUpdate": "Расход изменён",
+    "eventDelete": "Расход удалён",
+    "selectAtLeastOneFilter": "Выберите хотя бы одного участника или событие."
   }
 }
