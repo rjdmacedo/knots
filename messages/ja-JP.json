@@ -585,8 +585,28 @@
       "cancelled": {
         "title": "インポートをキャンセルしました",
         "description": "インポートは完了前に停止されました。"
+      },
+      "missingEmail": {
+        "title": "Email required",
+        "description": "Enter an email for {name}."
+      },
+      "incompleteMapping": {
+        "title": "Mapping incomplete",
+        "description": "Choose a member or email for {name}."
       }
-    }
+    },
+    "analyzing": "Analyzing CSV…",
+    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
+    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
+    "participantMappingLabel": "Match Splitwise names",
+    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
+    "mapToMemberLabel": "Group member",
+    "mapToMemberPlaceholder": "Select a member",
+    "addNewMemberOption": "Add new member by email",
+    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "softCreateHint": "They can register later with this email to access the group."
   },
   "ProfileSettings": {
     "title": "プロフィール設定",
@@ -748,6 +768,11 @@
         "title": "インポートをキャンセルしました",
         "description": "インポートは完了前に停止されました。"
       }
+    },
+    "errors": {
+      "invalidJson": "無効なJSONファイルです。",
+      "invalidFormat": "このファイルは有効なKnotsエクスポートではありません。",
+      "noExpenses": "エクスポートに支出が含まれていません。"
     }
   },
   "GroupDangerZone": {

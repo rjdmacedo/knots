@@ -11,51 +11,33 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { useImportDialogDismiss } from '@/components/use-import-dialog-dismiss'
 import { isAbortError } from '@/lib/abort-signal'
-import { KnotsImportError } from '@/lib/knots-import'
 import { trpc } from '@/trpc/client'
 import { Loader2, Upload, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
-type MissingParticipant = {
-  exportName: string
-  expenseCount: number
+const ADD_NEW_VALUE = '__add_new__'
+
+type ParticipantLink = {
+  userId: string | null
+  email: string
 }
 
-function knotsImportErrorMessage(
-  error: { message: string },
-  t: ReturnType<typeof useTranslations<'KnotsImport'>>,
-): string {
-  const legacyCode =
-    error.message === 'Invalid JSON file'
-      ? 'invalidJson'
-      : error.message === 'Export contains no expenses'
-        ? 'noExpenses'
-        : error.message.startsWith('Invalid Knots export format')
-          ? 'invalidFormat'
-          : null
-
-  const knownCodes = new Set(['invalidJson', 'invalidFormat', 'noExpenses'])
-  const code =
-    error instanceof KnotsImportError
-      ? error.code
-      : (legacyCode ?? (knownCodes.has(error.message) ? error.message : null))
-
-  if (code) {
-    return t(`errors.${code}`)
-  }
-
-  return error.message
-}
-
-export function KnotsImportDialog({
+export function SplitwiseImportDialog({
   open,
   onOpenChange,
   groupId,
@@ -66,12 +48,21 @@ export function KnotsImportDialog({
   groupId: string
   onImportComplete?: () => void
 }) {
-  const t = useTranslations('KnotsImport')
-  const [fileContent, setFileContent] = useState('')
-  const [memberEmails, setMemberEmails] = useState<Record<string, string>>({})
+  const t = useTranslations('SplitwiseImport')
+  const [csvContent, setCsvContent] = useState('')
+  const [participantLinks, setParticipantLinks] = useState<
+    Record<string, ParticipantLink>
+  >({})
   const [isImporting, setIsImporting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const utils = trpc.useUtils()
+
+  const { data: groupDetails } = trpc.groups.getDetails.useQuery(
+    { groupId },
+    { enabled: open },
+  )
+  const groupMembers = groupDetails?.group.participants ?? []
+
   const handleImportAbort = useCallback(() => {
     setIsImporting(false)
   }, [])
@@ -82,7 +73,7 @@ export function KnotsImportDialog({
     reset: resetAnalysis,
     isPending: isAnalyzing,
     error: analysisError,
-  } = trpc.groups.expenses.previewKnotsImport.useMutation()
+  } = trpc.groups.expenses.previewSplitwiseImport.useMutation()
 
   const {
     handleDialogOpenChange,
@@ -100,8 +91,8 @@ export function KnotsImportDialog({
     }
 
     setIsImporting(false)
-    setFileContent('')
-    setMemberEmails({})
+    setCsvContent('')
+    setParticipantLinks({})
     resetAnalysis()
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
@@ -114,8 +105,7 @@ export function KnotsImportDialog({
     const file = event.target.files?.[0]
     if (!file) return
 
-    const lowerName = file.name.toLowerCase()
-    if (!lowerName.endsWith('.json') && !lowerName.endsWith('.csv')) {
+    if (!file.name.toLowerCase().endsWith('.csv')) {
       toast.error(t('toast.invalidFileType.title'), {
         description: t('toast.invalidFileType.description'),
       })
@@ -125,17 +115,20 @@ export function KnotsImportDialog({
     const reader = new FileReader()
     reader.onload = async (e) => {
       const content = e.target?.result as string
-      setFileContent(content)
-      setMemberEmails({})
+      setCsvContent(content)
+      setParticipantLinks({})
       resetAnalysis()
 
       try {
-        const result = await previewImport({ groupId, fileContent: content })
-        setMemberEmails(
+        const result = await previewImport({ groupId, csvContent: content })
+        setParticipantLinks(
           Object.fromEntries(
-            result.missingParticipants.map((participant) => [
-              participant.exportName,
-              '',
+            result.csvParticipants.map((participant) => [
+              participant.csvName,
+              {
+                userId: participant.suggestedUserId,
+                email: '',
+              },
             ]),
           ),
         )
@@ -147,56 +140,80 @@ export function KnotsImportDialog({
   }
 
   const handleClear = () => {
-    setFileContent('')
-    setMemberEmails({})
+    setCsvContent('')
+    setParticipantLinks({})
     resetAnalysis()
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
   }
 
-  const missingParticipants = analysis?.missingParticipants ?? []
-  const hasMissingParticipants = missingParticipants.length > 0
+  const updateLink = (csvName: string, patch: Partial<ParticipantLink>) => {
+    setParticipantLinks((current) => ({
+      ...current,
+      [csvName]: { ...current[csvName], ...patch },
+    }))
+  }
 
   const handleImport = async () => {
-    if (!fileContent.trim()) {
+    if (!csvContent.trim()) {
       toast.error(t('toast.noContent.title'), {
         description: t('toast.noContent.description'),
       })
       return
     }
 
-    if (hasMissingParticipants) {
-      const missingEmail = missingParticipants.find((participant) => {
-        const email = memberEmails[participant.exportName]?.trim()
-        return !email || !email.includes('@')
-      })
+    const csvParticipants = analysis?.csvParticipants ?? []
+    const participantMappings: Record<string, string> = {}
+    const membersToAdd: Array<{
+      exportName: string
+      email: string
+      name?: string
+    }> = []
 
-      if (missingEmail) {
-        toast.error(t('toast.missingEmail.title'), {
-          description: t('toast.missingEmail.description', {
-            name: missingEmail.exportName,
+    for (const participant of csvParticipants) {
+      const link = participantLinks[participant.csvName]
+      if (!link) {
+        toast.error(t('toast.incompleteMapping.title'), {
+          description: t('toast.incompleteMapping.description', {
+            name: participant.csvName,
           }),
         })
         return
       }
+
+      if (link.userId) {
+        participantMappings[participant.csvName] = link.userId
+        continue
+      }
+
+      const email = link.email.trim()
+      if (!email.includes('@')) {
+        toast.error(t('toast.missingEmail.title'), {
+          description: t('toast.missingEmail.description', {
+            name: participant.csvName,
+          }),
+        })
+        return
+      }
+
+      membersToAdd.push({
+        exportName: participant.csvName,
+        email,
+        name: participant.csvName,
+      })
     }
 
     try {
       beginImport()
       setIsImporting(true)
 
-      const membersToAdd = missingParticipants.map((participant) => ({
-        exportName: participant.exportName,
-        email: memberEmails[participant.exportName].trim(),
-        name: participant.exportName,
-      }))
-
-      const result = await utils.client.groups.expenses.importKnots.mutate(
+      const result = await utils.client.groups.expenses.importSplitwise.mutate(
         {
           groupId,
-          fileContent,
+          csvContent,
           membersToAdd,
+          participantMappings,
         },
         { signal: getImportSignal() },
       )
@@ -215,6 +232,7 @@ export function KnotsImportDialog({
       utils.groups.get.invalidate({ groupId })
       utils.groups.getDetails.invalidate({ groupId })
       onOpenChange(false)
+      handleClear()
       onImportComplete?.()
     } catch (error) {
       if (isImportCancelled() || isAbortError(error)) {
@@ -226,17 +244,19 @@ export function KnotsImportDialog({
       console.error('Import failed:', error)
       toast.error(t('toast.error.title'), {
         description:
-          error instanceof Error
-            ? knotsImportErrorMessage(error, t)
-            : t('toast.error.description'),
+          error instanceof Error ? error.message : t('toast.error.description'),
       })
     } finally {
       setIsImporting(false)
     }
   }
 
-  const previewLines = fileContent.split('\n').slice(0, 10)
-  const isBusy = isAnalyzing || isImporting
+  const previewLines = csvContent.split('\n').slice(0, 10)
+  const isBusy = isImporting || isAnalyzing
+  const csvParticipants = analysis?.csvParticipants ?? []
+  const matchedCount = csvParticipants.filter(
+    (p) => p.suggestedUserId != null,
+  ).length
 
   return (
     <Dialog open={open} onOpenChange={handleDialogOpenChange}>
@@ -261,18 +281,18 @@ export function KnotsImportDialog({
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="knots-import-file">{t('fileLabel')}</Label>
+            <Label htmlFor="splitwise-import-file">{t('fileLabel')}</Label>
             <div className="flex gap-2">
               <Input
-                id="knots-import-file"
+                id="splitwise-import-file"
                 type="file"
-                accept=".json,.csv"
+                accept=".csv"
                 onChange={handleFileSelect}
                 ref={fileInputRef}
                 disabled={isBusy}
                 className="flex-1"
               />
-              {fileContent && (
+              {csvContent && (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -301,76 +321,111 @@ export function KnotsImportDialog({
           )}
 
           {analysisError && (
-            <p className="text-sm text-destructive">
-              {knotsImportErrorMessage(analysisError, t)}
-            </p>
+            <p className="text-sm text-destructive">{analysisError.message}</p>
           )}
 
           {analysis && (
             <div className="rounded-md border p-3 text-sm space-y-1">
               <p>{t('expenseCount', { count: analysis.expenseCount })}</p>
-              {analysis.matchedParticipants.length > 0 && (
+              {matchedCount > 0 && (
                 <p className="text-muted-foreground">
-                  {t('matchedParticipants', {
-                    names: analysis.matchedParticipants
-                      .map((p) => p.exportName)
-                      .join(', '),
-                  })}
+                  {t('autoMatchedCount', { count: matchedCount })}
                 </p>
               )}
             </div>
           )}
 
-          {hasMissingParticipants && (
+          {csvParticipants.length > 0 && (
             <div className="space-y-3">
               <div>
-                <Label>{t('missingParticipantsLabel')}</Label>
+                <Label>{t('participantMappingLabel')}</Label>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {t('missingParticipantsDescription')}
+                  {t('participantMappingDescription')}
                 </p>
               </div>
               <div className="space-y-3 max-h-56 overflow-y-auto pr-1">
-                {missingParticipants.map((participant: MissingParticipant) => (
-                  <div
-                    key={participant.exportName}
-                    className="rounded-md border p-3 space-y-2"
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="font-medium">{participant.exportName}</p>
-                      <p className="text-xs text-muted-foreground shrink-0">
-                        {t('expenseReferences', {
-                          count: participant.expenseCount,
-                        })}
-                      </p>
+                {csvParticipants.map((participant) => {
+                  const link = participantLinks[participant.csvName]
+                  const selectValue = link?.userId ?? ADD_NEW_VALUE
+
+                  return (
+                    <div
+                      key={participant.csvName}
+                      className="rounded-md border p-3 space-y-2"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="font-medium">{participant.csvName}</p>
+                        <p className="text-xs text-muted-foreground shrink-0">
+                          {t('expenseReferences', {
+                            count: participant.expenseCount,
+                          })}
+                        </p>
+                      </div>
+                      <div className="space-y-1">
+                        <Label>{t('mapToMemberLabel')}</Label>
+                        <Select
+                          value={selectValue}
+                          onValueChange={(value) => {
+                            if (value === ADD_NEW_VALUE) {
+                              updateLink(participant.csvName, {
+                                userId: null,
+                              })
+                            } else {
+                              updateLink(participant.csvName, {
+                                userId: value,
+                                email: '',
+                              })
+                            }
+                          }}
+                          disabled={isBusy}
+                        >
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={t('mapToMemberPlaceholder')}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {groupMembers.map((member) => (
+                              <SelectItem key={member.id} value={member.id}>
+                                {member.name}
+                              </SelectItem>
+                            ))}
+                            <SelectItem value={ADD_NEW_VALUE}>
+                              {t('addNewMemberOption')}
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      {selectValue === ADD_NEW_VALUE && (
+                        <div className="space-y-1">
+                          <Label htmlFor={`email-${participant.csvName}`}>
+                            {t('emailLabel')}
+                          </Label>
+                          <Input
+                            id={`email-${participant.csvName}`}
+                            type="email"
+                            placeholder={t('emailPlaceholder')}
+                            value={link?.email ?? ''}
+                            onChange={(event) =>
+                              updateLink(participant.csvName, {
+                                email: event.target.value,
+                              })
+                            }
+                            disabled={isBusy}
+                          />
+                          <p className="text-xs text-muted-foreground">
+                            {t('softCreateHint')}
+                          </p>
+                        </div>
+                      )}
                     </div>
-                    <div className="space-y-1">
-                      <Label htmlFor={`email-${participant.exportName}`}>
-                        {t('emailLabel')}
-                      </Label>
-                      <Input
-                        id={`email-${participant.exportName}`}
-                        type="email"
-                        placeholder={t('emailPlaceholder')}
-                        value={memberEmails[participant.exportName] ?? ''}
-                        onChange={(event) =>
-                          setMemberEmails((current) => ({
-                            ...current,
-                            [participant.exportName]: event.target.value,
-                          }))
-                        }
-                        disabled={isBusy}
-                      />
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      {t('softCreateHint')}
-                    </p>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
           )}
 
-          {fileContent && !isAnalyzing && (
+          {csvContent && !isAnalyzing && (
             <div className="space-y-2">
               <Label>{t('previewLabel')}</Label>
               <div className="p-3 bg-muted rounded-md text-sm font-mono overflow-auto max-h-32">
@@ -379,7 +434,7 @@ export function KnotsImportDialog({
                     {line}
                   </div>
                 ))}
-                {fileContent.split('\n').length > 10 && (
+                {csvContent.split('\n').length > 10 && (
                   <div className="text-muted-foreground">...</div>
                 )}
               </div>
@@ -396,7 +451,7 @@ export function KnotsImportDialog({
             </Button>
             <Button
               onClick={handleImport}
-              disabled={!fileContent || isBusy || isAnalyzing}
+              disabled={!csvContent || isBusy || isAnalyzing}
               className="gap-2"
             >
               {isImporting ? (
@@ -407,7 +462,7 @@ export function KnotsImportDialog({
               ) : (
                 <>
                   <Upload className="w-4 h-4" />
-                  {hasMissingParticipants ? t('addAndImport') : t('import')}
+                  {t('import')}
                 </>
               )}
             </Button>

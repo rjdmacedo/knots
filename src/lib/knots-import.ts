@@ -5,6 +5,14 @@ import { ExpenseFormValues } from '@/lib/schemas'
 import { RecurrenceRule, SplitMode } from '@prisma/client'
 import { z } from 'zod'
 
+/** i18n key under KnotsImport.errors — surfaced in the import dialog */
+export class KnotsImportError extends Error {
+  constructor(public readonly code: string) {
+    super(code)
+    this.name = 'KnotsImportError'
+  }
+}
+
 const knotsExportExpenseSchema = z.object({
   expenseDate: z.string(),
   title: z.string(),
@@ -292,18 +300,16 @@ function parseKnotsJSON(content: string): KnotsExport {
   try {
     parsed = JSON.parse(content)
   } catch {
-    throw new Error('Invalid JSON file')
+    throw new KnotsImportError('invalidJson')
   }
 
   const result = knotsExportSchema.safeParse(parsed)
   if (!result.success) {
-    throw new Error(
-      `Invalid Knots export format: ${result.error.issues[0]?.message ?? 'unknown error'}`,
-    )
+    throw new KnotsImportError('invalidFormat')
   }
 
   if (result.data.expenses.length === 0) {
-    throw new Error('Export contains no expenses')
+    throw new KnotsImportError('noExpenses')
   }
 
   return result.data

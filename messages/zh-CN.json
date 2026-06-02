@@ -585,8 +585,28 @@
       "cancelled": {
         "title": "导入已取消",
         "description": "导入在完成前已停止。"
+      },
+      "missingEmail": {
+        "title": "Email required",
+        "description": "Enter an email for {name}."
+      },
+      "incompleteMapping": {
+        "title": "Mapping incomplete",
+        "description": "Choose a member or email for {name}."
       }
-    }
+    },
+    "analyzing": "Analyzing CSV…",
+    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
+    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
+    "participantMappingLabel": "Match Splitwise names",
+    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
+    "mapToMemberLabel": "Group member",
+    "mapToMemberPlaceholder": "Select a member",
+    "addNewMemberOption": "Add new member by email",
+    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "softCreateHint": "They can register later with this email to access the group."
   },
   "ProfileSettings": {
     "title": "个人资料设置",
@@ -748,6 +768,11 @@
         "title": "导入已取消",
         "description": "导入在完成前已停止。"
       }
+    },
+    "errors": {
+      "invalidJson": "无效的 JSON 文件。",
+      "invalidFormat": "此文件不是有效的 Knots 导出。",
+      "noExpenses": "导出中没有支出。"
     }
   },
   "GroupDangerZone": {

@@ -3,10 +3,11 @@ import { createGroupExpenseProcedure } from '@/trpc/routers/groups/expenses/crea
 import { deleteGroupExpenseProcedure } from '@/trpc/routers/groups/expenses/delete.procedure'
 import { getGroupExpenseProcedure } from '@/trpc/routers/groups/expenses/get.procedure'
 import { importKnotsProcedure } from '@/trpc/routers/groups/expenses/import-knots.procedure'
-import { importSplitwiseCSVProcedure } from '@/trpc/routers/groups/expenses/import.procedure'
+import { importSplitwiseCSVProcedure } from '@/trpc/routers/groups/expenses/import-splitwise.procedure'
 import { listGroupExpensesProcedure } from '@/trpc/routers/groups/expenses/list.procedure'
 import { lookupCategoryMappingProcedure } from '@/trpc/routers/groups/expenses/lookup-category.procedure'
 import { previewKnotsImportProcedure } from '@/trpc/routers/groups/expenses/preview-knots.procedure'
+import { previewSplitwiseImportProcedure } from '@/trpc/routers/groups/expenses/preview-splitwise.procedure'
 import { updateGroupExpenseProcedure } from '@/trpc/routers/groups/expenses/update.procedure'
 
 export const groupExpensesRouter = createTRPCRouter({
@@ -16,6 +17,7 @@ export const groupExpensesRouter = createTRPCRouter({
   update: updateGroupExpenseProcedure,
   delete: deleteGroupExpenseProcedure,
   importSplitwise: importSplitwiseCSVProcedure,
+  previewSplitwiseImport: previewSplitwiseImportProcedure,
   previewKnotsImport: previewKnotsImportProcedure,
   importKnots: importKnotsProcedure,
   lookupCategory: lookupCategoryMappingProcedure,

@@ -579,6 +579,11 @@
     "emailLabel": "Email",
     "emailPlaceholder": "name@example.com",
     "softCreateHint": "They can register later with this email to access the group.",
+    "errors": {
+      "invalidJson": "Invalid JSON file.",
+      "invalidFormat": "This file is not a valid Knots export.",
+      "noExpenses": "The export contains no expenses."
+    },
     "toast": {
       "invalidFileType": {
         "title": "Invalid file type",
@@ -609,13 +614,25 @@
   "SplitwiseImport": {
     "button": "Import from Splitwise",
     "title": "Import from Splitwise",
-    "description": "Upload a CSV file exported from Splitwise to import expenses into this group. Make sure the participant names in the CSV match the names in this group.",
+    "description": "Upload a Splitwise CSV export. Match each name from the file to a group member, or add someone by email before importing.",
     "fileLabel": "CSV File",
     "previewLabel": "Preview (first 10 lines)",
     "clear": "Clear",
     "cancel": "Cancel",
     "import": "Import Expenses",
     "importing": "Importing...",
+    "analyzing": "Analyzing CSV…",
+    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
+    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
+    "participantMappingLabel": "Match Splitwise names",
+    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
+    "mapToMemberLabel": "Group member",
+    "mapToMemberPlaceholder": "Select a member",
+    "addNewMemberOption": "Add new member by email",
+    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "softCreateHint": "They can register later with this email to access the group.",
     "toast": {
       "invalidFileType": {
         "title": "Invalid file type",
@@ -624,6 +641,14 @@
       "noContent": {
         "title": "No CSV content",
         "description": "Please select a CSV file first."
+      },
+      "missingEmail": {
+        "title": "Email required",
+        "description": "Enter an email for {name}."
+      },
+      "incompleteMapping": {
+        "title": "Mapping incomplete",
+        "description": "Choose a member or email for {name}."
       },
       "success": {
         "title": "Import successful",

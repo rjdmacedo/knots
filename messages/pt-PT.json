@@ -579,6 +579,11 @@
     "emailLabel": "Email",
     "emailPlaceholder": "nome@example.com",
     "softCreateHint": "Podem registar-se depois com este email para aceder ao grupo.",
+    "errors": {
+      "invalidJson": "Ficheiro JSON inválido.",
+      "invalidFormat": "Este ficheiro não é uma exportação Knots válida.",
+      "noExpenses": "A exportação não contém despesas."
+    },
     "toast": {
       "invalidFileType": {
         "title": "Tipo de ficheiro inválido",
@@ -609,13 +614,25 @@
   "SplitwiseImport": {
     "button": "Importar do Splitwise",
     "title": "Importar do Splitwise",
-    "description": "Carrega um ficheiro CSV exportado do Splitwise para importar despesas para este grupo. Garante que os nomes dos participantes no CSV coincidem com os do grupo.",
+    "description": "Carrega uma exportação CSV do Splitwise. Associa cada nome do ficheiro a um membro do grupo, ou adiciona alguém por email antes de importar.",
     "fileLabel": "Ficheiro CSV",
     "previewLabel": "Pré‑visualização (primeiras 10 linhas)",
     "clear": "Limpar",
     "cancel": "Cancelar",
     "import": "Importar despesas",
     "importing": "A importar...",
+    "analyzing": "A analisar o CSV…",
+    "expenseCount": "{count, plural, one {# despesa encontrada} other {# despesas encontradas}}",
+    "autoMatchedCount": "{count, plural, one {# nome associado automaticamente} other {# nomes associados automaticamente}}",
+    "participantMappingLabel": "Associar nomes do Splitwise",
+    "participantMappingDescription": "Cada coluna no CSV é uma pessoa do Splitwise. Associa-a a membros deste grupo ou adiciona novos membros por email.",
+    "mapToMemberLabel": "Membro do grupo",
+    "mapToMemberPlaceholder": "Selecciona um membro",
+    "addNewMemberOption": "Adicionar novo membro por email",
+    "expenseReferences": "{count, plural, one {# despesa} other {# despesas}}",
+    "emailLabel": "Email",
+    "emailPlaceholder": "nome@example.com",
+    "softCreateHint": "Podem registar-se depois com este email para aceder ao grupo.",
     "toast": {
       "invalidFileType": {
         "title": "Tipo de ficheiro inválido",
@@ -624,6 +641,14 @@
       "noContent": {
         "title": "Sem conteúdo CSV",
         "description": "Selecciona primeiro um ficheiro CSV."
+      },
+      "missingEmail": {
+        "title": "Email obrigatório",
+        "description": "Introduz o email de {name}."
+      },
+      "incompleteMapping": {
+        "title": "Associação incompleta",
+        "description": "Escolhe um membro ou email para {name}."
       },
       "success": {
         "title": "Importação concluída",

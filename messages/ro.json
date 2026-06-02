@@ -585,8 +585,28 @@
       "cancelled": {
         "title": "Import anulat",
         "description": "Importul a fost oprit înainte să se termine."
+      },
+      "missingEmail": {
+        "title": "Email required",
+        "description": "Enter an email for {name}."
+      },
+      "incompleteMapping": {
+        "title": "Mapping incomplete",
+        "description": "Choose a member or email for {name}."
       }
-    }
+    },
+    "analyzing": "Analyzing CSV…",
+    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
+    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
+    "participantMappingLabel": "Match Splitwise names",
+    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
+    "mapToMemberLabel": "Group member",
+    "mapToMemberPlaceholder": "Select a member",
+    "addNewMemberOption": "Add new member by email",
+    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "softCreateHint": "They can register later with this email to access the group."
   },
   "ProfileSettings": {
     "title": "Setări profil",
@@ -748,6 +768,11 @@
         "title": "Import anulat",
         "description": "Importul a fost oprit înainte să se termine."
       }
+    },
+    "errors": {
+      "invalidJson": "Fișier JSON invalid.",
+      "invalidFormat": "Acest fișier nu este un export Knots valid.",
+      "noExpenses": "Exportul nu conține cheltuieli."
     }
   },
   "GroupDangerZone": {
