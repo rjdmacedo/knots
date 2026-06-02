@@ -1,8 +1,8 @@
 import { addGroupMember } from '@/lib/group-members'
-import { protectedProcedure } from '@/trpc/init'
+import { groupMemberProcedure } from '@/trpc/init'
 import { z } from 'zod'
 
-export const addMemberProcedure = protectedProcedure
+export const addMemberProcedure = groupMemberProcedure
   .input(
     z
       .object({

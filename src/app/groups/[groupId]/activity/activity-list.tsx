@@ -85,7 +85,7 @@ export function ActivityList() {
 
         return (
           <div key={dateGroup}>
-            <div className="text-xs py-1 font-semibold sticky top-0 bg-background -mx-6 px-6">
+            <div className="text-xs py-1 font-semibold sticky top-0 bg-background -mx-4 px-4">
               {t(`Groups.${dateGroup}`)}
             </div>
             {groupActivities.map((activity) => {

@@ -1,8 +1,8 @@
 import { lookupCategoryMapping } from '@/lib/category-mapping'
-import { baseProcedure } from '@/trpc/init'
+import { groupMemberProcedure } from '@/trpc/init'
 import { z } from 'zod'
 
-export const lookupCategoryMappingProcedure = baseProcedure
+export const lookupCategoryMappingProcedure = groupMemberProcedure
   .input(
     z.object({
       groupId: z.string().min(1),

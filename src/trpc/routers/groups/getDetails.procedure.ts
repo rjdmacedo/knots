@@ -1,9 +1,9 @@
 import { getGroup, getGroupExpenseUserIds } from '@/lib/api'
-import { baseProcedure } from '@/trpc/init'
+import { groupMemberProcedure } from '@/trpc/init'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-export const getGroupDetailsProcedure = baseProcedure
+export const getGroupDetailsProcedure = groupMemberProcedure
   .input(z.object({ groupId: z.string().min(1) }))
   .query(async ({ input: { groupId } }) => {
     const group = await getGroup(groupId)

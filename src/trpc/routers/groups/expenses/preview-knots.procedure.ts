@@ -1,9 +1,9 @@
 import { analyzeKnotsImport } from '@/lib/knots-import'
-import { protectedProcedure } from '@/trpc/init'
+import { groupMemberProcedure } from '@/trpc/init'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-export const previewKnotsImportProcedure = protectedProcedure
+export const previewKnotsImportProcedure = groupMemberProcedure
   .input(
     z.object({
       groupId: z.string().min(1),

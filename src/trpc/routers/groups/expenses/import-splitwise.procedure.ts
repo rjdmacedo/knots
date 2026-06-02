@@ -4,11 +4,11 @@ import {
   memberToAddSchema,
 } from '@/lib/knots-import-members'
 import { parseSplitwiseCSV } from '@/lib/splitwise-import'
-import { protectedProcedure } from '@/trpc/init'
+import { groupMemberProcedure } from '@/trpc/init'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-export const importSplitwiseCSVProcedure = protectedProcedure
+export const importSplitwiseCSVProcedure = groupMemberProcedure
   .input(
     z.object({
       groupId: z.string().min(1),

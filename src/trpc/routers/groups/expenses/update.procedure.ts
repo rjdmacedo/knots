@@ -2,11 +2,11 @@ import { updateExpense } from '@/lib/api'
 import { upsertCategoryMapping } from '@/lib/category-mapping'
 import { notifyOnActivity } from '@/lib/push/notify-on-activity'
 import { expenseFormSchema } from '@/lib/schemas'
-import { protectedProcedure } from '@/trpc/init'
+import { groupMemberProcedure } from '@/trpc/init'
 import { ActivityType } from '@prisma/client'
 import { z } from 'zod'
 
-export const updateGroupExpenseProcedure = protectedProcedure
+export const updateGroupExpenseProcedure = groupMemberProcedure
   .input(
     z.object({
       expenseId: z.string().min(1),

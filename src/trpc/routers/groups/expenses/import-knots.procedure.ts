@@ -6,7 +6,7 @@ import {
   memberToAddSchema,
 } from '@/lib/knots-import-members'
 import { prisma } from '@/lib/prisma'
-import { protectedProcedure } from '@/trpc/init'
+import { groupMemberProcedure } from '@/trpc/init'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
@@ -33,7 +33,7 @@ async function rollbackImportedExpenses(expenseIds: string[]) {
   ])
 }
 
-export const importKnotsProcedure = protectedProcedure
+export const importKnotsProcedure = groupMemberProcedure
   .input(
     z.object({
       groupId: z.string().min(1),

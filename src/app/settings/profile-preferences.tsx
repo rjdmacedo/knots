@@ -16,7 +16,7 @@ export function ProfilePreferences({
   const t = useTranslations('ProfileSettings')
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-4 sm:grid-cols-2">
       <div className="space-y-1.5">
         <div className="text-sm font-medium">
           {t('Preferences.timezoneLabel')}
@@ -31,15 +31,14 @@ export function ProfilePreferences({
         <CurrencyPreferenceSelect currentCurrency={preferredCurrency} />
       </div>
 
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="space-y-1.5">
-          <div className="text-sm font-medium">{t('languageLabel')}</div>
-          <LocaleSwitcher />
-        </div>
-        <div className="space-y-1.5">
-          <div className="text-sm font-medium">{t('themeLabel')}</div>
-          <ThemeToggle />
-        </div>
+      <div className="space-y-1.5">
+        <div className="text-sm font-medium">{t('languageLabel')}</div>
+        <LocaleSwitcher />
+      </div>
+
+      <div className="space-y-1.5">
+        <div className="text-sm font-medium">{t('themeLabel')}</div>
+        <ThemeToggle />
       </div>
     </div>
   )

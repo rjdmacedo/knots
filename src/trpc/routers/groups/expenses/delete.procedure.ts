@@ -1,10 +1,10 @@
 import { deleteExpense } from '@/lib/api'
 import { notifyOnActivity } from '@/lib/push/notify-on-activity'
-import { protectedProcedure } from '@/trpc/init'
+import { groupMemberProcedure } from '@/trpc/init'
 import { ActivityType } from '@prisma/client'
 import { z } from 'zod'
 
-export const deleteGroupExpenseProcedure = protectedProcedure
+export const deleteGroupExpenseProcedure = groupMemberProcedure
   .input(
     z.object({
       expenseId: z.string().min(1),

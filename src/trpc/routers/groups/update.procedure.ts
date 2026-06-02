@@ -1,9 +1,9 @@
 import { updateGroup } from '@/lib/api'
 import { groupFormSchema } from '@/lib/schemas'
-import { baseProcedure } from '@/trpc/init'
+import { groupMemberProcedure } from '@/trpc/init'
 import { z } from 'zod'
 
-export const updateGroupProcedure = baseProcedure
+export const updateGroupProcedure = groupMemberProcedure
   .input(
     z.object({
       groupId: z.string().min(1),

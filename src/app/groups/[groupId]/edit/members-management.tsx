@@ -156,16 +156,18 @@ export function MembersManagement({ groupId, members, currentUserId }: Props) {
               key={member.id}
               className="flex items-center justify-between gap-2 rounded-md border px-3 py-2"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 min-w-0">
                 <div className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-sm font-medium">
                   {member.name.charAt(0).toUpperCase()}
                   {member.role === 'OWNER' && (
                     <Crown className="absolute -top-1 -right-1 h-3 w-3 text-amber-500" />
                   )}
                 </div>
-                <div>
-                  <span className="text-sm font-medium">{member.name}</span>
-                  <span className="ml-2 text-xs text-muted-foreground">
+                <div className="flex flex-col min-w-0">
+                  <span className="text-sm font-medium truncate">
+                    {member.name}
+                  </span>
+                  <span className="text-xs text-muted-foreground truncate">
                     {member.email}
                   </span>
                 </div>

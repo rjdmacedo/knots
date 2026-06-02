@@ -1,27 +1,16 @@
 import { prisma } from '@/lib/prisma'
-import { protectedProcedure } from '@/trpc/init'
+import { groupMemberProcedure } from '@/trpc/init'
 import { MembershipRole } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-export const leaveProcedure = protectedProcedure
+export const leaveProcedure = groupMemberProcedure
   .input(
     z.object({
       groupId: z.string().min(1),
     }),
   )
-  .mutation(async ({ input: { groupId }, ctx: { user } }) => {
-    const membership = await prisma.groupMembership.findUnique({
-      where: { userId_groupId: { userId: user.id, groupId } },
-    })
-
-    if (!membership) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'You are not a member of this group.',
-      })
-    }
-
+  .mutation(async ({ input: { groupId }, ctx: { user, membership } }) => {
     // If the user is the owner, check if there's another owner
     if (membership.role === MembershipRole.OWNER) {
       const otherOwners = await prisma.groupMembership.count({

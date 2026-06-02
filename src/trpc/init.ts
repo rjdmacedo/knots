@@ -1,6 +1,7 @@
 import { auth } from '@/lib/auth/auth'
 import { Prisma } from '@prisma/client'
 import { initTRPC, TRPCError } from '@trpc/server'
+import { get } from 'lodash-es'
 import { cache } from 'react'
 import superjson from 'superjson'
 
@@ -12,6 +13,8 @@ superjson.registerCustom<Prisma.Decimal, string>(
   },
   'decimal.js',
 )
+
+import { prisma } from '@/lib/prisma'
 
 export const createTRPCContext = cache(async () => {
   /**
@@ -62,3 +65,44 @@ export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
     },
   })
 })
+
+/**
+ * Group member procedure — requires the user to be a member of the target group.
+ * Throws NOT_FOUND if the user is not a member (leaks no existence information).
+ */
+export const groupMemberProcedure = protectedProcedure.use(
+  async ({ ctx, getRawInput, next }) => {
+    const rawInput = await getRawInput()
+    const groupId = get(rawInput, 'groupId') as string | undefined
+
+    if (!groupId) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'Group ID is required.',
+      })
+    }
+
+    const membership = await prisma.groupMembership.findUnique({
+      where: {
+        userId_groupId: {
+          userId: ctx.user.id,
+          groupId,
+        },
+      },
+    })
+
+    if (!membership) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Group not found.',
+      })
+    }
+
+    return next({
+      ctx: {
+        ...ctx,
+        membership,
+      },
+    })
+  },
+)

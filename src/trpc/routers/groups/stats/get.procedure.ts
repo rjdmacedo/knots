@@ -15,10 +15,10 @@ import {
   getTotalActiveUserShare,
   getTotalGroupSpending,
 } from '@/lib/totals'
-import { baseProcedure } from '@/trpc/init'
+import { groupMemberProcedure } from '@/trpc/init'
 import { z } from 'zod'
 
-export const getGroupStatsProcedure = baseProcedure
+export const getGroupStatsProcedure = groupMemberProcedure
   .input(
     z.object({
       groupId: z.string().min(1),

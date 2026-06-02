@@ -1,10 +1,10 @@
 import { prisma } from '@/lib/prisma'
-import { protectedProcedure } from '@/trpc/init'
+import { groupMemberProcedure } from '@/trpc/init'
 import { MembershipRole } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-export const demoteMemberProcedure = protectedProcedure
+export const demoteMemberProcedure = groupMemberProcedure
   .input(
     z.object({
       groupId: z.string().min(1),
@@ -12,13 +12,14 @@ export const demoteMemberProcedure = protectedProcedure
     }),
   )
   .mutation(
-    async ({ input: { groupId, userId: targetUserId }, ctx: { user } }) => {
+    async ({
+      input: { groupId, userId: targetUserId },
+      ctx: { user, membership },
+    }) => {
       // Verify the caller is the group owner
-      const callerMembership = await prisma.groupMembership.findUnique({
-        where: { userId_groupId: { userId: user.id, groupId } },
-      })
+      const callerMembership = membership
 
-      if (!callerMembership || callerMembership.role !== MembershipRole.OWNER) {
+      if (callerMembership.role !== MembershipRole.OWNER) {
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: 'Only the group owner can demote members.',

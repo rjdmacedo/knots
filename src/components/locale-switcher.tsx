@@ -1,12 +1,12 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Locale, localeLabels } from '@/i18n'
 import { setUserLocale } from '@/lib/locale'
 import { useLocale } from 'next-intl'
@@ -27,28 +27,21 @@ export function LocaleSwitcher() {
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="-my-3"
-          disabled={isPending}
-        >
-          <span>{localeLabels[locale]}</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        {Object.entries(localeLabels).map(([locale, label]) => (
-          <DropdownMenuItem
-            key={locale}
-            onClick={() => handleLocaleChange(locale as Locale)}
-            disabled={isPending}
-          >
+    <Select
+      value={locale}
+      onValueChange={(val) => handleLocaleChange(val as Locale)}
+      disabled={isPending}
+    >
+      <SelectTrigger className="w-full">
+        <SelectValue placeholder={localeLabels[locale]} />
+      </SelectTrigger>
+      <SelectContent>
+        {Object.entries(localeLabels).map(([key, label]) => (
+          <SelectItem key={key} value={key}>
             {label}
-          </DropdownMenuItem>
+          </SelectItem>
         ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </SelectContent>
+    </Select>
   )
 }
