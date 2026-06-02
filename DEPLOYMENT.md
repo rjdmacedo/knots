@@ -66,3 +66,16 @@ Adjust `--interval` (seconds) as needed. Watchtower will pull the new image and 
 - **Not pulling / not recreating** – After a new image is pushed to GHCR, you must `docker compose pull` (or `docker pull`) and then `docker compose up -d` (or recreate the container) so the VM uses the new image.
 
 Use **`compose.ghcr.yaml`** and the **pull + up -d** flow above so that each release results in an updated container when you run the update commands on the VM.
+
+## Prisma Studio (optional, via Twingate)
+
+On the VM, copy `compose.tools.yaml` and `scripts/prisma-studio.sh` next to your `docker-compose.yml` and `.env`, then:
+
+```bash
+./scripts/prisma-studio.sh start    # https://studio.knots.mais-cedo.net via Caddy
+./scripts/prisma-studio.sh status
+./scripts/prisma-studio.sh logs
+./scripts/prisma-studio.sh stop
+```
+
+Uses the `tools` compose profile; does not start with a normal `docker compose up -d`. Ensure `DATABASE_URL` / `POSTGRES_*` URLs use host `db`, not `localhost`. The Studio container must join the same Docker network as Postgres (`knots-net` by default; set `KNOTS_DOCKER_NETWORK` if your compose file uses another name).

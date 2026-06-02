@@ -1,0 +1,21 @@
+# Prisma Studio overlay — merge with your main compose file:
+#   docker compose -f docker-compose.yml -f compose.tools.yaml --profile tools up -d prisma-studio
+services:
+  prisma-studio:
+    image: ${KNOTS_IMAGE:-ghcr.io/rjdmacedo/knots:latest}
+    container_name: knots-prisma-studio
+    profiles: ['tools']
+    depends_on:
+      db:
+        condition: service_healthy
+    # App image entrypoint runs migrate + next start; override for Studio only.
+    entrypoint:
+      ['npx', 'prisma', 'studio', '--hostname', '0.0.0.0', '--port', '5555']
+    environment:
+      POSTGRES_PRISMA_URL: ${POSTGRES_PRISMA_URL}
+      POSTGRES_URL_NON_POOLING: ${POSTGRES_URL_NON_POOLING}
+    ports:
+      - '5555:5555'
+    networks:
+      - ${KNOTS_DOCKER_NETWORK:-knots-net}
+    restart: 'no'
