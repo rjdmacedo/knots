@@ -163,56 +163,6 @@ async function persistDefaultSplittingOptions(
   }
 }
 
-// ─── iOS viewport fix hook ───────────────────────────────────────────────────
-
-function useIosViewportFix() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    // Only apply on iOS
-    const isIOS =
-      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
-
-    if (!isIOS) return
-
-    const viewport = window.visualViewport
-    if (!viewport) return
-
-    let pendingResize: number | null = null
-
-    const handleResize = () => {
-      if (pendingResize) cancelAnimationFrame(pendingResize)
-      pendingResize = requestAnimationFrame(() => {
-        const container = scrollContainerRef.current
-        if (!container) return
-
-        // When iOS keyboard closes, visualViewport height returns to full.
-        // Force a scroll position reset to prevent the "shrunken" viewport effect.
-        const viewportHeight = viewport.height
-        const windowHeight = window.innerHeight
-
-        // Keyboard is closed when viewport height is close to window height
-        if (Math.abs(viewportHeight - windowHeight) < 50) {
-          // Reset scroll position to avoid the blank area bug
-          container.style.height = ''
-          window.scrollTo(0, 0)
-          document.documentElement.scrollTop = 0
-          document.body.scrollTop = 0
-        }
-      })
-    }
-
-    viewport.addEventListener('resize', handleResize)
-    return () => {
-      viewport.removeEventListener('resize', handleResize)
-      if (pendingResize) cancelAnimationFrame(pendingResize)
-    }
-  }, [])
-
-  return scrollContainerRef
-}
-
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 export function ExpenseFormV2({
@@ -236,8 +186,6 @@ export function ExpenseFormV2({
   const locale = useLocale() as Locale
   const isCreate = expense === undefined
   const searchParams = useSearchParams()
-
-  const viewportFixRef = useIosViewportFix()
 
   const getDefaultPaidBy = (): string | undefined => {
     if (!isCreate) return undefined
@@ -557,7 +505,7 @@ export function ExpenseFormV2({
   // ─── Render ──────────────────────────────────────────────────────────────────
 
   return (
-    <div ref={viewportFixRef}>
+    <div>
       <Form {...form}>
         {/* 
           The native <form> wraps ONLY the expense details card (Card 1).

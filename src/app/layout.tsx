@@ -1,6 +1,7 @@
 import { ApplePwaSplash } from '@/app/apple-pwa-splash'
 import { AppHeader } from '@/components/app-header'
 import { Footer } from '@/components/footer'
+import { IosViewportResizeFix } from '@/components/ios-viewport-resize-fix'
 import { ProgressBar } from '@/components/progress-bar'
 import { ThemeProvider } from '@/components/theme-provider'
 import { TooltipProvider } from '@/components/ui/tooltip'
@@ -73,9 +74,9 @@ function Content({
     <TRPCProvider>
       <TooltipProvider>
         <AppHeader isAuthenticated={isAuthenticated} />
-        <div className="flex-1 overflow-y-auto py-16">
+        <IosViewportResizeFix className="flex-1 overflow-y-auto py-16">
           <main className="flex flex-col min-h-full py-4">{children}</main>
-        </div>
+        </IosViewportResizeFix>
         <Footer />
         <Toaster />
       </TooltipProvider>
