@@ -1,10 +1,9 @@
 'use client'
 
 import { trpc } from '@/trpc/client'
-import { useTranslations } from 'next-intl'
-import { usePathname } from 'next/navigation'
-import { PropsWithChildren, useEffect } from 'react'
-import { toast } from 'sonner'
+import { TRPCClientError } from '@trpc/client'
+import { notFound } from 'next/navigation'
+import { PropsWithChildren } from 'react'
 import { CurrentGroupProvider } from './current-group-context'
 import { GroupHeader } from './group-header'
 
@@ -12,15 +11,22 @@ export function GroupLayoutClient({
   groupId,
   children,
 }: PropsWithChildren<{ groupId: string }>) {
-  const { data, isLoading } = trpc.groups.get.useQuery({ groupId })
-  const t = useTranslations('Groups.NotFound')
-  const pathname = usePathname()
+  const { data, isLoading, isError, error } = trpc.groups.get.useQuery({
+    groupId,
+  })
 
-  useEffect(() => {
-    if (data && !data.group) {
-      toast.error(t('text'))
+  if (!isLoading) {
+    if (
+      isError &&
+      error instanceof TRPCClientError &&
+      error.data?.code === 'NOT_FOUND'
+    ) {
+      notFound()
     }
-  }, [data, t])
+    if (data && !data.group) {
+      notFound()
+    }
+  }
 
   const props =
     isLoading || !data?.group
