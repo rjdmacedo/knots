@@ -1,4 +1,4 @@
-import { EditExpenseForm } from '@/app/groups/[groupId]/expenses/edit-expense-form'
+import { EditExpenseFormV2 } from '@/app/groups/[groupId]/expenses/edit-expense-form-v2'
 import { getRuntimeFeatureFlags } from '@/lib/featureFlags'
 import { Metadata } from 'next'
 
@@ -13,7 +13,7 @@ export default async function EditExpensePage({
 }) {
   const { groupId, expenseId } = await params
   return (
-    <EditExpenseForm
+    <EditExpenseFormV2
       groupId={groupId}
       expenseId={expenseId}
       runtimeFeatureFlags={await getRuntimeFeatureFlags()}
