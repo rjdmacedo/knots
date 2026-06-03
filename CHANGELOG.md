@@ -1,3 +1,10 @@
+## [1.35.2](https://github.com/rjdmacedo/knots/compare/v1.35.1...v1.35.2) (2026-06-03)
+
+
+### Bug Fixes
+
+* show group not-found page when user lacks access ([8366776](https://github.com/rjdmacedo/knots/commit/8366776320505f6f530ec893e57d95338246a5b8))
+
 ## [1.35.1](https://github.com/rjdmacedo/knots/compare/v1.35.0...v1.35.1) (2026-06-02)
 
 
