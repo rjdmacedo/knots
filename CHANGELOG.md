@@ -1,3 +1,12 @@
+## [1.35.3](https://github.com/rjdmacedo/knots/compare/v1.35.2...v1.35.3) (2026-06-18)
+
+
+### Bug Fixes
+
+* migrate from Radix to Base UI to fix iOS Safari viewport bug ([74adf97](https://github.com/rjdmacedo/knots/commit/74adf979b400034d364b2621ac2418fc3f45aaa4))
+* migrate from Radix to Base UI to fix iOS Safari viewport bug ([3ca65f8](https://github.com/rjdmacedo/knots/commit/3ca65f8301fee8cc5cae7655fbafd4c804f8ff4f))
+* migrate from Radix to Base UI to fix iOS Safari viewport bug ([fcd2e50](https://github.com/rjdmacedo/knots/commit/fcd2e50e559bf2782b97846362bee9c39e9dac75))
+
 ## [1.35.2](https://github.com/rjdmacedo/knots/compare/v1.35.1...v1.35.2) (2026-06-03)
 
 
