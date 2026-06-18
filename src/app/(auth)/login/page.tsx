@@ -1,7 +1,7 @@
 'use client'
 
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -13,6 +13,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { loginAction, type LoginResult } from '@/lib/auth/actions'
+import { cn } from '@/lib/utils'
 import { AlertCircle, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
@@ -78,10 +79,7 @@ export default function LoginPage() {
           <div className="grid gap-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="password">Password</Label>
-              <Link
-                href="/forgot-password"
-                className="text-sm text-muted-foreground underline-offset-4 hover:underline"
-              >
+              <Link href="/forgot-password" className={cn(buttonVariants())}>
                 Forgot password?
               </Link>
             </div>
@@ -105,10 +103,7 @@ export default function LoginPage() {
       <CardFooter className="justify-center">
         <p className="text-sm text-muted-foreground">
           Don&apos;t have an account?{' '}
-          <Link
-            href="/register"
-            className="text-primary underline-offset-4 hover:underline"
-          >
+          <Link href="/register" className={cn(buttonVariants())}>
             Sign up
           </Link>
         </p>

@@ -21,41 +21,47 @@ export default function ExportButton({ groupId }: { groupId: string }) {
   return (
     <DropdownMenu>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <DropdownMenuTrigger asChild>
-            <Button variant="secondary" size="icon">
-              <Download className="w-4 h-4" />
-            </Button>
-          </DropdownMenuTrigger>
+        <TooltipTrigger
+          render={
+            <DropdownMenuTrigger
+              render={<Button variant="secondary" size="icon" />}
+            />
+          }
+        >
+          <Download className="w-4 h-4" />
         </TooltipTrigger>
         <TooltipContent>
           <p>{t('export')}</p>
         </TooltipContent>
       </Tooltip>
       <DropdownMenuContent>
-        <DropdownMenuItem asChild>
-          <Link
-            prefetch={false}
-            href={`/groups/${groupId}/expenses/export/json`}
-            target="_blank"
-          >
-            <div className="flex items-center gap-2">
-              <FileJson className="w-4 h-4" />
-              <p>{t('exportJson')}</p>
-            </div>
-          </Link>
+        <DropdownMenuItem
+          render={
+            <Link
+              prefetch={false}
+              href={`/groups/${groupId}/expenses/export/json`}
+              target="_blank"
+            />
+          }
+        >
+          <div className="flex items-center gap-2">
+            <FileJson className="w-4 h-4" />
+            <p>{t('exportJson')}</p>
+          </div>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link
-            prefetch={false}
-            href={`/groups/${groupId}/expenses/export/csv`}
-            target="_blank"
-          >
-            <div className="flex items-center gap-2">
-              <FileDown className="w-4 h-4" />
-              <p>{t('exportCsv')}</p>
-            </div>
-          </Link>
+        <DropdownMenuItem
+          render={
+            <Link
+              prefetch={false}
+              href={`/groups/${groupId}/expenses/export/csv`}
+              target="_blank"
+            />
+          }
+        >
+          <div className="flex items-center gap-2">
+            <FileDown className="w-4 h-4" />
+            <p>{t('exportCsv')}</p>
+          </div>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

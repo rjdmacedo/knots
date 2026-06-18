@@ -280,19 +280,21 @@ export function DocumentThumbnail({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button
-          variant="secondary"
-          className="w-full h-full border overflow-hidden rounded shadow-inner"
-        >
-          <Image
-            width={300}
-            height={300}
-            className="object-contain"
-            src={document.url}
-            alt=""
+      <DialogTrigger
+        render={
+          <Button
+            variant="secondary"
+            className="w-full h-full border overflow-hidden rounded shadow-inner"
           />
-        </Button>
+        }
+      >
+        <Image
+          width={300}
+          height={300}
+          className="object-contain"
+          src={document.url}
+          alt=""
+        />
       </DialogTrigger>
       <DialogContent className="p-4 w-screen max-w-[100vw] h-dvh max-h-dvh sm:max-w-[calc(100vw-32px)] sm:max-h-[calc(100dvh-32px)] [&>*:last-child]:hidden">
         <VisuallyHidden.Root>
@@ -313,10 +315,8 @@ export function DocumentThumbnail({
               <Trash className="w-4 h-4 mr-2" />
               Delete document
             </Button>
-            <DialogClose asChild>
-              <Button variant="ghost">
-                <X className="w-4 h-4 mr-2" /> Close
-              </Button>
+            <DialogClose render={<Button variant="ghost" />}>
+              <X className="w-4 h-4 mr-2" /> Close
             </DialogClose>
           </div>
 

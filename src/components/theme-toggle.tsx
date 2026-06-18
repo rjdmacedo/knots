@@ -15,7 +15,15 @@ export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
 
   return (
-    <Select value={theme} onValueChange={(val) => setTheme(val)}>
+    <Select
+      items={[
+        { value: 'light', label: 'Light' },
+        { value: 'dark', label: 'Dark' },
+        { value: 'system', label: 'System' },
+      ]}
+      value={theme}
+      onValueChange={(val) => val && setTheme(val)}
+    >
       <SelectTrigger className="w-full">
         <SelectValue placeholder="Select theme" />
       </SelectTrigger>

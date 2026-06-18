@@ -1,10 +1,10 @@
 'use client'
 import { ExpenseCard } from '@/app/groups/[groupId]/expenses/expense-card'
 import { getGroupExpensesAction } from '@/app/groups/[groupId]/expenses/expense-list-fetch-action'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import { SearchBar } from '@/components/ui/search-bar'
 import { Skeleton } from '@/components/ui/skeleton'
-import { getCurrencyFromGroup } from '@/lib/utils'
+import { cn, getCurrencyFromGroup } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import dayjs, { type Dayjs } from 'dayjs'
 import { useTranslations } from 'next-intl'
@@ -154,11 +154,12 @@ const ExpenseListForSearch = ({
     return (
       <p className="px-6 text-sm py-6">
         {t('noExpenses')}{' '}
-        <Button variant="link" asChild className="-m-4">
-          <Link href={`/groups/${groupId}/expenses/create`}>
-            {t('createFirst')}
-          </Link>
-        </Button>
+        <Link
+          href={`/groups/${groupId}/expenses/create`}
+          className={cn(buttonVariants({ variant: "link" }), "-m-4")}
+        >
+          {t('createFirst')}
+        </Link>
       </p>
     )
 

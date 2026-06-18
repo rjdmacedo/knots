@@ -1,5 +1,5 @@
 'use client'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import {
   DateTimeStyle,
   cn,
@@ -100,7 +100,7 @@ export function ActivityItem({
           <div className="m-1 text-xs text-muted-foreground">
             <Link
               href={`/groups/${groupId}`}
-              className="hover:underline"
+              className={cn(buttonVariants())}
               onClick={(event) => event.stopPropagation()}
             >
               {group.name}
@@ -118,16 +118,12 @@ export function ActivityItem({
         )}
       </div>
       {expenseExists && (
-        <Button
-          size="icon"
-          variant="link"
-          className="self-center hidden sm:flex w-5 h-5"
-          asChild
+        <Link
+          href={`/groups/${groupId}/expenses/${activity.expenseId}/edit`}
+          className={cn(buttonVariants({ size: "icon", variant: "link" }), "self-center hidden sm:flex w-5 h-5")}
         >
-          <Link href={`/groups/${groupId}/expenses/${activity.expenseId}/edit`}>
-            <ChevronRight className="w-4 h-4" />
-          </Link>
-        </Button>
+          <ChevronRight className="w-4 h-4" />
+        </Link>
       )}
     </div>
   )

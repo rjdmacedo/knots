@@ -145,24 +145,28 @@ export function PushNotificationToggle({
   return (
     <Popover>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <PopoverTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="shrink-0"
-              disabled={isLoading}
-              aria-controls={panelId}
-            >
-              {isLoading ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : isSubscribed ? (
-                <Bell className="size-4" />
-              ) : (
-                <BellOff className="size-4" />
-              )}
-            </Button>
-          </PopoverTrigger>
+        <TooltipTrigger
+          render={
+            <PopoverTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="shrink-0"
+                  disabled={isLoading}
+                  aria-controls={panelId}
+                />
+              }
+            />
+          }
+        >
+          {isLoading ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : isSubscribed ? (
+            <Bell className="size-4" />
+          ) : (
+            <BellOff className="size-4" />
+          )}
         </TooltipTrigger>
         <TooltipContent>
           <p>{isSubscribed ? t('unsubscribe') : t('subscribe')}</p>
@@ -173,7 +177,7 @@ export function PushNotificationToggle({
         id={panelId}
         align="end"
         className="w-80 p-0"
-        onOpenAutoFocus={(e) => e.preventDefault()}
+        initialFocus={false}
       >
         <div className="flex flex-col">
           <div className="flex items-start justify-between gap-4 border-b px-4 py-3">

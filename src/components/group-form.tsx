@@ -1,5 +1,5 @@
 import { SubmitButton } from '@/components/submit-button'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Form,
@@ -183,9 +183,9 @@ export function GroupForm({ group, onSubmit }: Props) {
             {t(group ? 'Settings.save' : 'Settings.create')}
           </SubmitButton>
           {!group && (
-            <Button variant="ghost" asChild>
-              <Link href="/groups">{t('Settings.cancel')}</Link>
-            </Button>
+            <Link href="/groups" className={buttonVariants({ variant: "ghost" })}>
+              {t('Settings.cancel')}
+            </Link>
           )}
         </div>
       </form>

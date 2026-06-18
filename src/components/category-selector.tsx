@@ -76,13 +76,15 @@ export function CategorySelector({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <CategoryButton
-          category={selectedCategory}
-          open={open}
-          isLoading={isLoading}
-        />
-      </PopoverTrigger>
+      <PopoverTrigger
+        render={
+          <CategoryButton
+            category={selectedCategory}
+            open={open}
+            isLoading={isLoading}
+          />
+        }
+      />
       <PopoverContent className="p-0" align="start">
         <CategoryCommand
           categories={categories}

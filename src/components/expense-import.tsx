@@ -35,12 +35,16 @@ export function ExpenseImport({
     <>
       <DropdownMenu>
         <Tooltip>
-          <TooltipTrigger asChild>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon">
-                <Upload className="w-4 h-4" />
-              </Button>
-            </DropdownMenuTrigger>
+          <TooltipTrigger
+            render={
+              <DropdownMenuTrigger
+                render={
+                  <Button variant="secondary" size="icon" />
+                }
+              />
+            }
+          >
+            <Upload className="w-4 h-4" />
           </TooltipTrigger>
           <TooltipContent>
             <p>{t('button')}</p>

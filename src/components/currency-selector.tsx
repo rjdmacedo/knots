@@ -81,13 +81,15 @@ export function CurrencySelector({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <CurrencyButton
-          currency={selectedCurrency}
-          open={open}
-          isLoading={isLoading}
-        />
-      </PopoverTrigger>
+      <PopoverTrigger
+        render={
+          <CurrencyButton
+            currency={selectedCurrency}
+            open={open}
+            isLoading={isLoading}
+          />
+        }
+      />
       <PopoverContent className="p-0" align="start">
         <CurrencyCommand
           currencies={currencies}

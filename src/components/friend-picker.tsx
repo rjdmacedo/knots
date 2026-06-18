@@ -159,7 +159,7 @@ export function FriendPicker({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>{trigger}</PopoverTrigger>
+      <PopoverTrigger render={trigger} />
       <PopoverContent
         className="w-[var(--radix-popover-trigger-width)] p-0"
         align="start"
@@ -241,10 +241,8 @@ function FriendPickerCommand({
           open={emailSectionOpen}
           onOpenChange={onEmailSectionOpenChange}
         >
-          <CollapsibleTrigger asChild>
-            <Button variant="link" size="sm" className="h-auto px-0">
-              {t('addByEmail')}
-            </Button>
+          <CollapsibleTrigger render={<Button variant="link" size="sm" className="h-auto px-0" />}>
+            {t('addByEmail')}
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-2 pt-2">
             <Input

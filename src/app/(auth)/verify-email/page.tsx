@@ -1,7 +1,7 @@
 'use client'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { cn } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { CheckCircle2, Clock, Loader2, Mail, XCircle } from 'lucide-react'
 import Link from 'next/link'
@@ -113,9 +114,9 @@ export default function VerifyEmailPage() {
           </CardDescription>
         </CardHeader>
         <CardFooter>
-          <Button asChild className="w-full">
-            <Link href="/login">Go to Login</Link>
-          </Button>
+          <Link href="/login" className={cn(buttonVariants(), "w-full")}>
+            Go to Login
+          </Link>
         </CardFooter>
       </Card>
     )
@@ -184,9 +185,9 @@ export default function VerifyEmailPage() {
           )}
         </CardContent>
         <CardFooter className="justify-center">
-          <Button variant="link" asChild>
-            <Link href="/login">Back to Login</Link>
-          </Button>
+          <Link href="/login" className={buttonVariants({ variant: "link" })}>
+            Back to Login
+          </Link>
         </CardFooter>
       </Card>
     )
@@ -206,9 +207,9 @@ export default function VerifyEmailPage() {
           </CardDescription>
         </CardHeader>
         <CardFooter>
-          <Button asChild className="w-full">
-            <Link href="/login">Go to Login</Link>
-          </Button>
+          <Link href="/login" className={cn(buttonVariants(), "w-full")}>
+            Go to Login
+          </Link>
         </CardFooter>
       </Card>
     )
@@ -228,9 +229,9 @@ export default function VerifyEmailPage() {
           </CardDescription>
         </CardHeader>
         <CardFooter className="justify-center">
-          <Button variant="link" asChild>
-            <Link href="/login">Back to Login</Link>
-          </Button>
+          <Link href="/login" className={buttonVariants({ variant: "link" })}>
+            Back to Login
+          </Link>
         </CardFooter>
       </Card>
     )
@@ -250,9 +251,9 @@ export default function VerifyEmailPage() {
         </CardDescription>
       </CardHeader>
       <CardFooter className="justify-center">
-        <Button variant="link" asChild>
-          <Link href="/login">Back to Login</Link>
-        </Button>
+        <Link href="/login" className={buttonVariants({ variant: "link" })}>
+          Back to Login
+        </Link>
       </CardFooter>
     </Card>
   )

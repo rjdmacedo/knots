@@ -283,20 +283,7 @@ export function SplitwiseImportDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleDialogOpenChange}>
-      <DialogContent
-        className="sm:max-w-lg"
-        showCloseButton={!isImporting}
-        onInteractOutside={(event) => {
-          if (isImporting) {
-            event.preventDefault()
-          }
-        }}
-        onEscapeKeyDown={(event) => {
-          if (isImporting) {
-            event.preventDefault()
-          }
-        }}
-      >
+      <DialogContent className="sm:max-w-lg" showCloseButton={!isImporting}>
         <DialogHeader>
           <DialogTitle>{t('title')}</DialogTitle>
           <DialogDescription>{t('description')}</DialogDescription>
@@ -317,17 +304,15 @@ export function SplitwiseImportDialog({
               />
               {csvContent && (
                 <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      onClick={handleClear}
-                      disabled={isBusy}
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </TooltipTrigger>
+                  <TooltipTrigger render={<Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={handleClear}
+                    disabled={isBusy}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>} />
                   <TooltipContent>
                     <p>{t('clear')}</p>
                   </TooltipContent>
@@ -387,6 +372,10 @@ export function SplitwiseImportDialog({
                       <div className="space-y-1">
                         <Label>{t('mapToMemberLabel')}</Label>
                         <Select
+                          items={[
+                            ...groupMembers.map((member) => ({ value: member.id, label: member.name })),
+                            { value: ADD_NEW_VALUE, label: t('addNewMemberOption') },
+                          ]}
                           value={selectValue}
                           onValueChange={(value) => {
                             if (value === ADD_NEW_VALUE) {

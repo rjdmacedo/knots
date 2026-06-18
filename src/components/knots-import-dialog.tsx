@@ -251,20 +251,7 @@ export function KnotsImportDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleDialogOpenChange}>
-      <DialogContent
-        className="sm:max-w-lg"
-        showCloseButton={!isImporting}
-        onInteractOutside={(event) => {
-          if (isImporting) {
-            event.preventDefault()
-          }
-        }}
-        onEscapeKeyDown={(event) => {
-          if (isImporting) {
-            event.preventDefault()
-          }
-        }}
-      >
+      <DialogContent className="sm:max-w-lg" showCloseButton={!isImporting}>
         <DialogHeader>
           <DialogTitle>{t('title')}</DialogTitle>
           <DialogDescription>{t('description')}</DialogDescription>
@@ -285,16 +272,18 @@ export function KnotsImportDialog({
               />
               {fileContent && (
                 <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      onClick={handleClear}
-                      disabled={isBusy}
-                    >
-                      <X className="w-4 h-4" />
-                    </Button>
+                  <TooltipTrigger
+                    render={
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={handleClear}
+                        disabled={isBusy}
+                      />
+                    }
+                  >
+                    <X className="w-4 h-4" />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>{t('clear')}</p>

@@ -101,11 +101,13 @@ export function BlockedUsers() {
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button variant="outline" className="w-full sm:w-auto">
-            <ShieldBan className="size-4" />
-            {t('manage')}
-          </Button>
+        <DialogTrigger
+          render={
+            <Button variant="outline" className="w-full sm:w-auto" />
+          }
+        >
+          <ShieldBan className="size-4" />
+          {t('manage')}
         </DialogTrigger>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>

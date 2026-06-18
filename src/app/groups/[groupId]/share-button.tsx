@@ -30,12 +30,14 @@ export function ShareButton({ group }: Props) {
   return (
     <Popover>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <PopoverTrigger asChild>
-            <Button size="icon" className="shrink-0">
-              <Share className="w-4 h-4" />
-            </Button>
-          </PopoverTrigger>
+        <TooltipTrigger
+          render={
+            <PopoverTrigger
+              render={<Button size="icon" className="shrink-0" />}
+            />
+          }
+        >
+          <Share className="w-4 h-4" />
         </TooltipTrigger>
         <TooltipContent>{t('title')}</TooltipContent>
       </Tooltip>

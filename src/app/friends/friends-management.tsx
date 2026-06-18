@@ -239,15 +239,17 @@ export function FriendsManagement() {
                 </div>
 
                 <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive"
-                      aria-label={t('removeFriend')}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                  <AlertDialogTrigger
+                    render={
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive"
+                        aria-label={t('removeFriend')}
+                      />
+                    }
+                  >
+                    <Trash2 className="h-4 w-4" />
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>

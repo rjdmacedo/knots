@@ -2,7 +2,7 @@
 import { ActiveUserBalance } from '@/app/groups/[groupId]/expenses/active-user-balance'
 import { CategoryIcon } from '@/app/groups/[groupId]/expenses/category-icon'
 import { DocumentsCount } from '@/app/groups/[groupId]/expenses/documents-count'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import { getGroupExpenses } from '@/lib/api'
 import { Currency } from '@/lib/currency'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
@@ -102,16 +102,12 @@ export function ExpenseCard({
           {formatDate(expense.expenseDate, locale, { dateStyle: 'medium' })}
         </div>
       </div>
-      <Button
-        size="icon"
-        variant="link"
-        className="self-center hidden sm:flex"
-        asChild
+      <Link
+        href={`/groups/${groupId}/expenses/${expense.id}/edit`}
+        className={cn(buttonVariants({ variant: "link", size: "icon" }), "self-center hidden sm:flex")}
       >
-        <Link href={`/groups/${groupId}/expenses/${expense.id}/edit`}>
-          <ChevronRight className="w-4 h-4" />
-        </Link>
-      </Button>
+        <ChevronRight className="w-4 h-4" />
+      </Link>
     </div>
   )
 }

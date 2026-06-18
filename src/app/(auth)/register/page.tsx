@@ -1,7 +1,7 @@
 'use client'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { validatePassword } from '@/lib/auth/password-validation'
+import { cn } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CheckCircle2, Loader2 } from 'lucide-react'
@@ -137,9 +138,12 @@ export default function RegisterPage() {
           </Alert>
         </CardContent>
         <CardFooter>
-          <Button asChild variant="outline" className="w-full">
-            <Link href="/login">Go to login</Link>
-          </Button>
+          <Link
+            href="/login"
+            className={cn(buttonVariants({ variant: 'outline' }), 'w-full')}
+          >
+            Go to login
+          </Link>
         </CardFooter>
       </Card>
     )
@@ -268,10 +272,7 @@ export default function RegisterPage() {
       <CardFooter className="justify-center">
         <p className="text-sm text-muted-foreground">
           Already have an account?{' '}
-          <Link
-            href="/login"
-            className="text-primary underline-offset-4 hover:underline"
-          >
+          <Link href="/login" className={cn(buttonVariants())}>
             Sign in
           </Link>
         </p>

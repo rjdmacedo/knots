@@ -2,8 +2,13 @@ import { getCurrency } from '@/lib/currency'
 import { formatAmountAsDecimal, getCurrencyFromGroup } from '@/lib/utils'
 import { Parser } from '@json2csv/plainjs'
 import { PrismaClient } from '@prisma/client'
-import contentDisposition from 'content-disposition'
+import _contentDisposition from 'content-disposition'
 import { NextResponse } from 'next/server'
+
+const contentDisposition = _contentDisposition as unknown as (
+  filename?: string,
+  options?: any,
+) => string
 
 const splitModeLabel = {
   EVENLY: 'Evenly',
@@ -118,9 +123,9 @@ export async function GET(
     amount: formatAmountAsDecimal(expense.amount, currency),
     originalAmount: expense.originalAmount
       ? formatAmountAsDecimal(
-          expense.originalAmount,
-          getCurrency(expense.originalCurrency),
-        )
+        expense.originalAmount,
+        getCurrency(expense.originalCurrency),
+      )
       : null,
     originalCurrency: expense.originalCurrency,
     conversionRate: expense.conversionRate

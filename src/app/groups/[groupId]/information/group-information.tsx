@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -14,6 +14,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { cn } from '@/lib/utils'
 import { Pencil } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
@@ -30,12 +31,15 @@ export default function GroupInformation({ groupId }: { groupId: string }) {
           <CardTitle className="flex justify-between">
             <span>{t('title')}</span>
             <Tooltip>
-              <TooltipTrigger asChild>
-                <Button size="icon" asChild className="-mb-12">
-                  <Link href={`/groups/${groupId}/edit`}>
-                    <Pencil className="w-4 h-4" />
-                  </Link>
-                </Button>
+              <TooltipTrigger
+                render={
+                  <Link
+                    href={`/groups/${groupId}/edit`}
+                    className={cn(buttonVariants({ size: "icon" }), "-mb-12")}
+                  />
+                }
+              >
+                <Pencil className="w-4 h-4" />
               </TooltipTrigger>
               <TooltipContent>{t('edit')}</TooltipContent>
             </Tooltip>

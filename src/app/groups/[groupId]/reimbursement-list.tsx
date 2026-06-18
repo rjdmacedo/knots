@@ -1,7 +1,7 @@
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import { Reimbursement } from '@/lib/balances'
 import { Currency } from '@/lib/currency'
-import { formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency } from '@/lib/utils'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 
@@ -37,13 +37,12 @@ export function ReimbursementList({
                 strong: (chunks) => <strong>{chunks}</strong>,
               })}
             </div>
-            <Button asChild className="-mx-4 -my-3" size="sm" variant="ghost">
-              <Link
-                href={`/groups/${groupId}/expenses/create?reimbursement=yes&from=${reimbursement.from}&to=${reimbursement.to}&amount=${reimbursement.amount}`}
-              >
-                {t('markAsPaid')}
-              </Link>
-            </Button>
+            <Link
+              href={`/groups/${groupId}/expenses/create?reimbursement=yes&from=${reimbursement.from}&to=${reimbursement.to}&amount=${reimbursement.amount}`}
+              className={cn(buttonVariants({ size: "sm", variant: "ghost" }), "-mx-4 -my-3")}
+            >
+              {t('markAsPaid')}
+            </Link>
           </div>
           <div>{formatCurrency(currency, reimbursement.amount, locale)}</div>
         </div>

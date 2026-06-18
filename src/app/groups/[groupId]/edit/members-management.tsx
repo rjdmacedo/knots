@@ -178,16 +178,20 @@ export function MembersManagement({ groupId, members, currentUserId }: Props) {
                 {member.id === currentUserId && (
                   <AlertDialog>
                     <Tooltip>
-                      <TooltipTrigger asChild>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                          >
-                            <LogOut className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
+                      <TooltipTrigger
+                        render={
+                          <AlertDialogTrigger
+                            render={
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                              />
+                            }
+                          />
+                        }
+                      >
+                        <LogOut className="h-4 w-4" />
                       </TooltipTrigger>
                       <TooltipContent>{t('leaveGroup')}</TooltipContent>
                     </Tooltip>
@@ -213,10 +217,12 @@ export function MembersManagement({ groupId, members, currentUserId }: Props) {
                 {/* Owner can manage others via dropdown */}
                 {isOwner && member.id !== currentUserId && (
                   <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
+                    <DropdownMenuTrigger
+                      render={
+                        <Button variant="ghost" size="icon" className="h-8 w-8" />
+                      }
+                    >
+                      <MoreVertical className="h-4 w-4" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       {member.role !== 'OWNER' ? (

@@ -28,6 +28,7 @@ export function LocaleSwitcher() {
 
   return (
     <Select
+      items={Object.entries(localeLabels).map(([key, label]) => ({ value: key, label }))}
       value={locale}
       onValueChange={(val) => handleLocaleChange(val as Locale)}
       disabled={isPending}

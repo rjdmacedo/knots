@@ -1,7 +1,7 @@
 'use client'
 
 import { KnotsLogo } from '@/components/knots-logo'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import {
   Tooltip,
   TooltipContent,
@@ -70,25 +70,25 @@ export function AppHeader({ isAuthenticated }: AppHeaderProps) {
                 return (
                   <li key={href}>
                     <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon-lg"
-                          className={cn(
-                            'md:h-8 md:w-auto md:px-3 md:gap-1.5',
-                            active && 'bg-accent text-accent-foreground',
-                          )}
-                          asChild
-                        >
+                      <TooltipTrigger
+                        render={
                           <Link
                             href={href}
                             aria-label={label}
                             aria-current={active ? 'page' : undefined}
-                          >
-                            <Icon className="size-5 md:size-4" />
-                            <span className="hidden md:inline">{label}</span>
-                          </Link>
-                        </Button>
+                            className={cn(
+                              buttonVariants({
+                                variant: 'ghost',
+                                size: 'icon-lg',
+                              }),
+                              'md:h-8 md:w-auto md:px-3 md:gap-1.5',
+                              active && 'bg-accent text-accent-foreground',
+                            )}
+                          />
+                        }
+                      >
+                        <Icon className="size-5 md:size-4" />
+                        <span className="hidden md:inline">{label}</span>
                       </TooltipTrigger>
                       <TooltipContent side="bottom" className="md:hidden">
                         {label}

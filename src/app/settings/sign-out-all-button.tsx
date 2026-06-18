@@ -35,11 +35,13 @@ export function SignOutAllButton() {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant="outline" className="w-full sm:w-auto">
-          <MonitorSmartphone className="size-4" />
-          {t('button')}
-        </Button>
+      <AlertDialogTrigger
+        render={
+          <Button variant="outline" className="w-full sm:w-auto" />
+        }
+      >
+        <MonitorSmartphone className="size-4" />
+        {t('button')}
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

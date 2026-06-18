@@ -1,6 +1,11 @@
 import { prisma } from '@/lib/prisma'
-import contentDisposition from 'content-disposition'
+import _contentDisposition from 'content-disposition'
 import { NextResponse } from 'next/server'
+
+const contentDisposition = _contentDisposition as unknown as (
+  filename?: string,
+  options?: any,
+) => string
 
 export async function GET(
   req: Request,

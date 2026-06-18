@@ -1,6 +1,6 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import {
   Tooltip,
   TooltipContent,
@@ -17,12 +17,15 @@ export function Footer() {
         <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
           <span>Version {packageJson.version}</span>
           <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon-sm" asChild>
-                <Link href="/changelog">
-                  <ScrollText className="w-4 h-4" />
-                </Link>
-              </Button>
+            <TooltipTrigger
+              render={
+                <Link
+                  href="/changelog"
+                  className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
+                />
+              }
+            >
+              <ScrollText className="w-4 h-4" />
             </TooltipTrigger>
             <TooltipContent>Changelog</TooltipContent>
           </Tooltip>

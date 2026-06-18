@@ -4,7 +4,7 @@ import { CreateFromReceiptButton } from '@/app/groups/[groupId]/expenses/create-
 import { ExpenseList } from '@/app/groups/[groupId]/expenses/expense-list'
 import ExportButton from '@/app/groups/[groupId]/export-button'
 import { ExpenseImport } from '@/components/expense-import'
-import { Button } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
 import {
   Card,
   CardAction,
@@ -49,12 +49,15 @@ export default function GroupExpensesPageClient({
             <ExpenseImport groupId={groupId} />
             {enableReceiptExtract && <CreateFromReceiptButton />}
             <Tooltip>
-              <TooltipTrigger asChild>
-                <Button asChild size="icon">
-                  <Link href={`/groups/${groupId}/expenses/create`}>
-                    <Plus className="w-4 h-4" />
-                  </Link>
-                </Button>
+              <TooltipTrigger
+                render={
+                  <Link
+                    href={`/groups/${groupId}/expenses/create`}
+                    className={buttonVariants({ size: "icon" })}
+                  />
+                }
+              >
+                <Plus className="w-4 h-4" />
               </TooltipTrigger>
               <TooltipContent>{t('create')}</TooltipContent>
             </Tooltip>

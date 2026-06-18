@@ -36,7 +36,11 @@ export default function proxy(request: NextRequest) {
   }
 
   // Public routes are accessible without auth
-  if (publicRoutes.includes(pathname) || pathname.startsWith('/api/')) {
+  if (
+    publicRoutes.includes(pathname) ||
+    pathname.startsWith('/api/') ||
+    pathname.startsWith('/ios-test')
+  ) {
     return NextResponse.next()
   }
 

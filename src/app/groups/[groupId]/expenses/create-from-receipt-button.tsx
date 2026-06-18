@@ -41,7 +41,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { getImageData, usePresignedUpload } from 'next-s3-upload'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { PropsWithChildren, ReactNode, useState } from 'react'
+import { PropsWithChildren, ReactElement, ReactNode, useState } from 'react'
 import { toast } from 'sonner'
 import { useCurrentGroup } from '../current-group-context'
 
@@ -276,7 +276,7 @@ function CreateFromReceiptDialog({
   description,
   children,
 }: PropsWithChildren<{
-  trigger: ReactNode
+  trigger: ReactElement
   tooltipContent?: ReactNode
   heading: ReactNode
   description: ReactNode
@@ -284,9 +284,11 @@ function CreateFromReceiptDialog({
   return (
     <Dialog>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <DialogTrigger asChild>{trigger}</DialogTrigger>
-        </TooltipTrigger>
+        <TooltipTrigger
+          render={
+            <DialogTrigger render={trigger} />
+          }
+        />
         <TooltipContent>{tooltipContent}</TooltipContent>
       </Tooltip>
       <DialogContent>
@@ -311,7 +313,7 @@ function CreateFromReceiptDrawer({
   description,
   children,
 }: PropsWithChildren<{
-  trigger: ReactNode
+  trigger: ReactElement
   tooltipContent?: ReactNode
   heading: ReactNode
   description: ReactNode
@@ -319,9 +321,11 @@ function CreateFromReceiptDrawer({
   return (
     <Drawer>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <DrawerTrigger asChild>{trigger}</DrawerTrigger>
-        </TooltipTrigger>
+        <TooltipTrigger
+          render={
+            <DrawerTrigger asChild>{trigger}</DrawerTrigger>
+          }
+        />
         <TooltipContent>{tooltipContent}</TooltipContent>
       </Tooltip>
       <DrawerContent>

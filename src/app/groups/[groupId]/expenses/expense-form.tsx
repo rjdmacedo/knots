@@ -4,7 +4,7 @@ import { DeletePopup } from '@/components/delete-popup'
 import { ExpenseDocumentsInput } from '@/components/expense-documents-input'
 import { extractCategoryFromTitle } from '@/components/expense-form-actions'
 import { SubmitButton } from '@/components/submit-button'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -696,12 +696,10 @@ export function ExpenseForm({
                 open={usingCustomConversionRate}
                 onOpenChange={setUsingCustomConversionRate}
               >
-                <CollapsibleTrigger asChild>
-                  <Button variant="link" className="-mx-4">
-                    {usingCustomConversionRate
-                      ? t('conversionRateField.useApi')
-                      : t('conversionRateField.useCustom')}
-                  </Button>
+                <CollapsibleTrigger render={<Button variant="link" className="-mx-4" />}>
+                  {usingCustomConversionRate
+                    ? t('conversionRateField.useApi')
+                    : t('conversionRateField.useCustom')}
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <FormField
@@ -833,6 +831,7 @@ export function ExpenseForm({
                 <FormItem className="sm:order-5">
                   <FormLabel>{t(`${sExpense}.paidByField.label`)}</FormLabel>
                   <Select
+                    items={group.participants.map(({ id, name }) => ({ value: id, label: name }))}
                     onValueChange={field.onChange}
                     value={field.value ?? getDefaultPaidBy()}
                   >
@@ -875,6 +874,12 @@ export function ExpenseForm({
                 <FormItem className="sm:order-5">
                   <FormLabel>{t(`${sExpense}.recurrenceRule.label`)}</FormLabel>
                   <Select
+                    items={[
+                      { value: 'NONE', label: t(`${sExpense}.recurrenceRule.none`) },
+                      { value: 'DAILY', label: t(`${sExpense}.recurrenceRule.daily`) },
+                      { value: 'WEEKLY', label: t(`${sExpense}.recurrenceRule.weekly`) },
+                      { value: 'MONTHLY', label: t(`${sExpense}.recurrenceRule.monthly`) },
+                    ]}
                     onValueChange={(value) => {
                       form.setValue('recurrenceRule', value as RecurrenceRule)
                     }}
@@ -1363,10 +1368,8 @@ export function ExpenseForm({
             className="mt-5"
             defaultOpen={form.getValues().splitMode !== 'EVENLY'}
           >
-            <CollapsibleTrigger asChild>
-              <Button variant="link" className="-mx-4">
-                {t('advancedOptions')}
-              </Button>
+            <CollapsibleTrigger render={<Button variant="link" className="-mx-4" />}>
+              {t('advancedOptions')}
             </CollapsibleTrigger>
             <CollapsibleContent>
               <div className="grid sm:grid-cols-2 gap-6 pt-3">
@@ -1378,6 +1381,12 @@ export function ExpenseForm({
                       <FormLabel>{t('SplitModeField.label')}</FormLabel>
                       <FormControl>
                         <Select
+                          items={[
+                            { value: 'EVENLY', label: t('SplitModeField.evenly') },
+                            { value: 'BY_SHARES', label: t('SplitModeField.byShares') },
+                            { value: 'BY_PERCENTAGE', label: t('SplitModeField.byPercentage') },
+                            { value: 'BY_AMOUNT', label: t('SplitModeField.byAmount') },
+                          ]}
                           onValueChange={(value) => {
                             form.setValue('splitMode', value as any, {
                               shouldDirty: true,
@@ -1481,9 +1490,9 @@ export function ExpenseForm({
             onDelete={() => onDelete(activeUserId ?? undefined)}
           ></DeletePopup>
         )}
-        <Button variant="ghost" asChild>
-          <Link href={`/groups/${group.id}`}>{t('cancel')}</Link>
-        </Button>
+        <Link href={`/groups/${group.id}`} className={buttonVariants({ variant: "ghost" })}>
+          {t('cancel')}
+        </Link>
       </div>
     </Form>
   )

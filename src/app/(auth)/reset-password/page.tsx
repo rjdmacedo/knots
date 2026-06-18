@@ -1,7 +1,7 @@
 'use client'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { validatePassword } from '@/lib/auth/password-validation'
+import { cn } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react'
@@ -147,12 +148,18 @@ export default function ResetPasswordPage() {
           </Alert>
         </CardContent>
         <CardFooter className="flex flex-col gap-2">
-          <Button asChild variant="default" className="w-full">
-            <Link href="/forgot-password">Request new reset link</Link>
-          </Button>
-          <Button asChild variant="outline" className="w-full">
-            <Link href="/login">Back to login</Link>
-          </Button>
+          <Link
+            href="/forgot-password"
+            className={cn(buttonVariants(), 'w-full')}
+          >
+            Request new reset link
+          </Link>
+          <Link
+            href="/login"
+            className={cn(buttonVariants({ variant: 'outline' }), 'w-full')}
+          >
+            Back to login
+          </Link>
         </CardFooter>
       </Card>
     )
@@ -198,13 +205,19 @@ export default function ResetPasswordPage() {
         </CardContent>
         <CardFooter className="flex flex-col gap-2">
           {config.showRequestNew && (
-            <Button asChild variant="default" className="w-full">
-              <Link href="/forgot-password">Request new reset link</Link>
-            </Button>
+            <Link
+              href="/forgot-password"
+              className={cn(buttonVariants(), 'w-full')}
+            >
+              Request new reset link
+            </Link>
           )}
-          <Button asChild variant="outline" className="w-full">
-            <Link href="/login">Back to login</Link>
-          </Button>
+          <Link
+            href="/login"
+            className={cn(buttonVariants({ variant: 'outline' }), 'w-full')}
+          >
+            Back to login
+          </Link>
         </CardFooter>
       </Card>
     )
@@ -225,9 +238,9 @@ export default function ResetPasswordPage() {
           </CardDescription>
         </CardHeader>
         <CardFooter>
-          <Button asChild className="w-full">
-            <Link href="/login">Sign in</Link>
-          </Button>
+          <Link href="/login" className={cn(buttonVariants(), 'w-full')}>
+            Sign in
+          </Link>
         </CardFooter>
       </Card>
     )
@@ -312,10 +325,7 @@ export default function ResetPasswordPage() {
       <CardFooter className="justify-center">
         <p className="text-sm text-muted-foreground">
           Remember your password?{' '}
-          <Link
-            href="/login"
-            className="text-primary underline-offset-4 hover:underline"
-          >
+          <Link href="/login" className={cn(buttonVariants())}>
             Sign in
           </Link>
         </p>

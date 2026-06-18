@@ -211,16 +211,18 @@ function GroupCard({
       <div className="flex items-center rounded-lg border transition-colors hover:bg-accent">
         <Link
           href={`/groups/${group.id}`}
-          className="flex flex-1 items-center gap-3 p-4"
+          className="flex flex-1 items-center gap-3 px-4 py-3 min-w-0"
         >
-          <Users className="h-5 w-5 text-muted-foreground shrink-0" />
+          <Users className="h-4 w-4 text-muted-foreground shrink-0" />
           <span className="font-medium truncate">{group.name}</span>
         </Link>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8 mr-2">
-              <MoreVertical className="h-4 w-4" />
-            </Button>
+          <DropdownMenuTrigger
+            render={
+              <Button variant="ghost" size="icon" className="h-8 w-8 mr-2" />
+            }
+          >
+            <MoreVertical className="h-4 w-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {pushConfigured && notifications.isSupported && !isArchived && (
@@ -237,11 +239,11 @@ function GroupCard({
                   }}
                 >
                   {notifications.isLoading ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                   ) : notifications.isSubscribed ? (
-                    <BellOff className="h-4 w-4 mr-2" />
+                    <BellOff className="h-4 w-4" />
                   ) : (
-                    <Bell className="h-4 w-4 mr-2" />
+                    <Bell className="h-4 w-4" />
                   )}
                   {notifications.isSubscribed
                     ? tGroups('disableNotifications')
@@ -255,7 +257,7 @@ function GroupCard({
                 disabled={isBusy}
                 onClick={() => unarchiveGroup.mutate({ groupId: group.id })}
               >
-                <ArchiveRestore className="h-4 w-4 mr-2" />
+                <ArchiveRestore className="h-4 w-4" />
                 {tGroups('unarchive')}
               </DropdownMenuItem>
             ) : (
@@ -263,26 +265,26 @@ function GroupCard({
                 disabled={isBusy}
                 onClick={() => archiveGroup.mutate({ groupId: group.id })}
               >
-                <Archive className="h-4 w-4 mr-2" />
+                <Archive className="h-4 w-4" />
                 {tGroups('archive')}
               </DropdownMenuItem>
             )}
             {isOwner && (
               <DropdownMenuItem
-                className="text-destructive focus:text-destructive"
+                variant="destructive"
                 disabled={isBusy}
                 onClick={() => setDeleteDialogOpen(true)}
               >
-                <Trash2 className="h-4 w-4 mr-2" />
+                <Trash2 className="h-4 w-4" />
                 {t('deleteGroup')}
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              className="text-destructive focus:text-destructive"
+              variant="destructive"
               onClick={() => setLeaveDialogOpen(true)}
             >
-              <LogOut className="h-4 w-4 mr-2" />
+              <LogOut className="h-4 w-4" />
               {t('leaveGroup')}
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -411,12 +413,14 @@ function CreateGroupDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          {t('createGroup')}
-        </Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            {t('createGroup')}
+          </Button>
+        }
+      />
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('createGroupTitle')}</DialogTitle>

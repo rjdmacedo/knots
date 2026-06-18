@@ -15,8 +15,9 @@ export function useImportDialogDismiss(
   }, [onImportAbort])
 
   const handleDialogOpenChange = useCallback(
-    (nextOpen: boolean) => {
+    (nextOpen: boolean, eventDetails?: { cancel?: () => void }) => {
       if (!nextOpen && isImporting) {
+        eventDetails?.cancel?.()
         return
       }
       onOpenChange(nextOpen)

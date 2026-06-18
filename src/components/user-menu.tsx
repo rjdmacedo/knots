@@ -34,11 +34,13 @@ export function UserMenu({ name, email }: UserMenuProps) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-8 w-8">
-          <User className="h-4 w-4" />
-          <span className="sr-only">User menu</span>
-        </Button>
+      <DropdownMenuTrigger
+        render={
+          <Button variant="ghost" size="icon" className="h-8 w-8" />
+        }
+      >
+        <User className="h-4 w-4" />
+        <span className="sr-only">User menu</span>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>
@@ -52,11 +54,9 @@ export function UserMenu({ name, email }: UserMenuProps) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/settings">
-            <Settings className="h-4 w-4 mr-2" />
-            {t('profileSettings')}
-          </Link>
+        <DropdownMenuItem render={<Link href="/settings" />}>
+          <Settings className="h-4 w-4 mr-2" />
+          {t('profileSettings')}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleLogout} disabled={isPending}>
           <LogOut className="h-4 w-4 mr-2" />

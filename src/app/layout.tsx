@@ -1,19 +1,22 @@
 import { ApplePwaSplash } from '@/app/apple-pwa-splash'
 import { AppHeader } from '@/components/app-header'
 import { Footer } from '@/components/footer'
-import { IosViewportResizeFix } from '@/components/ios-viewport-resize-fix'
 import { ProgressBar } from '@/components/progress-bar'
 import { ThemeProvider } from '@/components/theme-provider'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { auth } from '@/lib/auth/auth'
 import { env } from '@/lib/env'
+import { cn } from '@/lib/utils'
 import { TRPCProvider } from '@/trpc/client'
 import type { Metadata, Viewport } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getMessages } from 'next-intl/server'
+import { Inter } from 'next/font/google'
 import { Suspense } from 'react'
 import { Toaster } from 'sonner'
 import './globals.css'
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_BASE_URL),
@@ -74,9 +77,9 @@ function Content({
     <TRPCProvider>
       <TooltipProvider>
         <AppHeader isAuthenticated={isAuthenticated} />
-        <IosViewportResizeFix className="flex-1 overflow-y-auto py-16">
+        <div className="flex-1 overflow-y-auto py-16">
           <main className="flex flex-col min-h-full py-4">{children}</main>
-        </IosViewportResizeFix>
+        </div>
         <Footer />
         <Toaster />
       </TooltipProvider>
@@ -94,7 +97,11 @@ export default async function RootLayout({
   const session = await auth()
 
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html
+      lang={locale}
+      suppressHydrationWarning
+      className={cn('font-sans', inter.variable)}
+    >
       <ApplePwaSplash icon="/logo-with-text.png" color="#027756" />
       <body className="h-dvh overflow-hidden flex flex-col items-stretch">
         <NextIntlClientProvider messages={messages}>

@@ -1,7 +1,7 @@
 'use client'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -19,6 +19,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CheckCircle2, Loader2 } from 'lucide-react'
@@ -87,9 +88,12 @@ export default function ForgotPasswordPage() {
           </Alert>
         </CardContent>
         <CardFooter>
-          <Button asChild variant="outline" className="w-full">
-            <Link href="/login">Back to login</Link>
-          </Button>
+          <Link
+            href="/login"
+            className={cn(buttonVariants({ variant: 'outline' }), 'w-full')}
+          >
+            Back to login
+          </Link>
         </CardFooter>
       </Card>
     )
@@ -153,10 +157,7 @@ export default function ForgotPasswordPage() {
       <CardFooter className="justify-center">
         <p className="text-sm text-muted-foreground">
           Remember your password?{' '}
-          <Link
-            href="/login"
-            className="text-primary underline-offset-4 hover:underline"
-          >
+          <Link href="/login" className={cn(buttonVariants())}>
             Sign in
           </Link>
         </p>
