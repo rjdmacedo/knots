@@ -21,7 +21,10 @@ export function Footer() {
               render={
                 <Link
                   href="/changelog"
-                  className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
+                  className={buttonVariants({
+                    variant: 'ghost',
+                    size: 'icon-sm',
+                  })}
                 />
               }
             >

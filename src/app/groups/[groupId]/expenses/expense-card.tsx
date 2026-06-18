@@ -104,7 +104,10 @@ export function ExpenseCard({
       </div>
       <Link
         href={`/groups/${groupId}/expenses/${expense.id}/edit`}
-        className={cn(buttonVariants({ variant: "link", size: "icon" }), "self-center hidden sm:flex")}
+        className={cn(
+          buttonVariants({ variant: 'link', size: 'icon' }),
+          'self-center hidden sm:flex',
+        )}
       >
         <ChevronRight className="w-4 h-4" />
       </Link>

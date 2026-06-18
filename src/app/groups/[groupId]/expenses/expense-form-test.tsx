@@ -104,7 +104,11 @@ export function ExpenseFormTest() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Category</FormLabel>
-                  <Select items={categoryItems} value={field.value} onValueChange={field.onChange}>
+                  <Select
+                    items={categoryItems}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Choose category..." />
                     </SelectTrigger>
@@ -130,7 +134,11 @@ export function ExpenseFormTest() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Paid by</FormLabel>
-                  <Select items={participantItems} value={field.value} onValueChange={field.onChange}>
+                  <Select
+                    items={participantItems}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Choose participant..." />
                     </SelectTrigger>
@@ -153,7 +161,11 @@ export function ExpenseFormTest() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Recurrence</FormLabel>
-                  <Select items={recurrenceItems} value={field.value} onValueChange={field.onChange}>
+                  <Select
+                    items={recurrenceItems}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="NONE" />
                     </SelectTrigger>

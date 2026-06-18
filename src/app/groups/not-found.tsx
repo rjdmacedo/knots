@@ -8,7 +8,10 @@ export default function NotFound() {
     <div className="flex flex-col gap-2">
       <p>{t('text')}</p>
       <p>
-        <Link href="/groups" className={buttonVariants({ variant: "secondary" })}>
+        <Link
+          href="/groups"
+          className={buttonVariants({ variant: 'secondary' })}
+        >
           {t('link')}
         </Link>
       </p>

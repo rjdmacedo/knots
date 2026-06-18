@@ -156,7 +156,7 @@ const ExpenseListForSearch = ({
         {t('noExpenses')}{' '}
         <Link
           href={`/groups/${groupId}/expenses/create`}
-          className={cn(buttonVariants({ variant: "link" }), "-m-4")}
+          className={cn(buttonVariants({ variant: 'link' }), '-m-4')}
         >
           {t('createFirst')}
         </Link>

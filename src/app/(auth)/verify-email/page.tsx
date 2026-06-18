@@ -114,7 +114,7 @@ export default function VerifyEmailPage() {
           </CardDescription>
         </CardHeader>
         <CardFooter>
-          <Link href="/login" className={cn(buttonVariants(), "w-full")}>
+          <Link href="/login" className={cn(buttonVariants(), 'w-full')}>
             Go to Login
           </Link>
         </CardFooter>
@@ -185,7 +185,7 @@ export default function VerifyEmailPage() {
           )}
         </CardContent>
         <CardFooter className="justify-center">
-          <Link href="/login" className={buttonVariants({ variant: "link" })}>
+          <Link href="/login" className={buttonVariants({ variant: 'link' })}>
             Back to Login
           </Link>
         </CardFooter>
@@ -207,7 +207,7 @@ export default function VerifyEmailPage() {
           </CardDescription>
         </CardHeader>
         <CardFooter>
-          <Link href="/login" className={cn(buttonVariants(), "w-full")}>
+          <Link href="/login" className={cn(buttonVariants(), 'w-full')}>
             Go to Login
           </Link>
         </CardFooter>
@@ -229,7 +229,7 @@ export default function VerifyEmailPage() {
           </CardDescription>
         </CardHeader>
         <CardFooter className="justify-center">
-          <Link href="/login" className={buttonVariants({ variant: "link" })}>
+          <Link href="/login" className={buttonVariants({ variant: 'link' })}>
             Back to Login
           </Link>
         </CardFooter>
@@ -251,7 +251,7 @@ export default function VerifyEmailPage() {
         </CardDescription>
       </CardHeader>
       <CardFooter className="justify-center">
-        <Link href="/login" className={buttonVariants({ variant: "link" })}>
+        <Link href="/login" className={buttonVariants({ variant: 'link' })}>
           Back to Login
         </Link>
       </CardFooter>

@@ -35,9 +35,7 @@ export function UserMenu({ name, email }: UserMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={
-          <Button variant="ghost" size="icon" className="h-8 w-8" />
-        }
+        render={<Button variant="ghost" size="icon" className="h-8 w-8" />}
       >
         <User className="h-4 w-4" />
         <span className="sr-only">User menu</span>

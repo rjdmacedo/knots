@@ -241,7 +241,9 @@ function FriendPickerCommand({
           open={emailSectionOpen}
           onOpenChange={onEmailSectionOpenChange}
         >
-          <CollapsibleTrigger render={<Button variant="link" size="sm" className="h-auto px-0" />}>
+          <CollapsibleTrigger
+            render={<Button variant="link" size="sm" className="h-auto px-0" />}
+          >
             {t('addByEmail')}
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-2 pt-2">

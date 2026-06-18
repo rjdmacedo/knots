@@ -284,11 +284,7 @@ function CreateFromReceiptDialog({
   return (
     <Dialog>
       <Tooltip>
-        <TooltipTrigger
-          render={
-            <DialogTrigger render={trigger} />
-          }
-        />
+        <TooltipTrigger render={<DialogTrigger render={trigger} />} />
         <TooltipContent>{tooltipContent}</TooltipContent>
       </Tooltip>
       <DialogContent>
@@ -322,9 +318,7 @@ function CreateFromReceiptDrawer({
     <Drawer>
       <Tooltip>
         <TooltipTrigger
-          render={
-            <DrawerTrigger asChild>{trigger}</DrawerTrigger>
-          }
+          render={<DrawerTrigger asChild>{trigger}</DrawerTrigger>}
         />
         <TooltipContent>{tooltipContent}</TooltipContent>
       </Tooltip>

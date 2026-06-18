@@ -39,7 +39,10 @@ export function ReimbursementList({
             </div>
             <Link
               href={`/groups/${groupId}/expenses/create?reimbursement=yes&from=${reimbursement.from}&to=${reimbursement.to}&amount=${reimbursement.amount}`}
-              className={cn(buttonVariants({ size: "sm", variant: "ghost" }), "-mx-4 -my-3")}
+              className={cn(
+                buttonVariants({ size: 'sm', variant: 'ghost' }),
+                '-mx-4 -my-3',
+              )}
             >
               {t('markAsPaid')}
             </Link>

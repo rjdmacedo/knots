@@ -25,7 +25,10 @@ export default function HomePage() {
             <Link href="/groups" className={buttonVariants()}>
               {t('Homepage.button.groups')}
             </Link>
-            <Link href="https://github.com/rjdmacedo/knots" className={buttonVariants({ variant: "secondary" })}>
+            <Link
+              href="https://github.com/rjdmacedo/knots"
+              className={buttonVariants({ variant: 'secondary' })}
+            >
               {t('Homepage.button.github')}
             </Link>
           </div>

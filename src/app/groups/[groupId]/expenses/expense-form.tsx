@@ -696,7 +696,9 @@ export function ExpenseForm({
                 open={usingCustomConversionRate}
                 onOpenChange={setUsingCustomConversionRate}
               >
-                <CollapsibleTrigger render={<Button variant="link" className="-mx-4" />}>
+                <CollapsibleTrigger
+                  render={<Button variant="link" className="-mx-4" />}
+                >
                   {usingCustomConversionRate
                     ? t('conversionRateField.useApi')
                     : t('conversionRateField.useCustom')}
@@ -831,7 +833,10 @@ export function ExpenseForm({
                 <FormItem className="sm:order-5">
                   <FormLabel>{t(`${sExpense}.paidByField.label`)}</FormLabel>
                   <Select
-                    items={group.participants.map(({ id, name }) => ({ value: id, label: name }))}
+                    items={group.participants.map(({ id, name }) => ({
+                      value: id,
+                      label: name,
+                    }))}
                     onValueChange={field.onChange}
                     value={field.value ?? getDefaultPaidBy()}
                   >
@@ -875,10 +880,22 @@ export function ExpenseForm({
                   <FormLabel>{t(`${sExpense}.recurrenceRule.label`)}</FormLabel>
                   <Select
                     items={[
-                      { value: 'NONE', label: t(`${sExpense}.recurrenceRule.none`) },
-                      { value: 'DAILY', label: t(`${sExpense}.recurrenceRule.daily`) },
-                      { value: 'WEEKLY', label: t(`${sExpense}.recurrenceRule.weekly`) },
-                      { value: 'MONTHLY', label: t(`${sExpense}.recurrenceRule.monthly`) },
+                      {
+                        value: 'NONE',
+                        label: t(`${sExpense}.recurrenceRule.none`),
+                      },
+                      {
+                        value: 'DAILY',
+                        label: t(`${sExpense}.recurrenceRule.daily`),
+                      },
+                      {
+                        value: 'WEEKLY',
+                        label: t(`${sExpense}.recurrenceRule.weekly`),
+                      },
+                      {
+                        value: 'MONTHLY',
+                        label: t(`${sExpense}.recurrenceRule.monthly`),
+                      },
                     ]}
                     onValueChange={(value) => {
                       form.setValue('recurrenceRule', value as RecurrenceRule)
@@ -1368,7 +1385,9 @@ export function ExpenseForm({
             className="mt-5"
             defaultOpen={form.getValues().splitMode !== 'EVENLY'}
           >
-            <CollapsibleTrigger render={<Button variant="link" className="-mx-4" />}>
+            <CollapsibleTrigger
+              render={<Button variant="link" className="-mx-4" />}
+            >
               {t('advancedOptions')}
             </CollapsibleTrigger>
             <CollapsibleContent>
@@ -1382,10 +1401,22 @@ export function ExpenseForm({
                       <FormControl>
                         <Select
                           items={[
-                            { value: 'EVENLY', label: t('SplitModeField.evenly') },
-                            { value: 'BY_SHARES', label: t('SplitModeField.byShares') },
-                            { value: 'BY_PERCENTAGE', label: t('SplitModeField.byPercentage') },
-                            { value: 'BY_AMOUNT', label: t('SplitModeField.byAmount') },
+                            {
+                              value: 'EVENLY',
+                              label: t('SplitModeField.evenly'),
+                            },
+                            {
+                              value: 'BY_SHARES',
+                              label: t('SplitModeField.byShares'),
+                            },
+                            {
+                              value: 'BY_PERCENTAGE',
+                              label: t('SplitModeField.byPercentage'),
+                            },
+                            {
+                              value: 'BY_AMOUNT',
+                              label: t('SplitModeField.byAmount'),
+                            },
                           ]}
                           onValueChange={(value) => {
                             form.setValue('splitMode', value as any, {
@@ -1490,7 +1521,10 @@ export function ExpenseForm({
             onDelete={() => onDelete(activeUserId ?? undefined)}
           ></DeletePopup>
         )}
-        <Link href={`/groups/${group.id}`} className={buttonVariants({ variant: "ghost" })}>
+        <Link
+          href={`/groups/${group.id}`}
+          className={buttonVariants({ variant: 'ghost' })}
+        >
           {t('cancel')}
         </Link>
       </div>

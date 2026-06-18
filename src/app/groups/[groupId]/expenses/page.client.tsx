@@ -53,7 +53,7 @@ export default function GroupExpensesPageClient({
                 render={
                   <Link
                     href={`/groups/${groupId}/expenses/create`}
-                    className={buttonVariants({ size: "icon" })}
+                    className={buttonVariants({ size: 'icon' })}
                   />
                 }
               >

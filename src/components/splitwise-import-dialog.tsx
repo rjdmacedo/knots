@@ -304,15 +304,19 @@ export function SplitwiseImportDialog({
               />
               {csvContent && (
                 <Tooltip>
-                  <TooltipTrigger render={<Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={handleClear}
-                    disabled={isBusy}
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>} />
+                  <TooltipTrigger
+                    render={
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={handleClear}
+                        disabled={isBusy}
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    }
+                  />
                   <TooltipContent>
                     <p>{t('clear')}</p>
                   </TooltipContent>
@@ -373,8 +377,14 @@ export function SplitwiseImportDialog({
                         <Label>{t('mapToMemberLabel')}</Label>
                         <Select
                           items={[
-                            ...groupMembers.map((member) => ({ value: member.id, label: member.name })),
-                            { value: ADD_NEW_VALUE, label: t('addNewMemberOption') },
+                            ...groupMembers.map((member) => ({
+                              value: member.id,
+                              label: member.name,
+                            })),
+                            {
+                              value: ADD_NEW_VALUE,
+                              label: t('addNewMemberOption'),
+                            },
                           ]}
                           value={selectValue}
                           onValueChange={(value) => {

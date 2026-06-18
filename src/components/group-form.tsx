@@ -183,7 +183,10 @@ export function GroupForm({ group, onSubmit }: Props) {
             {t(group ? 'Settings.save' : 'Settings.create')}
           </SubmitButton>
           {!group && (
-            <Link href="/groups" className={buttonVariants({ variant: "ghost" })}>
+            <Link
+              href="/groups"
+              className={buttonVariants({ variant: 'ghost' })}
+            >
               {t('Settings.cancel')}
             </Link>
           )}

@@ -35,7 +35,7 @@ export default function GroupInformation({ groupId }: { groupId: string }) {
                 render={
                   <Link
                     href={`/groups/${groupId}/edit`}
-                    className={cn(buttonVariants({ size: "icon" }), "-mb-12")}
+                    className={cn(buttonVariants({ size: 'icon' }), '-mb-12')}
                   />
                 }
               >

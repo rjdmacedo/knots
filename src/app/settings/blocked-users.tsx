@@ -102,9 +102,7 @@ export function BlockedUsers() {
     <>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger
-          render={
-            <Button variant="outline" className="w-full sm:w-auto" />
-          }
+          render={<Button variant="outline" className="w-full sm:w-auto" />}
         >
           <ShieldBan className="size-4" />
           {t('manage')}

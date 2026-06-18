@@ -120,7 +120,10 @@ export function ActivityItem({
       {expenseExists && (
         <Link
           href={`/groups/${groupId}/expenses/${activity.expenseId}/edit`}
-          className={cn(buttonVariants({ size: "icon", variant: "link" }), "self-center hidden sm:flex w-5 h-5")}
+          className={cn(
+            buttonVariants({ size: 'icon', variant: 'link' }),
+            'self-center hidden sm:flex w-5 h-5',
+          )}
         >
           <ChevronRight className="w-4 h-4" />
         </Link>

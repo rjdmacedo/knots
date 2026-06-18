@@ -38,9 +38,7 @@ export function ExpenseImport({
           <TooltipTrigger
             render={
               <DropdownMenuTrigger
-                render={
-                  <Button variant="secondary" size="icon" />
-                }
+                render={<Button variant="secondary" size="icon" />}
               />
             }
           >
