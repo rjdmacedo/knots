@@ -123,9 +123,9 @@ export async function GET(
     amount: formatAmountAsDecimal(expense.amount, currency),
     originalAmount: expense.originalAmount
       ? formatAmountAsDecimal(
-        expense.originalAmount,
-        getCurrency(expense.originalCurrency),
-      )
+          expense.originalAmount,
+          getCurrency(expense.originalCurrency),
+        )
       : null,
     originalCurrency: expense.originalCurrency,
     conversionRate: expense.conversionRate
