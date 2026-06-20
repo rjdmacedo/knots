@@ -18,7 +18,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { useMediaQuery } from '@/lib/hooks'
-import { StickyNote } from 'lucide-react'
+import { FileText } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useCallback, useRef, useState } from 'react'
 
@@ -46,13 +46,13 @@ export function ExpenseNotes({ notes, title }: Props) {
     return (
       <Popover open={open} onOpenChange={handleOpenChange}>
         <PopoverTrigger
-          className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
+          className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors shrink-0"
           onClick={(e) => {
             e.stopPropagation()
             e.preventDefault()
           }}
         >
-          <StickyNote className="w-3.5 h-3.5" />
+          <FileText className="w-3.5 h-3.5 shrink-0" />
         </PopoverTrigger>
         <PopoverContent
           className="w-64"
@@ -72,7 +72,7 @@ export function ExpenseNotes({ notes, title }: Props) {
     <>
       <button
         type="button"
-        className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
+        className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors shrink-0"
         onClick={(e) => {
           e.stopPropagation()
           e.preventDefault()
@@ -82,7 +82,7 @@ export function ExpenseNotes({ notes, title }: Props) {
           e.stopPropagation()
         }}
       >
-        <StickyNote className="w-3.5 h-3.5" />
+        <FileText className="w-3.5 h-3.5 shrink-0" />
       </button>
       <Drawer open={open} onOpenChange={handleOpenChange}>
         <DrawerContent
