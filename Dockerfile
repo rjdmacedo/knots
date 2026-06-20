@@ -1,4 +1,4 @@
-FROM node:20-alpine AS base
+FROM node:24-alpine AS base
 
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
@@ -30,7 +30,7 @@ RUN pnpm run build
 
 RUN rm -r .next/cache
 
-FROM node:20-alpine AS runtime-deps
+FROM node:24-alpine AS runtime-deps
 
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
@@ -41,7 +41,7 @@ COPY --from=base /usr/app/prisma ./prisma
 RUN pnpm install --frozen-lockfile --prod --ignore-scripts && \
     npx prisma generate
 
-FROM node:20-alpine AS runner
+FROM node:24-alpine AS runner
 
 EXPOSE 3000/tcp
 WORKDIR /usr/app
