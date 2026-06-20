@@ -46,7 +46,8 @@
     "everyone": "everyone",
     "receivedBy": "Primit de <strong>{paidBy}</strong> pentru <paidFor></paidFor>",
     "yourBalance": "Soldul tău:",
-    "notInvolved": "You are not involved"
+    "notInvolved": "You are not involved",
+    "close": "Închide"
   },
   "Groups": {
     "myGroups": "Grupurile mele",

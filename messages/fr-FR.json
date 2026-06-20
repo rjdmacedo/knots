@@ -46,7 +46,8 @@
     "everyone": "tout le monde",
     "receivedBy": "Reçu par <strong>{paidBy}</strong> pour <paidFor></paidFor>",
     "yourBalance": "Votre solde :",
-    "notInvolved": "Vous n'êtes pas concerné"
+    "notInvolved": "Vous n'êtes pas concerné",
+    "close": "Fermer"
   },
   "Groups": {
     "myGroups": "Mes groupes",

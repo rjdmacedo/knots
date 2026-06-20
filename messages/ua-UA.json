@@ -46,7 +46,8 @@
     "everyone": "everyone",
     "receivedBy": "Отримано <strong>{paidBy}</strong> за <paidFor></paidFor>",
     "yourBalance": "Ваш баланс:",
-    "notInvolved": "You are not involved"
+    "notInvolved": "You are not involved",
+    "close": "Закрити"
   },
   "Groups": {
     "myGroups": "Мої групи",

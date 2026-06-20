@@ -46,7 +46,8 @@
     "everyone": "everyone",
     "receivedBy": "<strong>{paidBy}</strong> 为 <paidFor></paidFor> 接收。",
     "yourBalance": "你的余额：",
-    "notInvolved": "You are not involved"
+    "notInvolved": "You are not involved",
+    "close": "关闭"
   },
   "Groups": {
     "myGroups": "我的群组",

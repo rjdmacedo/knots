@@ -46,7 +46,8 @@
     "everyone": "everyone",
     "receivedBy": "Obdržel/a <strong>{paidBy}</strong> od <paidFor></paidFor>",
     "yourBalance": "Váš zůstatek:",
-    "notInvolved": "You are not involved"
+    "notInvolved": "You are not involved",
+    "close": "Zavřít"
   },
   "Groups": {
     "myGroups": "Moje skupiny",

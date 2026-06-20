@@ -46,7 +46,8 @@
     "everyone": "everyone",
     "receivedBy": "<strong>{paidBy}</strong> tarafından alındı, <paidFor></paidFor> için",
     "yourBalance": "Bakiyeniz:",
-    "notInvolved": "You are not involved"
+    "notInvolved": "You are not involved",
+    "close": "Kapat"
   },
   "Groups": {
     "myGroups": "Gruplarım",

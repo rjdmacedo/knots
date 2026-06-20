@@ -46,7 +46,8 @@
     "everyone": "everyone",
     "receivedBy": "<strong>{paidBy}</strong> sai rahaa {forCount, plural, =1 {henkilön} other {henkilöiden}} <paidFor></paidFor> puolesta",
     "yourBalance": "Saldosi:",
-    "notInvolved": "You are not involved"
+    "notInvolved": "You are not involved",
+    "close": "Sulje"
   },
   "Groups": {
     "myGroups": "Omat ryhmät",

@@ -46,7 +46,8 @@
     "everyone": "everyone",
     "receivedBy": "Otrzymane przez <strong>{paidBy}</strong> od <paidFor></paidFor>",
     "yourBalance": "Twjoje saldo:",
-    "notInvolved": "You are not involved"
+    "notInvolved": "You are not involved",
+    "close": "Zamknij"
   },
   "Groups": {
     "myGroups": "Moje grupy",

@@ -46,7 +46,8 @@
     "everyone": "everyone",
     "receivedBy": "<strong>{paidBy}</strong>が<paidFor></paidFor>のために受け取りました",
     "yourBalance": "あなたの残高:",
-    "notInvolved": "You are not involved"
+    "notInvolved": "You are not involved",
+    "close": "閉じる"
   },
   "Groups": {
     "myGroups": "マイグループ",

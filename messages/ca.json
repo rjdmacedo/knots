@@ -46,7 +46,8 @@
     "everyone": "everyone",
     "receivedBy": "Debuda per <strong>{paidBy}</strong> para <paidFor></paidFor>",
     "yourBalance": "El teu balanç: balance:",
-    "notInvolved": "You are not involved"
+    "notInvolved": "You are not involved",
+    "close": "Tanca"
   },
   "Groups": {
     "myGroups": "Els meus grups",

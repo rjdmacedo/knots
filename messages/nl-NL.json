@@ -46,7 +46,8 @@
     "everyone": "iedereen",
     "receivedBy": "Ontvangen door <strong>{paidBy}</strong> voor <paidFor></paidFor>",
     "yourBalance": "Jouw balans:",
-    "notInvolved": "Je bent hier niet bij betrokken"
+    "notInvolved": "Je bent hier niet bij betrokken",
+    "close": "Sluiten"
   },
   "Groups": {
     "myGroups": "Mijn groepen",
