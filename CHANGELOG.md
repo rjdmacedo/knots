@@ -1,3 +1,10 @@
+## [1.36.1](https://github.com/rjdmacedo/knots/compare/v1.36.0...v1.36.1) (2026-06-20)
+
+
+### Bug Fixes
+
+* replace StickyNote with FileText icon on expense notes ([dc05a86](https://github.com/rjdmacedo/knots/commit/dc05a860654fcdf94839cc0087eccb2d6a40c34a))
+
 # [1.36.0](https://github.com/rjdmacedo/knots/compare/v1.35.3...v1.36.0) (2026-06-20)
 
 
