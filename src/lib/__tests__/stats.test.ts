@@ -27,6 +27,7 @@ function makeExpense(overrides: Partial<Expense> = {}): Expense {
     splitMode: 'EVENLY',
     title: 'Test Expense',
     recurrenceRule: null,
+    notes: null,
     _count: { documents: 0 },
     ...overrides,
   } as Expense

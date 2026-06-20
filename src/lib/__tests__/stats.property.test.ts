@@ -322,6 +322,7 @@ describe('Enhanced Stats Dashboard — Property-Based Tests', () => {
               splitMode: 'EVENLY' as const,
               title: 'Test expense',
               recurrenceRule: null,
+              notes: null,
               _count: { documents: 0 },
             }))
 

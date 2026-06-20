@@ -2,6 +2,7 @@
 import { ActiveUserBalance } from '@/app/groups/[groupId]/expenses/active-user-balance'
 import { CategoryIcon } from '@/app/groups/[groupId]/expenses/category-icon'
 import { DocumentsCount } from '@/app/groups/[groupId]/expenses/documents-count'
+import { ExpenseNotes } from '@/app/groups/[groupId]/expenses/expense-notes'
 import { buttonVariants } from '@/components/ui/button'
 import { getGroupExpenses } from '@/lib/api'
 import { Currency } from '@/lib/currency'
@@ -71,10 +72,13 @@ export function ExpenseCard({
         router.push(`/groups/${groupId}/expenses/${expense.id}/edit`)
       }}
     >
-      <CategoryIcon
-        category={expense.category}
-        className="w-4 h-4 mr-2 mt-0.5 text-muted-foreground"
-      />
+      <div className="flex flex-col items-center mr-2 gap-1">
+        <CategoryIcon
+          category={expense.category}
+          className="w-4 h-4 mt-0.5 text-muted-foreground"
+        />
+        <ExpenseNotes notes={expense.notes} title={expense.title} />
+      </div>
       <div className="flex-1">
         <div className={cn('mb-1', expense.isReimbursement && 'italic')}>
           {expense.title}

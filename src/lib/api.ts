@@ -421,6 +421,7 @@ export async function getGroupExpenses(
       splitMode: true,
       recurrenceRule: true,
       title: true,
+      notes: true,
       _count: { select: { documents: true } },
     },
     where: {
