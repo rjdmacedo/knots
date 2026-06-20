@@ -9,7 +9,12 @@
     },
     "shadcn": {
       "command": "npx",
-      "args": ["shadcn@latest", "mcp"]
+      "args": ["shadcn@latest", "mcp"],
+      "autoApprove": [
+        "search_items_in_registries",
+        "view_items_in_registries",
+        "get_item_examples_from_registries"
+      ]
     }
   }
 }

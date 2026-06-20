@@ -8,6 +8,7 @@ import { listGroupExpensesProcedure } from '@/trpc/routers/groups/expenses/list.
 import { lookupCategoryMappingProcedure } from '@/trpc/routers/groups/expenses/lookup-category.procedure'
 import { previewKnotsImportProcedure } from '@/trpc/routers/groups/expenses/preview-knots.procedure'
 import { previewSplitwiseImportProcedure } from '@/trpc/routers/groups/expenses/preview-splitwise.procedure'
+import { suggestExpenseTitlesProcedure } from '@/trpc/routers/groups/expenses/suggest-titles.procedure'
 import { updateGroupExpenseProcedure } from '@/trpc/routers/groups/expenses/update.procedure'
 
 export const groupExpensesRouter = createTRPCRouter({
@@ -21,4 +22,5 @@ export const groupExpensesRouter = createTRPCRouter({
   previewKnotsImport: previewKnotsImportProcedure,
   importKnots: importKnotsProcedure,
   lookupCategory: lookupCategoryMappingProcedure,
+  suggestTitles: suggestExpenseTitlesProcedure,
 })

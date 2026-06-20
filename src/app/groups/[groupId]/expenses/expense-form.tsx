@@ -3,6 +3,10 @@ import { CurrencySelector } from '@/components/currency-selector'
 import { DeletePopup } from '@/components/delete-popup'
 import { ExpenseDocumentsInput } from '@/components/expense-documents-input'
 import { extractCategoryFromTitle } from '@/components/expense-form-actions'
+import {
+  ExpenseTitleInput,
+  ExpenseTitleSuggestion,
+} from '@/components/expense-title-input'
 import { SubmitButton } from '@/components/submit-button'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
@@ -518,12 +522,19 @@ export function ExpenseForm({
                 <FormItem className="">
                   <FormLabel>{t(`${sExpense}.TitleField.label`)}</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder={t(`${sExpense}.TitleField.placeholder`)}
-                      className="text-base"
-                      {...field}
+                    <ExpenseTitleInput
+                      groupId={group.id}
+                      value={field.value}
+                      onChange={(val) => {
+                        field.onChange(val)
+                      }}
+                      onSuggestionSelected={(
+                        suggestion: ExpenseTitleSuggestion,
+                      ) => {
+                        form.setValue('category', suggestion.categoryId)
+                      }}
                       onBlur={async () => {
-                        field.onBlur() // avoid skipping other blur event listeners since we overwrite `field`
+                        field.onBlur()
 
                         // 1. Try lookup from category mapping (has priority over AI)
                         try {
@@ -553,6 +564,8 @@ export function ExpenseForm({
                           setCategoryLoading(false)
                         }
                       }}
+                      placeholder={t(`${sExpense}.TitleField.placeholder`)}
+                      className="text-base"
                     />
                   </FormControl>
                   <FormDescription>

@@ -20,7 +20,7 @@ import {
 import { useMediaQuery } from '@/lib/hooks'
 import { StickyNote } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 
 type Props = {
   notes: string | null
@@ -31,16 +31,25 @@ export function ExpenseNotes({ notes, title }: Props) {
   const t = useTranslations('ExpenseCard')
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const [open, setOpen] = useState(false)
+  const closedAtRef = useRef(0)
+
+  const handleOpenChange = useCallback((newOpen: boolean) => {
+    if (!newOpen) {
+      closedAtRef.current = Date.now()
+    }
+    setOpen(newOpen)
+  }, [])
 
   if (!notes) return null
 
   if (isDesktop) {
     return (
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover open={open} onOpenChange={handleOpenChange}>
         <PopoverTrigger
           className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
           onClick={(e) => {
             e.stopPropagation()
+            e.preventDefault()
           }}
         >
           <StickyNote className="w-3.5 h-3.5" />
@@ -66,13 +75,20 @@ export function ExpenseNotes({ notes, title }: Props) {
         className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors"
         onClick={(e) => {
           e.stopPropagation()
+          e.preventDefault()
           setOpen(true)
+        }}
+        onPointerDown={(e) => {
+          e.stopPropagation()
         }}
       >
         <StickyNote className="w-3.5 h-3.5" />
       </button>
-      <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerContent>
+      <Drawer open={open} onOpenChange={handleOpenChange}>
+        <DrawerContent
+          onClick={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+        >
           <DrawerHeader className="text-left">
             <DrawerTitle>{title}</DrawerTitle>
           </DrawerHeader>
@@ -81,7 +97,9 @@ export function ExpenseNotes({ notes, title }: Props) {
           </div>
           <DrawerFooter>
             <DrawerClose asChild>
-              <Button variant="outline">{t('close')}</Button>
+              <Button variant="outline" onClick={(e) => e.stopPropagation()}>
+                {t('close')}
+              </Button>
             </DrawerClose>
           </DrawerFooter>
         </DrawerContent>

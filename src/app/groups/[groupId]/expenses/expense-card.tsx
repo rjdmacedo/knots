@@ -68,7 +68,16 @@ export function ExpenseCard({
         'flex justify-between sm:mx-6 px-4 sm:rounded-lg sm:pr-2 sm:pl-4 py-4 text-sm cursor-pointer hover:bg-accent gap-1 items-stretch',
         expense.isReimbursement && 'italic',
       )}
-      onClick={() => {
+      onClick={(e) => {
+        // Don't navigate if the click originated from an interactive element (button, link, etc.)
+        const target = e.target as HTMLElement
+        if (
+          target.closest(
+            'button, a, [role="dialog"], [data-slot="drawer-overlay"], [data-slot="popover-content"]',
+          )
+        ) {
+          return
+        }
         router.push(`/groups/${groupId}/expenses/${expense.id}/edit`)
       }}
     >
