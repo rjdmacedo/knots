@@ -1,3 +1,11 @@
+# [1.36.0](https://github.com/rjdmacedo/knots/compare/v1.35.3...v1.36.0) (2026-06-20)
+
+
+### Features
+
+* add ExpenseNotes component and update translations ([7f6a0d3](https://github.com/rjdmacedo/knots/commit/7f6a0d3030e9b400eaba86b7b4b79e33ff6d2c7f))
+* implement ExpenseTitleInput component and enhance expense form interactions ([405b163](https://github.com/rjdmacedo/knots/commit/405b16377a36e825dedbd0f43514c26408658440))
+
 ## [1.35.3](https://github.com/rjdmacedo/knots/compare/v1.35.2...v1.35.3) (2026-06-18)
 
 
