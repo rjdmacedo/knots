@@ -1,3 +1,10 @@
+## [1.36.2](https://github.com/rjdmacedo/knots/compare/v1.36.1...v1.36.2) (2026-06-23)
+
+
+### Bug Fixes
+
+* restore group expense exports after content-disposition v2 API change ([c6d3696](https://github.com/rjdmacedo/knots/commit/c6d3696accfefe354c39654b934524510fe2469e))
+
 ## [1.36.1](https://github.com/rjdmacedo/knots/compare/v1.36.0...v1.36.1) (2026-06-20)
 
 
