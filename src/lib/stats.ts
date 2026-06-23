@@ -1,4 +1,9 @@
 import { getGroupExpenses } from '@/lib/api'
+import {
+  getBalances,
+  getPublicBalances,
+  getSuggestedReimbursements,
+} from '@/lib/balances'
 import { calculateShare } from '@/lib/totals'
 
 // --- Input Types ---
@@ -403,49 +408,17 @@ export function computeNetBalances(
   expenses: Expense[],
   participants: Participant[],
 ): NetBalanceItem[] {
-  const nonReimbursements = expenses.filter((e) => !e.isReimbursement)
+  const balances = getBalances(expenses)
+  const reimbursements = getSuggestedReimbursements(balances)
+  const settlementBalances = getPublicBalances(reimbursements)
 
-  const balanceMap = new Map<
-    string,
-    { name: string; totalPaid: number; totalShare: number }
-  >()
-
-  // Initialize all participants with zero values
-  for (const participant of participants) {
-    balanceMap.set(participant.id, {
-      name: participant.name,
-      totalPaid: 0,
-      totalShare: 0,
-    })
-  }
-
-  // Accumulate paid amounts and shares
-  for (const expense of nonReimbursements) {
-    const payerId = expense.paidBy.id
-    const payerEntry = balanceMap.get(payerId)
-    if (payerEntry) {
-      payerEntry.totalPaid += expense.amount
-    }
-
-    // Compute share for each participant in this expense
-    for (const participant of participants) {
-      const share = calculateShare(participant.id, expense)
-      const entry = balanceMap.get(participant.id)
-      if (entry) {
-        entry.totalShare += share
-      }
-    }
-  }
-
-  const items: NetBalanceItem[] = Array.from(balanceMap.entries()).map(
-    ([participantId, { name, totalPaid, totalShare }]) => ({
-      participantId,
-      participantName: name,
-      totalPaid,
-      totalShare,
-      netBalance: totalPaid - totalShare,
-    }),
-  )
+  const items: NetBalanceItem[] = participants.map((participant) => ({
+    participantId: participant.id,
+    participantName: participant.name,
+    totalPaid: balances[participant.id]?.paid ?? 0,
+    totalShare: balances[participant.id]?.paidFor ?? 0,
+    netBalance: settlementBalances[participant.id]?.total ?? 0,
+  }))
 
   // Sort by netBalance descending (most owed first)
   items.sort((a, b) => b.netBalance - a.netBalance)

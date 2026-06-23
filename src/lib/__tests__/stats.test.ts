@@ -913,7 +913,7 @@ describe('computeNetBalances', () => {
     }
   })
 
-  it('excludes reimbursements from computation', () => {
+  it('includes reimbursements so net balances match the Balances tab', () => {
     const expenses = [
       makeExpense({
         id: 'e1',
@@ -936,11 +936,10 @@ describe('computeNetBalances', () => {
     ]
     const result = computeNetBalances(expenses, participants)
 
-    // Only first expense counts
     const alice = result.find((r) => r.participantName === 'Alice')!
     expect(alice.totalPaid).toBe(6000)
-    expect(alice.totalShare).toBe(3000)
-    expect(alice.netBalance).toBe(3000)
+    expect(alice.totalShare).toBe(6000)
+    expect(alice.netBalance).toBe(0)
   })
 })
 

@@ -1,4 +1,5 @@
 import { getGroupExpenses } from '@/lib/api'
+import { calculateShare } from '@/lib/totals'
 import { match } from 'ts-pattern'
 
 export type Balances = Record<
@@ -23,6 +24,18 @@ export function getBalances(
 
     if (!balances[paidBy]) balances[paidBy] = { paid: 0, paidFor: 0, total: 0 }
     balances[paidBy].paid += expense.amount
+
+    if (expense.splitMode === 'BY_PERCENTAGE') {
+      for (const paidFor of paidFors) {
+        if (!balances[paidFor.user.id])
+          balances[paidFor.user.id] = { paid: 0, paidFor: 0, total: 0 }
+        balances[paidFor.user.id].paidFor += calculateShare(
+          paidFor.user.id,
+          expense,
+        )
+      }
+      continue
+    }
 
     const totalPaidForShares = paidFors.reduce(
       (sum, paidFor) => sum + paidFor.shares,
