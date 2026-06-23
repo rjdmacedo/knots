@@ -14,12 +14,15 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { Loader2, Plus, Trash2, UserPlus, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import Link from 'next/link'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { FriendBalanceSummary } from './friend-balance-summary'
 
 export function FriendsManagement() {
   const t = useTranslations('Friends')
@@ -30,9 +33,16 @@ export function FriendsManagement() {
   const [pendingBlockedEmail, setPendingBlockedEmail] = useState('')
   const utils = trpc.useUtils()
 
+  const t_bal = useTranslations('Friends.Balances')
   const { data: friends, isLoading, error } = trpc.friends.list.useQuery()
   const { data: incomingRequests, isLoading: isLoadingRequests } =
     trpc.friends.listIncoming.useQuery()
+  const {
+    data: balances,
+    isLoading: isLoadingBalances,
+    error: balanceError,
+    refetch: refetchBalances,
+  } = trpc.friends.listWithBalances.useQuery()
 
   const addFriend = trpc.friends.add.useMutation({
     onSuccess: (data) => {
@@ -209,69 +219,122 @@ export function FriendsManagement() {
 
         {friends && friends.length > 0 ? (
           <ul className="flex flex-col gap-2">
-            {friends.map((friend) => (
-              <li
-                key={friend.id}
-                className="flex items-center justify-between gap-2 rounded-md border px-3 py-2"
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <div
-                    className={cn(
-                      'flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-sm font-medium ring-2 ring-offset-2 ring-offset-background',
-                      friend.status === 'pending'
-                        ? 'ring-debt/30'
-                        : 'ring-primary/70',
-                    )}
-                  >
-                    {friend.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                      <span className="text-sm font-medium">{friend.name}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {friend.hasAccount ? t('hasAccount') : t('noAccount')}
-                      </span>
-                    </div>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {friend.email}
-                    </p>
-                  </div>
-                </div>
+            {friends.map((friend) => {
+              const friendBalance = balances?.find(
+                (b) => b.friendId === friend.id,
+              )
+              const hasBalances =
+                friendBalance &&
+                friendBalance.balances.length > 0 &&
+                friendBalance.balances.some((b) => b.groups.length > 0)
+              const isConnected = friend.status === 'connected'
 
-                <AlertDialog>
-                  <AlertDialogTrigger
-                    render={
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive"
-                        aria-label={t('removeFriend')}
-                      />
-                    }
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>{t('removeFriend')}</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        {t('removeFriendDescription', { name: friend.name })}
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={() =>
-                          removeFriend.mutate({ friendId: friend.id })
-                        }
-                      >
-                        {t('remove')}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </li>
-            ))}
+              return (
+                <li
+                  key={friend.id}
+                  className="flex items-center justify-between gap-2 rounded-md border px-3 py-2"
+                >
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <div
+                      className={cn(
+                        'flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-sm font-medium ring-2 ring-offset-2 ring-offset-background',
+                        friend.status === 'pending'
+                          ? 'ring-debt/30'
+                          : 'ring-primary/70',
+                      )}
+                    >
+                      {friend.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                        <span className="text-sm font-medium">
+                          {friend.name}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {friend.hasAccount ? t('hasAccount') : t('noAccount')}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {friend.email}
+                      </p>
+                      {isConnected && (
+                        <div className="mt-1">
+                          {isLoadingBalances ? (
+                            <Skeleton className="h-3 w-24" />
+                          ) : balanceError ? (
+                            <div className="flex items-center gap-1">
+                              <span className="text-xs text-destructive">
+                                {t_bal('loadError')}
+                              </span>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-5 px-1 text-xs"
+                                onClick={() => refetchBalances()}
+                              >
+                                {t_bal('retry')}
+                              </Button>
+                            </div>
+                          ) : friendBalance ? (
+                            hasBalances ? (
+                              <Link
+                                href={`/friends/${friend.id}/balances`}
+                                className="hover:underline"
+                              >
+                                <FriendBalanceSummary
+                                  balances={friendBalance.balances}
+                                  friendName={friend.name}
+                                />
+                              </Link>
+                            ) : (
+                              <FriendBalanceSummary
+                                balances={friendBalance.balances}
+                                friendName={friend.name}
+                              />
+                            )
+                          ) : null}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <AlertDialog>
+                    <AlertDialogTrigger
+                      render={
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive"
+                          aria-label={t('removeFriend')}
+                        />
+                      }
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>{t('removeFriend')}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          {t('removeFriendDescription', {
+                            name: friend.name,
+                          })}
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() =>
+                            removeFriend.mutate({ friendId: friend.id })
+                          }
+                        >
+                          {t('remove')}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </li>
+              )
+            })}
           </ul>
         ) : (
           <p className="text-sm text-muted-foreground">{t('empty')}</p>

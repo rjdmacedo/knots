@@ -1,0 +1,127 @@
+import type { getGroupExpenses } from '@/lib/api'
+import {
+  getBalances,
+  getSuggestedReimbursements,
+  Reimbursement,
+} from '@/lib/balances'
+import { Currency } from '@/lib/currency'
+import { getCurrencyFromGroup } from '@/lib/utils'
+
+export type GroupBalanceBreakdown = {
+  groupId: string
+  groupName: string
+  currency: Currency
+  amount: number // minor units; positive = friend owes user
+}
+
+export type CurrencyBalance = {
+  currency: Currency
+  totalAmount: number
+  groups: GroupBalanceBreakdown[]
+}
+
+export type FriendBalanceSummary = {
+  friendId: string
+  friendUserId: string
+  name: string
+  balances: CurrencyBalance[] // empty if no shared groups or all zero
+}
+
+/** Net balance between two users from reimbursement suggestions. */
+export function getPairwiseBalance(
+  reimbursements: Reimbursement[],
+  currentUserId: string,
+  friendUserId: string,
+): number {
+  return reimbursements.reduce((net, r) => {
+    if (r.from === friendUserId && r.to === currentUserId) return net + r.amount
+    if (r.from === currentUserId && r.to === friendUserId) return net - r.amount
+    return net
+  }, 0)
+}
+
+/** Compute balances for one friend across shared groups. */
+export function computeFriendBalance(
+  currentUserId: string,
+  friendUserId: string,
+  sharedGroups: Array<{
+    id: string
+    name: string
+    currency: string
+    currencyCode: string | null
+    expenses: NonNullable<Awaited<ReturnType<typeof getGroupExpenses>>>
+  }>,
+): CurrencyBalance[] {
+  // Map of currency key → { currency, totalAmount, groups }
+  const currencyMap = new Map<string, CurrencyBalance>()
+
+  for (const group of sharedGroups) {
+    const balances = getBalances(group.expenses)
+    const reimbursements = getSuggestedReimbursements(balances)
+    const amount = getPairwiseBalance(
+      reimbursements,
+      currentUserId,
+      friendUserId,
+    )
+
+    const currency = getCurrencyFromGroup({
+      currency: group.currency,
+      currencyCode: group.currencyCode,
+    })
+
+    // Use currencyCode as key, or fall back to the symbol for custom currencies
+    const currencyKey = currency.code || currency.symbol
+
+    const breakdown: GroupBalanceBreakdown = {
+      groupId: group.id,
+      groupName: group.name,
+      currency,
+      amount,
+    }
+
+    const existing = currencyMap.get(currencyKey)
+    if (existing) {
+      existing.totalAmount += amount
+      existing.groups.push(breakdown)
+    } else {
+      currencyMap.set(currencyKey, {
+        currency,
+        totalAmount: amount,
+        groups: [breakdown],
+      })
+    }
+  }
+
+  return Array.from(currencyMap.values())
+}
+
+/** Sort: non-zero balances first, then alphabetical by name. */
+export function sortFriendBalances(
+  items: FriendBalanceSummary[],
+): FriendBalanceSummary[] {
+  return [...items].sort((a, b) => {
+    const aMaxAbs = getMaxAbsoluteBalance(a.balances)
+    const bMaxAbs = getMaxAbsoluteBalance(b.balances)
+
+    const aHasBalance = aMaxAbs > 0
+    const bHasBalance = bMaxAbs > 0
+
+    // Non-zero balances come first
+    if (aHasBalance && !bHasBalance) return -1
+    if (!aHasBalance && bHasBalance) return 1
+
+    // Both have non-zero balances: sort by largest absolute amount descending
+    if (aHasBalance && bHasBalance) {
+      if (aMaxAbs !== bMaxAbs) return bMaxAbs - aMaxAbs
+    }
+
+    // Tie-break: alphabetical by name
+    return (a.name ?? '').localeCompare(b.name ?? '')
+  })
+}
+
+/** Get the largest absolute totalAmount across all currencies for a friend. */
+function getMaxAbsoluteBalance(balances: CurrencyBalance[]): number {
+  if (balances.length === 0) return 0
+  return Math.max(...balances.map((b) => Math.abs(b.totalAmount)))
+}

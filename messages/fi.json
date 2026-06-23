@@ -745,7 +745,36 @@
     "unblockDialogTitle": "Käyttäjä on estetty",
     "unblockDialogDescription": "Olet estänyt käyttäjän {email}. Lisätäksesi hänet kaveriksi, sinun on ensin poistettava esto.",
     "unblockAndAdd": "Poista esto ja lisää",
-    "unblocking": "Poistetaan estoa…"
+    "unblocking": "Poistetaan estoa…",
+    "Balances": {
+      "columnTitle": "Saldo",
+      "loading": "Ladataan saldoja…",
+      "loadError": "Saldoja ei voitu ladata.",
+      "retry": "Yritä uudelleen",
+      "settled": "Kaikki kunnossa",
+      "noSharedGroups": "Ei yhteisiä ryhmiä",
+      "friendOwesYou": "{name} on sinulle velkaa",
+      "youOweFriend": "Olet velkaa {name}:lle",
+      "viewDetails": "Näytä tiedot",
+      "summaryTitle": "Saldot ystävien kanssa",
+      "summaryDescription": "Nettosummat kaikissa ryhmissä, joita jaat kunkin ystävän kanssa."
+    },
+    "BalanceDetail": {
+      "title": "Saldo: {name}",
+      "description": "Erittely jaetun ryhmän mukaan.",
+      "backToFriends": "Takaisin ystäviin",
+      "totalBalance": "Kokonaissaldo",
+      "groupBreakdown": "Ryhmittäin",
+      "groupBalance": "Saldo tässä ryhmässä",
+      "viewGroupBalances": "Näytä ryhmän saldot",
+      "emptyTitle": "Ei yhteisiä ryhmiä",
+      "emptyDescription": "Saldot näkyvät, kun sinä ja {name} olette saman ryhmän jäseniä.",
+      "notConnectedTitle": "Ei yhdistetty",
+      "notConnectedDescription": "Hyväksy yhteyspyyntö nähdäksesi saldot tämän ystävän kanssa.",
+      "loading": "Ladataan saldon tietoja…",
+      "loadError": "Saldoa ei voitu ladata.",
+      "retry": "Yritä uudelleen"
+    }
   },
   "Members": {
     "addedToGroup": "{name} lisätty ryhmään.",

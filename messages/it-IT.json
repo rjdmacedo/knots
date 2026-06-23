@@ -745,7 +745,36 @@
     "unblockDialogTitle": "Questo utente è bloccato",
     "unblockDialogDescription": "Hai bloccato {email}. Per aggiungerlo come amico, devi prima sbloccarlo.",
     "unblockAndAdd": "Sblocca e aggiungi",
-    "unblocking": "Sblocco…"
+    "unblocking": "Sblocco…",
+    "Balances": {
+      "columnTitle": "Saldo",
+      "loading": "Caricamento saldi…",
+      "loadError": "Impossibile caricare i saldi.",
+      "retry": "Riprova",
+      "settled": "Tutto saldato",
+      "noSharedGroups": "Nessun gruppo in comune",
+      "friendOwesYou": "{name} ti deve",
+      "youOweFriend": "Devi a {name}",
+      "viewDetails": "Vedi dettagli",
+      "summaryTitle": "Saldi con gli amici",
+      "summaryDescription": "Importi netti in tutti i gruppi che condividi con ogni amico."
+    },
+    "BalanceDetail": {
+      "title": "Saldo con {name}",
+      "description": "Ripartizione per gruppo condiviso.",
+      "backToFriends": "Torna agli amici",
+      "totalBalance": "Saldo totale",
+      "groupBreakdown": "Per gruppo",
+      "groupBalance": "Saldo in questo gruppo",
+      "viewGroupBalances": "Vedi saldi del gruppo",
+      "emptyTitle": "Nessun gruppo in comune",
+      "emptyDescription": "I saldi compaiono quando tu e {name} siete entrambi membri dello stesso gruppo.",
+      "notConnectedTitle": "Non connesso",
+      "notConnectedDescription": "Accetta la richiesta di connessione per vedere i saldi con questo amico.",
+      "loading": "Caricamento dettagli saldo…",
+      "loadError": "Impossibile caricare i dettagli del saldo.",
+      "retry": "Riprova"
+    }
   },
   "Members": {
     "addedToGroup": "{name} aggiunto al gruppo.",

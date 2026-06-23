@@ -745,7 +745,36 @@
     "unblockDialogTitle": "Bu kullanıcı engellendi",
     "unblockDialogDescription": "{email} kullanıcısını engellediniz. Onu arkadaş olarak eklemek için önce engelini kaldırmalısınız.",
     "unblockAndAdd": "Engeli kaldır ve ekle",
-    "unblocking": "Engeli kaldırılıyor…"
+    "unblocking": "Engeli kaldırılıyor…",
+    "Balances": {
+      "columnTitle": "Bakiye",
+      "loading": "Bakiyeler yükleniyor…",
+      "loadError": "Bakiyeler yüklenemedi.",
+      "retry": "Tekrar dene",
+      "settled": "Her şey kapandı",
+      "noSharedGroups": "Ortak grup yok",
+      "friendOwesYou": "{name} size borçlu",
+      "youOweFriend": "{name}'e borçlusunuz",
+      "viewDetails": "Detayları gör",
+      "summaryTitle": "Arkadaşlarla bakiyeler",
+      "summaryDescription": "Her arkadaşla paylaştığınız tüm gruplardaki net tutarlar."
+    },
+    "BalanceDetail": {
+      "title": "{name} ile bakiye",
+      "description": "Ortak gruplara göre döküm.",
+      "backToFriends": "Arkadaşlara dön",
+      "totalBalance": "Toplam bakiye",
+      "groupBreakdown": "Gruba göre",
+      "groupBalance": "Bu gruptaki bakiye",
+      "viewGroupBalances": "Grup bakiyelerini gör",
+      "emptyTitle": "Ortak grup yok",
+      "emptyDescription": "Siz ve {name} aynı grubun üyesi olduğunuzda bakiyeler görünür.",
+      "notConnectedTitle": "Bağlı değil",
+      "notConnectedDescription": "Bu arkadaşla bakiyeleri görmek için bağlantı isteğini kabul edin.",
+      "loading": "Bakiye detayları yükleniyor…",
+      "loadError": "Bakiye detayları yüklenemedi.",
+      "retry": "Tekrar dene"
+    }
   },
   "Members": {
     "addedToGroup": "{name} gruba eklendi.",

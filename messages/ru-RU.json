@@ -745,7 +745,36 @@
     "unblockDialogTitle": "Этот пользователь заблокирован",
     "unblockDialogDescription": "Вы заблокировали пользователя {email}. Чтобы добавить его в друзья, сначала разблокируйте его.",
     "unblockAndAdd": "Разблокировать и добавить",
-    "unblocking": "Разблокировка…"
+    "unblocking": "Разблокировка…",
+    "Balances": {
+      "columnTitle": "Баланс",
+      "loading": "Загрузка балансов…",
+      "loadError": "Не удалось загрузить балансы.",
+      "retry": "Повторить",
+      "settled": "Все рассчитано",
+      "noSharedGroups": "Нет общих групп",
+      "friendOwesYou": "{name} должен вам",
+      "youOweFriend": "Вы должны {name}",
+      "viewDetails": "Подробнее",
+      "summaryTitle": "Балансы с друзьями",
+      "summaryDescription": "Чистые суммы по всем группам, которые вы разделяете с каждым другом."
+    },
+    "BalanceDetail": {
+      "title": "Баланс с {name}",
+      "description": "Разбивка по общим группам.",
+      "backToFriends": "Назад к друзьям",
+      "totalBalance": "Общий баланс",
+      "groupBreakdown": "По группам",
+      "groupBalance": "Баланс в этой группе",
+      "viewGroupBalances": "Посмотреть балансы группы",
+      "emptyTitle": "Нет общих групп",
+      "emptyDescription": "Балансы появятся, когда вы и {name} станете участниками одной группы.",
+      "notConnectedTitle": "Не подключён",
+      "notConnectedDescription": "Примите запрос на подключение, чтобы видеть балансы с этим другом.",
+      "loading": "Загрузка деталей баланса…",
+      "loadError": "Не удалось загрузить детали баланса.",
+      "retry": "Повторить"
+    }
   },
   "Members": {
     "addedToGroup": "{name} добавлен в группу.",

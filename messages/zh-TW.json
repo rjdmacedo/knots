@@ -745,7 +745,36 @@
     "unblockDialogTitle": "該用戶已被封鎖",
     "unblockDialogDescription": "您已封鎖 {email}。若要新增其為好友，您需要先解除封鎖。",
     "unblockAndAdd": "解除封鎖並新增",
-    "unblocking": "正在解除封鎖…"
+    "unblocking": "正在解除封鎖…",
+    "Balances": {
+      "columnTitle": "餘額",
+      "loading": "正在載入餘額…",
+      "loadError": "無法載入餘額。",
+      "retry": "重試",
+      "settled": "已全部結清",
+      "noSharedGroups": "沒有共同群組",
+      "friendOwesYou": "{name}欠你",
+      "youOweFriend": "你欠{name}",
+      "viewDetails": "查看詳情",
+      "summaryTitle": "與好友的餘額",
+      "summaryDescription": "你與每位好友共享的所有群組中的淨額。"
+    },
+    "BalanceDetail": {
+      "title": "與{name}的餘額",
+      "description": "按共享群組細分。",
+      "backToFriends": "返回好友",
+      "totalBalance": "總餘額",
+      "groupBreakdown": "按群組",
+      "groupBalance": "此群組中的餘額",
+      "viewGroupBalances": "查看群組餘額",
+      "emptyTitle": "沒有共同群組",
+      "emptyDescription": "當你和{name}都是同一群組的成員時，餘額才會顯示。",
+      "notConnectedTitle": "未連線",
+      "notConnectedDescription": "接受連線請求以查看與此好友的餘額。",
+      "loading": "正在載入餘額詳情…",
+      "loadError": "無法載入餘額詳情。",
+      "retry": "重試"
+    }
   },
   "Members": {
     "addedToGroup": "已將 {name} 加入群組。",

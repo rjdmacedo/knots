@@ -745,7 +745,36 @@
     "unblockDialogTitle": "Deze gebruiker is geblokkeerd",
     "unblockDialogDescription": "Je hebt {email} geblokkeerd. Om deze persoon als vriend toe te voegen, moet je deze eerst deblokkeren.",
     "unblockAndAdd": "Deblokkeren en toevoegen",
-    "unblocking": "Deblokkeren…"
+    "unblocking": "Deblokkeren…",
+    "Balances": {
+      "columnTitle": "Saldo",
+      "loading": "Saldi laden…",
+      "loadError": "Kon saldi niet laden.",
+      "retry": "Opnieuw proberen",
+      "settled": "Alles verrekend",
+      "noSharedGroups": "Geen gedeelde groepen",
+      "friendOwesYou": "{name} is jou schuldig",
+      "youOweFriend": "Jij bent {name} schuldig",
+      "viewDetails": "Details bekijken",
+      "summaryTitle": "Saldi met vrienden",
+      "summaryDescription": "Nettobedragen in alle groepen die je deelt met elke vriend."
+    },
+    "BalanceDetail": {
+      "title": "Saldo met {name}",
+      "description": "Uitsplitsing per gedeelde groep.",
+      "backToFriends": "Terug naar vrienden",
+      "totalBalance": "Totaal saldo",
+      "groupBreakdown": "Per groep",
+      "groupBalance": "Saldo in deze groep",
+      "viewGroupBalances": "Groepssaldi bekijken",
+      "emptyTitle": "Geen gedeelde groepen",
+      "emptyDescription": "Saldi verschijnen wanneer jij en {name} lid zijn van dezelfde groep.",
+      "notConnectedTitle": "Niet verbonden",
+      "notConnectedDescription": "Accepteer het verbindingsverzoek om saldi met deze vriend te zien.",
+      "loading": "Saldodetails laden…",
+      "loadError": "Kon saldodetails niet laden.",
+      "retry": "Opnieuw proberen"
+    }
   },
   "Members": {
     "addedToGroup": "{name} toegevoegd aan de groep.",

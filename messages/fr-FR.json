@@ -745,7 +745,36 @@
     "unblockDialogTitle": "Cet utilisateur est bloqué",
     "unblockDialogDescription": "Vous avez bloqué {email}. Pour l'ajouter comme ami, vous devez d'abord le débloquer.",
     "unblockAndAdd": "Débloquer et ajouter",
-    "unblocking": "Déblocage…"
+    "unblocking": "Déblocage…",
+    "Balances": {
+      "columnTitle": "Solde",
+      "loading": "Chargement des soldes…",
+      "loadError": "Impossible de charger les soldes.",
+      "retry": "Réessayer",
+      "settled": "Tout est réglé",
+      "noSharedGroups": "Aucun groupe en commun",
+      "friendOwesYou": "{name} vous doit",
+      "youOweFriend": "Vous devez à {name}",
+      "viewDetails": "Voir les détails",
+      "summaryTitle": "Soldes avec vos amis",
+      "summaryDescription": "Montants nets dans tous les groupes que vous partagez avec chaque ami."
+    },
+    "BalanceDetail": {
+      "title": "Solde avec {name}",
+      "description": "Répartition par groupe partagé.",
+      "backToFriends": "Retour aux amis",
+      "totalBalance": "Solde total",
+      "groupBreakdown": "Par groupe",
+      "groupBalance": "Solde dans ce groupe",
+      "viewGroupBalances": "Voir les soldes du groupe",
+      "emptyTitle": "Aucun groupe en commun",
+      "emptyDescription": "Les soldes apparaissent lorsque vous et {name} êtes membres du même groupe.",
+      "notConnectedTitle": "Non connecté",
+      "notConnectedDescription": "Acceptez la demande de connexion pour voir les soldes avec cet ami.",
+      "loading": "Chargement des détails du solde…",
+      "loadError": "Impossible de charger les détails du solde.",
+      "retry": "Réessayer"
+    }
   },
   "Members": {
     "addedToGroup": "{name} ajouté au groupe.",

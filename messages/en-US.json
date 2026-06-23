@@ -803,7 +803,36 @@
     "unblockDialogTitle": "This user is blocked",
     "unblockDialogDescription": "You have blocked {email}. To add them as a friend, you need to unblock them first.",
     "unblockAndAdd": "Unblock and add",
-    "unblocking": "Unblocking…"
+    "unblocking": "Unblocking…",
+    "Balances": {
+      "columnTitle": "Balance",
+      "loading": "Loading balances…",
+      "loadError": "Could not load balances.",
+      "retry": "Retry",
+      "settled": "All settled up",
+      "noSharedGroups": "No shared groups",
+      "friendOwesYou": "{name} owes you",
+      "youOweFriend": "You owe {name}",
+      "viewDetails": "View details",
+      "summaryTitle": "Balances with friends",
+      "summaryDescription": "Net amounts across all groups you share with each friend."
+    },
+    "BalanceDetail": {
+      "title": "Balance with {name}",
+      "description": "Breakdown by shared group.",
+      "backToFriends": "Back to friends",
+      "totalBalance": "Total balance",
+      "groupBreakdown": "By group",
+      "groupBalance": "Balance in this group",
+      "viewGroupBalances": "View group balances",
+      "emptyTitle": "No shared groups",
+      "emptyDescription": "Balances appear when you and {name} are both members of the same group.",
+      "notConnectedTitle": "Not connected",
+      "notConnectedDescription": "Accept the connection request to see balances with this friend.",
+      "loading": "Loading balance details…",
+      "loadError": "Could not load balance details.",
+      "retry": "Retry"
+    }
   },
   "Members": {
     "addedToGroup": "{name} added to the group.",

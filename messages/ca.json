@@ -745,7 +745,36 @@
     "unblockDialogTitle": "Aquest usuari està bloquejat",
     "unblockDialogDescription": "Has bloquejat a {email}. Per afegir-lo com a amic, primer l'has de desbloquejar.",
     "unblockAndAdd": "Desbloquejar i afegir",
-    "unblocking": "Desbloquejant…"
+    "unblocking": "Desbloquejant…",
+    "Balances": {
+      "columnTitle": "Saldo",
+      "loading": "Carregant saldos…",
+      "loadError": "No s'han pogut carregar els saldos.",
+      "retry": "Torna-ho a provar",
+      "settled": "Tot quadrat",
+      "noSharedGroups": "Sense grups en comú",
+      "friendOwesYou": "{name} et deu",
+      "youOweFriend": "Deus a {name}",
+      "viewDetails": "Veure detalls",
+      "summaryTitle": "Saldos amb amics",
+      "summaryDescription": "Imports nets en tots els grups que comparteixes amb cada amic."
+    },
+    "BalanceDetail": {
+      "title": "Saldo amb {name}",
+      "description": "Desglossament per grup compartit.",
+      "backToFriends": "Tornar als amics",
+      "totalBalance": "Saldo total",
+      "groupBreakdown": "Per grup",
+      "groupBalance": "Saldo en aquest grup",
+      "viewGroupBalances": "Veure saldos del grup",
+      "emptyTitle": "Sense grups en comú",
+      "emptyDescription": "Els saldos apareixen quan tu i {name} sou membres del mateix grup.",
+      "notConnectedTitle": "No connectat",
+      "notConnectedDescription": "Accepta la sol·licitud de connexió per veure saldos amb aquest amic.",
+      "loading": "Carregant detalls del saldo…",
+      "loadError": "No s'han pogut carregar els detalls del saldo.",
+      "retry": "Torna-ho a provar"
+    }
   },
   "Members": {
     "addedToGroup": "{name} afegit al grup.",

@@ -827,7 +827,36 @@
     "unblockDialogTitle": "Este utilizador está bloqueado",
     "unblockDialogDescription": "Bloqueaste {email}. Para adicioná-lo como amigo, precisas de o desbloquear primeiro.",
     "unblockAndAdd": "Desbloquear e adicionar",
-    "unblocking": "A desbloquear…"
+    "unblocking": "A desbloquear…",
+    "Balances": {
+      "columnTitle": "Saldo",
+      "loading": "A carregar saldos…",
+      "loadError": "Não foi possível carregar os saldos.",
+      "retry": "Tentar novamente",
+      "settled": "Tudo acertado",
+      "noSharedGroups": "Sem grupos em comum",
+      "friendOwesYou": "{name} deve-te",
+      "youOweFriend": "Deves a {name}",
+      "viewDetails": "Ver detalhes",
+      "summaryTitle": "Saldos com amigos",
+      "summaryDescription": "Valores líquidos em todos os grupos que partilhas com cada amigo."
+    },
+    "BalanceDetail": {
+      "title": "Saldo com {name}",
+      "description": "Discriminação por grupo partilhado.",
+      "backToFriends": "Voltar aos amigos",
+      "totalBalance": "Saldo total",
+      "groupBreakdown": "Por grupo",
+      "groupBalance": "Saldo neste grupo",
+      "viewGroupBalances": "Ver saldos do grupo",
+      "emptyTitle": "Sem grupos em comum",
+      "emptyDescription": "Os saldos aparecem quando tu e {name} forem membros do mesmo grupo.",
+      "notConnectedTitle": "Não conectado",
+      "notConnectedDescription": "Aceita o pedido de conexão para ver saldos com este amigo.",
+      "loading": "A carregar detalhes do saldo…",
+      "loadError": "Não foi possível carregar os detalhes do saldo.",
+      "retry": "Tentar novamente"
+    }
   },
   "Members": {
     "addedToGroup": "{name} adicionado ao grupo.",

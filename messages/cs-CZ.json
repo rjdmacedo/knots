@@ -745,7 +745,36 @@
     "unblockDialogTitle": "Tento uživatel je blokován",
     "unblockDialogDescription": "Zablokovali jste uživatele {email}. Chcete-li si jej přidat do přátel, musíte jej nejprve odblokovat.",
     "unblockAndAdd": "Odblokovat a přidat",
-    "unblocking": "Odblokovávání…"
+    "unblocking": "Odblokovávání…",
+    "Balances": {
+      "columnTitle": "Zůstatek",
+      "loading": "Načítání zůstatků…",
+      "loadError": "Zůstatky se nepodařilo načíst.",
+      "retry": "Zkusit znovu",
+      "settled": "Vše vyrovnáno",
+      "noSharedGroups": "Žádné společné skupiny",
+      "friendOwesYou": "{name} vám dluží",
+      "youOweFriend": "Dlužíte {name}",
+      "viewDetails": "Zobrazit podrobnosti",
+      "summaryTitle": "Zůstatky s přáteli",
+      "summaryDescription": "Čisté částky ve všech skupinách, které sdílíte s každým přítelem."
+    },
+    "BalanceDetail": {
+      "title": "Zůstatek s {name}",
+      "description": "Rozpis podle sdílené skupiny.",
+      "backToFriends": "Zpět na přátele",
+      "totalBalance": "Celkový zůstatek",
+      "groupBreakdown": "Podle skupiny",
+      "groupBalance": "Zůstatek v této skupině",
+      "viewGroupBalances": "Zobrazit zůstatky skupiny",
+      "emptyTitle": "Žádné společné skupiny",
+      "emptyDescription": "Zůstatky se zobrazí, až budete vy a {name} členy stejné skupiny.",
+      "notConnectedTitle": "Nepřipojeno",
+      "notConnectedDescription": "Přijměte žádost o propojení, abyste viděli zůstatky s tímto přítelem.",
+      "loading": "Načítání podrobností zůstatku…",
+      "loadError": "Podrobnosti zůstatku se nepodařilo načíst.",
+      "retry": "Zkusit znovu"
+    }
   },
   "Members": {
     "addedToGroup": "{name} přidán do skupiny.",

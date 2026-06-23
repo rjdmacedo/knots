@@ -745,7 +745,36 @@
     "unblockDialogTitle": "Ten użytkownik jest zablokowany",
     "unblockDialogDescription": "Zablokowałeś użytkownika {email}. Aby dodać go do znajomych, musisz go najpierw odblokować.",
     "unblockAndAdd": "Odblokuj i dodaj",
-    "unblocking": "Odblokowywanie…"
+    "unblocking": "Odblokowywanie…",
+    "Balances": {
+      "columnTitle": "Saldo",
+      "loading": "Ładowanie sald…",
+      "loadError": "Nie udało się załadować sald.",
+      "retry": "Spróbuj ponownie",
+      "settled": "Wszystko rozliczone",
+      "noSharedGroups": "Brak wspólnych grup",
+      "friendOwesYou": "{name} jest ci winien",
+      "youOweFriend": "Jesteś winien {name}",
+      "viewDetails": "Zobacz szczegóły",
+      "summaryTitle": "Salda ze znajomymi",
+      "summaryDescription": "Kwoty netto we wszystkich grupach, które dzielisz z każdym znajomym."
+    },
+    "BalanceDetail": {
+      "title": "Saldo z {name}",
+      "description": "Podział według wspólnej grupy.",
+      "backToFriends": "Powrót do znajomych",
+      "totalBalance": "Saldo całkowite",
+      "groupBreakdown": "Według grupy",
+      "groupBalance": "Saldo w tej grupie",
+      "viewGroupBalances": "Zobacz salda grupy",
+      "emptyTitle": "Brak wspólnych grup",
+      "emptyDescription": "Salda pojawią się, gdy ty i {name} będziecie członkami tej samej grupy.",
+      "notConnectedTitle": "Nie połączono",
+      "notConnectedDescription": "Zaakceptuj prośbę o połączenie, aby zobaczyć salda z tym znajomym.",
+      "loading": "Ładowanie szczegółów salda…",
+      "loadError": "Nie udało się załadować szczegółów salda.",
+      "retry": "Spróbuj ponownie"
+    }
   },
   "Members": {
     "addedToGroup": "{name} dodany do grupy.",

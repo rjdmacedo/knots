@@ -1,3 +1,10 @@
+import { getGroupExpenses } from '@/lib/api'
+import {
+  computeFriendBalance,
+  FriendBalanceSummary,
+  sortFriendBalances,
+} from '@/lib/friend-balances'
+import { getSharedGroupsForUsers } from '@/lib/friend-balances-db'
 import {
   acceptFriendRequest,
   addFriendByEmail,
@@ -6,7 +13,9 @@ import {
   listIncomingFriendRequests,
   removeFriend,
 } from '@/lib/friends'
+import { prisma } from '@/lib/prisma'
 import { createTRPCRouter, protectedProcedure } from '@/trpc/init'
+import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
 export const friendsRouter = createTRPCRouter({
@@ -16,6 +25,55 @@ export const friendsRouter = createTRPCRouter({
 
   listIncoming: protectedProcedure.query(async ({ ctx }) => {
     return listIncomingFriendRequests(ctx.user.id)
+  }),
+
+  listWithBalances: protectedProcedure.query(async ({ ctx }) => {
+    const friends = await listFriends(ctx.user.id)
+
+    const connectedFriends = friends.filter(
+      (f) => f.status === 'connected' && f.friendUserId !== null,
+    )
+
+    // Cache expenses by groupId to avoid duplicate fetches when multiple friends share a group
+    const expenseCache = new Map<
+      string,
+      Awaited<ReturnType<typeof getGroupExpenses>>
+    >()
+
+    const summaries: FriendBalanceSummary[] = await Promise.all(
+      connectedFriends.map(async (friend) => {
+        const sharedGroups = await getSharedGroupsForUsers(
+          ctx.user.id,
+          friend.friendUserId!,
+        )
+
+        const sharedGroupsWithExpenses = await Promise.all(
+          sharedGroups.map(async (group) => {
+            let expenses = expenseCache.get(group.id)
+            if (!expenses) {
+              expenses = await getGroupExpenses(group.id)
+              expenseCache.set(group.id, expenses)
+            }
+            return { ...group, expenses }
+          }),
+        )
+
+        const balances = computeFriendBalance(
+          ctx.user.id,
+          friend.friendUserId!,
+          sharedGroupsWithExpenses,
+        )
+
+        return {
+          friendId: friend.id,
+          friendUserId: friend.friendUserId!,
+          name: friend.name,
+          balances,
+        }
+      }),
+    )
+
+    return sortFriendBalances(summaries)
   }),
 
   add: protectedProcedure
@@ -62,5 +120,65 @@ export const friendsRouter = createTRPCRouter({
       })
 
       return { success: true }
+    }),
+
+  getBalanceDetail: protectedProcedure
+    .input(z.object({ friendId: z.string().min(1) }))
+    .query(async ({ ctx, input }) => {
+      const friend = await prisma.friend.findUnique({
+        where: { id: input.friendId },
+        select: {
+          id: true,
+          userId: true,
+          name: true,
+          email: true,
+          friendUserId: true,
+          friend: { select: { name: true } },
+        },
+      })
+
+      if (!friend || friend.userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Friend not found.',
+        })
+      }
+
+      if (!friend.friendUserId) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Friend is not connected.',
+        })
+      }
+
+      const sharedGroups = await getSharedGroupsForUsers(
+        ctx.user.id,
+        friend.friendUserId,
+      )
+
+      const sharedGroupsWithExpenses = await Promise.all(
+        sharedGroups.map(async (group) => ({
+          ...group,
+          expenses: await getGroupExpenses(group.id),
+        })),
+      )
+
+      const balances = computeFriendBalance(
+        ctx.user.id,
+        friend.friendUserId,
+        sharedGroupsWithExpenses,
+      )
+
+      return {
+        friend: {
+          id: friend.id,
+          name:
+            friend.name ?? friend.friend?.name ?? friend.email.split('@')[0],
+          email: friend.email,
+          friendUserId: friend.friendUserId,
+        },
+        balances,
+        sharedGroupCount: sharedGroups.length,
+      }
     }),
 })

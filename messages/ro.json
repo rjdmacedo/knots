@@ -745,7 +745,36 @@
     "unblockDialogTitle": "Acest utilizator este blocat",
     "unblockDialogDescription": "L-ai blocat pe {email}. Pentru a-l adăuga ca prieten, trebuie să-l deblochezi mai întâi.",
     "unblockAndAdd": "Deblochează și adaugă",
-    "unblocking": "Se deblochează…"
+    "unblocking": "Se deblochează…",
+    "Balances": {
+      "columnTitle": "Sold",
+      "loading": "Se încarcă soldurile…",
+      "loadError": "Nu s-au putut încărca soldurile.",
+      "retry": "Reîncearcă",
+      "settled": "Totul este achitat",
+      "noSharedGroups": "Niciun grup comun",
+      "friendOwesYou": "{name} îți datorează",
+      "youOweFriend": "Îi datorezi lui {name}",
+      "viewDetails": "Vezi detalii",
+      "summaryTitle": "Solduri cu prietenii",
+      "summaryDescription": "Sume nete în toate grupurile pe care le împărtășești cu fiecare prieten."
+    },
+    "BalanceDetail": {
+      "title": "Sold cu {name}",
+      "description": "Detaliere pe grupuri comune.",
+      "backToFriends": "Înapoi la prieteni",
+      "totalBalance": "Sold total",
+      "groupBreakdown": "Pe grup",
+      "groupBalance": "Sold în acest grup",
+      "viewGroupBalances": "Vezi soldurile grupului",
+      "emptyTitle": "Niciun grup comun",
+      "emptyDescription": "Soldurile apar când tu și {name} sunteți membri ai aceluiași grup.",
+      "notConnectedTitle": "Neconectat",
+      "notConnectedDescription": "Acceptă cererea de conectare pentru a vedea soldurile cu acest prieten.",
+      "loading": "Se încarcă detaliile soldului…",
+      "loadError": "Nu s-au putut încărca detaliile soldului.",
+      "retry": "Reîncearcă"
+    }
   },
   "Members": {
     "addedToGroup": "{name} adăugat în grup.",

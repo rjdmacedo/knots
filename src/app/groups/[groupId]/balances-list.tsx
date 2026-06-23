@@ -123,7 +123,7 @@ export function BalancesList({
             accessibilityLayer
             data={chartData}
             layout="vertical"
-            margin={{ left: 0, right: 60 }}
+            margin={{ left: 0, right: 80 }}
           >
             <CartesianGrid horizontal={false} />
             <YAxis
@@ -143,6 +143,26 @@ export function BalancesList({
                 offset={8}
                 className="fill-foreground"
                 fontSize={12}
+                content={({ x, y, width, height, value, index }) => {
+                  const item = chartData[index as number]
+                  if (!item) return null
+                  const isNegative = (value as number) < 0
+                  const labelX = isNegative
+                    ? (x as number) - 8
+                    : (x as number) + (width as number) + 8
+                  return (
+                    <text
+                      x={labelX}
+                      y={(y as number) + (height as number) / 2}
+                      textAnchor={isNegative ? 'end' : 'start'}
+                      dominantBaseline="middle"
+                      className="fill-foreground"
+                      fontSize={12}
+                    >
+                      {item.formattedBalance}
+                    </text>
+                  )
+                }}
               />
               {chartData.map((item) => (
                 <Cell

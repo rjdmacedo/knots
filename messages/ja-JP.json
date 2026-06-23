@@ -745,7 +745,36 @@
     "unblockDialogTitle": "このユーザーはブロックされています",
     "unblockDialogDescription": "{email}をブロックしています。友達として追加するには、まずブロックを解除する必要があります。",
     "unblockAndAdd": "ブロック解除して追加",
-    "unblocking": "ブロックを解除しています…"
+    "unblocking": "ブロックを解除しています…",
+    "Balances": {
+      "columnTitle": "残高",
+      "loading": "残高を読み込み中…",
+      "loadError": "残高を読み込めませんでした。",
+      "retry": "再試行",
+      "settled": "すべて清算済み",
+      "noSharedGroups": "共通のグループなし",
+      "friendOwesYou": "{name}があなたに借りがあります",
+      "youOweFriend": "あなたが{name}に借りがあります",
+      "viewDetails": "詳細を見る",
+      "summaryTitle": "友達との残高",
+      "summaryDescription": "各友達と共有するすべてのグループでの純額。"
+    },
+    "BalanceDetail": {
+      "title": "{name}との残高",
+      "description": "共有グループ別の内訳。",
+      "backToFriends": "友達に戻る",
+      "totalBalance": "合計残高",
+      "groupBreakdown": "グループ別",
+      "groupBalance": "このグループの残高",
+      "viewGroupBalances": "グループの残高を見る",
+      "emptyTitle": "共通のグループなし",
+      "emptyDescription": "あなたと{name}が同じグループのメンバーになると残高が表示されます。",
+      "notConnectedTitle": "未接続",
+      "notConnectedDescription": "この友達との残高を見るには接続リクエストを承認してください。",
+      "loading": "残高の詳細を読み込み中…",
+      "loadError": "残高の詳細を読み込めませんでした。",
+      "retry": "再試行"
+    }
   },
   "Members": {
     "addedToGroup": "{name} をグループに追加しました。",

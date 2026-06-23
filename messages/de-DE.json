@@ -745,7 +745,36 @@
     "unblockDialogTitle": "Dieser Nutzer ist blockiert",
     "unblockDialogDescription": "Du hast {email} blockiert. Um diese Person als Freund hinzuzufügen, musst du sie zuerst entblocken.",
     "unblockAndAdd": "Entblocken und hinzufügen",
-    "unblocking": "Entblocken…"
+    "unblocking": "Entblocken…",
+    "Balances": {
+      "columnTitle": "Saldo",
+      "loading": "Salden werden geladen…",
+      "loadError": "Salden konnten nicht geladen werden.",
+      "retry": "Erneut versuchen",
+      "settled": "Alles ausgeglichen",
+      "noSharedGroups": "Keine gemeinsamen Gruppen",
+      "friendOwesYou": "{name} schuldet dir",
+      "youOweFriend": "Du schuldest {name}",
+      "viewDetails": "Details anzeigen",
+      "summaryTitle": "Salden mit Freunden",
+      "summaryDescription": "Nettobeträge über alle Gruppen, die du mit jedem Freund teilst."
+    },
+    "BalanceDetail": {
+      "title": "Saldo mit {name}",
+      "description": "Aufschlüsselung nach gemeinsamer Gruppe.",
+      "backToFriends": "Zurück zu Freunden",
+      "totalBalance": "Gesamtsaldo",
+      "groupBreakdown": "Nach Gruppe",
+      "groupBalance": "Saldo in dieser Gruppe",
+      "viewGroupBalances": "Gruppensalden anzeigen",
+      "emptyTitle": "Keine gemeinsamen Gruppen",
+      "emptyDescription": "Salden erscheinen, wenn du und {name} Mitglieder derselben Gruppe seid.",
+      "notConnectedTitle": "Nicht verbunden",
+      "notConnectedDescription": "Akzeptiere die Verbindungsanfrage, um Salden mit diesem Freund zu sehen.",
+      "loading": "Saldo-Details werden geladen…",
+      "loadError": "Saldo-Details konnten nicht geladen werden.",
+      "retry": "Erneut versuchen"
+    }
   },
   "Members": {
     "addedToGroup": "{name} zur Gruppe hinzugefügt.",

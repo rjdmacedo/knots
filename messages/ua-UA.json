@@ -745,7 +745,36 @@
     "unblockDialogTitle": "Цей користувач заблокований",
     "unblockDialogDescription": "Ви заблокували {email}. Щоб додати його в друзі, спочатку розблокуйте його.",
     "unblockAndAdd": "Розблокувати та додати",
-    "unblocking": "Розблокування…"
+    "unblocking": "Розблокування…",
+    "Balances": {
+      "columnTitle": "Баланс",
+      "loading": "Завантаження балансів…",
+      "loadError": "Не вдалося завантажити баланси.",
+      "retry": "Повторити",
+      "settled": "Усе розраховано",
+      "noSharedGroups": "Немає спільних груп",
+      "friendOwesYou": "{name} винен вам",
+      "youOweFriend": "Ви винні {name}",
+      "viewDetails": "Деталі",
+      "summaryTitle": "Баланси з друзями",
+      "summaryDescription": "Чисті суми у всіх групах, які ви ділите з кожним другом."
+    },
+    "BalanceDetail": {
+      "title": "Баланс з {name}",
+      "description": "Розбивка за спільними групами.",
+      "backToFriends": "Назад до друзів",
+      "totalBalance": "Загальний баланс",
+      "groupBreakdown": "За групами",
+      "groupBalance": "Баланс у цій групі",
+      "viewGroupBalances": "Переглянути баланси групи",
+      "emptyTitle": "Немає спільних груп",
+      "emptyDescription": "Баланси з'являться, коли ви та {name} станете учасниками однієї групи.",
+      "notConnectedTitle": "Не підключено",
+      "notConnectedDescription": "Прийміть запит на підключення, щоб бачити баланси з цим другом.",
+      "loading": "Завантаження деталей балансу…",
+      "loadError": "Не вдалося завантажити деталі балансу.",
+      "retry": "Повторити"
+    }
   },
   "Members": {
     "addedToGroup": "{name} додано до групи.",
