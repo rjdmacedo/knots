@@ -1,3 +1,16 @@
+# [1.39.0](https://github.com/rjdmacedo/knots/compare/v1.38.0...v1.39.0) (2026-06-23)
+
+
+### Bug Fixes
+
+* keep expense date group headers visible under sticky nav ([27cd47f](https://github.com/rjdmacedo/knots/commit/27cd47f5652aaed57d7d21c81b3f82238ca832d8))
+
+
+### Features
+
+* add dyad groups for direct friend expense tracking ([250fd35](https://github.com/rjdmacedo/knots/commit/250fd356d65d64d1457f8829799d7ca26a32a045))
+* add friend expenses page across shared and dyad groups ([b2123b3](https://github.com/rjdmacedo/knots/commit/b2123b38d25a10840affa8fff466700605df934f))
+
 # [1.38.0](https://github.com/rjdmacedo/knots/compare/v1.37.1...v1.38.0) (2026-06-23)
 
 
