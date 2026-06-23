@@ -12,9 +12,16 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
+enum GroupType {
+  STANDARD
+  DYAD
+}
+
 model Group {
   id                String                   @id
   name              String
+  type              GroupType                @default(STANDARD)
+  dyadKey           String?                  @unique
   information       String?                  @db.Text
   currency          String                   @default("$")
   currencyCode      String?

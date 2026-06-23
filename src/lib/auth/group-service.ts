@@ -4,6 +4,7 @@
  */
 
 import { prisma } from '@/lib/prisma'
+import { GroupType } from '@prisma/client'
 import { nanoid } from 'nanoid'
 
 export type GroupError = 'INVALID_NAME' | 'GROUP_LIMIT_REACHED'
@@ -85,7 +86,10 @@ function createGroupService(): GroupService {
       }>
     > {
       const memberships = await prisma.groupMembership.findMany({
-        where: { userId },
+        where: {
+          userId,
+          group: { type: GroupType.STANDARD },
+        },
         include: {
           group: {
             include: {
