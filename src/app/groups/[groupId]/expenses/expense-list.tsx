@@ -171,7 +171,7 @@ const ExpenseListForSearch = ({
 
         return (
           <div key={expenseGroup}>
-            <div className="text-xs py-1 font-semibold sticky top-0 bg-background px-6">
+            <div className="text-xs py-1 font-semibold sticky top-16 z-10 bg-background px-6">
               {t(`Groups.${expenseGroup}`)}
             </div>
             {groupExpenses.map((expense) => (
