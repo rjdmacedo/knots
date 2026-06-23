@@ -1,3 +1,10 @@
+## [1.37.1](https://github.com/rjdmacedo/knots/compare/v1.37.0...v1.37.1) (2026-06-23)
+
+
+### Bug Fixes
+
+* align BY_PERCENTAGE balances with Stats and Balances tab ([bf77b4f](https://github.com/rjdmacedo/knots/commit/bf77b4f24b0db5d51c52da2f473ce9362e303ce7))
+
 # [1.37.0](https://github.com/rjdmacedo/knots/compare/v1.36.2...v1.37.0) (2026-06-23)
 
 
