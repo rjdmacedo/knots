@@ -1,3 +1,10 @@
+# [1.38.0](https://github.com/rjdmacedo/knots/compare/v1.37.1...v1.38.0) (2026-06-23)
+
+
+### Features
+
+* add reimbursements section to Stats dashboard ([73eb621](https://github.com/rjdmacedo/knots/commit/73eb6210f570b475544db8fbf14fd584e0827d62))
+
 ## [1.37.1](https://github.com/rjdmacedo/knots/compare/v1.37.0...v1.37.1) (2026-06-23)
 
 

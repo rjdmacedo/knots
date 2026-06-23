@@ -1,6 +1,6 @@
 {
   "name": "knots",
-  "version": "1.37.1",
+  "version": "1.38.0",
   "private": true,
   "packageManager": "pnpm@11.8.0",
   "scripts": {
