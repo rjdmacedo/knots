@@ -339,7 +339,7 @@
     },
     "ExpenseDistribution": {
       "title": "Expense Distribution",
-      "description": "Comparison of what each participant paid versus their fair share.",
+      "description": "Comparison of what each participant paid versus their fair share on shared expenses. Excludes reimbursements.",
       "emptyState": "No spending data available to show expense distribution.",
       "paid": "Paid",
       "share": "Share",
@@ -401,6 +401,22 @@
       "participant": "Participant",
       "paidPercentage": "Paid %",
       "sharePercentage": "Share %"
+    },
+    "Reimbursements": {
+      "title": "Reimbursements",
+      "description": "Payments recorded to settle balances. Expense distribution above excludes these amounts.",
+      "recordedTitle": "Recorded reimbursements",
+      "recordedEmpty": "No reimbursements recorded yet.",
+      "suggestedTitle": "Suggested reimbursements",
+      "suggestedDescription": "Remaining payments needed to settle all balances (same as the Balances tab).",
+      "suggestedEmpty": "All balances are settled.",
+      "allSettled": "No reimbursements recorded and all balances are settled.",
+      "date": "Date",
+      "from": "From",
+      "to": "To",
+      "amount": "Amount",
+      "titleColumn": "Title",
+      "totalRecorded": "Total recorded: {amount}"
     }
   },
   "Activity": {

@@ -9,6 +9,7 @@ import {
   computeNetBalances,
   computePaidVsSharePercentages,
   computeParticipantRanking,
+  computeReimbursementStats,
   computeSpendingOverTime,
 } from '@/lib/stats'
 
@@ -940,6 +941,57 @@ describe('computeNetBalances', () => {
     expect(alice.totalPaid).toBe(6000)
     expect(alice.totalShare).toBe(6000)
     expect(alice.netBalance).toBe(0)
+  })
+})
+
+// --- computeReimbursementStats ---
+
+describe('computeReimbursementStats', () => {
+  it('lists recorded reimbursement expenses', () => {
+    const expenses = [
+      makeExpense({
+        id: 'e1',
+        amount: 6000,
+        paidBy: { id: 'p2', name: 'Bob' },
+        paidFor: [{ user: { id: 'p1', name: 'Alice' }, shares: 1 }],
+        isReimbursement: true,
+        title: 'Settlement',
+      }),
+    ]
+    const result = computeReimbursementStats(expenses, participants)
+
+    expect(result.recorded).toHaveLength(1)
+    expect(result.recorded[0]).toMatchObject({
+      expenseId: 'e1',
+      fromId: 'p2',
+      toId: 'p1',
+      amount: 6000,
+      title: 'Settlement',
+    })
+    expect(result.totalRecordedAmount).toBe(6000)
+  })
+
+  it('includes suggested reimbursements from remaining balances', () => {
+    const expenses = [
+      makeExpense({
+        amount: 9000,
+        paidBy: { id: 'p1', name: 'Alice' },
+        paidFor: [
+          { user: { id: 'p1', name: 'Alice' }, shares: 1 },
+          { user: { id: 'p2', name: 'Bob' }, shares: 1 },
+        ],
+        splitMode: 'EVENLY',
+      }),
+    ]
+    const result = computeReimbursementStats(expenses, participants)
+
+    expect(result.suggested).toEqual([
+      expect.objectContaining({
+        fromId: 'p2',
+        toId: 'p1',
+        amount: 4500,
+      }),
+    ])
   })
 })
 

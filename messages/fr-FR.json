@@ -339,7 +339,7 @@
     },
     "ExpenseDistribution": {
       "title": "Répartition des dépenses",
-      "description": "Comparaison entre ce que chaque participant a payé et sa juste part.",
+      "description": "Comparison of what each participant paid versus their fair share on shared expenses. Excludes reimbursements.",
       "emptyState": "Aucune donnée de dépenses pour afficher la répartition.",
       "paid": "Payé",
       "share": "Part",
@@ -401,6 +401,22 @@
       "participant": "Participant",
       "paidPercentage": "Payé %",
       "sharePercentage": "Part %"
+    },
+    "Reimbursements": {
+      "title": "Reimbursements",
+      "description": "Payments recorded to settle balances. Expense distribution above excludes these amounts.",
+      "recordedTitle": "Recorded reimbursements",
+      "recordedEmpty": "No reimbursements recorded yet.",
+      "suggestedTitle": "Suggested reimbursements",
+      "suggestedDescription": "Remaining payments needed to settle all balances (same as the Balances tab).",
+      "suggestedEmpty": "All balances are settled.",
+      "allSettled": "No reimbursements recorded and all balances are settled.",
+      "date": "Date",
+      "from": "From",
+      "to": "To",
+      "amount": "Amount",
+      "titleColumn": "Title",
+      "totalRecorded": "Total recorded: {amount}"
     }
   },
   "Activity": {

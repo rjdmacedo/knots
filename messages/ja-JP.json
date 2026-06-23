@@ -339,7 +339,7 @@
     },
     "ExpenseDistribution": {
       "title": "支出の分配",
-      "description": "各参加者の支払い額と公平な負担額の比較。",
+      "description": "Comparison of what each participant paid versus their fair share on shared expenses. Excludes reimbursements.",
       "emptyState": "支出の分配を表示するデータがありません。",
       "paid": "支払い済み",
       "share": "負担額",
@@ -401,6 +401,22 @@
       "participant": "参加者",
       "paidPercentage": "支払い %",
       "sharePercentage": "負担 %"
+    },
+    "Reimbursements": {
+      "title": "Reimbursements",
+      "description": "Payments recorded to settle balances. Expense distribution above excludes these amounts.",
+      "recordedTitle": "Recorded reimbursements",
+      "recordedEmpty": "No reimbursements recorded yet.",
+      "suggestedTitle": "Suggested reimbursements",
+      "suggestedDescription": "Remaining payments needed to settle all balances (same as the Balances tab).",
+      "suggestedEmpty": "All balances are settled.",
+      "allSettled": "No reimbursements recorded and all balances are settled.",
+      "date": "Date",
+      "from": "From",
+      "to": "To",
+      "amount": "Amount",
+      "titleColumn": "Title",
+      "totalRecorded": "Total recorded: {amount}"
     }
   },
   "Activity": {

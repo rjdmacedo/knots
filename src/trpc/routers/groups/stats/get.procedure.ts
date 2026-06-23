@@ -8,6 +8,7 @@ import {
   computeNetBalances,
   computePaidVsSharePercentages,
   computeParticipantRanking,
+  computeReimbursementStats,
   computeSpendingOverTime,
 } from '@/lib/stats'
 import {
@@ -58,6 +59,7 @@ export const getGroupStatsProcedure = groupMemberProcedure
       expenses,
       members,
     )
+    const reimbursements = computeReimbursementStats(expenses, members)
 
     return {
       totalGroupSpendings,
@@ -72,5 +74,6 @@ export const getGroupStatsProcedure = groupMemberProcedure
       aggregateMetrics,
       netBalances,
       paidVsSharePercentages,
+      reimbursements,
     }
   })

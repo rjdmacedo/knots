@@ -85,6 +85,31 @@ export interface PaidVsShareItem {
   sharePercentage: number // one decimal place
 }
 
+export interface RecordedReimbursementItem {
+  expenseId: string
+  title: string
+  date: Date
+  fromId: string
+  fromName: string
+  toId: string
+  toName: string
+  amount: number
+}
+
+export interface SuggestedReimbursementItem {
+  fromId: string
+  fromName: string
+  toId: string
+  toName: string
+  amount: number
+}
+
+export interface ReimbursementStats {
+  recorded: RecordedReimbursementItem[]
+  suggested: SuggestedReimbursementItem[]
+  totalRecordedAmount: number
+}
+
 // --- Computation Functions ---
 
 export function computeCategoryBreakdown(
@@ -477,4 +502,55 @@ export function computePaidVsSharePercentages(
   )
 
   return items
+}
+
+function getParticipantName(
+  participantId: string,
+  participants: Participant[],
+): string {
+  return participants.find((p) => p.id === participantId)?.name ?? participantId
+}
+
+export function computeReimbursementStats(
+  expenses: Expense[],
+  participants: Participant[],
+): ReimbursementStats {
+  const recorded: RecordedReimbursementItem[] = []
+
+  for (const expense of expenses) {
+    if (!expense.isReimbursement) continue
+
+    const recipients = expense.paidFor.filter(
+      (paidFor) => paidFor.user.id !== expense.paidBy.id,
+    )
+    const primaryRecipient = recipients[0] ?? expense.paidFor[0]
+    if (!primaryRecipient) continue
+
+    recorded.push({
+      expenseId: expense.id,
+      title: expense.title,
+      date: expense.expenseDate,
+      fromId: expense.paidBy.id,
+      fromName: expense.paidBy.name,
+      toId: primaryRecipient.user.id,
+      toName: primaryRecipient.user.name,
+      amount: expense.amount,
+    })
+  }
+
+  recorded.sort((a, b) => b.date.getTime() - a.date.getTime())
+
+  const balances = getBalances(expenses)
+  const suggestedRaw = getSuggestedReimbursements(balances)
+  const suggested: SuggestedReimbursementItem[] = suggestedRaw.map((r) => ({
+    fromId: r.from,
+    fromName: getParticipantName(r.from, participants),
+    toId: r.to,
+    toName: getParticipantName(r.to, participants),
+    amount: r.amount,
+  }))
+
+  const totalRecordedAmount = recorded.reduce((sum, r) => sum + r.amount, 0)
+
+  return { recorded, suggested, totalRecordedAmount }
 }

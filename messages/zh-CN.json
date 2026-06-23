@@ -339,7 +339,7 @@
     },
     "ExpenseDistribution": {
       "title": "支出分配",
-      "description": "每位参与者的支付金额与其公平份额的比较。",
+      "description": "Comparison of what each participant paid versus their fair share on shared expenses. Excludes reimbursements.",
       "emptyState": "没有可用的支出数据来显示支出分配。",
       "paid": "已付",
       "share": "份额",
@@ -401,6 +401,22 @@
       "participant": "参与者",
       "paidPercentage": "已付 %",
       "sharePercentage": "份额 %"
+    },
+    "Reimbursements": {
+      "title": "Reimbursements",
+      "description": "Payments recorded to settle balances. Expense distribution above excludes these amounts.",
+      "recordedTitle": "Recorded reimbursements",
+      "recordedEmpty": "No reimbursements recorded yet.",
+      "suggestedTitle": "Suggested reimbursements",
+      "suggestedDescription": "Remaining payments needed to settle all balances (same as the Balances tab).",
+      "suggestedEmpty": "All balances are settled.",
+      "allSettled": "No reimbursements recorded and all balances are settled.",
+      "date": "Date",
+      "from": "From",
+      "to": "To",
+      "amount": "Amount",
+      "titleColumn": "Title",
+      "totalRecorded": "Total recorded: {amount}"
     }
   },
   "Activity": {

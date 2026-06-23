@@ -8,6 +8,7 @@ import { MonthOverMonth } from '@/app/groups/[groupId]/stats/month-over-month'
 import { NetBalances } from '@/app/groups/[groupId]/stats/net-balances'
 import { PaidVsShare } from '@/app/groups/[groupId]/stats/paid-vs-share'
 import { ParticipantRanking } from '@/app/groups/[groupId]/stats/participant-ranking'
+import { Reimbursements } from '@/app/groups/[groupId]/stats/reimbursements'
 import { SpendingOverTime } from '@/app/groups/[groupId]/stats/spending-over-time'
 import { Totals } from '@/app/groups/[groupId]/stats/totals'
 import { Button } from '@/components/ui/button'
@@ -194,6 +195,7 @@ export function TotalsPageClient() {
     aggregateMetrics,
     netBalances,
     paidVsSharePercentages,
+    reimbursements,
   } = data
 
   // Check if group has no non-reimbursement expenses
@@ -244,6 +246,9 @@ export function TotalsPageClient() {
 
       {/* Expense Distribution */}
       <ExpenseDistribution data={expenseDistribution} currency={currency} />
+
+      {/* Reimbursements */}
+      <Reimbursements data={reimbursements} currency={currency} />
 
       {/* Spending Over Time */}
       <SpendingOverTime data={spendingOverTime} currency={currency} />

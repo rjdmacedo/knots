@@ -339,7 +339,7 @@
     },
     "ExpenseDistribution": {
       "title": "Distribuição de despesas",
-      "description": "Comparação entre o que cada participante pagou e sua parte justa.",
+      "description": "Comparação entre o que cada participante pagou e sua parte justa nas despesas compartilhadas. Exclui reembolsos.",
       "emptyState": "Nenhum dado de despesas para mostrar a distribuição.",
       "paid": "Pago",
       "share": "Parte",
@@ -401,6 +401,22 @@
       "participant": "Participante",
       "paidPercentage": "Pago %",
       "sharePercentage": "Parte %"
+    },
+    "Reimbursements": {
+      "title": "Reembolsos",
+      "description": "Pagamentos registrados para acertar saldos. A distribuição de despesas acima exclui esses valores.",
+      "recordedTitle": "Reembolsos registrados",
+      "recordedEmpty": "Ainda não há reembolsos registrados.",
+      "suggestedTitle": "Reembolsos sugeridos",
+      "suggestedDescription": "Pagamentos restantes para acertar todos os saldos (igual à aba Saldos).",
+      "suggestedEmpty": "Todos os saldos estão acertados.",
+      "allSettled": "Sem reembolsos registrados e todos os saldos acertados.",
+      "date": "Data",
+      "from": "De",
+      "to": "Para",
+      "amount": "Valor",
+      "titleColumn": "Título",
+      "totalRecorded": "Total registrado: {amount}"
     }
   },
   "Activity": {
