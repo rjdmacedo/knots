@@ -1,14 +1,9 @@
 import { getCurrency } from '@/lib/currency'
+import { prisma } from '@/lib/prisma'
 import { formatAmountAsDecimal, getCurrencyFromGroup } from '@/lib/utils'
 import { Parser } from '@json2csv/plainjs'
-import { PrismaClient } from '@prisma/client'
-import _contentDisposition from 'content-disposition'
+import { create as contentDisposition } from 'content-disposition'
 import { NextResponse } from 'next/server'
-
-const contentDisposition = _contentDisposition as unknown as (
-  filename?: string,
-  options?: any,
-) => string
 
 const splitModeLabel = {
   EVENLY: 'Evenly',
@@ -24,8 +19,6 @@ function formatDate(isoDateString: Date): string {
   const day = String(date.getDate()).padStart(2, '0')
   return `${year}-${month}-${day}` // YYYY-MM-DD format
 }
-
-const prisma = new PrismaClient()
 
 export async function GET(
   req: Request,
@@ -147,10 +140,13 @@ export async function GET(
         )
 
         const isPaidByParticipant = expense.paidById === participant.id
-        const participantAmountShare = +formatAmountAsDecimal(
-          (expense.amount / totalShares) * participantShare,
-          currency,
-        )
+        const participantAmountShare =
+          totalShares === 0
+            ? 0
+            : +formatAmountAsDecimal(
+                (expense.amount / totalShares) * participantShare,
+                currency,
+              )
 
         return [
           participant.name,
