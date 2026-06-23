@@ -761,6 +761,9 @@
     "unblockDialogTitle": "Acest utilizator este blocat",
     "unblockDialogDescription": "L-ai blocat pe {email}. Pentru a-l adăuga ca prieten, trebuie să-l deblochezi mai întâi.",
     "unblockAndAdd": "Deblochează și adaugă",
+    "addExpenseWithFriendAria": "Adaugă cheltuială cu {name}",
+    "addExpenseWithFriend": "Cheltuială",
+    "friendActions": "Acțiuni prieten",
     "unblocking": "Se deblochează…",
     "Balances": {
       "columnTitle": "Sold",
@@ -790,6 +793,30 @@
       "loading": "Se încarcă detaliile soldului…",
       "loadError": "Nu s-au putut încărca detaliile soldului.",
       "retry": "Reîncearcă"
+    },
+    "viewFriendExpenses": "Cheltuieli",
+    "Expenses": {
+      "title": "Expenses with {name}",
+      "description": "All expenses you share with this friend, across groups.",
+      "backToFriends": "Back to friends",
+      "listTitle": "Expense history",
+      "listDescription": "Direct expenses and expenses from shared groups.",
+      "create": "Add expense",
+      "empty": "No expenses with this friend yet.",
+      "directExpenses": "Direct expenses",
+      "viewExpenses": "View expenses",
+      "viewAllExpenses": "View all expenses",
+      "loadError": "Could not load expenses.",
+      "retry": "Retry",
+      "groups": {
+        "upcoming": "Urmează",
+        "thisWeek": "În această săptămână",
+        "earlierThisMonth": "La începutul lunii",
+        "lastMonth": "Luna trecută",
+        "earlierThisYear": "La începutul anului",
+        "lastYear": "Anul trecut",
+        "older": "Mai vechi"
+      }
     }
   },
   "Members": {

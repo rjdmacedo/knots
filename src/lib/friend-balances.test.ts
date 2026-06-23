@@ -1,3 +1,4 @@
+import { GroupType } from '@prisma/client'
 import {
   computeFriendBalance,
   FriendBalanceSummary,
@@ -126,6 +127,7 @@ describe('computeFriendBalance', () => {
       {
         id: 'group-1',
         name: 'Trip',
+        type: GroupType.STANDARD,
         currency: '€',
         currencyCode: 'EUR',
         expenses: mockExpenses,
@@ -192,6 +194,7 @@ describe('computeFriendBalance', () => {
       {
         id: 'group-eur',
         name: 'Europe Trip',
+        type: GroupType.STANDARD,
         currency: '€',
         currencyCode: 'EUR',
         expenses: mockExpenses,
@@ -199,6 +202,7 @@ describe('computeFriendBalance', () => {
       {
         id: 'group-usd',
         name: 'US Trip',
+        type: GroupType.STANDARD,
         currency: '$',
         currencyCode: 'USD',
         expenses: mockExpenses,
@@ -254,6 +258,7 @@ describe('computeFriendBalance', () => {
       {
         id: 'group-1',
         name: 'Settled Group',
+        type: GroupType.STANDARD,
         currency: '$',
         currencyCode: 'USD',
         expenses: mockExpenses,
@@ -279,6 +284,7 @@ describe('sortFriendBalances', () => {
     friendId: `friend-${name}`,
     friendUserId: `user-${name}`,
     name,
+    dyadGroupId: null,
     balances:
       totalAmount === 0
         ? []

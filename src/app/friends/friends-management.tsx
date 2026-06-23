@@ -9,15 +9,28 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
-import { Loader2, Plus, Trash2, UserPlus, X } from 'lucide-react'
+import {
+  Loader2,
+  MoreVertical,
+  Plus,
+  Receipt,
+  Trash2,
+  UserPlus,
+  X,
+} from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -31,6 +44,10 @@ export function FriendsManagement() {
   const [name, setName] = useState('')
   const [showUnblockDialog, setShowUnblockDialog] = useState(false)
   const [pendingBlockedEmail, setPendingBlockedEmail] = useState('')
+  const [friendToRemove, setFriendToRemove] = useState<{
+    id: string
+    name: string
+  } | null>(null)
   const utils = trpc.useUtils()
 
   const t_bal = useTranslations('Friends.Balances')
@@ -220,14 +237,10 @@ export function FriendsManagement() {
         {friends && friends.length > 0 ? (
           <ul className="flex flex-col gap-2">
             {friends.map((friend) => {
+              const hasAccount = friend.friendUserId !== null
               const friendBalance = balances?.find(
                 (b) => b.friendId === friend.id,
               )
-              const hasBalances =
-                friendBalance &&
-                friendBalance.balances.length > 0 &&
-                friendBalance.balances.some((b) => b.groups.length > 0)
-              const isConnected = friend.status === 'connected'
 
               return (
                 <li
@@ -257,7 +270,7 @@ export function FriendsManagement() {
                       <p className="text-xs text-muted-foreground truncate">
                         {friend.email}
                       </p>
-                      {isConnected && (
+                      {hasAccount && (
                         <div className="mt-1">
                           {isLoadingBalances ? (
                             <Skeleton className="h-3 w-24" />
@@ -276,62 +289,66 @@ export function FriendsManagement() {
                               </Button>
                             </div>
                           ) : friendBalance ? (
-                            hasBalances ? (
-                              <Link
-                                href={`/friends/${friend.id}/balances`}
-                                className="hover:underline"
-                              >
-                                <FriendBalanceSummary
-                                  balances={friendBalance.balances}
-                                  friendName={friend.name}
-                                />
-                              </Link>
-                            ) : (
+                            <Link
+                              href={`/friends/${friend.id}/expenses`}
+                              className="hover:underline"
+                            >
                               <FriendBalanceSummary
                                 balances={friendBalance.balances}
                                 friendName={friend.name}
                               />
-                            )
+                            </Link>
                           ) : null}
                         </div>
                       )}
                     </div>
                   </div>
 
-                  <AlertDialog>
-                    <AlertDialogTrigger
-                      render={
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive"
-                          aria-label={t('removeFriend')}
-                        />
-                      }
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>{t('removeFriend')}</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          {t('removeFriendDescription', {
-                            name: friend.name,
-                          })}
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
-                        <AlertDialogAction
+                  <div className="flex items-center gap-1 shrink-0">
+                    {hasAccount && (
+                      <Link
+                        href={`/friends/${friend.id}/expenses`}
+                        className={cn(
+                          buttonVariants({ variant: 'outline', size: 'sm' }),
+                          'h-8 gap-1.5 px-2',
+                        )}
+                      >
+                        <Receipt className="h-4 w-4" />
+                        <span className="hidden sm:inline">
+                          {t('viewFriendExpenses')}
+                        </span>
+                      </Link>
+                    )}
+
+                    <DropdownMenu>
+                      <DropdownMenuTrigger
+                        render={
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 shrink-0"
+                            aria-label={t('friendActions')}
+                          />
+                        }
+                      >
+                        <MoreVertical className="h-4 w-4" />
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem
+                          variant="destructive"
                           onClick={() =>
-                            removeFriend.mutate({ friendId: friend.id })
+                            setFriendToRemove({
+                              id: friend.id,
+                              name: friend.name,
+                            })
                           }
                         >
-                          {t('remove')}
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                          <Trash2 className="h-4 w-4" />
+                          {t('removeFriend')}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </li>
               )
             })}
@@ -402,6 +419,37 @@ export function FriendsManagement() {
           </Button>
         )}
       </section>
+
+      <AlertDialog
+        open={friendToRemove !== null}
+        onOpenChange={(open) => {
+          if (!open) setFriendToRemove(null)
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('removeFriend')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {friendToRemove
+                ? t('removeFriendDescription', { name: friendToRemove.name })
+                : null}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (friendToRemove) {
+                  removeFriend.mutate({ friendId: friendToRemove.id })
+                  setFriendToRemove(null)
+                }
+              }}
+            >
+              {t('remove')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AlertDialog open={showUnblockDialog} onOpenChange={setShowUnblockDialog}>
         <AlertDialogContent>

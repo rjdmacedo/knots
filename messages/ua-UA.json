@@ -761,6 +761,9 @@
     "unblockDialogTitle": "Цей користувач заблокований",
     "unblockDialogDescription": "Ви заблокували {email}. Щоб додати його в друзі, спочатку розблокуйте його.",
     "unblockAndAdd": "Розблокувати та додати",
+    "addExpenseWithFriendAria": "Додати витрату з {name}",
+    "addExpenseWithFriend": "Витрата",
+    "friendActions": "Дії з другом",
     "unblocking": "Розблокування…",
     "Balances": {
       "columnTitle": "Баланс",
@@ -790,6 +793,30 @@
       "loading": "Завантаження деталей балансу…",
       "loadError": "Не вдалося завантажити деталі балансу.",
       "retry": "Повторити"
+    },
+    "viewFriendExpenses": "Витрати",
+    "Expenses": {
+      "title": "Expenses with {name}",
+      "description": "All expenses you share with this friend, across groups.",
+      "backToFriends": "Back to friends",
+      "listTitle": "Expense history",
+      "listDescription": "Direct expenses and expenses from shared groups.",
+      "create": "Add expense",
+      "empty": "No expenses with this friend yet.",
+      "directExpenses": "Direct expenses",
+      "viewExpenses": "View expenses",
+      "viewAllExpenses": "View all expenses",
+      "loadError": "Could not load expenses.",
+      "retry": "Retry",
+      "groups": {
+        "upcoming": "Майбутні",
+        "thisWeek": "Цього тижня",
+        "earlierThisMonth": "Раніше цього місяця",
+        "lastMonth": "Минулого місяця",
+        "earlierThisYear": "Раніше цього року",
+        "lastYear": "Минулого року",
+        "older": "Старіші"
+      }
     }
   },
   "Members": {

@@ -819,6 +819,9 @@
     "unblockDialogTitle": "This user is blocked",
     "unblockDialogDescription": "You have blocked {email}. To add them as a friend, you need to unblock them first.",
     "unblockAndAdd": "Unblock and add",
+    "addExpenseWithFriendAria": "Add expense with {name}",
+    "addExpenseWithFriend": "Expense",
+    "friendActions": "Friend actions",
     "unblocking": "Unblocking…",
     "Balances": {
       "columnTitle": "Balance",
@@ -848,6 +851,30 @@
       "loading": "Loading balance details…",
       "loadError": "Could not load balance details.",
       "retry": "Retry"
+    },
+    "viewFriendExpenses": "Expenses",
+    "Expenses": {
+      "title": "Expenses with {name}",
+      "description": "All expenses you share with this friend, across groups.",
+      "backToFriends": "Back to friends",
+      "listTitle": "Expense history",
+      "listDescription": "Direct expenses and expenses from shared groups.",
+      "create": "Add expense",
+      "empty": "No expenses with this friend yet.",
+      "directExpenses": "Direct expenses",
+      "viewExpenses": "View expenses",
+      "viewAllExpenses": "View all expenses",
+      "loadError": "Could not load expenses.",
+      "retry": "Retry",
+      "groups": {
+        "upcoming": "Upcoming",
+        "thisWeek": "This week",
+        "earlierThisMonth": "Earlier this month",
+        "lastMonth": "Last month",
+        "earlierThisYear": "Earlier this year",
+        "lastYear": "Last year",
+        "older": "Older"
+      }
     }
   },
   "Members": {

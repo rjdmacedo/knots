@@ -761,6 +761,9 @@
     "unblockDialogTitle": "Tento uživatel je blokován",
     "unblockDialogDescription": "Zablokovali jste uživatele {email}. Chcete-li si jej přidat do přátel, musíte jej nejprve odblokovat.",
     "unblockAndAdd": "Odblokovat a přidat",
+    "addExpenseWithFriendAria": "Přidat výdaj s {name}",
+    "addExpenseWithFriend": "Výdaj",
+    "friendActions": "Akce přítele",
     "unblocking": "Odblokovávání…",
     "Balances": {
       "columnTitle": "Zůstatek",
@@ -790,6 +793,30 @@
       "loading": "Načítání podrobností zůstatku…",
       "loadError": "Podrobnosti zůstatku se nepodařilo načíst.",
       "retry": "Zkusit znovu"
+    },
+    "viewFriendExpenses": "Výdaje",
+    "Expenses": {
+      "title": "Expenses with {name}",
+      "description": "All expenses you share with this friend, across groups.",
+      "backToFriends": "Back to friends",
+      "listTitle": "Expense history",
+      "listDescription": "Direct expenses and expenses from shared groups.",
+      "create": "Add expense",
+      "empty": "No expenses with this friend yet.",
+      "directExpenses": "Direct expenses",
+      "viewExpenses": "View expenses",
+      "viewAllExpenses": "View all expenses",
+      "loadError": "Could not load expenses.",
+      "retry": "Retry",
+      "groups": {
+        "upcoming": "Nadcházející",
+        "thisWeek": "Tento týden",
+        "earlierThisMonth": "Dříve tento měsíc",
+        "lastMonth": "Minulý měsíc",
+        "earlierThisYear": "Dříve tento rok",
+        "lastYear": "Minulý rok",
+        "older": "Starší"
+      }
     }
   },
   "Members": {

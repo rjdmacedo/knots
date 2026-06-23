@@ -761,6 +761,9 @@
     "unblockDialogTitle": "Deze gebruiker is geblokkeerd",
     "unblockDialogDescription": "Je hebt {email} geblokkeerd. Om deze persoon als vriend toe te voegen, moet je deze eerst deblokkeren.",
     "unblockAndAdd": "Deblokkeren en toevoegen",
+    "addExpenseWithFriendAria": "Uitgave toevoegen met {name}",
+    "addExpenseWithFriend": "Uitgave",
+    "friendActions": "Vriendacties",
     "unblocking": "Deblokkeren…",
     "Balances": {
       "columnTitle": "Saldo",
@@ -790,6 +793,30 @@
       "loading": "Saldodetails laden…",
       "loadError": "Kon saldodetails niet laden.",
       "retry": "Opnieuw proberen"
+    },
+    "viewFriendExpenses": "Uitgaven",
+    "Expenses": {
+      "title": "Expenses with {name}",
+      "description": "All expenses you share with this friend, across groups.",
+      "backToFriends": "Back to friends",
+      "listTitle": "Expense history",
+      "listDescription": "Direct expenses and expenses from shared groups.",
+      "create": "Add expense",
+      "empty": "No expenses with this friend yet.",
+      "directExpenses": "Direct expenses",
+      "viewExpenses": "View expenses",
+      "viewAllExpenses": "View all expenses",
+      "loadError": "Could not load expenses.",
+      "retry": "Retry",
+      "groups": {
+        "upcoming": "Aankomend",
+        "thisWeek": "Deze week",
+        "earlierThisMonth": "Eerder deze maand",
+        "lastMonth": "Vorige maand",
+        "earlierThisYear": "Eerder dit jaar",
+        "lastYear": "Vorig jaar",
+        "older": "Ouder"
+      }
     }
   },
   "Members": {

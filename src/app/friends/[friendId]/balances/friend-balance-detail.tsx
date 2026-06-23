@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { CurrencyBalance } from '@/lib/friend-balances'
 import { trpc } from '@/trpc/client'
+import { GroupType } from '@prisma/client'
 import { TRPCClientError } from '@trpc/client'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
@@ -17,6 +18,7 @@ type Props = {
 
 export function FriendBalanceDetail({ friendId }: Props) {
   const t = useTranslations('Friends.BalanceDetail')
+  const t_expenses = useTranslations('Friends.Expenses')
   const {
     data,
     isLoading: queryIsLoading,
@@ -95,6 +97,14 @@ export function FriendBalanceDetail({ friendId }: Props) {
           {t('title', { name: friend.name })}
         </h1>
         <p className="text-sm text-muted-foreground">{t('description')}</p>
+        <div className="mt-3">
+          <Link
+            href={`/friends/${friendId}/expenses`}
+            className="text-sm text-primary hover:underline"
+          >
+            {t_expenses('viewAllExpenses')}
+          </Link>
+        </div>
       </div>
 
       {sharedGroupCount === 0 ? (
@@ -162,6 +172,7 @@ function TotalBalanceCard({ balances }: { balances: CurrencyBalance[] }) {
 
 function GroupBreakdownCard({ balances }: { balances: CurrencyBalance[] }) {
   const t = useTranslations('Friends.BalanceDetail')
+  const t_expenses = useTranslations('Friends.Expenses')
 
   const allGroups = balances.flatMap((b) =>
     b.groups.map((g) => ({ ...g, currency: b.currency })),
@@ -175,19 +186,29 @@ function GroupBreakdownCard({ balances }: { balances: CurrencyBalance[] }) {
         <CardTitle className="text-base">{t('groupBreakdown')}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col divide-y">
+        <div className="flex flex-col gap-3">
           {allGroups.map((group) => (
             <div
               key={group.groupId}
               className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
             >
               <div className="flex flex-col gap-0.5">
-                <span className="text-sm font-medium">{group.groupName}</span>
+                <span className="text-sm font-medium">
+                  {group.groupType === GroupType.DYAD
+                    ? t_expenses('directExpenses')
+                    : group.groupName}
+                </span>
                 <Link
-                  href={`/groups/${group.groupId}/balances`}
+                  href={
+                    group.groupType === GroupType.DYAD
+                      ? `/groups/${group.groupId}/expenses`
+                      : `/groups/${group.groupId}/balances`
+                  }
                   className="text-xs text-muted-foreground hover:underline"
                 >
-                  {t('viewGroupBalances')}
+                  {group.groupType === GroupType.DYAD
+                    ? t_expenses('viewExpenses')
+                    : t('viewGroupBalances')}
                 </Link>
               </div>
               <Money currency={group.currency} amount={group.amount} colored />

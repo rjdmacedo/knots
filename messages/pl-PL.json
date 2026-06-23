@@ -761,6 +761,9 @@
     "unblockDialogTitle": "Ten użytkownik jest zablokowany",
     "unblockDialogDescription": "Zablokowałeś użytkownika {email}. Aby dodać go do znajomych, musisz go najpierw odblokować.",
     "unblockAndAdd": "Odblokuj i dodaj",
+    "addExpenseWithFriendAria": "Dodaj wydatek z {name}",
+    "addExpenseWithFriend": "Wydatek",
+    "friendActions": "Akcje znajomego",
     "unblocking": "Odblokowywanie…",
     "Balances": {
       "columnTitle": "Saldo",
@@ -790,6 +793,30 @@
       "loading": "Ładowanie szczegółów salda…",
       "loadError": "Nie udało się załadować szczegółów salda.",
       "retry": "Spróbuj ponownie"
+    },
+    "viewFriendExpenses": "Wydatki",
+    "Expenses": {
+      "title": "Expenses with {name}",
+      "description": "All expenses you share with this friend, across groups.",
+      "backToFriends": "Back to friends",
+      "listTitle": "Expense history",
+      "listDescription": "Direct expenses and expenses from shared groups.",
+      "create": "Add expense",
+      "empty": "No expenses with this friend yet.",
+      "directExpenses": "Direct expenses",
+      "viewExpenses": "View expenses",
+      "viewAllExpenses": "View all expenses",
+      "loadError": "Could not load expenses.",
+      "retry": "Retry",
+      "groups": {
+        "upcoming": "Nadchodzące",
+        "thisWeek": "Ten tydzień",
+        "earlierThisMonth": "Wcześniej w tym miesiącu",
+        "lastMonth": "Ostatni miesiąc",
+        "earlierThisYear": "Wcześniej w tym roku",
+        "lastYear": "Poprzedni rok",
+        "older": "Starsze"
+      }
     }
   },
   "Members": {

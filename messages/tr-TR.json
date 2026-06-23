@@ -761,6 +761,9 @@
     "unblockDialogTitle": "Bu kullanıcı engellendi",
     "unblockDialogDescription": "{email} kullanıcısını engellediniz. Onu arkadaş olarak eklemek için önce engelini kaldırmalısınız.",
     "unblockAndAdd": "Engeli kaldır ve ekle",
+    "addExpenseWithFriendAria": "{name} ile gider ekle",
+    "addExpenseWithFriend": "Gider",
+    "friendActions": "Arkadaş işlemleri",
     "unblocking": "Engeli kaldırılıyor…",
     "Balances": {
       "columnTitle": "Bakiye",
@@ -790,6 +793,30 @@
       "loading": "Bakiye detayları yükleniyor…",
       "loadError": "Bakiye detayları yüklenemedi.",
       "retry": "Tekrar dene"
+    },
+    "viewFriendExpenses": "Giderler",
+    "Expenses": {
+      "title": "Expenses with {name}",
+      "description": "All expenses you share with this friend, across groups.",
+      "backToFriends": "Back to friends",
+      "listTitle": "Expense history",
+      "listDescription": "Direct expenses and expenses from shared groups.",
+      "create": "Add expense",
+      "empty": "No expenses with this friend yet.",
+      "directExpenses": "Direct expenses",
+      "viewExpenses": "View expenses",
+      "viewAllExpenses": "View all expenses",
+      "loadError": "Could not load expenses.",
+      "retry": "Retry",
+      "groups": {
+        "upcoming": "Yaklaşan",
+        "thisWeek": "Bu hafta",
+        "earlierThisMonth": "Bu ayın başlarında",
+        "lastMonth": "Geçen ay",
+        "earlierThisYear": "Bu yılın başlarında",
+        "lastYear": "Geçen yıl",
+        "older": "Daha eski"
+      }
     }
   },
   "Members": {

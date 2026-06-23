@@ -761,6 +761,9 @@
     "unblockDialogTitle": "このユーザーはブロックされています",
     "unblockDialogDescription": "{email}をブロックしています。友達として追加するには、まずブロックを解除する必要があります。",
     "unblockAndAdd": "ブロック解除して追加",
+    "addExpenseWithFriendAria": "{name}との支出を追加",
+    "addExpenseWithFriend": "支出",
+    "friendActions": "友達の操作",
     "unblocking": "ブロックを解除しています…",
     "Balances": {
       "columnTitle": "残高",
@@ -790,6 +793,30 @@
       "loading": "残高の詳細を読み込み中…",
       "loadError": "残高の詳細を読み込めませんでした。",
       "retry": "再試行"
+    },
+    "viewFriendExpenses": "支出",
+    "Expenses": {
+      "title": "Expenses with {name}",
+      "description": "All expenses you share with this friend, across groups.",
+      "backToFriends": "Back to friends",
+      "listTitle": "Expense history",
+      "listDescription": "Direct expenses and expenses from shared groups.",
+      "create": "Add expense",
+      "empty": "No expenses with this friend yet.",
+      "directExpenses": "Direct expenses",
+      "viewExpenses": "View expenses",
+      "viewAllExpenses": "View all expenses",
+      "loadError": "Could not load expenses.",
+      "retry": "Retry",
+      "groups": {
+        "upcoming": "今後",
+        "thisWeek": "今週",
+        "earlierThisMonth": "今月初め",
+        "lastMonth": "先月",
+        "earlierThisYear": "今年初め",
+        "lastYear": "昨年",
+        "older": "それ以前"
+      }
     }
   },
   "Members": {

@@ -6,10 +6,12 @@ import {
 } from '@/lib/balances'
 import { Currency } from '@/lib/currency'
 import { getCurrencyFromGroup } from '@/lib/utils'
+import { GroupType } from '@prisma/client'
 
 export type GroupBalanceBreakdown = {
   groupId: string
   groupName: string
+  groupType: GroupType
   currency: Currency
   amount: number // minor units; positive = friend owes user
 }
@@ -24,6 +26,7 @@ export type FriendBalanceSummary = {
   friendId: string
   friendUserId: string
   name: string
+  dyadGroupId: string | null
   balances: CurrencyBalance[] // empty if no shared groups or all zero
 }
 
@@ -47,6 +50,7 @@ export function computeFriendBalance(
   sharedGroups: Array<{
     id: string
     name: string
+    type: GroupType
     currency: string
     currencyCode: string | null
     expenses: NonNullable<Awaited<ReturnType<typeof getGroupExpenses>>>
@@ -75,6 +79,7 @@ export function computeFriendBalance(
     const breakdown: GroupBalanceBreakdown = {
       groupId: group.id,
       groupName: group.name,
+      groupType: group.type,
       currency,
       amount,
     }

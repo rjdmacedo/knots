@@ -761,6 +761,9 @@
     "unblockDialogTitle": "Aquest usuari està bloquejat",
     "unblockDialogDescription": "Has bloquejat a {email}. Per afegir-lo com a amic, primer l'has de desbloquejar.",
     "unblockAndAdd": "Desbloquejar i afegir",
+    "addExpenseWithFriendAria": "Afegir despesa amb {name}",
+    "addExpenseWithFriend": "Despesa",
+    "friendActions": "Accions de l'amic",
     "unblocking": "Desbloquejant…",
     "Balances": {
       "columnTitle": "Saldo",
@@ -790,6 +793,30 @@
       "loading": "Carregant detalls del saldo…",
       "loadError": "No s'han pogut carregar els detalls del saldo.",
       "retry": "Torna-ho a provar"
+    },
+    "viewFriendExpenses": "Despeses",
+    "Expenses": {
+      "title": "Expenses with {name}",
+      "description": "All expenses you share with this friend, across groups.",
+      "backToFriends": "Back to friends",
+      "listTitle": "Expense history",
+      "listDescription": "Direct expenses and expenses from shared groups.",
+      "create": "Add expense",
+      "empty": "No expenses with this friend yet.",
+      "directExpenses": "Direct expenses",
+      "viewExpenses": "View expenses",
+      "viewAllExpenses": "View all expenses",
+      "loadError": "Could not load expenses.",
+      "retry": "Retry",
+      "groups": {
+        "upcoming": "Pròximament",
+        "thisWeek": "Aquesta setmana",
+        "earlierThisMonth": "A inicis d'aquest mes",
+        "lastMonth": "El mes anterior",
+        "earlierThisYear": "A inicis d'aquest any",
+        "lastYear": "L'any passat",
+        "older": "Més antics"
+      }
     }
   },
   "Members": {

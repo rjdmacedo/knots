@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import { GroupType } from '@prisma/client'
 
 /**
  * Returns groups where both users have active (non-archived) memberships.
@@ -10,6 +11,7 @@ export async function getSharedGroupsForUsers(
   Array<{
     id: string
     name: string
+    type: GroupType
     currency: string
     currencyCode: string | null
   }>
@@ -23,7 +25,13 @@ export async function getSharedGroupsForUsers(
       groupId: true,
       userId: true,
       group: {
-        select: { id: true, name: true, currency: true, currencyCode: true },
+        select: {
+          id: true,
+          name: true,
+          type: true,
+          currency: true,
+          currencyCode: true,
+        },
       },
     },
   })
@@ -36,6 +44,7 @@ export async function getSharedGroupsForUsers(
       group: {
         id: string
         name: string
+        type: GroupType
         currency: string
         currencyCode: string | null
       }
@@ -57,6 +66,7 @@ export async function getSharedGroupsForUsers(
   const sharedGroups: Array<{
     id: string
     name: string
+    type: GroupType
     currency: string
     currencyCode: string | null
   }> = []

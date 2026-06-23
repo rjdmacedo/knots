@@ -1,10 +1,12 @@
 import { getGroupExpenses } from '@/lib/api'
+import { findDyadGroup, findOrCreateDyadGroup } from '@/lib/dyad-groups'
 import {
   computeFriendBalance,
   FriendBalanceSummary,
   sortFriendBalances,
 } from '@/lib/friend-balances'
 import { getSharedGroupsForUsers } from '@/lib/friend-balances-db'
+import { getFriendExpenses } from '@/lib/friend-expenses'
 import {
   acceptFriendRequest,
   addFriendByEmail,
@@ -30,9 +32,7 @@ export const friendsRouter = createTRPCRouter({
   listWithBalances: protectedProcedure.query(async ({ ctx }) => {
     const friends = await listFriends(ctx.user.id)
 
-    const connectedFriends = friends.filter(
-      (f) => f.status === 'connected' && f.friendUserId !== null,
-    )
+    const friendsWithAccount = friends.filter((f) => f.friendUserId !== null)
 
     // Cache expenses by groupId to avoid duplicate fetches when multiple friends share a group
     const expenseCache = new Map<
@@ -41,7 +41,7 @@ export const friendsRouter = createTRPCRouter({
     >()
 
     const summaries: FriendBalanceSummary[] = await Promise.all(
-      connectedFriends.map(async (friend) => {
+      friendsWithAccount.map(async (friend) => {
         const sharedGroups = await getSharedGroupsForUsers(
           ctx.user.id,
           friend.friendUserId!,
@@ -64,10 +64,13 @@ export const friendsRouter = createTRPCRouter({
           sharedGroupsWithExpenses,
         )
 
+        const dyadGroup = await findDyadGroup(ctx.user.id, friend.friendUserId!)
+
         return {
           friendId: friend.id,
           friendUserId: friend.friendUserId!,
           name: friend.name,
+          dyadGroupId: dyadGroup?.groupId ?? null,
           balances,
         }
       }),
@@ -169,6 +172,8 @@ export const friendsRouter = createTRPCRouter({
         sharedGroupsWithExpenses,
       )
 
+      const dyadGroup = await findDyadGroup(ctx.user.id, friend.friendUserId)
+
       return {
         friend: {
           id: friend.id,
@@ -177,8 +182,112 @@ export const friendsRouter = createTRPCRouter({
           email: friend.email,
           friendUserId: friend.friendUserId,
         },
+        dyadGroupId: dyadGroup?.groupId ?? null,
         balances,
         sharedGroupCount: sharedGroups.length,
       }
+    }),
+
+  getExpenses: protectedProcedure
+    .input(z.object({ friendId: z.string().min(1) }))
+    .query(async ({ ctx, input }) => {
+      const friend = await prisma.friend.findUnique({
+        where: { id: input.friendId },
+        select: {
+          id: true,
+          userId: true,
+          name: true,
+          email: true,
+          friendUserId: true,
+          friend: { select: { name: true } },
+        },
+      })
+
+      if (!friend || friend.userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Friend not found.',
+        })
+      }
+
+      if (!friend.friendUserId) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'This friend does not have a Knots account yet.',
+        })
+      }
+
+      const expenses = await getFriendExpenses(ctx.user.id, friend.friendUserId)
+      const dyadGroup = await findDyadGroup(ctx.user.id, friend.friendUserId)
+
+      const sharedGroups = await getSharedGroupsForUsers(
+        ctx.user.id,
+        friend.friendUserId,
+      )
+
+      const sharedGroupsWithExpenses = await Promise.all(
+        sharedGroups.map(async (group) => ({
+          ...group,
+          expenses: await getGroupExpenses(group.id),
+        })),
+      )
+
+      const balances = computeFriendBalance(
+        ctx.user.id,
+        friend.friendUserId,
+        sharedGroupsWithExpenses,
+      )
+
+      return {
+        friend: {
+          id: friend.id,
+          name:
+            friend.name ?? friend.friend?.name ?? friend.email.split('@')[0],
+          email: friend.email,
+          friendUserId: friend.friendUserId,
+        },
+        expenses,
+        dyadGroupId: dyadGroup?.groupId ?? null,
+        balances,
+      }
+    }),
+
+  findOrCreateDyadGroup: protectedProcedure
+    .input(z.object({ friendId: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      const friend = await prisma.friend.findUnique({
+        where: { id: input.friendId },
+        select: {
+          id: true,
+          userId: true,
+          name: true,
+          email: true,
+          friendUserId: true,
+          friend: { select: { name: true } },
+        },
+      })
+
+      if (!friend || friend.userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Friend not found.',
+        })
+      }
+
+      if (!friend.friendUserId) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'This friend does not have a Knots account yet.',
+        })
+      }
+
+      const displayName =
+        friend.name ?? friend.friend?.name ?? friend.email.split('@')[0]
+
+      return findOrCreateDyadGroup(
+        ctx.user.id,
+        friend.friendUserId,
+        displayName,
+      )
     }),
 })

@@ -1,5 +1,6 @@
 import { getSharedGroupsForUsers } from '@/lib/friend-balances-db'
 import { prisma } from '@/lib/prisma'
+import { GroupType } from '@prisma/client'
 
 jest.mock('@/lib/prisma', () => ({
   prisma: {
@@ -14,6 +15,14 @@ const mockFindMany = prisma.groupMembership.findMany as jest.Mock
 const userId = 'user-1'
 const friendUserId = 'user-2'
 
+const standardGroup = {
+  id: 'group-1',
+  name: 'Trip',
+  type: GroupType.STANDARD,
+  currency: '€',
+  currencyCode: 'EUR',
+}
+
 beforeEach(() => {
   jest.clearAllMocks()
 })
@@ -24,30 +33,18 @@ describe('getSharedGroupsForUsers', () => {
       {
         groupId: 'group-1',
         userId: 'user-1',
-        group: {
-          id: 'group-1',
-          name: 'Trip',
-          currency: '€',
-          currencyCode: 'EUR',
-        },
+        group: standardGroup,
       },
       {
         groupId: 'group-1',
         userId: 'user-2',
-        group: {
-          id: 'group-1',
-          name: 'Trip',
-          currency: '€',
-          currencyCode: 'EUR',
-        },
+        group: standardGroup,
       },
     ])
 
     const result = await getSharedGroupsForUsers(userId, friendUserId)
 
-    expect(result).toEqual([
-      { id: 'group-1', name: 'Trip', currency: '€', currencyCode: 'EUR' },
-    ])
+    expect(result).toEqual([standardGroup])
     expect(mockFindMany).toHaveBeenCalledWith({
       where: {
         userId: { in: [userId, friendUserId] },
@@ -57,7 +54,13 @@ describe('getSharedGroupsForUsers', () => {
         groupId: true,
         userId: true,
         group: {
-          select: { id: true, name: true, currency: true, currencyCode: true },
+          select: {
+            id: true,
+            name: true,
+            type: true,
+            currency: true,
+            currencyCode: true,
+          },
         },
       },
     })
@@ -71,6 +74,7 @@ describe('getSharedGroupsForUsers', () => {
         group: {
           id: 'group-1',
           name: 'Solo group',
+          type: GroupType.STANDARD,
           currency: '$',
           currencyCode: 'USD',
         },
@@ -95,22 +99,12 @@ describe('getSharedGroupsForUsers', () => {
       {
         groupId: 'group-1',
         userId: 'user-1',
-        group: {
-          id: 'group-1',
-          name: 'Trip',
-          currency: '€',
-          currencyCode: 'EUR',
-        },
+        group: standardGroup,
       },
       {
         groupId: 'group-1',
         userId: 'user-2',
-        group: {
-          id: 'group-1',
-          name: 'Trip',
-          currency: '€',
-          currencyCode: 'EUR',
-        },
+        group: standardGroup,
       },
       {
         groupId: 'group-2',
@@ -118,6 +112,7 @@ describe('getSharedGroupsForUsers', () => {
         group: {
           id: 'group-2',
           name: 'Flat',
+          type: GroupType.STANDARD,
           currency: '$',
           currencyCode: 'USD',
         },
@@ -128,6 +123,7 @@ describe('getSharedGroupsForUsers', () => {
         group: {
           id: 'group-2',
           name: 'Flat',
+          type: GroupType.STANDARD,
           currency: '$',
           currencyCode: 'USD',
         },
@@ -138,6 +134,7 @@ describe('getSharedGroupsForUsers', () => {
         group: {
           id: 'group-3',
           name: 'Private',
+          type: GroupType.STANDARD,
           currency: '£',
           currencyCode: 'GBP',
         },
@@ -147,15 +144,11 @@ describe('getSharedGroupsForUsers', () => {
     const result = await getSharedGroupsForUsers(userId, friendUserId)
 
     expect(result).toHaveLength(2)
-    expect(result).toContainEqual({
-      id: 'group-1',
-      name: 'Trip',
-      currency: '€',
-      currencyCode: 'EUR',
-    })
+    expect(result).toContainEqual(standardGroup)
     expect(result).toContainEqual({
       id: 'group-2',
       name: 'Flat',
+      type: GroupType.STANDARD,
       currency: '$',
       currencyCode: 'USD',
     })
@@ -169,6 +162,7 @@ describe('getSharedGroupsForUsers', () => {
         group: {
           id: 'group-1',
           name: 'Old Group',
+          type: GroupType.STANDARD,
           currency: '$',
           currencyCode: null,
         },
@@ -179,6 +173,7 @@ describe('getSharedGroupsForUsers', () => {
         group: {
           id: 'group-1',
           name: 'Old Group',
+          type: GroupType.STANDARD,
           currency: '$',
           currencyCode: null,
         },
@@ -188,7 +183,13 @@ describe('getSharedGroupsForUsers', () => {
     const result = await getSharedGroupsForUsers(userId, friendUserId)
 
     expect(result).toEqual([
-      { id: 'group-1', name: 'Old Group', currency: '$', currencyCode: null },
+      {
+        id: 'group-1',
+        name: 'Old Group',
+        type: GroupType.STANDARD,
+        currency: '$',
+        currencyCode: null,
+      },
     ])
   })
 })

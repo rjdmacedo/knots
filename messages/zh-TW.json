@@ -761,6 +761,9 @@
     "unblockDialogTitle": "該用戶已被封鎖",
     "unblockDialogDescription": "您已封鎖 {email}。若要新增其為好友，您需要先解除封鎖。",
     "unblockAndAdd": "解除封鎖並新增",
+    "addExpenseWithFriendAria": "與{name}新增支出",
+    "addExpenseWithFriend": "支出",
+    "friendActions": "好友操作",
     "unblocking": "正在解除封鎖…",
     "Balances": {
       "columnTitle": "餘額",
@@ -790,6 +793,30 @@
       "loading": "正在載入餘額詳情…",
       "loadError": "無法載入餘額詳情。",
       "retry": "重試"
+    },
+    "viewFriendExpenses": "支出",
+    "Expenses": {
+      "title": "Expenses with {name}",
+      "description": "All expenses you share with this friend, across groups.",
+      "backToFriends": "Back to friends",
+      "listTitle": "Expense history",
+      "listDescription": "Direct expenses and expenses from shared groups.",
+      "create": "Add expense",
+      "empty": "No expenses with this friend yet.",
+      "directExpenses": "Direct expenses",
+      "viewExpenses": "View expenses",
+      "viewAllExpenses": "View all expenses",
+      "loadError": "Could not load expenses.",
+      "retry": "Retry",
+      "groups": {
+        "upcoming": "即將到來",
+        "thisWeek": "本週",
+        "earlierThisMonth": "本月稍早",
+        "lastMonth": "上個月",
+        "earlierThisYear": "今年稍早",
+        "lastYear": "去年",
+        "older": "更早"
+      }
     }
   },
   "Members": {

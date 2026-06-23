@@ -761,6 +761,9 @@
     "unblockDialogTitle": "Этот пользователь заблокирован",
     "unblockDialogDescription": "Вы заблокировали пользователя {email}. Чтобы добавить его в друзья, сначала разблокируйте его.",
     "unblockAndAdd": "Разблокировать и добавить",
+    "addExpenseWithFriendAria": "Добавить расход с {name}",
+    "addExpenseWithFriend": "Расход",
+    "friendActions": "Действия с другом",
     "unblocking": "Разблокировка…",
     "Balances": {
       "columnTitle": "Баланс",
@@ -790,6 +793,30 @@
       "loading": "Загрузка деталей баланса…",
       "loadError": "Не удалось загрузить детали баланса.",
       "retry": "Повторить"
+    },
+    "viewFriendExpenses": "Расходы",
+    "Expenses": {
+      "title": "Expenses with {name}",
+      "description": "All expenses you share with this friend, across groups.",
+      "backToFriends": "Back to friends",
+      "listTitle": "Expense history",
+      "listDescription": "Direct expenses and expenses from shared groups.",
+      "create": "Add expense",
+      "empty": "No expenses with this friend yet.",
+      "directExpenses": "Direct expenses",
+      "viewExpenses": "View expenses",
+      "viewAllExpenses": "View all expenses",
+      "loadError": "Could not load expenses.",
+      "retry": "Retry",
+      "groups": {
+        "upcoming": "Будущее",
+        "thisWeek": "На этой неделе",
+        "earlierThisMonth": "Ранее в этом месяце",
+        "lastMonth": "В прошлом месяце",
+        "earlierThisYear": "Ранее в этом году",
+        "lastYear": "В прошлом году",
+        "older": "Очень давно"
+      }
     }
   },
   "Members": {

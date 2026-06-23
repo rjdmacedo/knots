@@ -12,6 +12,16 @@ type Props = {
 export function FriendBalanceSummary({ balances, friendName }: Props) {
   const t = useTranslations('Friends.Balances')
 
+  const hasSharedGroups = balances.some((b) => b.groups.length > 0)
+
+  if (!hasSharedGroups) {
+    return (
+      <span className="text-xs text-muted-foreground">
+        {t('noSharedGroups')}
+      </span>
+    )
+  }
+
   const nonZeroBalances = balances.filter((b) => b.totalAmount !== 0)
 
   if (nonZeroBalances.length === 0) {

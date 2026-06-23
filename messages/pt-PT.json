@@ -843,6 +843,9 @@
     "unblockDialogTitle": "Este utilizador está bloqueado",
     "unblockDialogDescription": "Bloqueaste {email}. Para adicioná-lo como amigo, precisas de o desbloquear primeiro.",
     "unblockAndAdd": "Desbloquear e adicionar",
+    "addExpenseWithFriendAria": "Adicionar despesa com {name}",
+    "addExpenseWithFriend": "Despesa",
+    "friendActions": "Ações do amigo",
     "unblocking": "A desbloquear…",
     "Balances": {
       "columnTitle": "Saldo",
@@ -872,6 +875,30 @@
       "loading": "A carregar detalhes do saldo…",
       "loadError": "Não foi possível carregar os detalhes do saldo.",
       "retry": "Tentar novamente"
+    },
+    "viewFriendExpenses": "Despesas",
+    "Expenses": {
+      "title": "Despesas com {name}",
+      "description": "Todas as despesas que partilham, em todos os grupos.",
+      "backToFriends": "Voltar aos amigos",
+      "listTitle": "Histórico de despesas",
+      "listDescription": "Despesas diretas e despesas de grupos partilhados.",
+      "create": "Adicionar despesa",
+      "empty": "Ainda não há despesas com este amigo.",
+      "directExpenses": "Despesas diretas",
+      "viewExpenses": "Ver despesas",
+      "viewAllExpenses": "Ver todas as despesas",
+      "loadError": "Não foi possível carregar as despesas.",
+      "retry": "Tentar novamente",
+      "groups": {
+        "upcoming": "Próximas",
+        "thisWeek": "Esta semana",
+        "earlierThisMonth": "Anteriores neste mês",
+        "lastMonth": "Mês passado",
+        "earlierThisYear": "Anteriores neste ano",
+        "lastYear": "Ano passado",
+        "older": "Mais antigas"
+      }
     }
   },
   "Members": {
