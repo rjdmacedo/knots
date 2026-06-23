@@ -1,3 +1,10 @@
+# [1.37.0](https://github.com/rjdmacedo/knots/compare/v1.36.2...v1.37.0) (2026-06-23)
+
+
+### Features
+
+* add aggregated friend balances across shared groups ([fe48f3c](https://github.com/rjdmacedo/knots/commit/fe48f3cbc54a7e1fd7031028dec28238932a25f1))
+
 ## [1.36.2](https://github.com/rjdmacedo/knots/compare/v1.36.1...v1.36.2) (2026-06-23)
 
 
