@@ -81,7 +81,9 @@
     "NotFound": {
       "text": "Acest grup nu există.",
       "link": "Mergi la ultimele grupuri vizitate"
-    }
+    },
+    "backToGroups": "Înapoi la grupuri",
+    "detailDescription": "Cheltuieli, solduri și activitate pentru acest grup."
   },
   "GroupForm": {
     "title": "Informații despre grup",
@@ -104,6 +106,10 @@
       "createDescription": "All amounts and balances will be in this currency.",
       "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
       "customOption": "Custom"
+    },
+    "SimplifyDebtsField": {
+      "label": "Simplifică datoriile",
+      "description": "Reduce numărul de plăți combinând soldurile între membri (ca Splitwise Pro). Dezactivat, fiecare persoană datorează doar celui care a plătit partea ei."
     },
     "Participants": {
       "title": "Membri",
@@ -298,12 +304,45 @@
   "Balances": {
     "title": "Solduri",
     "description": "Aceasta este suma pe care fiecare membru a plătit-o sau cu care a fost plătit.",
+    "Actions": {
+      "request": "Solicită",
+      "settle": "Achită",
+      "requestTitle": "Solicită plata",
+      "requestDescription": "Trimite un e-mail cuiva care îți datorează în acest grup.",
+      "settleTitle": "Achită",
+      "settleDescription": "Înregistrează o plată pe care ai făcut-o pentru a-ți echilibra soldul.",
+      "selectDebtor": "Cine ar trebui să te plătească?",
+      "selectCreditor": "Pe cine ai plătit?",
+      "settleAmountLabel": "Suma plății",
+      "settleAmountHint": "Sugerat: {amount}",
+      "message": "Mesaj (opțional)",
+      "messagePlaceholder": "Adaugă o notă…",
+      "sendRequest": "Trimite solicitarea",
+      "recordPayment": "Înregistrează plata",
+      "cancel": "Anulează",
+      "requestSent": "Solicitarea de plată a fost trimisă.",
+      "requestFailed": "Nu s-a putut trimite solicitarea de plată.",
+      "settlementRecorded": "Plată înregistrată.",
+      "settlementFailed": "Nu s-a putut înregistra plata.",
+      "noOneOwesYou": "Nimeni nu îți datorează în acest grup.",
+      "youOweNoOne": "Nu datorezi nimănui în acest grup.",
+      "confirmSettle": "Înregistrezi că ai plătit {amount} către {name}?",
+      "youAreOwed": "{name} îți datorează {amount}",
+      "youOwe": "Datorezi {amount} lui {name}",
+      "allSettled": "Ești la zi în acest grup.",
+      "sending": "Se trimite…",
+      "recording": "Se înregistrează…"
+    },
     "Reimbursements": {
-      "title": "Rambursări sugerate",
-      "description": "Acestea sunt sugestiile pentru rambursări optimizate între membrii.",
-      "noImbursements": "Se pare că grupul tău nu are nevoie de rambursări 😁",
-      "owes": "<strong>{from}</strong> datorează <strong>{to}</strong>",
-      "markAsPaid": "Bifează ca plătit"
+      "title": "Decontări sugerate",
+      "description": "Plăți optimizate pentru echilibrarea soldurilor în acest grup.",
+      "noImbursements": "Se pare că grupul tău nu are nevoie de decontări 😁",
+      "owes": "<strong>{from}</strong> datorează lui <strong>{to}</strong>",
+      "markAsPaid": "Achită",
+      "request": "Solicită",
+      "requestTooltip": "Solicită plată",
+      "requestConfirmTitle": "Trimite cererea de plată?",
+      "requestConfirmDescription": "Un email va fi trimis către {name} solicitând {amount}."
     }
   },
   "Stats": {

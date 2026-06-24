@@ -81,7 +81,9 @@
     "NotFound": {
       "text": "Bu grup mevcut değil.",
       "link": "Son ziyaret ettiğiniz gruplara dön"
-    }
+    },
+    "backToGroups": "Gruplara dön",
+    "detailDescription": "Bu grubun giderleri, bakiyeleri ve etkinliği."
   },
   "GroupForm": {
     "title": "Grup bilgileri",
@@ -104,6 +106,10 @@
       "createDescription": "All amounts and balances will be in this currency.",
       "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
       "customOption": "Custom"
+    },
+    "SimplifyDebtsField": {
+      "label": "Borçları sadeleştir",
+      "description": "Üyeler arasındaki bakiyeleri birleştirerek ödeme sayısını azaltır (Splitwise Pro gibi). Kapalıyken herkes yalnızca payı için ödeyen kişiye borçludur."
     },
     "Participants": {
       "title": "Katılımcılar",
@@ -298,12 +304,45 @@
   "Balances": {
     "title": "Bakiyeler",
     "description": "Her katılımcının ödediği veya kendisi için ödenen tutar burada gösterilir.",
+    "Actions": {
+      "request": "Talep et",
+      "settle": "Hesabı kapat",
+      "requestTitle": "Ödeme talep et",
+      "requestDescription": "Bu grupta sana borçlu olan birine e-posta gönder.",
+      "settleTitle": "Hesabı kapat",
+      "settleDescription": "Bakiyeni kapatmak için yaptığın bir ödemeyi kaydet.",
+      "selectDebtor": "Sana kim ödeme yapmalı?",
+      "selectCreditor": "Kime ödeme yaptın?",
+      "settleAmountLabel": "Ödeme tutarı",
+      "settleAmountHint": "Önerilen: {amount}",
+      "message": "Mesaj (isteğe bağlı)",
+      "messagePlaceholder": "Bir not ekle…",
+      "sendRequest": "Talebi gönder",
+      "recordPayment": "Ödemeyi kaydet",
+      "cancel": "İptal",
+      "requestSent": "Ödeme talebi gönderildi.",
+      "requestFailed": "Ödeme talebi gönderilemedi.",
+      "settlementRecorded": "Ödeme kaydedildi.",
+      "settlementFailed": "Ödeme kaydedilemedi.",
+      "noOneOwesYou": "Bu grupta kimse sana borçlu değil.",
+      "youOweNoOne": "Bu grupta kimseye borçlu değilsin.",
+      "confirmSettle": "{name} kişisine {amount} ödediğini kaydet?",
+      "youAreOwed": "{name} sana {amount} borçlu",
+      "youOwe": "{name} kişisine {amount} borçlusun",
+      "allSettled": "Bu grupta hesabın kapalı.",
+      "sending": "Gönderiliyor…",
+      "recording": "Kaydediliyor…"
+    },
     "Reimbursements": {
-      "title": "Önerilen geri ödemeler",
-      "description": "Katılımcılar arasındaki en uygun geri ödeme önerileri aşağıdadır.",
-      "noImbursements": "Görünüşe göre grubunuzun hiçbir geri ödemeye ihtiyacı yok 😁",
-      "owes": "<strong>{from}</strong>, <strong>{to}</strong>'ya borçlu",
-      "markAsPaid": "Ödendi olarak işaretle"
+      "title": "Önerilen ödemeler",
+      "description": "Bu grupta bakiyeleri kapatmak için optimize edilmiş ödemeler.",
+      "noImbursements": "Grubunuzun herhangi bir ödemeye ihtiyacı yok gibi görünüyor 😁",
+      "owes": "<strong>{from}</strong>, <strong>{to}</strong> kişisine borçlu",
+      "markAsPaid": "Hesabı kapat",
+      "request": "Talep et",
+      "requestTooltip": "Ödeme talep et",
+      "requestConfirmTitle": "Ödeme talebi gönderilsin mi?",
+      "requestConfirmDescription": "{name} adresine {amount} talep eden bir e-posta gönderilecek."
     }
   },
   "Stats": {

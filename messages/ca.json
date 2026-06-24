@@ -81,7 +81,9 @@
     "NotFound": {
       "text": "Aquest grup no existeix.",
       "link": "Anar als darrers grups visitats."
-    }
+    },
+    "backToGroups": "Torna als grups",
+    "detailDescription": "Despeses, saldos i activitat d'aquest grup."
   },
   "GroupForm": {
     "title": "Informació del grup",
@@ -104,6 +106,10 @@
       "createDescription": "All amounts and balances will be in this currency.",
       "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
       "customOption": "Custom"
+    },
+    "SimplifyDebtsField": {
+      "label": "Simplifica els deutes",
+      "description": "Redueix el nombre de pagaments combinant saldos entre membres (com Splitwise Pro). Desactivat, cada persona només deu a qui va pagar la seva part."
     },
     "Participants": {
       "title": "Participants",
@@ -298,12 +304,45 @@
   "Balances": {
     "title": "Balanç",
     "description": "L'import total que ha pagat o rebut cada participant.",
+    "Actions": {
+      "request": "Sol·licitar",
+      "settle": "Liquidar comptes",
+      "requestTitle": "Sol·licitar pagament",
+      "requestDescription": "Envia un correu a qui et deu en aquest grup.",
+      "settleTitle": "Liquidar comptes",
+      "settleDescription": "Registra un pagament que has fet per saldar el teu balanç.",
+      "selectDebtor": "Qui t'ha de pagar?",
+      "selectCreditor": "A qui has pagat?",
+      "settleAmountLabel": "Import del pagament",
+      "settleAmountHint": "Suggerit: {amount}",
+      "message": "Missatge (opcional)",
+      "messagePlaceholder": "Afegeix una nota…",
+      "sendRequest": "Enviar sol·licitud",
+      "recordPayment": "Registrar pagament",
+      "cancel": "Cancel·lar",
+      "requestSent": "Sol·licitud de pagament enviada.",
+      "requestFailed": "No s'ha pogut enviar la sol·licitud de pagament.",
+      "settlementRecorded": "Pagament registrat.",
+      "settlementFailed": "No s'ha pogut registrar el pagament.",
+      "noOneOwesYou": "Ningú et deu en aquest grup.",
+      "youOweNoOne": "No deus a ningú en aquest grup.",
+      "confirmSettle": "Registrar que has pagat {amount} a {name}?",
+      "youAreOwed": "{name} et deu {amount}",
+      "youOwe": "Deus {amount} a {name}",
+      "allSettled": "Estàs al dia en aquest grup.",
+      "sending": "Enviant…",
+      "recording": "Registrant…"
+    },
     "Reimbursements": {
-      "title": "Proposta de reemborsaments",
-      "description": "Suggerència per optimitzar els reemborsaments entre participants.",
-      "noImbursements": "Sembla que el teu grup no necessita cap reemborsament 😁",
+      "title": "Liquidacions suggerides",
+      "description": "Pagaments optimitzats per saldar balanços en aquest grup.",
+      "noImbursements": "Sembla que el teu grup no necessita liquidacions 😁",
       "owes": "<strong>{from}</strong> deu a <strong>{to}</strong>",
-      "markAsPaid": "Marcar com a pagat"
+      "markAsPaid": "Liquidar",
+      "request": "Sol·licitar",
+      "requestTooltip": "Sol·licitar pagament",
+      "requestConfirmTitle": "Enviar sol·licitud de pagament?",
+      "requestConfirmDescription": "S'enviarà un correu a {name} sol·licitant {amount}."
     }
   },
   "Stats": {

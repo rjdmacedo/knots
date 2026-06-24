@@ -81,7 +81,9 @@
     "NotFound": {
       "text": "Tato skupina neexistuje.",
       "link": "Přejít na nedávno navštívené skupiny"
-    }
+    },
+    "backToGroups": "Zpět ke skupinám",
+    "detailDescription": "Výdaje, zůstatky a aktivita této skupiny."
   },
   "GroupForm": {
     "title": "Informace o skupině",
@@ -104,6 +106,10 @@
       "createDescription": "All amounts and balances will be in this currency.",
       "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
       "customOption": "Custom"
+    },
+    "SimplifyDebtsField": {
+      "label": "Zjednodušit dluhy",
+      "description": "Snižuje počet plateb kombinací zůstatků mezi členy (jako Splitwise Pro). Vypnuto: každý dluží pouze tomu, kdo zaplatil jeho podíl."
     },
     "Participants": {
       "title": "Účastníci",
@@ -298,12 +304,45 @@
   "Balances": {
     "title": "Zůstatky",
     "description": "Toto je částka, kterou každý účastník zaplatil nebo za kterou bylo zaplaceno.",
+    "Actions": {
+      "request": "Požádat",
+      "settle": "Vyrovnat",
+      "requestTitle": "Požádat o platbu",
+      "requestDescription": "Pošlete e-mail někomu, kdo vám v této skupině dluží.",
+      "settleTitle": "Vyrovnat",
+      "settleDescription": "Zaznamenejte platbu, kterou jste provedli k vyrovnání zůstatku.",
+      "selectDebtor": "Kdo vám má zaplatit?",
+      "selectCreditor": "Komu jste zaplatili?",
+      "settleAmountLabel": "Částka platby",
+      "settleAmountHint": "Navrhovaná částka: {amount}",
+      "message": "Zpráva (volitelné)",
+      "messagePlaceholder": "Přidejte poznámku…",
+      "sendRequest": "Odeslat žádost",
+      "recordPayment": "Zaznamenat platbu",
+      "cancel": "Zrušit",
+      "requestSent": "Žádost o platbu odeslána.",
+      "requestFailed": "Žádost o platbu se nepodařilo odeslat.",
+      "settlementRecorded": "Platba zaznamenána.",
+      "settlementFailed": "Platbu se nepodařilo zaznamenat.",
+      "noOneOwesYou": "Nikdo vám v této skupině nedluží.",
+      "youOweNoOne": "Nikomu v této skupině nedlužíte.",
+      "confirmSettle": "Zaznamenat, že jste zaplatili {amount} uživateli {name}?",
+      "youAreOwed": "{name} vám dluží {amount}",
+      "youOwe": "Dlužíte {name} {amount}",
+      "allSettled": "Jste v této skupině vyrovnáni.",
+      "sending": "Odesílání…",
+      "recording": "Zaznamenávání…"
+    },
     "Reimbursements": {
-      "title": "Navrhovaná proplacení",
-      "description": "Zde jsou návrhy na optimalizovaná proplacení mezi účastníky.",
-      "noImbursements": "Vypadá to, že vaše skupina nepotřebuje žádné proplacení 😁",
+      "title": "Navrhovaná vyrovnání",
+      "description": "Optimalizované platby k vyrovnání zůstatků v této skupině.",
+      "noImbursements": "Vypadá to, že vaše skupina nepotřebuje žádná vyrovnání 😁",
       "owes": "<strong>{from}</strong> dluží <strong>{to}</strong>",
-      "markAsPaid": "Označit jako zaplaceno"
+      "markAsPaid": "Vyrovnat",
+      "request": "Požádat",
+      "requestTooltip": "Požádat o platbu",
+      "requestConfirmTitle": "Odeslat žádost o platbu?",
+      "requestConfirmDescription": "Na adresu {name} bude odeslán e-mail s žádostí o {amount}."
     }
   },
   "Stats": {

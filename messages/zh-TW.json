@@ -81,7 +81,9 @@
     "NotFound": {
       "text": "該群組不存在。",
       "link": "前往最近訪問的群組"
-    }
+    },
+    "backToGroups": "返回群組",
+    "detailDescription": "此群組的支出、餘額和活動。"
   },
   "GroupForm": {
     "title": "群組資訊",
@@ -104,6 +106,10 @@
       "createDescription": "All amounts and balances will be in this currency.",
       "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
       "customOption": "Custom"
+    },
+    "SimplifyDebtsField": {
+      "label": "簡化債務",
+      "description": "透過合併成員之間的餘額來減少付款次數（類似 Splitwise Pro）。關閉後，每人只欠為其份額付款的人。"
     },
     "Participants": {
       "title": "群組成員",
@@ -298,12 +304,45 @@
   "Balances": {
     "title": "總覽",
     "description": "這是每個成員已支付及需支付的金額",
+    "Actions": {
+      "request": "請求",
+      "settle": "結算",
+      "requestTitle": "請求付款",
+      "requestDescription": "向本群組中欠你錢的人發送電子郵件。",
+      "settleTitle": "結算",
+      "settleDescription": "記錄你為清除餘額而支付的款項。",
+      "selectDebtor": "誰應該付款給你？",
+      "selectCreditor": "你付款給了誰？",
+      "settleAmountLabel": "付款金額",
+      "settleAmountHint": "建議：{amount}",
+      "message": "留言（選填）",
+      "messagePlaceholder": "新增備註…",
+      "sendRequest": "傳送請求",
+      "recordPayment": "記錄付款",
+      "cancel": "取消",
+      "requestSent": "付款請求已傳送。",
+      "requestFailed": "無法傳送付款請求。",
+      "settlementRecorded": "付款已記錄。",
+      "settlementFailed": "無法記錄付款。",
+      "noOneOwesYou": "本群組中沒有人欠你。",
+      "youOweNoOne": "你不欠本群組中任何人。",
+      "confirmSettle": "記錄你向{name}支付了{amount}？",
+      "youAreOwed": "{name}欠你{amount}",
+      "youOwe": "你欠{name} {amount}",
+      "allSettled": "你在本群組中已結清。",
+      "sending": "傳送中…",
+      "recording": "記錄中…"
+    },
     "Reimbursements": {
-      "title": "建議核銷",
-      "description": "這是建議的銷帳方式",
-      "noImbursements": "看起來你的群組目前不需要銷帳😁",
-      "owes": "<strong>{from}</strong> 欠 <strong>{to}</strong>",
-      "markAsPaid": "標記為已支付"
+      "title": "建議的結算",
+      "description": "本群組中用於結清餘額的最佳化付款方案。",
+      "noImbursements": "看起來你的群組不需要任何結算 😁",
+      "owes": "<strong>{from}</strong>欠<strong>{to}</strong>",
+      "markAsPaid": "結算",
+      "request": "請求",
+      "requestTooltip": "請求付款",
+      "requestConfirmTitle": "傳送付款請求？",
+      "requestConfirmDescription": "將向 {name} 傳送一封請求 {amount} 的郵件。"
     }
   },
   "Stats": {

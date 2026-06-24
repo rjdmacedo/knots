@@ -81,7 +81,9 @@
     "NotFound": {
       "text": "このグループは存在しません。",
       "link": "最近訪れたグループへ移動"
-    }
+    },
+    "backToGroups": "グループに戻る",
+    "detailDescription": "このグループの支出、残高、アクティビティ。"
   },
   "GroupForm": {
     "title": "グループ情報",
@@ -104,6 +106,10 @@
       "createDescription": "All amounts and balances will be in this currency.",
       "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
       "customOption": "Custom"
+    },
+    "SimplifyDebtsField": {
+      "label": "借金を簡略化",
+      "description": "メンバー間の残高をまとめて支払い回数を減らします（Splitwise Proと同様）。オフの場合、各人は自分の分を支払った人にのみ借りがあります。"
     },
     "Participants": {
       "title": "参加者",
@@ -298,12 +304,45 @@
   "Balances": {
     "title": "残高",
     "description": "これは各参加者が支払ったまたは支払われた金額です。",
+    "Actions": {
+      "request": "リクエスト",
+      "settle": "精算する",
+      "requestTitle": "支払いをリクエスト",
+      "requestDescription": "このグループであなたに借りがある人にメールを送信します。",
+      "settleTitle": "精算する",
+      "settleDescription": "残高を清算するために行った支払いを記録します。",
+      "selectDebtor": "誰があなたに支払うべきですか？",
+      "selectCreditor": "誰に支払いましたか？",
+      "settleAmountLabel": "支払い金額",
+      "settleAmountHint": "推奨: {amount}",
+      "message": "メッセージ（任意）",
+      "messagePlaceholder": "メモを追加…",
+      "sendRequest": "リクエストを送信",
+      "recordPayment": "支払いを記録",
+      "cancel": "キャンセル",
+      "requestSent": "支払いリクエストが送信されました。",
+      "requestFailed": "支払いリクエストを送信できませんでした。",
+      "settlementRecorded": "支払いが記録されました。",
+      "settlementFailed": "支払いを記録できませんでした。",
+      "noOneOwesYou": "このグループであなたに借りがある人はいません。",
+      "youOweNoOne": "このグループで誰にも借りはありません。",
+      "confirmSettle": "{name}に{amount}を支払ったことを記録しますか？",
+      "youAreOwed": "{name}があなたに{amount}の借りがあります",
+      "youOwe": "あなたは{name}に{amount}の借りがあります",
+      "allSettled": "このグループで精算済みです。",
+      "sending": "送信中…",
+      "recording": "記録中…"
+    },
     "Reimbursements": {
-      "title": "提案される払い戻し",
-      "description": "参加者間の最適化された払い戻しの提案です。",
-      "noImbursements": "グループに払い戻しが必要ないようです 😁",
-      "owes": "<strong>{from}</strong>は<strong>{to}</strong>に借りがあります",
-      "markAsPaid": "支払い済みとしてマーク"
+      "title": "推奨される精算",
+      "description": "このグループの残高を精算するための最適化された支払い。",
+      "noImbursements": "グループに精算の必要はないようです 😁",
+      "owes": "<strong>{from}</strong>が<strong>{to}</strong>に支払い",
+      "markAsPaid": "精算する",
+      "request": "リクエスト",
+      "requestTooltip": "支払いをリクエスト",
+      "requestConfirmTitle": "支払いリクエストを送信しますか？",
+      "requestConfirmDescription": "{name} に {amount} の支払いリクエストメールが送信されます。"
     }
   },
   "Stats": {

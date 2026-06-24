@@ -81,7 +81,9 @@
     "NotFound": {
       "text": "Deze groep bestaat niet.",
       "link": "Ga naar je recente groepen"
-    }
+    },
+    "backToGroups": "Terug naar groepen",
+    "detailDescription": "Uitgaven, saldi en activiteit van deze groep."
   },
   "GroupForm": {
     "title": "Groepsinformatie",
@@ -104,6 +106,10 @@
       "createDescription": "Alle hoeveelheden en saldi worden in deze valuta weergegeven.",
       "editDescription": "Alle bedragen en saldi worden in deze valuta weergegeven. Als je dit wijzigt, worden reeds ingevoerde uitgaven NIET omgerekend, behalve wanneer de valuta andere \"kleinste eenheden\" heeft dan de huidige (bijvoorbeeld bij een wijziging van Amerikaanse dollar naar Japanse yen)",
       "customOption": "Aangepast"
+    },
+    "SimplifyDebtsField": {
+      "label": "Schulden vereenvoudigen",
+      "description": "Vermindert het aantal betalingen door saldi tussen leden te combineren (zoals Splitwise Pro). Uit: iedereen is alleen verschuldigd aan wie hun deel betaalde."
     },
     "Participants": {
       "title": "Deelnemers",
@@ -298,12 +304,45 @@
   "Balances": {
     "title": "Balans",
     "description": "Dit zijn de bedragen die elke deelnemer heeft betaald of waarvoor is betaald.",
+    "Actions": {
+      "request": "Verzoeken",
+      "settle": "Verrekenen",
+      "requestTitle": "Betaling verzoeken",
+      "requestDescription": "Stuur een e-mail naar iemand die je geld schuldig is in deze groep.",
+      "settleTitle": "Verrekenen",
+      "settleDescription": "Registreer een betaling die je hebt gedaan om je saldo te vereffenen.",
+      "selectDebtor": "Wie moet jou betalen?",
+      "selectCreditor": "Wie heb je betaald?",
+      "settleAmountLabel": "Betalingsbedrag",
+      "settleAmountHint": "Voorgesteld: {amount}",
+      "message": "Bericht (optioneel)",
+      "messagePlaceholder": "Voeg een notitie toe…",
+      "sendRequest": "Verzoek versturen",
+      "recordPayment": "Betaling registreren",
+      "cancel": "Annuleren",
+      "requestSent": "Betalingsverzoek verstuurd.",
+      "requestFailed": "Betalingsverzoek kon niet worden verstuurd.",
+      "settlementRecorded": "Betaling geregistreerd.",
+      "settlementFailed": "Betaling kon niet worden geregistreerd.",
+      "noOneOwesYou": "Niemand is je iets schuldig in deze groep.",
+      "youOweNoOne": "Je bent niemand iets schuldig in deze groep.",
+      "confirmSettle": "Registreren dat je {amount} aan {name} hebt betaald?",
+      "youAreOwed": "{name} is je {amount} schuldig",
+      "youOwe": "Je bent {name} {amount} schuldig",
+      "allSettled": "Je bent verrekend in deze groep.",
+      "sending": "Versturen…",
+      "recording": "Registreren…"
+    },
     "Reimbursements": {
-      "title": "Voorgestelde terugbetalingen",
-      "description": "Dit zijn de voorgestelde terugbetalingen tussen deelnemers.",
-      "noImbursements": "Lijkt erop dat je groep geen terugbetalingen nodig heeft 😁",
-      "owes": "<strong>{from}</strong> betaalt aan <strong>{to}</strong>",
-      "markAsPaid": "Markeer als betaald"
+      "title": "Voorgestelde verrekeningen",
+      "description": "Geoptimaliseerde betalingen om saldi te vereffenen in deze groep.",
+      "noImbursements": "Het lijkt erop dat je groep geen verrekeningen nodig heeft 😁",
+      "owes": "<strong>{from}</strong> is verschuldigd aan <strong>{to}</strong>",
+      "markAsPaid": "Verrekenen",
+      "request": "Verzoeken",
+      "requestTooltip": "Betaling aanvragen",
+      "requestConfirmTitle": "Betalingsverzoek versturen?",
+      "requestConfirmDescription": "Er wordt een e-mail naar {name} gestuurd met een verzoek om {amount}."
     }
   },
   "Stats": {

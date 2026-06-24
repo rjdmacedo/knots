@@ -81,7 +81,9 @@
     "NotFound": {
       "text": "Diese Gruppe existiert nicht.",
       "link": "Gehe zu zuletzt besuchten Gruppen"
-    }
+    },
+    "backToGroups": "Zurück zu Gruppen",
+    "detailDescription": "Ausgaben, Salden und Aktivität dieser Gruppe."
   },
   "GroupForm": {
     "title": "Gruppeninformationen",
@@ -104,6 +106,10 @@
       "createDescription": "Alle Beträge und Salden werden in dieser Währung angegeben.",
       "editDescription": "Alle Beträge und Salden werden in dieser Währung angegeben. Bei Änderung dieser, werden bereits eingegebene Ausgaben NICHT umgerechnet, es sei denn, die Währung hat andere \"kleinere Einheiten\" als die aktuelle (z. B. Wechsel von US-Dollar zu Japanischem Yen)",
       "customOption": "benutzerdefiniert"
+    },
+    "SimplifyDebtsField": {
+      "label": "Schulden vereinfachen",
+      "description": "Reduziert die Anzahl der Zahlungen durch Kombination der Salden zwischen Mitgliedern (wie Splitwise Pro). Aus: Jede Person schuldet nur demjenigen, der ihre Anteile bezahlt hat."
     },
     "Participants": {
       "title": "Mitglieder",
@@ -298,12 +304,45 @@
   "Balances": {
     "title": "Bilanz",
     "description": "Das sind die Beträge, die jedes Mitglied bezahlt oder empfangen hat.",
+    "Actions": {
+      "request": "Anfordern",
+      "settle": "Abrechnen",
+      "requestTitle": "Zahlung anfordern",
+      "requestDescription": "Sende eine E-Mail an jemanden, der dir in dieser Gruppe schuldet.",
+      "settleTitle": "Abrechnen",
+      "settleDescription": "Erfasse eine Zahlung, die du geleistet hast, um dein Guthaben auszugleichen.",
+      "selectDebtor": "Wer soll dich bezahlen?",
+      "selectCreditor": "Wen hast du bezahlt?",
+      "settleAmountLabel": "Zahlungsbetrag",
+      "settleAmountHint": "Vorgeschlagen: {amount}",
+      "message": "Nachricht (optional)",
+      "messagePlaceholder": "Notiz hinzufügen…",
+      "sendRequest": "Anfrage senden",
+      "recordPayment": "Zahlung erfassen",
+      "cancel": "Abbrechen",
+      "requestSent": "Zahlungsanfrage gesendet.",
+      "requestFailed": "Zahlungsanfrage konnte nicht gesendet werden.",
+      "settlementRecorded": "Zahlung erfasst.",
+      "settlementFailed": "Zahlung konnte nicht erfasst werden.",
+      "noOneOwesYou": "Niemand schuldet dir in dieser Gruppe.",
+      "youOweNoOne": "Du schuldest niemandem in dieser Gruppe.",
+      "confirmSettle": "Erfassen, dass du {amount} an {name} gezahlt hast?",
+      "youAreOwed": "{name} schuldet dir {amount}",
+      "youOwe": "Du schuldest {name} {amount}",
+      "allSettled": "Du bist in dieser Gruppe ausgeglichen.",
+      "sending": "Wird gesendet…",
+      "recording": "Wird erfasst…"
+    },
     "Reimbursements": {
-      "title": "Vorgeschlagene Rückzahlungen",
-      "description": "Hier sind Vorschläge für optimierte Rückzahlungen zwischen Mitgliedern.",
-      "noImbursements": "Es sieht aus, als seien in der Gruppe keine Rückzahlungen nötig 😁",
+      "title": "Vorgeschlagene Abrechnungen",
+      "description": "Optimierte Zahlungen zum Ausgleich der Salden in dieser Gruppe.",
+      "noImbursements": "Deine Gruppe braucht keine Abrechnungen 😁",
       "owes": "<strong>{from}</strong> schuldet <strong>{to}</strong>",
-      "markAsPaid": "Als gezahlt markieren"
+      "markAsPaid": "Abrechnen",
+      "request": "Anfordern",
+      "requestTooltip": "Zahlung anfordern",
+      "requestConfirmTitle": "Zahlungsanfrage senden?",
+      "requestConfirmDescription": "Eine E-Mail wird an {name} gesendet mit der Anfrage über {amount}."
     }
   },
   "Stats": {

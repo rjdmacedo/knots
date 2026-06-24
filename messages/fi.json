@@ -81,7 +81,9 @@
     "NotFound": {
       "text": "Tätä ryhmää ei löydy.",
       "link": "Siirry äskettäisiin ryhmiin"
-    }
+    },
+    "backToGroups": "Takaisin ryhmiin",
+    "detailDescription": "Tämän ryhmän kulut, saldot ja aktiviteetti."
   },
   "GroupForm": {
     "title": "Ryhmän tiedot",
@@ -104,6 +106,10 @@
       "createDescription": "All amounts and balances will be in this currency.",
       "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
       "customOption": "Custom"
+    },
+    "SimplifyDebtsField": {
+      "label": "Yksinkertaista velat",
+      "description": "Vähentää maksujen määrää yhdistämällä jäsenten saldot (kuten Splitwise Pro). Pois päältä: jokainen maksaa vain sille, joka maksoi hänen osuutensa."
     },
     "Participants": {
       "title": "Osallistujat",
@@ -298,12 +304,45 @@
   "Balances": {
     "title": "Saldo",
     "description": "Osallistujien saatavat tai velat.",
+    "Actions": {
+      "request": "Pyydä",
+      "settle": "Tasaa",
+      "requestTitle": "Pyydä maksua",
+      "requestDescription": "Lähetä sähköposti jollekulle, joka on sinulle velkaa tässä ryhmässä.",
+      "settleTitle": "Tasaa",
+      "settleDescription": "Kirjaa maksu, jonka teit saldon tasaamiseksi.",
+      "selectDebtor": "Kenen pitäisi maksaa sinulle?",
+      "selectCreditor": "Kenelle maksoit?",
+      "settleAmountLabel": "Maksun määrä",
+      "settleAmountHint": "Ehdotettu: {amount}",
+      "message": "Viesti (valinnainen)",
+      "messagePlaceholder": "Lisää muistiinpano…",
+      "sendRequest": "Lähetä pyyntö",
+      "recordPayment": "Kirjaa maksu",
+      "cancel": "Peruuta",
+      "requestSent": "Maksupyyntö lähetetty.",
+      "requestFailed": "Maksupyyntöä ei voitu lähettää.",
+      "settlementRecorded": "Maksu kirjattu.",
+      "settlementFailed": "Maksua ei voitu kirjata.",
+      "noOneOwesYou": "Kukaan ei ole sinulle velkaa tässä ryhmässä.",
+      "youOweNoOne": "Et ole kenellekään velkaa tässä ryhmässä.",
+      "confirmSettle": "Kirjataanko, että maksoit {amount} käyttäjälle {name}?",
+      "youAreOwed": "{name} on sinulle velkaa {amount}",
+      "youOwe": "Olet velkaa {name} {amount}",
+      "allSettled": "Olet tasannut tässä ryhmässä.",
+      "sending": "Lähetetään…",
+      "recording": "Kirjataan…"
+    },
     "Reimbursements": {
-      "title": "Maksuehdotus",
-      "description": "Optimoitu ehdotus kuka maksaa kenellekin.",
-      "noImbursements": "Näyttää siltä, että kaikki ovat sujut 😁",
-      "owes": "<strong>{from}</strong> maksaa henkilölle <strong>{to}</strong>",
-      "markAsPaid": "Merkitse maksetuksi"
+      "title": "Ehdotetut tasaukset",
+      "description": "Optimoidut maksut saldojen tasaamiseksi tässä ryhmässä.",
+      "noImbursements": "Ryhmäsi ei näytä tarvitsevan tasauksia 😁",
+      "owes": "<strong>{from}</strong> on velkaa <strong>{to}</strong>",
+      "markAsPaid": "Tasaa",
+      "request": "Pyydä",
+      "requestTooltip": "Pyydä maksua",
+      "requestConfirmTitle": "Lähetetäänkö maksupyyntö?",
+      "requestConfirmDescription": "Sähköposti lähetetään henkilölle {name} pyytäen {amount}."
     }
   },
   "Stats": {

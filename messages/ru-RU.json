@@ -81,7 +81,9 @@
     "NotFound": {
       "text": "Этой группы не существует",
       "link": "Перейти к списку недавних групп"
-    }
+    },
+    "backToGroups": "Назад к группам",
+    "detailDescription": "Расходы, балансы и активность этой группы."
   },
   "GroupForm": {
     "title": "Сведения о группе",
@@ -104,6 +106,10 @@
       "createDescription": "All amounts and balances will be in this currency.",
       "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
       "customOption": "Custom"
+    },
+    "SimplifyDebtsField": {
+      "label": "Упростить долги",
+      "description": "Уменьшает число платежей, объединяя балансы между участниками (как Splitwise Pro). Выключено: каждый должен только тому, кто оплатил его долю."
     },
     "Participants": {
       "title": "Участники",
@@ -298,12 +304,45 @@
   "Balances": {
     "title": "Балансы",
     "description": "Это список балансов всех участников группы. Баланс увеличивается у тех, кто оплачивает расход, и уменьшается у тех, между кем он был распределен.",
+    "Actions": {
+      "request": "Запросить",
+      "settle": "Рассчитаться",
+      "requestTitle": "Запросить оплату",
+      "requestDescription": "Отправьте письмо тому, кто вам должен в этой группе.",
+      "settleTitle": "Рассчитаться",
+      "settleDescription": "Запишите платёж, который вы сделали для погашения баланса.",
+      "selectDebtor": "Кто должен вам заплатить?",
+      "selectCreditor": "Кому вы заплатили?",
+      "settleAmountLabel": "Сумма платежа",
+      "settleAmountHint": "Рекомендуется: {amount}",
+      "message": "Сообщение (необязательно)",
+      "messagePlaceholder": "Добавить заметку…",
+      "sendRequest": "Отправить запрос",
+      "recordPayment": "Записать платёж",
+      "cancel": "Отмена",
+      "requestSent": "Запрос на оплату отправлен.",
+      "requestFailed": "Не удалось отправить запрос на оплату.",
+      "settlementRecorded": "Платёж записан.",
+      "settlementFailed": "Не удалось записать платёж.",
+      "noOneOwesYou": "Никто вам не должен в этой группе.",
+      "youOweNoOne": "Вы никому не должны в этой группе.",
+      "confirmSettle": "Записать, что вы заплатили {amount} пользователю {name}?",
+      "youAreOwed": "{name} должен вам {amount}",
+      "youOwe": "Вы должны {name} {amount}",
+      "allSettled": "Вы рассчитались в этой группе.",
+      "sending": "Отправка…",
+      "recording": "Запись…"
+    },
     "Reimbursements": {
-      "title": "Предложенные возмещения",
-      "description": "Вот список задолженностей между участниками.",
-      "noImbursements": "Похоже, все в расчете 😁",
+      "title": "Предложенные расчёты",
+      "description": "Оптимизированные платежи для погашения балансов в этой группе.",
+      "noImbursements": "Похоже, вашей группе не нужны расчёты 😁",
       "owes": "<strong>{from}</strong> должен <strong>{to}</strong>",
-      "markAsPaid": "Пометить оплаченным"
+      "markAsPaid": "Рассчитаться",
+      "request": "Запросить",
+      "requestTooltip": "Запросить оплату",
+      "requestConfirmTitle": "Отправить запрос на оплату?",
+      "requestConfirmDescription": "На {name} будет отправлено письмо с запросом {amount}."
     }
   },
   "Stats": {

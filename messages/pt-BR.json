@@ -81,7 +81,9 @@
     "NotFound": {
       "text": "Este grupo não existe.",
       "link": "Ir para grupos visitados recentemente"
-    }
+    },
+    "backToGroups": "Voltar aos grupos",
+    "detailDescription": "Despesas, saldos e atividade deste grupo."
   },
   "GroupForm": {
     "title": "Informações do grupo",
@@ -104,6 +106,10 @@
       "createDescription": "Todos os valores e saldos estarão nesta moeda.",
       "editDescription": "Todos os valores e saldos estarão nesta moeda. A sua alteração NÃO irá converter despesas já registradas, exceto quando a moeda possuir \"unidades menores\" que a atual (ex. Alterar de Dólar Americano para Yen Japonês)",
       "customOption": "Customizado"
+    },
+    "SimplifyDebtsField": {
+      "label": "Simplificar dívidas",
+      "description": "Reduz o número de pagamentos ao combinar saldos entre os membros (como o Splitwise Pro). Desativado, cada pessoa só deve a quem pagou pela sua parte."
     },
     "Participants": {
       "title": "Participantes",
@@ -298,12 +304,45 @@
   "Balances": {
     "title": "Saldos",
     "description": "Este é o valor que cada participante pagou ou recebeu.",
+    "Actions": {
+      "request": "Solicitar",
+      "settle": "Acertar contas",
+      "requestTitle": "Solicitar pagamento",
+      "requestDescription": "Envie um email para quem te deve neste grupo.",
+      "settleTitle": "Acertar contas",
+      "settleDescription": "Registre um pagamento que você fez para zerar o saldo.",
+      "selectDebtor": "Quem deve pagar você?",
+      "selectCreditor": "Para quem você pagou?",
+      "settleAmountLabel": "Valor do pagamento",
+      "settleAmountHint": "Sugerido: {amount}",
+      "message": "Mensagem (opcional)",
+      "messagePlaceholder": "Adicione uma nota…",
+      "sendRequest": "Enviar solicitação",
+      "recordPayment": "Registrar pagamento",
+      "cancel": "Cancelar",
+      "requestSent": "Solicitação de pagamento enviada.",
+      "requestFailed": "Não foi possível enviar a solicitação de pagamento.",
+      "settlementRecorded": "Pagamento registrado.",
+      "settlementFailed": "Não foi possível registrar o pagamento.",
+      "noOneOwesYou": "Ninguém te deve neste grupo.",
+      "youOweNoOne": "Você não deve a ninguém neste grupo.",
+      "confirmSettle": "Registrar que você pagou {amount} para {name}?",
+      "youAreOwed": "{name} te deve {amount}",
+      "youOwe": "Você deve {amount} para {name}",
+      "allSettled": "Você está acertado neste grupo.",
+      "sending": "Enviando…",
+      "recording": "Registrando…"
+    },
     "Reimbursements": {
-      "title": "Reembolsos sugeridos",
-      "description": "Aqui estão sugestões para reembolsos otimizados entre os participantes.",
-      "noImbursements": "Parece que seu grupo não precisa de nenhum reembolso 😁",
+      "title": "Acertos sugeridos",
+      "description": "Pagamentos otimizados para acertar saldos neste grupo.",
+      "noImbursements": "Parece que seu grupo não precisa de acertos 😁",
       "owes": "<strong>{from}</strong> deve <strong>{to}</strong>",
-      "markAsPaid": "Marcar como pago"
+      "markAsPaid": "Acertar",
+      "request": "Solicitar",
+      "requestTooltip": "Solicitar pagamento",
+      "requestConfirmTitle": "Enviar solicitação de pagamento?",
+      "requestConfirmDescription": "Um email será enviado para {name} solicitando {amount}."
     }
   },
   "Stats": {
@@ -866,7 +905,12 @@
     "deleteGroupConfirmAction": "Excluir permanentemente"
   },
   "UserMenu": {
+    "menuLabel": "Menu do usuário",
     "profileSettings": "Configurações de perfil",
+    "theme": "Tema",
+    "themeLight": "Claro",
+    "themeDark": "Escuro",
+    "themeSystem": "Sistema",
     "signingOut": "Saindo…",
     "signOut": "Sair"
   },

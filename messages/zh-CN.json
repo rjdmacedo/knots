@@ -81,7 +81,9 @@
     "NotFound": {
       "text": "该群组不存在。",
       "link": "跳转到最近访问过的群组"
-    }
+    },
+    "backToGroups": "返回群组",
+    "detailDescription": "此群组的支出、余额和活动。"
   },
   "GroupForm": {
     "title": "群组信息",
@@ -104,6 +106,10 @@
       "createDescription": "All amounts and balances will be in this currency.",
       "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
       "customOption": "Custom"
+    },
+    "SimplifyDebtsField": {
+      "label": "简化债务",
+      "description": "通过合并成员之间的余额来减少付款次数（类似 Splitwise Pro）。关闭后，每人只欠为其份额付款的人。"
     },
     "Participants": {
       "title": "群组成员",
@@ -298,12 +304,45 @@
   "Balances": {
     "title": "余额",
     "description": "这是每位群组成员支付或被支付的金额。",
+    "Actions": {
+      "request": "请求",
+      "settle": "结算",
+      "requestTitle": "请求付款",
+      "requestDescription": "向本组中欠你钱的人发送电子邮件。",
+      "settleTitle": "结算",
+      "settleDescription": "记录你为清除余额而支付的款项。",
+      "selectDebtor": "谁应该付款给你？",
+      "selectCreditor": "你付款给了谁？",
+      "settleAmountLabel": "付款金额",
+      "settleAmountHint": "建议：{amount}",
+      "message": "留言（可选）",
+      "messagePlaceholder": "添加备注…",
+      "sendRequest": "发送请求",
+      "recordPayment": "记录付款",
+      "cancel": "取消",
+      "requestSent": "付款请求已发送。",
+      "requestFailed": "无法发送付款请求。",
+      "settlementRecorded": "付款已记录。",
+      "settlementFailed": "无法记录付款。",
+      "noOneOwesYou": "本组中没有人欠你。",
+      "youOweNoOne": "你不欠本组中任何人。",
+      "confirmSettle": "记录你向{name}支付了{amount}？",
+      "youAreOwed": "{name}欠你{amount}",
+      "youOwe": "你欠{name} {amount}",
+      "allSettled": "你在本组中已结清。",
+      "sending": "发送中…",
+      "recording": "记录中…"
+    },
     "Reimbursements": {
-      "title": "建议报销",
-      "description": "这里是优化群组成员之间报销的建议。",
-      "noImbursements": "看起来你的群组不需要任何报销😁",
-      "owes": "<strong>{from}</strong> 欠 <strong>{to}</strong>",
-      "markAsPaid": "标记为已支付"
+      "title": "建议的结算",
+      "description": "本组中用于结清余额的优化付款方案。",
+      "noImbursements": "看起来你的群组不需要任何结算 😁",
+      "owes": "<strong>{from}</strong>欠<strong>{to}</strong>",
+      "markAsPaid": "结算",
+      "request": "请求",
+      "requestTooltip": "请求付款",
+      "requestConfirmTitle": "发送付款请求？",
+      "requestConfirmDescription": "将向 {name} 发送一封请求 {amount} 的邮件。"
     }
   },
   "Stats": {

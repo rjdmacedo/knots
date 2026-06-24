@@ -81,7 +81,9 @@
       "link": "Ir para grupos visitados recentemente"
     },
     "enableNotifications": "Ativar notificações",
-    "disableNotifications": "Desativar notificações"
+    "disableNotifications": "Desativar notificações",
+    "backToGroups": "Voltar aos grupos",
+    "detailDescription": "Despesas, saldos e atividade deste grupo."
   },
   "GroupForm": {
     "title": "Informações do grupo",
@@ -130,6 +132,10 @@
       "createDescription": "Todos os valores e saldos estarão nesta moeda.",
       "editDescription": "Todos os valores e saldos estarão nesta moeda. Alterar esta moeda NÃO converte as despesas já inseridas, excepto quando a nova moeda tiver unidades diferentes (por ex. de Dólar para Iene).",
       "customOption": "Personalizada"
+    },
+    "SimplifyDebtsField": {
+      "label": "Simplificar dívidas",
+      "description": "Reduz o número de pagamentos ao combinar saldos entre os membros (como o Splitwise Pro). Desativado, cada pessoa só deve a quem pagou pela sua parte."
     }
   },
   "ExpenseForm": {
@@ -298,12 +304,45 @@
   "Balances": {
     "title": "Saldos",
     "description": "Este é o valor que cada participante pagou ou recebeu.",
+    "Actions": {
+      "request": "Solicitar",
+      "settle": "Liquidar contas",
+      "requestTitle": "Solicitar pagamento",
+      "requestDescription": "Envia um email a quem te deve neste grupo.",
+      "settleTitle": "Liquidar contas",
+      "settleDescription": "Regista um pagamento que fizeste para acertar o saldo.",
+      "selectDebtor": "Quem te deve pagar?",
+      "selectCreditor": "A quem pagaste?",
+      "settleAmountLabel": "Valor do pagamento",
+      "settleAmountHint": "Sugerido: {amount}",
+      "message": "Mensagem (opcional)",
+      "messagePlaceholder": "Adiciona uma nota…",
+      "sendRequest": "Enviar pedido",
+      "recordPayment": "Registar pagamento",
+      "cancel": "Cancelar",
+      "requestSent": "Pedido de pagamento enviado.",
+      "requestFailed": "Não foi possível enviar o pedido de pagamento.",
+      "settlementRecorded": "Pagamento registado.",
+      "settlementFailed": "Não foi possível registar o pagamento.",
+      "noOneOwesYou": "Ninguém te deve neste grupo.",
+      "youOweNoOne": "Não deves a ninguém neste grupo.",
+      "confirmSettle": "Registar que pagaste {amount} a {name}?",
+      "youAreOwed": "{name} deve-te {amount}",
+      "youOwe": "Deves {amount} a {name}",
+      "allSettled": "Estás acertado neste grupo.",
+      "sending": "A enviar…",
+      "recording": "A registar…"
+    },
     "Reimbursements": {
-      "title": "Reembolsos sugeridos",
-      "description": "Sugestões de reembolsos optimizados entre participantes.",
-      "noImbursements": "Parece que o teu grupo não precisa de nenhum reembolso 😁",
+      "title": "Liquidações sugeridas",
+      "description": "Pagamentos optimizados para acertar saldos neste grupo.",
+      "noImbursements": "Parece que o teu grupo não precisa de liquidações 😁",
       "owes": "<strong>{from}</strong> deve a <strong>{to}</strong>",
-      "markAsPaid": "Marcar como pago"
+      "markAsPaid": "Liquidar",
+      "request": "Solicitar",
+      "requestTooltip": "Solicitar pagamento",
+      "requestConfirmTitle": "Enviar pedido de pagamento?",
+      "requestConfirmDescription": "Será enviado um email a {name} a solicitar {amount}."
     }
   },
   "Stats": {
@@ -424,6 +463,8 @@
     "description": "Resumo de toda a actividade neste grupo.",
     "globalTitle": "Actividade",
     "globalDescription": "Resumo de toda a actividade nos seus grupos.",
+    "globalListTitle": "Histórico de actividade",
+    "globalListDescription": "Alterações recentes em todos os seus grupos.",
     "globalNoActivity": "Ainda não há actividade nos seus grupos.",
     "noActivity": "Ainda não há actividade no grupo.",
     "someone": "Alguém",
@@ -962,8 +1003,19 @@
     "deleteConfirmAction": "Apagar permanentemente"
   },
   "UserMenu": {
+    "menuLabel": "Menu do utilizador",
     "profileSettings": "Definições de perfil",
+    "theme": "Tema",
+    "themeLight": "Claro",
+    "themeDark": "Escuro",
+    "themeSystem": "Sistema",
     "signingOut": "A terminar sessão…",
     "signOut": "Terminar sessão"
+  },
+  "AppError": {
+    "title": "Algo correu mal",
+    "description": "Os dados locais da app foram limpos. A sessão também será terminada para poderes recomeçar na página inicial.",
+    "recover": "Ir para a página inicial",
+    "recovering": "A redirecionar…"
   }
 }

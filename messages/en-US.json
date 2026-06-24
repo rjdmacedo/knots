@@ -81,7 +81,9 @@
     "NotFound": {
       "text": "This group does not exist.",
       "link": "Go to recently visited groups"
-    }
+    },
+    "backToGroups": "Back to groups",
+    "detailDescription": "Expenses, balances, and activity for this group."
   },
   "GroupForm": {
     "title": "Group information",
@@ -104,6 +106,10 @@
       "createDescription": "All amounts and balances will be in this currency.",
       "editDescription": "All amounts and balances will be in this currency. Changing this will NOT convert expenses already entered, except when the currency has different \"minor units\" than the current one (e.g. changing from US Dollar to Japanese Yen)",
       "customOption": "Custom"
+    },
+    "SimplifyDebtsField": {
+      "label": "Simplify debts",
+      "description": "Reduce the number of payments by combining balances between group members (like Splitwise Pro). When off, each person only owes whoever paid for their share."
     },
     "Participants": {
       "title": "Participants",
@@ -298,12 +304,45 @@
   "Balances": {
     "title": "Balances",
     "description": "This is the amount that each participant paid or was paid for.",
+    "Actions": {
+      "request": "Request",
+      "settle": "Settle up",
+      "requestTitle": "Request payment",
+      "requestDescription": "Send an email to someone who owes you in this group.",
+      "settleTitle": "Settle up",
+      "settleDescription": "Record a payment you made to clear your balance.",
+      "selectDebtor": "Who should pay you?",
+      "selectCreditor": "Who did you pay?",
+      "settleAmountLabel": "Payment amount",
+      "settleAmountHint": "Suggested: {amount}",
+      "message": "Message (optional)",
+      "messagePlaceholder": "Add a note…",
+      "sendRequest": "Send request",
+      "recordPayment": "Record payment",
+      "cancel": "Cancel",
+      "requestSent": "Payment request sent.",
+      "requestFailed": "Could not send payment request.",
+      "settlementRecorded": "Payment recorded.",
+      "settlementFailed": "Could not record payment.",
+      "noOneOwesYou": "Nobody owes you in this group.",
+      "youOweNoOne": "You don't owe anyone in this group.",
+      "confirmSettle": "Record that you paid {amount} to {name}?",
+      "youAreOwed": "{name} owes you {amount}",
+      "youOwe": "You owe {name} {amount}",
+      "allSettled": "You're all settled up in this group.",
+      "sending": "Sending…",
+      "recording": "Recording…"
+    },
     "Reimbursements": {
-      "title": "Suggested reimbursements",
-      "description": "Here are suggestions for optimized reimbursements between participants.",
-      "noImbursements": "It looks like your group doesn’t need any reimbursement 😁",
+      "title": "Suggested settlements",
+      "description": "Optimized payments to settle balances in this group.",
+      "noImbursements": "It looks like your group doesn’t need any settlement 😁",
       "owes": "<strong>{from}</strong> owes <strong>{to}</strong>",
-      "markAsPaid": "Mark as paid"
+      "markAsPaid": "Settle up",
+      "request": "Request",
+      "requestTooltip": "Request payment",
+      "requestConfirmTitle": "Send payment request?",
+      "requestConfirmDescription": "An email will be sent to {name} requesting {amount}."
     }
   },
   "Stats": {
@@ -424,6 +463,8 @@
     "description": "Overview of all activity in this group.",
     "globalTitle": "Activity",
     "globalDescription": "Overview of all activity across your groups.",
+    "globalListTitle": "Activity history",
+    "globalListDescription": "Recent changes across all your groups.",
     "globalNoActivity": "There is not yet any activity in your groups.",
     "noActivity": "There is not yet any activity in your group.",
     "someone": "Someone",
@@ -857,8 +898,9 @@
       "title": "Expenses with {name}",
       "description": "All expenses you share with this friend, across groups.",
       "backToFriends": "Back to friends",
+      "backToFriend": "Back to {name}",
       "listTitle": "Expense history",
-      "listDescription": "Direct expenses and expenses from shared groups.",
+      "listDescription": "Expenses shared directly between you and this friend.",
       "create": "Add expense",
       "empty": "No expenses with this friend yet.",
       "directExpenses": "Direct expenses",
@@ -938,7 +980,12 @@
     "deleteConfirmAction": "Delete permanently"
   },
   "UserMenu": {
+    "menuLabel": "User menu",
     "profileSettings": "Profile settings",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
     "signingOut": "Signing out…",
     "signOut": "Sign out"
   },
@@ -965,5 +1012,11 @@
     "eventDelete": "Expense deleted",
     "selectAtLeastOneFilter": "Select at least one member or event.",
     "subscribeError": "Could not enable notifications. Please try again."
+  },
+  "AppError": {
+    "title": "Something went wrong",
+    "description": "Local app data was cleared. Your session will also be ended so you can start fresh from the homepage.",
+    "recover": "Go to homepage",
+    "recovering": "Redirecting…"
   }
 }
