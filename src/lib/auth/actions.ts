@@ -78,3 +78,11 @@ export async function loginAction(formData: {
 export async function logoutAction(): Promise<void> {
   await signOut({ redirectTo: '/login' })
 }
+
+/**
+ * Recovery after an unrecoverable client error (e.g. stale session after a DB reseed).
+ * Clears the auth session and redirects to the homepage.
+ */
+export async function recoverFromAppErrorAction(): Promise<void> {
+  await signOut({ redirectTo: '/' })
+}

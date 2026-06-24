@@ -8,6 +8,7 @@ import { useState } from 'react'
 import superjson from 'superjson'
 import { makeQueryClient } from './query-client'
 import type { AppRouter } from './routers/_app'
+import { unauthorizedLink } from './unauthorized-link'
 
 superjson.registerCustom<Prisma.Decimal, string>(
   {
@@ -55,6 +56,7 @@ export function TRPCProvider(
   const [trpcClient] = useState(() =>
     trpc.createClient({
       links: [
+        unauthorizedLink,
         httpBatchLink({
           transformer: superjson,
           url: getUrl(),
