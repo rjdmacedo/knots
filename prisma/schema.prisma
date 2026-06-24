@@ -25,6 +25,9 @@ model Group {
   information       String?                  @db.Text
   currency          String                   @default("$")
   currencyCode      String?
+  /// When true, balances are simplified to the minimum number of payments (Splitwise-style).
+  /// When false, each person owes whoever actually paid for their share.
+  simplifyDebts     Boolean                  @default(true)
   expenses          Expense[]
   activities        Activity[]
   pushSubscriptions PushSubscription[]

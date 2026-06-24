@@ -14,6 +14,7 @@ export async function getSharedGroupsForUsers(
     type: GroupType
     currency: string
     currencyCode: string | null
+    simplifyDebts: boolean
   }>
 > {
   const memberships = await prisma.groupMembership.findMany({
@@ -31,6 +32,7 @@ export async function getSharedGroupsForUsers(
           type: true,
           currency: true,
           currencyCode: true,
+          simplifyDebts: true,
         },
       },
     },
@@ -47,6 +49,7 @@ export async function getSharedGroupsForUsers(
         type: GroupType
         currency: string
         currencyCode: string | null
+        simplifyDebts: boolean
       }
     }
   >()
@@ -69,6 +72,7 @@ export async function getSharedGroupsForUsers(
     type: GroupType
     currency: string
     currencyCode: string | null
+    simplifyDebts: boolean
   }> = []
 
   Array.from(groupMap.values()).forEach((entry) => {

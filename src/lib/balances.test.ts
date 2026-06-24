@@ -76,3 +76,56 @@ describe('getBalances BY_PERCENTAGE', () => {
     )
   })
 })
+
+function makeEvenExpense(
+  payerId: string,
+  participantIds: string[],
+  amount: number,
+): TestExpense {
+  return {
+    amount,
+    isReimbursement: false,
+    splitMode: 'EVENLY',
+    paidBy: { id: payerId, name: payerId },
+    paidFor: participantIds.map((id) => ({
+      user: { id, name: id },
+      shares: 1,
+    })),
+  } as TestExpense
+}
+
+describe('getReimbursements', () => {
+  it('simplified mode reduces payments through intermediaries', () => {
+    const { getReimbursements } = jest.requireActual(
+      './balances',
+    ) as typeof import('./balances')
+    const expenses = [
+      makeEvenExpense('alice', ['bob', 'carol'], 200),
+      makeEvenExpense('bob', ['carol'], 100),
+    ]
+
+    const simplified = getReimbursements(expenses, { simplifyDebts: true })
+    const direct = getReimbursements(expenses, { simplifyDebts: false })
+
+    expect(simplified).toEqual([{ from: 'carol', to: 'alice', amount: 200 }])
+    expect(direct).toEqual(
+      expect.arrayContaining([
+        { from: 'bob', to: 'alice', amount: 100 },
+        { from: 'carol', to: 'alice', amount: 100 },
+        { from: 'carol', to: 'bob', amount: 100 },
+      ]),
+    )
+    expect(direct).toHaveLength(3)
+  })
+
+  it('defaults to simplified mode', () => {
+    const { getReimbursements } = jest.requireActual(
+      './balances',
+    ) as typeof import('./balances')
+    const expenses = [makeEvenExpense('alice', ['alice', 'bob'], 200)]
+
+    expect(getReimbursements(expenses)).toEqual([
+      { from: 'bob', to: 'alice', amount: 100 },
+    ])
+  })
+})

@@ -54,12 +54,16 @@ export const getGroupStatsProcedure = groupMemberProcedure
     const monthOverMonth = computeMonthOverMonth(spendingOverTime)
     const dailyAverage = computeDailyAverage(expenses)
     const aggregateMetrics = computeAggregateMetrics(expenses)
-    const netBalances = computeNetBalances(expenses, members)
+    const netBalances = computeNetBalances(expenses, members, {
+      simplifyDebts: group?.simplifyDebts ?? true,
+    })
     const paidVsSharePercentages = computePaidVsSharePercentages(
       expenses,
       members,
     )
-    const reimbursements = computeReimbursementStats(expenses, members)
+    const reimbursements = computeReimbursementStats(expenses, members, {
+      simplifyDebts: group?.simplifyDebts ?? true,
+    })
 
     return {
       totalGroupSpendings,

@@ -6,6 +6,7 @@ export const groupFormSchema = z.object({
   information: z.string().optional(),
   currency: z.string().min(1, 'min1').max(5, 'max5'),
   currencyCode: z.union([z.string().length(3).nullish(), z.literal('')]), // ISO-4217 currency code
+  simplifyDebts: z.boolean().default(true),
 })
 
 export type GroupFormValues = z.infer<typeof groupFormSchema>

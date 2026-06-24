@@ -108,6 +108,65 @@ function compareBalancesForReimbursements(b1: any, b2: any): number {
   return b1.userId < b2.userId ? -1 : 1
 }
 
+/**
+ * Direct (unsimplified) debts: each person owes whoever paid for their share,
+ * without routing payments through other group members.
+ */
+export function getDirectReimbursements(
+  expenses: NonNullable<Awaited<ReturnType<typeof getGroupExpenses>>>,
+): Reimbursement[] {
+  const pairOwes = new Map<string, number>()
+
+  for (const expense of expenses) {
+    const balances = getBalances([expense])
+    const payer = expense.paidBy.id
+
+    for (const [userId, { total }] of Object.entries(balances)) {
+      if (userId === payer || total >= 0) continue
+      const key = `${userId}:${payer}`
+      pairOwes.set(key, (pairOwes.get(key) ?? 0) + -total)
+    }
+  }
+
+  const users = new Set<string>()
+  for (const key of Array.from(pairOwes.keys())) {
+    const [from, to] = key.split(':')
+    users.add(from)
+    users.add(to)
+  }
+
+  const userList = Array.from(users).sort()
+  const reimbursements: Reimbursement[] = []
+
+  for (let i = 0; i < userList.length; i++) {
+    for (let j = i + 1; j < userList.length; j++) {
+      const a = userList[i]
+      const b = userList[j]
+      const aOwesB = pairOwes.get(`${a}:${b}`) ?? 0
+      const bOwesA = pairOwes.get(`${b}:${a}`) ?? 0
+      const net = Math.round(aOwesB - bOwesA) + 0
+
+      if (net > 0) {
+        reimbursements.push({ from: a, to: b, amount: net })
+      } else if (net < 0) {
+        reimbursements.push({ from: b, to: a, amount: -net })
+      }
+    }
+  }
+
+  return reimbursements.filter(({ amount }) => amount !== 0)
+}
+
+export function getReimbursements(
+  expenses: NonNullable<Awaited<ReturnType<typeof getGroupExpenses>>>,
+  options?: { simplifyDebts?: boolean },
+): Reimbursement[] {
+  if (options?.simplifyDebts === false) {
+    return getDirectReimbursements(expenses)
+  }
+  return getSuggestedReimbursements(getBalances(expenses))
+}
+
 export function getSuggestedReimbursements(
   balances: Balances,
 ): Reimbursement[] {

@@ -8,6 +8,7 @@ import { ExpenseFormValues, GroupFormValues } from '@/lib/schemas'
 import {
   ActivityType,
   Expense,
+  GroupType,
   RecurrenceRule,
   RecurringExpenseLink,
 } from '@prisma/client'
@@ -26,6 +27,7 @@ export async function createGroup(groupFormValues: GroupFormValues) {
       information: groupFormValues.information,
       currency: groupFormValues.currency,
       currencyCode: groupFormValues.currencyCode,
+      simplifyDebts: groupFormValues.simplifyDebts,
     },
     include: {
       memberships: {
@@ -38,6 +40,7 @@ export async function createGroup(groupFormValues: GroupFormValues) {
 export async function createExpense(
   expenseFormValues: ExpenseFormValues,
   groupId: string,
+  userId?: string,
 ): Promise<Expense> {
   const group = await getGroup(groupId)
   if (!group)
@@ -75,6 +78,7 @@ export async function createExpense(
   ]
 
   await logActivity(groupId, ActivityType.CREATE_EXPENSE, {
+    userId,
     expenseId,
     data: expenseFormValues.title,
     changes,
@@ -353,7 +357,18 @@ export async function updateGroup(
   const existingGroup = await getGroup(groupId)
   if (!existingGroup) throw new Error('Invalid group ID')
 
-  const changes = computeGroupChanges(existingGroup, groupFormValues)
+  const isDyad = existingGroup.type === GroupType.DYAD
+  const nextValues = isDyad
+    ? {
+        name: existingGroup.name,
+        information: existingGroup.information ?? '',
+        currency: groupFormValues.currency,
+        currencyCode: groupFormValues.currencyCode,
+        simplifyDebts: existingGroup.simplifyDebts,
+      }
+    : groupFormValues
+
+  const changes = computeGroupChanges(existingGroup, nextValues)
 
   await logActivity(groupId, ActivityType.UPDATE_GROUP, {
     changes,
@@ -362,10 +377,11 @@ export async function updateGroup(
   return prisma.group.update({
     where: { id: groupId },
     data: {
-      name: groupFormValues.name,
-      information: groupFormValues.information,
-      currency: groupFormValues.currency,
-      currencyCode: groupFormValues.currencyCode,
+      name: nextValues.name,
+      information: nextValues.information,
+      currency: nextValues.currency,
+      currencyCode: nextValues.currencyCode,
+      simplifyDebts: nextValues.simplifyDebts,
     },
   })
 }
@@ -464,7 +480,7 @@ export async function getActivities(
   const activities = await prisma.activity.findMany({
     where: { groupId },
     include: { changes: true },
-    orderBy: [{ time: 'desc' }],
+    orderBy: [{ time: 'desc' }, { id: 'desc' }],
     skip: options?.offset,
     take: options?.length,
   })
@@ -504,7 +520,7 @@ export async function getGlobalActivities(
   const activities = await prisma.activity.findMany({
     where: { groupId: { in: groupIds } },
     include: { changes: true },
-    orderBy: [{ time: 'desc' }],
+    orderBy: [{ time: 'desc' }, { id: 'desc' }],
     skip: options?.offset,
     take: options?.length,
   })
@@ -575,6 +591,7 @@ export async function logActivity(
     data: {
       id: randomId(),
       groupId,
+      time: new Date(),
       activityType,
       // Activity.participantId column stores the User ID of the actor
       participantId: userId,

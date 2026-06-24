@@ -30,6 +30,7 @@ export const getGroupDetailsProcedure = groupMemberProcedure
         information: group.information,
         currency: group.currency,
         currencyCode: group.currencyCode,
+        simplifyDebts: group.simplifyDebts,
         createdAt: group.createdAt,
         participants: members,
       },

@@ -2,7 +2,7 @@ import { getGroupExpenses } from '@/lib/api'
 import {
   getBalances,
   getPublicBalances,
-  getSuggestedReimbursements,
+  getReimbursements,
 } from '@/lib/balances'
 import { calculateShare } from '@/lib/totals'
 
@@ -432,9 +432,10 @@ export function computeAggregateMetrics(
 export function computeNetBalances(
   expenses: Expense[],
   participants: Participant[],
+  options?: { simplifyDebts?: boolean },
 ): NetBalanceItem[] {
   const balances = getBalances(expenses)
-  const reimbursements = getSuggestedReimbursements(balances)
+  const reimbursements = getReimbursements(expenses, options)
   const settlementBalances = getPublicBalances(reimbursements)
 
   const items: NetBalanceItem[] = participants.map((participant) => ({
@@ -514,6 +515,7 @@ function getParticipantName(
 export function computeReimbursementStats(
   expenses: Expense[],
   participants: Participant[],
+  options?: { simplifyDebts?: boolean },
 ): ReimbursementStats {
   const recorded: RecordedReimbursementItem[] = []
 
@@ -541,7 +543,7 @@ export function computeReimbursementStats(
   recorded.sort((a, b) => b.date.getTime() - a.date.getTime())
 
   const balances = getBalances(expenses)
-  const suggestedRaw = getSuggestedReimbursements(balances)
+  const suggestedRaw = getReimbursements(expenses, options)
   const suggested: SuggestedReimbursementItem[] = suggestedRaw.map((r) => ({
     fromId: r.from,
     fromName: getParticipantName(r.from, participants),

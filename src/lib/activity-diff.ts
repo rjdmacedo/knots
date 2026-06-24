@@ -27,11 +27,13 @@ export function computeGroupChanges(
     name: string
     information: string | null
     currency: string
+    simplifyDebts?: boolean
   },
   updated: {
     name: string
     information?: string
     currency: string
+    simplifyDebts?: boolean
   },
 ): FieldChange[] {
   const changes: FieldChange[] = []
@@ -57,6 +59,18 @@ export function computeGroupChanges(
       field: 'currency',
       oldValue: existing.currency,
       newValue: updated.currency,
+    })
+  }
+
+  if (
+    existing.simplifyDebts !== undefined &&
+    updated.simplifyDebts !== undefined &&
+    existing.simplifyDebts !== updated.simplifyDebts
+  ) {
+    changes.push({
+      field: 'simplifyDebts',
+      oldValue: String(existing.simplifyDebts),
+      newValue: String(updated.simplifyDebts),
     })
   }
 
