@@ -69,14 +69,22 @@ export const viewport: Viewport = {
 function Content({
   children,
   isAuthenticated,
+  userName,
+  userEmail,
 }: {
   children: React.ReactNode
   isAuthenticated: boolean
+  userName?: string | null
+  userEmail?: string | null
 }) {
   return (
     <TRPCProvider>
       <TooltipProvider>
-        <AppHeader isAuthenticated={isAuthenticated} />
+        <AppHeader
+          isAuthenticated={isAuthenticated}
+          userName={userName}
+          userEmail={userEmail}
+        />
         <div className="flex-1 overflow-y-auto py-16">
           <main className="flex flex-col min-h-full py-4">{children}</main>
         </div>
@@ -114,7 +122,13 @@ export default async function RootLayout({
             <Suspense>
               <ProgressBar />
             </Suspense>
-            <Content isAuthenticated={!!session?.user}>{children}</Content>
+            <Content
+              isAuthenticated={!!session?.user?.id}
+              userName={session?.user?.name}
+              userEmail={session?.user?.email}
+            >
+              {children}
+            </Content>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

@@ -7,31 +7,27 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { UserMenu } from '@/components/user-menu'
 import { cn } from '@/lib/utils'
-import {
-  History,
-  LayoutGrid,
-  UserCircle,
-  Users,
-  type LucideIcon,
-} from 'lucide-react'
+import { History, LayoutGrid, Users, type LucideIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 interface AppHeaderProps {
   isAuthenticated: boolean
+  userName?: string | null
+  userEmail?: string | null
 }
 
 const navItems: {
   href: string
-  labelKey: 'friends' | 'groups' | 'activities' | 'profile'
+  labelKey: 'friends' | 'groups' | 'activities'
   icon: LucideIcon
 }[] = [
   { href: '/friends', labelKey: 'friends', icon: Users },
   { href: '/groups', labelKey: 'groups', icon: LayoutGrid },
   { href: '/activities', labelKey: 'activities', icon: History },
-  { href: '/settings', labelKey: 'profile', icon: UserCircle },
 ]
 
 function isNavActive(pathname: string, href: string) {
@@ -41,7 +37,11 @@ function isNavActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`)
 }
 
-export function AppHeader({ isAuthenticated }: AppHeaderProps) {
+export function AppHeader({
+  isAuthenticated,
+  userName,
+  userEmail,
+}: AppHeaderProps) {
   const t = useTranslations('Header')
   const pathname = usePathname()
   const logoHref = isAuthenticated ? '/groups' : '/'
@@ -97,6 +97,9 @@ export function AppHeader({ isAuthenticated }: AppHeaderProps) {
                   </li>
                 )
               })}
+              <li>
+                <UserMenu name={userName} email={userEmail} />
+              </li>
             </ul>
           </nav>
         )}
