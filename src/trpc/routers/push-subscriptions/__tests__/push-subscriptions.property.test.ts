@@ -65,6 +65,16 @@ jest.mock('@/lib/prisma', () => ({
   },
 }))
 
+jest.mock('@/trpc/init', () => {
+  const { initTRPC } = require('@trpc/server')
+  const t = initTRPC.context().create()
+  return {
+    baseProcedure: t.procedure,
+    createTRPCRouter: t.router,
+    createTRPCContext: jest.fn().mockResolvedValue({ session: null }),
+  }
+})
+
 // Mock superjson to avoid ESM import issues
 jest.mock('superjson', () => ({
   __esModule: true,

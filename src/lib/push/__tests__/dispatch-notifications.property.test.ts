@@ -73,6 +73,7 @@ const MockWebPushError = jest.requireMock('web-push').WebPushError as new (
 // --- Constants ---
 
 const PBT_NUM_RUNS = 30
+const DISPATCH_ACTOR_USER_ID = 'dispatch-actor-user'
 
 const ACTIVITY_TYPES = [
   ActivityType.CREATE_EXPENSE,
@@ -106,6 +107,22 @@ const arbSubscription = (groupId: string) =>
 
 const arbSubscriptions = (groupId: string) =>
   fc.array(arbSubscription(groupId), { minLength: 1, maxLength: 10 })
+
+const arbEligibleSubscriptions = (groupId: string, actorUserId: string) =>
+  arbSubscriptions(groupId).map((subs) =>
+    subs.map((sub) => ({
+      ...sub,
+      subscriberUserId:
+        sub.subscriberUserId === actorUserId
+          ? `${sub.subscriberUserId}-other`
+          : sub.subscriberUserId,
+      notifyAllMembers: true,
+      includedUserIds: [],
+      notifyOnCreate: true,
+      notifyOnUpdate: true,
+      notifyOnDelete: true,
+    })),
+  )
 
 // --- Tests ---
 
@@ -299,7 +316,7 @@ describe('Dispatch Notifications Property Tests', () => {
       return fc.assert(
         fc.asyncProperty(
           arbActivityType,
-          arbSubscriptions('group-1'),
+          arbEligibleSubscriptions('group-1', DISPATCH_ACTOR_USER_ID),
           arbStatusCode,
           async (activityType, subscriptions, statusCode) => {
             jest.clearAllMocks()
@@ -314,11 +331,20 @@ describe('Dispatch Notifications Property Tests', () => {
             )
 
             await dispatchNotifications('group-1', activityType, {
+              userId: DISPATCH_ACTOR_USER_ID,
               expenseId: 'expense-1',
             })
 
-            // All subscriptions should be deleted since all got 410/404
-            expect(mockDelete).toHaveBeenCalledTimes(subscriptions.length)
+            const eligibleCount = subscriptions.filter((sub) =>
+              isPushSubscriptionEligible(
+                sub,
+                activityType,
+                DISPATCH_ACTOR_USER_ID,
+              ),
+            ).length
+
+            // Eligible subscriptions should be deleted since all got 410/404
+            expect(mockDelete).toHaveBeenCalledTimes(eligibleCount)
 
             // Verify each deleted subscription matches one of the original subscriptions
             const deletedIds = mockDelete.mock.calls.map(
