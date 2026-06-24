@@ -1,12 +1,15 @@
 import { getGroupExpenses } from '@/lib/api'
 import { findDyadGroup, findOrCreateDyadGroup } from '@/lib/dyad-groups'
+import { getFriendActivities } from '@/lib/friend-activities'
 import {
   computeFriendBalance,
+  computeFriendSettlements,
   FriendBalanceSummary,
   sortFriendBalances,
 } from '@/lib/friend-balances'
 import { getSharedGroupsForUsers } from '@/lib/friend-balances-db'
 import { getFriendExpenses } from '@/lib/friend-expenses'
+import { getFriendStats } from '@/lib/friend-stats'
 import {
   acceptFriendRequest,
   addFriendByEmail,
@@ -125,6 +128,37 @@ export const friendsRouter = createTRPCRouter({
       return { success: true }
     }),
 
+  getFriend: protectedProcedure
+    .input(z.object({ friendId: z.string().min(1) }))
+    .query(async ({ ctx, input }) => {
+      const friend = await prisma.friend.findUnique({
+        where: { id: input.friendId },
+        select: {
+          id: true,
+          userId: true,
+          name: true,
+          email: true,
+          friendUserId: true,
+          friend: { select: { name: true } },
+        },
+      })
+
+      if (!friend || friend.userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Friend not found.',
+        })
+      }
+
+      return {
+        id: friend.id,
+        name: friend.name ?? friend.friend?.name ?? friend.email.split('@')[0],
+        email: friend.email,
+        friendUserId: friend.friendUserId,
+        isConnected: friend.friendUserId !== null,
+      }
+    }),
+
   getBalanceDetail: protectedProcedure
     .input(z.object({ friendId: z.string().min(1) }))
     .query(async ({ ctx, input }) => {
@@ -172,6 +206,12 @@ export const friendsRouter = createTRPCRouter({
         sharedGroupsWithExpenses,
       )
 
+      const settlements = computeFriendSettlements(
+        ctx.user.id,
+        friend.friendUserId,
+        sharedGroupsWithExpenses,
+      )
+
       const dyadGroup = await findDyadGroup(ctx.user.id, friend.friendUserId)
 
       return {
@@ -184,6 +224,8 @@ export const friendsRouter = createTRPCRouter({
         },
         dyadGroupId: dyadGroup?.groupId ?? null,
         balances,
+        settlements,
+        currentUserId: ctx.user.id,
         sharedGroupCount: sharedGroups.length,
       }
     }),
@@ -289,5 +331,57 @@ export const friendsRouter = createTRPCRouter({
         friend.friendUserId,
         displayName,
       )
+    }),
+
+  getStats: protectedProcedure
+    .input(z.object({ friendId: z.string().min(1) }))
+    .query(async ({ ctx, input }) => {
+      const friend = await prisma.friend.findUnique({
+        where: { id: input.friendId },
+        select: { userId: true, friendUserId: true },
+      })
+
+      if (!friend || friend.userId !== ctx.user.id || !friend.friendUserId) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Friend not found.',
+        })
+      }
+
+      return getFriendStats(ctx.user.id, friend.friendUserId)
+    }),
+
+  listActivities: protectedProcedure
+    .input(
+      z.object({
+        friendId: z.string().min(1),
+        cursor: z.number().optional().default(0),
+        limit: z.number().optional().default(20),
+      }),
+    )
+    .query(async ({ ctx, input: { friendId, cursor, limit } }) => {
+      const friend = await prisma.friend.findUnique({
+        where: { id: friendId },
+        select: { userId: true, friendUserId: true },
+      })
+
+      if (!friend || friend.userId !== ctx.user.id || !friend.friendUserId) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Friend not found.',
+        })
+      }
+
+      const activities = await getFriendActivities(
+        ctx.user.id,
+        friend.friendUserId,
+        { offset: cursor, length: limit + 1 },
+      )
+
+      return {
+        activities: activities.slice(0, limit),
+        hasMore: activities.length > limit,
+        nextCursor: cursor + limit,
+      }
     }),
 })

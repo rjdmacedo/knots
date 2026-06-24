@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Currency } from '@/lib/currency'
+import { participantEmphasisClassName } from '@/lib/participant-emphasis'
 import { NetBalanceItem } from '@/lib/stats'
 import { cn, formatCurrency } from '@/lib/utils'
 import { useLocale, useTranslations } from 'next-intl'
@@ -14,9 +15,14 @@ import { useLocale, useTranslations } from 'next-intl'
 type Props = {
   netBalances: NetBalanceItem[]
   currency: Currency
+  emphasizedParticipantIds?: string[]
 }
 
-export function NetBalances({ netBalances, currency }: Props) {
+export function NetBalances({
+  netBalances,
+  currency,
+  emphasizedParticipantIds,
+}: Props) {
   const locale = useLocale()
   const t = useTranslations('Stats.NetBalances')
 
@@ -56,7 +62,13 @@ export function NetBalances({ netBalances, currency }: Props) {
             return (
               <li
                 key={item.participantId}
-                className="flex items-center justify-between"
+                className={cn(
+                  'flex items-center justify-between',
+                  participantEmphasisClassName(
+                    item.participantId,
+                    emphasizedParticipantIds,
+                  ),
+                )}
               >
                 <div className="flex flex-col">
                   <span className="text-sm font-medium">

@@ -170,3 +170,35 @@ export async function findOrCreateDyadGroup(
 
   return { groupId, created: true }
 }
+
+export function getDyadFriendUserId(
+  participants: Array<{ id: string }>,
+  currentUserId: string,
+): string | undefined {
+  return participants.find((participant) => participant.id !== currentUserId)
+    ?.id
+}
+
+export async function assertStandardGroup(
+  groupId: string,
+  message = 'This action is not available for direct expense groups.',
+) {
+  const group = await prisma.group.findUnique({
+    where: { id: groupId },
+    select: { type: true },
+  })
+
+  if (!group) {
+    throw new TRPCError({
+      code: 'NOT_FOUND',
+      message: 'Group not found.',
+    })
+  }
+
+  if (group.type === GroupType.DYAD) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message,
+    })
+  }
+}

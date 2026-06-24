@@ -6,16 +6,22 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Currency } from '@/lib/currency'
+import { participantEmphasisClassName } from '@/lib/participant-emphasis'
 import { ParticipantRankingItem } from '@/lib/stats'
-import { formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency } from '@/lib/utils'
 import { useLocale, useTranslations } from 'next-intl'
 
 type Props = {
   ranking: ParticipantRankingItem[]
   currency: Currency
+  emphasizedParticipantIds?: string[]
 }
 
-export function ParticipantRanking({ ranking, currency }: Props) {
+export function ParticipantRanking({
+  ranking,
+  currency,
+  emphasizedParticipantIds,
+}: Props) {
   const locale = useLocale()
   const t = useTranslations('Stats.ParticipantRanking')
 
@@ -42,7 +48,16 @@ export function ParticipantRanking({ ranking, currency }: Props) {
       <CardContent>
         <ol className="space-y-3">
           {ranking.map((item, index) => (
-            <li key={item.participantId} className="flex items-center gap-3">
+            <li
+              key={item.participantId}
+              className={cn(
+                'flex items-center gap-3',
+                participantEmphasisClassName(
+                  item.participantId,
+                  emphasizedParticipantIds,
+                ),
+              )}
+            >
               <span className="text-muted-foreground w-6 text-right text-sm font-medium">
                 {index + 1}.
               </span>

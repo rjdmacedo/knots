@@ -16,17 +16,23 @@ import {
   type ChartConfig,
 } from '@/components/ui/chart'
 import { Currency } from '@/lib/currency'
+import { participantEmphasisClassName } from '@/lib/participant-emphasis'
 import { ExpenseDistributionItem } from '@/lib/stats'
-import { formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency } from '@/lib/utils'
 import { useLocale, useTranslations } from 'next-intl'
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 
 type Props = {
   data: ExpenseDistributionItem[]
   currency: Currency
+  emphasizedParticipantIds?: string[]
 }
 
-export function ExpenseDistribution({ data, currency }: Props) {
+export function ExpenseDistribution({
+  data,
+  currency,
+  emphasizedParticipantIds,
+}: Props) {
   const locale = useLocale()
   const t = useTranslations('Stats.ExpenseDistribution')
 
@@ -45,6 +51,7 @@ export function ExpenseDistribution({ data, currency }: Props) {
   }
 
   const chartData = data.map((item) => ({
+    participantId: item.participantId,
     name: item.participantName,
     paid: item.totalPaid,
     share: item.totalShare,
@@ -95,9 +102,36 @@ export function ExpenseDistribution({ data, currency }: Props) {
               axisLine={false}
               tickMargin={8}
               width={80}
-              tickFormatter={(value) =>
-                value.length > 10 ? value.slice(0, 10) + '…' : value
-              }
+              tick={({ x, y, payload }) => {
+                const item = chartData.find(
+                  (entry) => entry.name === payload.value,
+                )
+                const opacity =
+                  item &&
+                  emphasizedParticipantIds &&
+                  !emphasizedParticipantIds.includes(item.participantId)
+                    ? 0.5
+                    : 1
+
+                const label =
+                  typeof payload.value === 'string' && payload.value.length > 10
+                    ? `${payload.value.slice(0, 10)}…`
+                    : payload.value
+
+                return (
+                  <text
+                    x={x}
+                    y={y}
+                    dy={4}
+                    textAnchor="end"
+                    fill="currentColor"
+                    opacity={opacity}
+                    className="text-xs fill-muted-foreground"
+                  >
+                    {label}
+                  </text>
+                )
+              }}
             />
             <XAxis
               type="number"
@@ -147,7 +181,13 @@ export function ExpenseDistribution({ data, currency }: Props) {
           {data.map((item) => (
             <div
               key={item.participantId}
-              className="flex items-center justify-between text-sm"
+              className={cn(
+                'flex items-center justify-between text-sm',
+                participantEmphasisClassName(
+                  item.participantId,
+                  emphasizedParticipantIds,
+                ),
+              )}
             >
               <span className="font-medium">{item.participantName}</span>
               <span

@@ -1,6 +1,5 @@
 'use client'
 
-import { FriendBalanceSummary } from '@/app/friends/friend-balance-summary'
 import { ExpenseCard } from '@/app/groups/[groupId]/expenses/expense-card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -123,121 +122,93 @@ export function FriendExpenses({ friendId }: Props) {
     )
   }
 
-  const { friend, expenses, balances } = data
+  const { expenses } = data
 
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <Link
-          href="/friends"
-          className="text-sm text-muted-foreground hover:underline"
-        >
-          ← {t('backToFriends')}
-        </Link>
-      </div>
+    <Card className="overflow-visible">
+      <CardHeader>
+        <CardTitle>{t('listTitle')}</CardTitle>
+        <CardDescription>{t('listDescription')}</CardDescription>
+        <CardAction>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  size="icon"
+                  disabled={findOrCreateDyadGroup.isPending}
+                  onClick={() => findOrCreateDyadGroup.mutate({ friendId })}
+                />
+              }
+            >
+              {findOrCreateDyadGroup.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Plus className="w-4 h-4" />
+              )}
+            </TooltipTrigger>
+            <TooltipContent>{t_expenses('create')}</TooltipContent>
+          </Tooltip>
+        </CardAction>
+      </CardHeader>
+      <CardContent className="p-0">
+        {expenses.length === 0 ? (
+          <p className="px-4 pb-4 text-sm text-muted-foreground">
+            {t('empty')}
+          </p>
+        ) : (
+          <>
+            {Object.values(EXPENSE_GROUPS).map((expenseGroup) => {
+              const groupItems = groupedExpensesByDate[expenseGroup]
+              if (!groupItems || groupItems.length === 0) return null
 
-      <div>
-        <h1 className="font-bold text-2xl">
-          {t('title', { name: friend.name })}
-        </h1>
-        <p className="text-sm text-muted-foreground">{t('description')}</p>
-        <div className="mt-2">
-          <FriendBalanceSummary balances={balances} friendName={friend.name} />
-        </div>
-      </div>
-
-      <Card className="overflow-visible">
-        <CardHeader>
-          <CardTitle>{t('listTitle')}</CardTitle>
-          <CardDescription>{t('listDescription')}</CardDescription>
-          <CardAction>
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    size="icon"
-                    disabled={findOrCreateDyadGroup.isPending}
-                    onClick={() => findOrCreateDyadGroup.mutate({ friendId })}
-                  />
-                }
-              >
-                {findOrCreateDyadGroup.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Plus className="w-4 h-4" />
-                )}
-              </TooltipTrigger>
-              <TooltipContent>{t_expenses('create')}</TooltipContent>
-            </Tooltip>
-          </CardAction>
-        </CardHeader>
-        <CardContent className="p-0">
-          {expenses.length === 0 ? (
-            <p className="px-4 pb-4 text-sm text-muted-foreground">
-              {t('empty')}
-            </p>
-          ) : (
-            <>
-              {Object.values(EXPENSE_GROUPS).map((expenseGroup) => {
-                const groupItems = groupedExpensesByDate[expenseGroup]
-                if (!groupItems || groupItems.length === 0) return null
-
-                return (
-                  <div key={expenseGroup}>
-                    <div className="text-xs py-1 font-semibold sticky top-0 z-10 bg-background px-6">
-                      {t_expenses(`Groups.${expenseGroup}`)}
-                    </div>
-                    {groupItems.map((item) => (
-                      <div key={`${item.groupId}-${item.expense.id}`}>
-                        <div className="flex items-center gap-2 px-4 pt-3 pb-1">
-                          {item.groupType === GroupType.DYAD ? (
-                            <Badge variant="secondary">
-                              {t('directExpenses')}
-                            </Badge>
-                          ) : (
-                            <Link
-                              href={`/groups/${item.groupId}/expenses`}
-                              className="hover:underline"
-                            >
-                              <Badge variant="outline">{item.groupName}</Badge>
-                            </Link>
-                          )}
-                        </div>
-                        <ExpenseCard
-                          expense={item.expense}
-                          currency={item.currency}
-                          groupId={item.groupId}
-                          participantCount={item.memberCount}
-                        />
-                      </div>
-                    ))}
+              return (
+                <div key={expenseGroup}>
+                  <div className="text-xs py-1 font-semibold sticky top-0 z-10 bg-background px-6">
+                    {t_expenses(`Groups.${expenseGroup}`)}
                   </div>
-                )
-              })}
-            </>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+                  {groupItems.map((item) => (
+                    <div key={`${item.groupId}-${item.expense.id}`}>
+                      <div className="flex items-center gap-2 px-4 pt-3 pb-1">
+                        {item.groupType === GroupType.DYAD ? (
+                          <Badge variant="secondary">
+                            {t('directExpenses')}
+                          </Badge>
+                        ) : (
+                          <Link
+                            href={`/groups/${item.groupId}/expenses`}
+                            className="hover:underline"
+                          >
+                            <Badge variant="outline">{item.groupName}</Badge>
+                          </Link>
+                        )}
+                      </div>
+                      <ExpenseCard
+                        expense={item.expense}
+                        currency={item.currency}
+                        groupId={item.groupId}
+                        participantCount={item.memberCount}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )
+            })}
+          </>
+        )}
+      </CardContent>
+    </Card>
   )
 }
 
 function LoadingSkeleton() {
   return (
-    <div className="flex flex-col gap-6">
-      <Skeleton className="h-4 w-24" />
-      <div>
-        <Skeleton className="h-7 w-48 mb-2" />
-        <Skeleton className="h-4 w-64" />
-      </div>
-      <Card>
-        <CardHeader>
-          <Skeleton className="h-5 w-32" />
-        </CardHeader>
-        <CardContent>
-          <Skeleton className="h-20 w-full" />
-        </CardContent>
-      </Card>
-    </div>
+    <Card>
+      <CardHeader>
+        <Skeleton className="h-5 w-32" />
+      </CardHeader>
+      <CardContent>
+        <Skeleton className="h-20 w-full" />
+      </CardContent>
+    </Card>
   )
 }

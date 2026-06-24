@@ -16,7 +16,7 @@ export type FriendExpenseItem = {
   currency: ReturnType<typeof getCurrencyFromGroup>
 }
 
-function expenseInvolvesBothUsers(
+export function expenseInvolvesBothUsers(
   expense: GroupExpense,
   userIdA: string,
   userIdB: string,
@@ -38,11 +38,15 @@ export async function getFriendExpenses(
     friendUserId,
   )
 
-  if (sharedGroups.length === 0) {
+  const dyadGroups = sharedGroups.filter(
+    (group) => group.type === GroupType.DYAD,
+  )
+
+  if (dyadGroups.length === 0) {
     return []
   }
 
-  const groupIds = sharedGroups.map((group) => group.id)
+  const groupIds = dyadGroups.map((group) => group.id)
 
   const memberCounts = await prisma.groupMembership.groupBy({
     by: ['groupId'],
@@ -56,7 +60,7 @@ export async function getFriendExpenses(
 
   const items: FriendExpenseItem[] = []
 
-  for (const group of sharedGroups) {
+  for (const group of dyadGroups) {
     const expenses = await fetchGroupExpenses(group.id)
     const currency = getCurrencyFromGroup({
       currency: group.currency,
@@ -88,4 +92,24 @@ export async function getFriendExpenses(
   })
 
   return items
+}
+
+export async function getFriendSharedExpenseRecords(
+  currentUserId: string,
+  friendUserId: string,
+): Promise<
+  Array<{
+    expense: GroupExpense
+    groupId: string
+    groupType: GroupType
+    currency: ReturnType<typeof getCurrencyFromGroup>
+  }>
+> {
+  const items = await getFriendExpenses(currentUserId, friendUserId)
+  return items.map((item) => ({
+    expense: item.expense,
+    groupId: item.groupId,
+    groupType: item.groupType,
+    currency: item.currency,
+  }))
 }

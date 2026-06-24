@@ -1,5 +1,6 @@
 'use client'
 import { RuntimeFeatureFlags } from '@/lib/featureFlags'
+import { invalidateActivityQueries } from '@/lib/invalidate-activity-queries'
 import { trpc } from '@/trpc/client'
 import { useRouter } from 'next/navigation'
 import { ExpenseForm } from './expense-form'
@@ -47,7 +48,7 @@ export function EditExpenseForm({
           expenseFormValues,
         })
         utils.groups.expenses.invalidate()
-        utils.groups.activities.invalidate()
+        invalidateActivityQueries(utils)
         router.push(`/groups/${group.id}`)
       }}
       onDelete={async (_participantId) => {
@@ -56,7 +57,7 @@ export function EditExpenseForm({
           groupId,
         })
         utils.groups.expenses.invalidate()
-        utils.groups.activities.invalidate()
+        invalidateActivityQueries(utils)
         router.push(`/groups/${group.id}`)
       }}
       runtimeFeatureFlags={runtimeFeatureFlags}

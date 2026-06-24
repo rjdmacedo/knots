@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Currency } from '@/lib/currency'
+import { participantEmphasisClassName } from '@/lib/participant-emphasis'
 import { PaidVsShareItem } from '@/lib/stats'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
@@ -14,9 +15,13 @@ import { useTranslations } from 'next-intl'
 type Props = {
   paidVsSharePercentages: PaidVsShareItem[]
   currency: Currency
+  emphasizedParticipantIds?: string[]
 }
 
-export function PaidVsShare({ paidVsSharePercentages }: Props) {
+export function PaidVsShare({
+  paidVsSharePercentages,
+  emphasizedParticipantIds,
+}: Props) {
   const t = useTranslations('Stats.PaidVsShare')
 
   if (paidVsSharePercentages.length === 0) {
@@ -56,7 +61,13 @@ export function PaidVsShare({ paidVsSharePercentages }: Props) {
               return (
                 <li
                   key={item.participantId}
-                  className="flex items-center justify-between"
+                  className={cn(
+                    'flex items-center justify-between',
+                    participantEmphasisClassName(
+                      item.participantId,
+                      emphasizedParticipantIds,
+                    ),
+                  )}
                 >
                   <span className="text-sm font-medium">
                     {item.participantName}

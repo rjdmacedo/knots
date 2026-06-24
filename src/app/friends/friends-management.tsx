@@ -20,6 +20,11 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import {
@@ -306,18 +311,27 @@ export function FriendsManagement() {
 
                   <div className="flex items-center gap-1 shrink-0">
                     {hasAccount && (
-                      <Link
-                        href={`/friends/${friend.id}/expenses`}
-                        className={cn(
-                          buttonVariants({ variant: 'outline', size: 'sm' }),
-                          'h-8 gap-1.5 px-2',
-                        )}
-                      >
-                        <Receipt className="h-4 w-4" />
-                        <span className="hidden sm:inline">
+                      <Tooltip>
+                        <TooltipTrigger
+                          render={
+                            <Link
+                              href={`/friends/${friend.id}/expenses`}
+                              className={cn(
+                                buttonVariants({
+                                  variant: 'outline',
+                                  size: 'icon-sm',
+                                }),
+                              )}
+                              aria-label={t('viewFriendExpenses')}
+                            />
+                          }
+                        >
+                          <Receipt className="size-4" />
+                        </TooltipTrigger>
+                        <TooltipContent>
                           {t('viewFriendExpenses')}
-                        </span>
-                      </Link>
+                        </TooltipContent>
+                      </Tooltip>
                     )}
 
                     <DropdownMenu>

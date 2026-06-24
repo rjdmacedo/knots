@@ -1,3 +1,4 @@
+import { assertStandardGroup } from '@/lib/dyad-groups'
 import { upsertFriendByEmail } from '@/lib/friends'
 import { prisma } from '@/lib/prisma'
 import { isBlockedBy } from '@/lib/profile/block-check'
@@ -54,6 +55,11 @@ export async function addGroupMember(
       message: 'Only the group owner can add members.',
     })
   }
+
+  await assertStandardGroup(
+    groupId,
+    'Members cannot be added to a direct expense group.',
+  )
 
   let targetUser
   let createdUser = false

@@ -11,6 +11,7 @@ import { TRPCClientError } from '@trpc/client'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useSpinDelay } from 'spin-delay'
+import { FriendBalancesActions } from './friend-balances-actions'
 
 type Props = {
   friendId: string
@@ -79,43 +80,27 @@ export function FriendBalanceDetail({ friendId }: Props) {
     return null
   }
 
-  const { friend, balances, sharedGroupCount } = data
+  const { balances, sharedGroupCount, settlements } = data
 
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <Link
-          href="/friends"
-          className="text-sm text-muted-foreground hover:underline"
-        >
-          ← {t('backToFriends')}
-        </Link>
-      </div>
-
-      <div>
-        <h1 className="font-bold text-2xl">
-          {t('title', { name: friend.name })}
-        </h1>
-        <p className="text-sm text-muted-foreground">{t('description')}</p>
-        <div className="mt-3">
-          <Link
-            href={`/friends/${friendId}/expenses`}
-            className="text-sm text-primary hover:underline"
-          >
-            {t_expenses('viewAllExpenses')}
-          </Link>
-        </div>
-      </div>
-
+    <>
       {sharedGroupCount === 0 ? (
-        <EmptyState name={friend.name} />
+        <EmptyState name={data.friend.name} />
       ) : (
         <>
+          <FriendBalancesActions
+            friendId={friendId}
+            friendName={data.friend.name}
+            friendUserId={data.friend.friendUserId!}
+            currentUserId={data.currentUserId}
+            balances={balances}
+            settlements={settlements}
+          />
           <TotalBalanceCard balances={balances} />
-          <GroupBreakdownCard balances={balances} />
+          <GroupBreakdownCard balances={balances} friendId={friendId} />
         </>
       )}
-    </div>
+    </>
   )
 }
 
@@ -170,7 +155,13 @@ function TotalBalanceCard({ balances }: { balances: CurrencyBalance[] }) {
   )
 }
 
-function GroupBreakdownCard({ balances }: { balances: CurrencyBalance[] }) {
+function GroupBreakdownCard({
+  balances,
+  friendId,
+}: {
+  balances: CurrencyBalance[]
+  friendId: string
+}) {
   const t = useTranslations('Friends.BalanceDetail')
   const t_expenses = useTranslations('Friends.Expenses')
 
@@ -201,7 +192,7 @@ function GroupBreakdownCard({ balances }: { balances: CurrencyBalance[] }) {
                 <Link
                   href={
                     group.groupType === GroupType.DYAD
-                      ? `/groups/${group.groupId}/expenses`
+                      ? `/friends/${friendId}/expenses`
                       : `/groups/${group.groupId}/balances`
                   }
                   className="text-xs text-muted-foreground hover:underline"
@@ -221,17 +212,8 @@ function GroupBreakdownCard({ balances }: { balances: CurrencyBalance[] }) {
 }
 
 function LoadingSkeleton() {
-  const t = useTranslations('Friends.BalanceDetail')
-
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <Skeleton className="h-4 w-24" />
-      </div>
-      <div>
-        <Skeleton className="h-7 w-48 mb-2" />
-        <Skeleton className="h-4 w-36" />
-      </div>
+    <>
       <Card>
         <CardHeader>
           <Skeleton className="h-5 w-28" />
@@ -260,6 +242,6 @@ function LoadingSkeleton() {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </>
   )
 }

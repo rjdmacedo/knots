@@ -2,13 +2,14 @@
 
 import { GroupForm } from '@/components/group-form'
 import { trpc } from '@/trpc/client'
+import { GroupType } from '@prisma/client'
 import { useSpinDelay } from 'spin-delay'
 import { useCurrentGroup } from '../current-group-context'
 import { GroupDangerZone } from './group-danger-zone'
 import { MembersManagement } from './members-management'
 
 export const EditGroup = ({ currentUserId }: { currentUserId: string }) => {
-  const { groupId } = useCurrentGroup()
+  const { groupId, group } = useCurrentGroup()
   const { data, isLoading: queryIsLoading } = trpc.groups.getDetails.useQuery({
     groupId,
   })
@@ -24,23 +25,26 @@ export const EditGroup = ({ currentUserId }: { currentUserId: string }) => {
 
   if (isLoading) return <></>
 
+  const isDyad = group?.type === GroupType.DYAD
+
   return (
     <>
       <GroupForm
         group={data?.group}
+        variant={isDyad ? 'dyad' : 'default'}
         onSubmit={async (groupFormValues) => {
           await mutateAsync({ groupId, groupFormValues })
           await utils.groups.invalidate()
         }}
       />
-      {data?.group?.participants && (
+      {!isDyad && data?.group?.participants && (
         <MembersManagement
           groupId={groupId}
           members={data.group.participants}
           currentUserId={currentUserId}
         />
       )}
-      {data?.group && currentMembership && (
+      {!isDyad && data?.group && currentMembership && (
         <GroupDangerZone
           groupId={groupId}
           groupName={data.group.name}

@@ -18,6 +18,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Currency } from '@/lib/currency'
+import { participantEmphasisClassName } from '@/lib/participant-emphasis'
 import { ReimbursementStats } from '@/lib/stats'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { useLocale, useTranslations } from 'next-intl'
@@ -25,9 +26,14 @@ import { useLocale, useTranslations } from 'next-intl'
 type Props = {
   data: ReimbursementStats
   currency: Currency
+  emphasizedParticipantIds?: string[]
 }
 
-export function Reimbursements({ data, currency }: Props) {
+export function Reimbursements({
+  data,
+  currency,
+  emphasizedParticipantIds,
+}: Props) {
   const locale = useLocale()
   const t = useTranslations('Stats.Reimbursements')
 
@@ -89,8 +95,22 @@ export function Reimbursements({ data, currency }: Props) {
                       {formatDate(item.date, locale, { dateStyle: 'medium' })}
                     </TableCell>
                     <TableCell>{item.title}</TableCell>
-                    <TableCell>{item.fromName}</TableCell>
-                    <TableCell>{item.toName}</TableCell>
+                    <TableCell
+                      className={participantEmphasisClassName(
+                        item.fromId,
+                        emphasizedParticipantIds,
+                      )}
+                    >
+                      {item.fromName}
+                    </TableCell>
+                    <TableCell
+                      className={participantEmphasisClassName(
+                        item.toId,
+                        emphasizedParticipantIds,
+                      )}
+                    >
+                      {item.toName}
+                    </TableCell>
                     <TableCell className="text-end font-medium">
                       {formatCurrency(currency, item.amount, locale)}
                     </TableCell>
@@ -127,8 +147,22 @@ export function Reimbursements({ data, currency }: Props) {
               <TableBody>
                 {data.suggested.map((item) => (
                   <TableRow key={`${item.fromId}-${item.toId}-${item.amount}`}>
-                    <TableCell>{item.fromName}</TableCell>
-                    <TableCell>{item.toName}</TableCell>
+                    <TableCell
+                      className={participantEmphasisClassName(
+                        item.fromId,
+                        emphasizedParticipantIds,
+                      )}
+                    >
+                      {item.fromName}
+                    </TableCell>
+                    <TableCell
+                      className={participantEmphasisClassName(
+                        item.toId,
+                        emphasizedParticipantIds,
+                      )}
+                    >
+                      {item.toName}
+                    </TableCell>
                     <TableCell className="text-end font-medium">
                       {formatCurrency(currency, item.amount, locale)}
                     </TableCell>

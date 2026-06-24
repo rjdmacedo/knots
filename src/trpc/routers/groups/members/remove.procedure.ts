@@ -1,3 +1,4 @@
+import { assertStandardGroup } from '@/lib/dyad-groups'
 import { prisma } from '@/lib/prisma'
 import { groupMemberProcedure } from '@/trpc/init'
 import { MembershipRole } from '@prisma/client'
@@ -16,6 +17,11 @@ export const removeMemberProcedure = groupMemberProcedure
       input: { groupId, userId: targetUserId },
       ctx: { user, membership },
     }) => {
+      await assertStandardGroup(
+        groupId,
+        'Members cannot be removed from a direct expense group.',
+      )
+
       // Verify the caller is the group owner
       const callerMembership = membership
 
