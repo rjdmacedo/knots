@@ -1,11 +1,17 @@
 'use client'
 
+import { GroupHeader } from '@/app/groups/[groupId]/group-header'
+import { DetailPageLayout } from '@/components/detail-page-layout'
 import { trpc } from '@/trpc/client'
+import { GroupType } from '@prisma/client'
 import { TRPCClientError } from '@trpc/client'
 import { notFound } from 'next/navigation'
 import { PropsWithChildren } from 'react'
 import { CurrentGroupProvider } from './current-group-context'
-import { GroupHeader } from './group-header'
+
+function shouldShowGroupHeader(groupType?: GroupType) {
+  return groupType !== GroupType.DYAD
+}
 
 export function GroupLayoutClient({
   groupId,
@@ -33,19 +39,14 @@ export function GroupLayoutClient({
       ? { isLoading: true as const, groupId, group: undefined }
       : { isLoading: false as const, groupId, group: data.group }
 
-  if (isLoading) {
-    return (
-      <CurrentGroupProvider {...props}>
-        <GroupHeader />
-        {children}
-      </CurrentGroupProvider>
-    )
-  }
+  const showHeader = shouldShowGroupHeader(data?.group?.type)
 
   return (
     <CurrentGroupProvider {...props}>
-      <GroupHeader />
-      {children}
+      <DetailPageLayout>
+        {showHeader && <GroupHeader />}
+        {children}
+      </DetailPageLayout>
     </CurrentGroupProvider>
   )
 }

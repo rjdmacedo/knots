@@ -54,10 +54,7 @@ const GROUP_INFORMATION_PATH = path.resolve(
   __dirname,
   '../../groups/[groupId]/information/group-information.tsx',
 )
-const RECENT_GROUP_LIST_CARD_PATH = path.resolve(
-  __dirname,
-  '../../groups/recent-group-list-card.tsx',
-)
+const MY_GROUPS_PATH = path.resolve(__dirname, '../../groups/my-groups.tsx')
 
 // --- Helpers ---
 
@@ -261,16 +258,13 @@ describe('UI Button Tooltip Bug Condition Exploration', () => {
      */
     it('GroupCardContextMenu SHALL include a notifications toggle menu item', () => {
       fc.assert(
-        fc.property(
-          fc.constant(RECENT_GROUP_LIST_CARD_PATH),
-          (sourceFilePath) => {
-            const fileContent = fs.readFileSync(sourceFilePath, 'utf-8')
+        fc.property(fc.constant(MY_GROUPS_PATH), (sourceFilePath) => {
+          const fileContent = fs.readFileSync(sourceFilePath, 'utf-8')
 
-            // The context menu must contain a notifications toggle item
-            const hasToggle = hasNotificationsToggle(fileContent)
-            expect(hasToggle).toBe(true)
-          },
-        ),
+          // The context menu must contain a notifications toggle item
+          const hasToggle = hasNotificationsToggle(fileContent)
+          expect(hasToggle).toBe(true)
+        }),
         { numRuns: PBT_NUM_RUNS },
       )
     })

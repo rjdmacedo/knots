@@ -40,8 +40,8 @@ export default function GroupExpensesPageClient({
 
   return (
     <>
-      <Card className="rounded-none -mx-4 border-x-0 sm:border-x sm:rounded-lg sm:mx-0 overflow-visible">
-        <CardHeader className="p-4 sm:p-6">
+      <Card className="overflow-visible">
+        <CardHeader>
           <CardTitle>{t('title')}</CardTitle>
           <CardDescription>{t('description')}</CardDescription>
           <CardAction className="flex flex-row gap-2">

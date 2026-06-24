@@ -1,46 +1,64 @@
 'use client'
 
-import { GroupTabs } from '@/app/groups/[groupId]/group-tabs'
+import { useCurrentGroup } from '@/app/groups/[groupId]/current-group-context'
 import { ShareButton } from '@/app/groups/[groupId]/share-button'
+import {
+  DetailPageHeader,
+  DetailPageTabs,
+} from '@/components/detail-page-layout'
 import { PushNotificationToggle } from '@/components/push-notification-toggle'
 import { Skeleton } from '@/components/ui/skeleton'
 import { trpc } from '@/trpc/client'
-import Link from 'next/link'
-import { useCurrentGroup } from './current-group-context'
+import { GroupType } from '@prisma/client'
+import { useTranslations } from 'next-intl'
 
 export const GroupHeader = () => {
+  const t = useTranslations('Groups')
+  const tTabs = useTranslations()
   const { isLoading, groupId, group } = useCurrentGroup()
   const { data: profile } = trpc.profile.getProfile.useQuery()
 
+  const basePath = `/groups/${groupId}`
+  const isDyad = group?.type === GroupType.DYAD
+  const description =
+    group?.information?.trim() ||
+    (!isLoading && group ? t('detailDescription') : undefined)
+
+  const tabs = [
+    { value: 'expenses', label: tTabs('Expenses.title') },
+    { value: 'balances', label: tTabs('Balances.title') },
+    ...(isDyad
+      ? []
+      : [{ value: 'information', label: tTabs('Information.title') }]),
+    { value: 'stats', label: tTabs('Stats.title') },
+    { value: 'activity', label: tTabs('Activity.title') },
+    ...(isDyad ? [] : [{ value: 'edit', label: tTabs('Settings.title') }]),
+  ]
+
   return (
-    <div className="flex flex-col justify-between gap-3">
-      <div className="flex items-center justify-between">
-        <h1 className="font-bold text-2xl">
-          <Link href={`/groups/${groupId}`}>
-            {isLoading ? (
-              <Skeleton className="mt-1.5 mb-1.5 h-5 w-32" />
-            ) : (
-              <div className="flex">{group.name}</div>
+    <DetailPageHeader
+      backHref="/groups"
+      backLabel={t('backToGroups')}
+      title={isLoading ? <Skeleton className="h-7 w-48" /> : group?.name}
+      description={description}
+      actions={
+        group ? (
+          <>
+            {process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && (
+              <PushNotificationToggle
+                groupId={groupId}
+                currentUserId={profile?.id}
+                members={group.participants.map((participant) => ({
+                  id: participant.id,
+                  name: participant.name,
+                }))}
+              />
             )}
-          </Link>
-        </h1>
-
-        <div className="flex items-center gap-1">
-          {group && process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && (
-            <PushNotificationToggle
-              groupId={groupId}
-              currentUserId={profile?.id}
-              members={group.participants.map((p) => ({
-                id: p.id,
-                name: p.name,
-              }))}
-            />
-          )}
-          {group && <ShareButton group={group} />}
-        </div>
-      </div>
-
-      <GroupTabs groupId={groupId} />
-    </div>
+            <ShareButton group={group} />
+          </>
+        ) : undefined
+      }
+      tabs={<DetailPageTabs basePath={basePath} tabs={tabs} />}
+    />
   )
 }

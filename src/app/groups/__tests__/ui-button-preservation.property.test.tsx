@@ -50,10 +50,7 @@ const GROUP_INFORMATION_PATH = path.resolve(
   __dirname,
   '../../groups/[groupId]/information/group-information.tsx',
 )
-const RECENT_GROUP_LIST_CARD_PATH = path.resolve(
-  __dirname,
-  '../../groups/recent-group-list-card.tsx',
-)
+const MY_GROUPS_PATH = path.resolve(__dirname, '../../groups/my-groups.tsx')
 const EXPENSE_IMPORT_PATH = path.resolve(
   __dirname,
   '../../../components/expense-import.tsx',
@@ -118,8 +115,8 @@ function notificationButtonPreservesClickBehavior(fileContent: string): {
     hasPopoverContent: fileContent.includes('<PopoverContent'),
     hasSubscribeToggle: fileContent.includes('<Switch'),
     hasParticipantSelection:
-      fileContent.includes('<RadioGroup') &&
-      fileContent.includes('members.map'),
+      fileContent.includes('<Checkbox') &&
+      fileContent.includes('otherMembers.map'),
   }
 }
 
@@ -210,22 +207,25 @@ function editButtonPreservesClickBehavior(fileContent: string): {
  */
 function contextMenuPreservesClickBehavior(fileContent: string): {
   hasDropdownMenu: boolean
-  hasRemoveRecentItem: boolean
+  hasNotificationsToggle: boolean
   hasArchiveItem: boolean
-  hasDeleteRecentGroupHandler: boolean
   hasArchiveGroupHandler: boolean
-  hasRefreshCallback: boolean
+  hasLeaveGroupHandler: boolean
+  hasDeleteGroupHandler: boolean
 } {
   return {
     hasDropdownMenu: fileContent.includes('<DropdownMenu'),
-    hasRemoveRecentItem: fileContent.includes('removeRecent'),
+    hasNotificationsToggle:
+      fileContent.includes('notifications.toggle') &&
+      (fileContent.includes('enableNotifications') ||
+        fileContent.includes('disableNotifications')),
     hasArchiveItem:
       fileContent.includes('archive') || fileContent.includes('unarchive'),
-    hasDeleteRecentGroupHandler: fileContent.includes('deleteRecentGroup'),
     hasArchiveGroupHandler:
       fileContent.includes('archiveGroup') ||
       fileContent.includes('unarchiveGroup'),
-    hasRefreshCallback: fileContent.includes('refreshGroupsFromStorage'),
+    hasLeaveGroupHandler: fileContent.includes('leaveGroup'),
+    hasDeleteGroupHandler: fileContent.includes('deleteGroup'),
   }
 }
 
@@ -249,9 +249,13 @@ function expenseImportPreservesTooltipBehavior(fileContent: string): {
     hasDropdownMenu: fileContent.includes('<DropdownMenu'),
     hasDropdownMenuTrigger: fileContent.includes('<DropdownMenuTrigger'),
     hasKnotsImport:
+      fileContent.includes('KnotsImportDialog') ||
       fileContent.includes('importKnots') ||
       fileContent.includes('previewKnotsImport'),
-    hasSplitwiseImport: fileContent.includes('importSplitwise'),
+    hasSplitwiseImport:
+      fileContent.includes('SplitwiseImportDialog') ||
+      fileContent.includes('importSplitwise') ||
+      fileContent.includes('setSplitwiseOpen'),
   }
 }
 
@@ -295,10 +299,10 @@ const PRESERVATION_TEST_CASES: PreservationTestCase[] = [
     requirement: '3.6',
   },
   {
-    name: 'ContextMenu',
-    filePath: RECENT_GROUP_LIST_CARD_PATH,
+    name: 'GroupCardContextMenu',
+    filePath: MY_GROUPS_PATH,
     description:
-      '"Remove from recent groups" and "Archive group" perform their actions',
+      'Notifications toggle, archive, leave, and delete perform their actions',
     requirement: '3.7',
   },
   {
@@ -495,29 +499,26 @@ describe('UI Button Preservation Property Tests', () => {
     })
 
     /**
-     * Context menu: "Remove from recent groups" and "Archive group" SHALL CONTINUE TO
-     * perform those actions as before.
+     * Group card context menu: notifications, archive, leave, and delete SHALL
+     * CONTINUE TO perform those actions as before.
      *
      * **Validates: Requirements 3.7**
      */
-    it('Context menu items SHALL CONTINUE TO perform remove and archive actions', () => {
+    it('Group card context menu items SHALL CONTINUE TO perform their actions', () => {
       fc.assert(
         fc.property(
           arbButtonState,
           arbInteractionSequence,
           (state, sequence) => {
-            const fileContent = fs.readFileSync(
-              RECENT_GROUP_LIST_CARD_PATH,
-              'utf-8',
-            )
+            const fileContent = fs.readFileSync(MY_GROUPS_PATH, 'utf-8')
             const result = contextMenuPreservesClickBehavior(fileContent)
 
             expect(result.hasDropdownMenu).toBe(true)
-            expect(result.hasRemoveRecentItem).toBe(true)
+            expect(result.hasNotificationsToggle).toBe(true)
             expect(result.hasArchiveItem).toBe(true)
-            expect(result.hasDeleteRecentGroupHandler).toBe(true)
             expect(result.hasArchiveGroupHandler).toBe(true)
-            expect(result.hasRefreshCallback).toBe(true)
+            expect(result.hasLeaveGroupHandler).toBe(true)
+            expect(result.hasDeleteGroupHandler).toBe(true)
           },
         ),
         { numRuns: PBT_NUM_RUNS },
@@ -620,10 +621,10 @@ describe('UI Button Preservation Property Tests', () => {
                 expect(r.hasEditRoute).toBe(true)
                 break
               }
-              case 'ContextMenu': {
+              case 'GroupCardContextMenu': {
                 const r = contextMenuPreservesClickBehavior(fileContent)
                 expect(r.hasDropdownMenu).toBe(true)
-                expect(r.hasRemoveRecentItem).toBe(true)
+                expect(r.hasNotificationsToggle).toBe(true)
                 expect(r.hasArchiveItem).toBe(true)
                 break
               }
