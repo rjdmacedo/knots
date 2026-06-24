@@ -1,9 +1,5 @@
+import { interpretEnvVarAsBool } from '@/lib/interpret-env-bool'
 import { ZodIssueCode, z } from 'zod'
-
-const interpretEnvVarAsBool = (val: unknown): boolean => {
-  if (typeof val !== 'string') return false
-  return ['true', 'yes', '1', 'on'].includes(val.toLowerCase())
-}
 
 const envSchema = z
   .object({
