@@ -1,9 +1,8 @@
-import { auth } from '@/lib/auth/auth'
+import { requireSession } from '@/lib/auth/require-session'
 import { createTRPCContext } from '@/trpc/init'
 import { appRouter } from '@/trpc/routers/_app'
 import { Metadata } from 'next'
 import { useTranslations } from 'next-intl'
-import { redirect } from 'next/navigation'
 import { BlockedUsers } from './blocked-users'
 import { NameChangeForm } from './name-change-form'
 import { PasswordChangeForm } from './password-change-form'
@@ -16,11 +15,7 @@ export const metadata: Metadata = {
 }
 
 export default async function ProfileSettingsPage() {
-  const session = await auth()
-
-  if (!session?.user?.id) {
-    redirect('/login?callbackUrl=/settings')
-  }
+  await requireSession({ callbackUrl: '/settings' })
 
   const ctx = await createTRPCContext()
   const caller = appRouter.createCaller(ctx)

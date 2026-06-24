@@ -13,6 +13,7 @@ import Credentials from 'next-auth/providers/credentials'
 import authConfig from './auth.config'
 import { verifyPassword } from './password'
 import { enforceSessionLimit } from './session-limit'
+import { resolveSessionUser } from './session-user'
 
 export const { auth, signIn, signOut, handlers } = NextAuth({
   ...authConfig,
@@ -61,14 +62,29 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
         token.name = user.name
         token.email = user.email
       }
+
+      if (token.id) {
+        const dbUser = await resolveSessionUser(token.id as string)
+        if (!dbUser) {
+          return null
+        }
+      }
+
       return token
     },
     async session({ session, token }) {
-      if (token && session.user) {
-        session.user.id = token.id as string
-        session.user.name = token.name as string
-        session.user.email = token.email as string
+      if (!token?.id) {
+        return { expires: session.expires }
       }
+
+      const user = await resolveSessionUser(token.id as string)
+      if (!user) {
+        return { expires: session.expires }
+      }
+
+      session.user.id = user.id
+      session.user.name = user.name
+      session.user.email = user.email
       return session
     },
   },
