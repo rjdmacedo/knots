@@ -107,6 +107,36 @@ const placeholderEmailService: EmailService = {
     )
     return { ok: true as const }
   },
+  async sendPaymentRequestEmail(
+    to: string,
+    requesterName: string,
+    groupName: string,
+    _amount: string,
+    _balancesLink: string,
+    _message?: string,
+    isDirectBalance?: boolean,
+  ) {
+    const context = isDirectBalance ? 'direct balance' : `group ${groupName}`
+    console.log(
+      `[EmailService] Would send payment request email to ${to} from ${requesterName} (${context})`,
+    )
+    return { ok: true as const }
+  },
+  async sendSettlementRecordedEmail(
+    to: string,
+    payerName: string,
+    groupName: string,
+    _amount: string,
+    _balancesLink: string,
+    remainingBalance: string,
+    isDirectBalance?: boolean,
+  ) {
+    const context = isDirectBalance ? 'direct balance' : `group ${groupName}`
+    console.log(
+      `[EmailService] Would send settlement recorded email to ${to} from ${payerName} (${context}, ${remainingBalance})`,
+    )
+    return { ok: true as const }
+  },
 }
 
 function createAuthService(emailService: EmailService): AuthService {

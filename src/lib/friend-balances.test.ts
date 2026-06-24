@@ -1,6 +1,7 @@
 import { GroupType } from '@prisma/client'
 import {
   computeFriendBalance,
+  computeFriendSettlements,
   FriendBalanceSummary,
   getPairwiseBalance,
   sortFriendBalances,
@@ -8,16 +9,15 @@ import {
 
 jest.mock('@/lib/balances', () => ({
   getBalances: jest.fn(),
-  getSuggestedReimbursements: jest.fn(),
+  getReimbursements: jest.fn(),
 }))
 
-import { getBalances, getSuggestedReimbursements } from '@/lib/balances'
+import { getBalances, getReimbursements } from '@/lib/balances'
 
 const mockedGetBalances = getBalances as jest.MockedFunction<typeof getBalances>
-const mockedGetSuggestedReimbursements =
-  getSuggestedReimbursements as jest.MockedFunction<
-    typeof getSuggestedReimbursements
-  >
+const mockedGetReimbursements = getReimbursements as jest.MockedFunction<
+  typeof getReimbursements
+>
 
 describe('getPairwiseBalance', () => {
   const currentUserId = 'user-1'
@@ -119,7 +119,7 @@ describe('computeFriendBalance', () => {
       [currentUserId]: { paid: 3000, paidFor: 1500, total: 1500 },
       [friendUserId]: { paid: 0, paidFor: 1500, total: -1500 },
     })
-    mockedGetSuggestedReimbursements.mockReturnValue([
+    mockedGetReimbursements.mockReturnValue([
       { from: friendUserId, to: currentUserId, amount: 1500 },
     ])
 
@@ -130,6 +130,7 @@ describe('computeFriendBalance', () => {
         type: GroupType.STANDARD,
         currency: '€',
         currencyCode: 'EUR',
+        simplifyDebts: true,
         expenses: mockExpenses,
       },
     ]
@@ -182,7 +183,7 @@ describe('computeFriendBalance', () => {
         [friendUserId]: { paid: 0, paidFor: 500, total: -500 },
       })
 
-    mockedGetSuggestedReimbursements
+    mockedGetReimbursements
       .mockReturnValueOnce([
         { from: friendUserId, to: currentUserId, amount: 1000 },
       ])
@@ -197,6 +198,7 @@ describe('computeFriendBalance', () => {
         type: GroupType.STANDARD,
         currency: '€',
         currencyCode: 'EUR',
+        simplifyDebts: true,
         expenses: mockExpenses,
       },
       {
@@ -205,6 +207,7 @@ describe('computeFriendBalance', () => {
         type: GroupType.STANDARD,
         currency: '$',
         currencyCode: 'USD',
+        simplifyDebts: true,
         expenses: mockExpenses,
       },
     ]
@@ -252,7 +255,7 @@ describe('computeFriendBalance', () => {
       [currentUserId]: { paid: 1000, paidFor: 1000, total: 0 },
       [friendUserId]: { paid: 1000, paidFor: 1000, total: 0 },
     })
-    mockedGetSuggestedReimbursements.mockReturnValue([])
+    mockedGetReimbursements.mockReturnValue([])
 
     const sharedGroups = [
       {
@@ -261,6 +264,7 @@ describe('computeFriendBalance', () => {
         type: GroupType.STANDARD,
         currency: '$',
         currencyCode: 'USD',
+        simplifyDebts: true,
         expenses: mockExpenses,
       },
     ]
@@ -273,6 +277,86 @@ describe('computeFriendBalance', () => {
 
     expect(result).toHaveLength(1)
     expect(result[0].totalAmount).toBe(0)
+  })
+})
+
+describe('computeFriendSettlements', () => {
+  const currentUserId = 'user-1'
+  const friendUserId = 'user-2'
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it('returns pairwise debts between the two friends per group', () => {
+    mockedGetBalances.mockReturnValue({})
+    mockedGetReimbursements
+      .mockReturnValueOnce([
+        { from: friendUserId, to: currentUserId, amount: 5000 },
+      ])
+      .mockReturnValueOnce([
+        { from: currentUserId, to: friendUserId, amount: 8000 },
+      ])
+
+    const sharedGroups = [
+      {
+        id: 'group-dyad',
+        name: 'Alice',
+        type: GroupType.DYAD,
+        currency: '€',
+        currencyCode: 'EUR',
+        simplifyDebts: true,
+        expenses: [],
+      },
+      {
+        id: 'group-demo',
+        name: 'Demo group',
+        type: GroupType.STANDARD,
+        currency: '€',
+        currencyCode: 'EUR',
+        simplifyDebts: true,
+        expenses: [],
+      },
+    ]
+
+    const result = computeFriendSettlements(
+      currentUserId,
+      friendUserId,
+      sharedGroups,
+    )
+
+    expect(result).toHaveLength(2)
+    expect(result[0]).toMatchObject({
+      groupId: 'group-dyad',
+      from: friendUserId,
+      to: currentUserId,
+      amount: 5000,
+    })
+    expect(result[1]).toMatchObject({
+      groupId: 'group-demo',
+      from: currentUserId,
+      to: friendUserId,
+      amount: 8000,
+    })
+  })
+
+  it('skips groups without debt between the two friends', () => {
+    mockedGetBalances.mockReturnValue({})
+    mockedGetReimbursements.mockReturnValue([])
+
+    const result = computeFriendSettlements(currentUserId, friendUserId, [
+      {
+        id: 'group-1',
+        name: 'Settled',
+        type: GroupType.STANDARD,
+        currency: '€',
+        currencyCode: 'EUR',
+        simplifyDebts: true,
+        expenses: [],
+      },
+    ])
+
+    expect(result).toEqual([])
   })
 })
 

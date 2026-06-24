@@ -1,9 +1,5 @@
 import type { getGroupExpenses } from '@/lib/api'
-import {
-  getBalances,
-  getSuggestedReimbursements,
-  Reimbursement,
-} from '@/lib/balances'
+import { getBalances, getReimbursements, Reimbursement } from '@/lib/balances'
 import { Currency } from '@/lib/currency'
 import { getCurrencyFromGroup } from '@/lib/utils'
 import { GroupType } from '@prisma/client'
@@ -14,6 +10,16 @@ export type GroupBalanceBreakdown = {
   groupType: GroupType
   currency: Currency
   amount: number // minor units; positive = friend owes user
+}
+
+export type FriendSettlement = {
+  groupId: string
+  groupName: string
+  groupType: GroupType
+  currency: Currency
+  from: string
+  to: string
+  amount: number
 }
 
 export type CurrencyBalance = {
@@ -53,6 +59,7 @@ export function computeFriendBalance(
     type: GroupType
     currency: string
     currencyCode: string | null
+    simplifyDebts: boolean
     expenses: NonNullable<Awaited<ReturnType<typeof getGroupExpenses>>>
   }>,
 ): CurrencyBalance[] {
@@ -61,7 +68,9 @@ export function computeFriendBalance(
 
   for (const group of sharedGroups) {
     const balances = getBalances(group.expenses)
-    const reimbursements = getSuggestedReimbursements(balances)
+    const reimbursements = getReimbursements(group.expenses, {
+      simplifyDebts: group.simplifyDebts,
+    })
     const amount = getPairwiseBalance(
       reimbursements,
       currentUserId,
@@ -98,6 +107,56 @@ export function computeFriendBalance(
   }
 
   return Array.from(currencyMap.values())
+}
+
+/** Pairwise settlement suggestions between two friends in each shared group. */
+export function computeFriendSettlements(
+  currentUserId: string,
+  friendUserId: string,
+  sharedGroups: Array<{
+    id: string
+    name: string
+    type: GroupType
+    currency: string
+    currencyCode: string | null
+    simplifyDebts: boolean
+    expenses: NonNullable<Awaited<ReturnType<typeof getGroupExpenses>>>
+  }>,
+): FriendSettlement[] {
+  const settlements: FriendSettlement[] = []
+
+  for (const group of sharedGroups) {
+    const balances = getBalances(group.expenses)
+    const reimbursements = getReimbursements(group.expenses, {
+      simplifyDebts: group.simplifyDebts,
+    })
+    const debt = reimbursements.find(
+      (reimbursement) =>
+        (reimbursement.from === currentUserId &&
+          reimbursement.to === friendUserId) ||
+        (reimbursement.from === friendUserId &&
+          reimbursement.to === currentUserId),
+    )
+
+    if (!debt) {
+      continue
+    }
+
+    settlements.push({
+      groupId: group.id,
+      groupName: group.name,
+      groupType: group.type,
+      currency: getCurrencyFromGroup({
+        currency: group.currency,
+        currencyCode: group.currencyCode,
+      }),
+      from: debt.from,
+      to: debt.to,
+      amount: debt.amount,
+    })
+  }
+
+  return settlements
 }
 
 /** Sort: non-zero balances first, then alphabetical by name. */

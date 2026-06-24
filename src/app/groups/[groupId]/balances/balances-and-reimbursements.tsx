@@ -17,10 +17,17 @@ import { Fragment, useEffect } from 'react'
 import { useSpinDelay } from 'spin-delay'
 import { match } from 'ts-pattern'
 import { useCurrentGroup } from '../current-group-context'
+import { BalancesActions } from './balances-actions'
 
-export default function BalancesAndReimbursements() {
+type Props = {
+  currentUserId?: string
+}
+
+export default function BalancesAndReimbursements({ currentUserId }: Props) {
   const utils = trpc.useUtils()
   const { groupId, group } = useCurrentGroup()
+  const { data: profile } = trpc.profile.getProfile.useQuery()
+  const resolvedUserId = currentUserId ?? profile?.id
   const { data: balancesData, isLoading: balancesAreLoading } =
     trpc.groups.balances.list.useQuery({
       groupId,
@@ -43,6 +50,19 @@ export default function BalancesAndReimbursements() {
 
   return (
     <>
+      {isLoading ? (
+        <BalancesActionsSkeleton />
+      ) : (
+        resolvedUserId && (
+          <BalancesActions
+            groupId={groupId}
+            reimbursements={balancesData!.reimbursements}
+            participants={group!.participants}
+            currency={getCurrencyFromGroup(group!)}
+            currentUserId={resolvedUserId}
+          />
+        )
+      )}
       <Card className="mb-4">
         <CardHeader>
           <CardTitle>{t('title')}</CardTitle>
@@ -77,6 +97,7 @@ export default function BalancesAndReimbursements() {
               participants={group!.participants}
               currency={getCurrencyFromGroup(group!)}
               groupId={groupId}
+              currentUserId={resolvedUserId}
             />
           )}
         </CardContent>
@@ -84,6 +105,18 @@ export default function BalancesAndReimbursements() {
     </>
   )
 }
+
+const BalancesActionsSkeleton = () => (
+  <Card size="sm" className="mb-4">
+    <CardContent className="flex flex-col gap-3">
+      <Skeleton className="h-5 w-56" />
+      <div className="flex gap-2">
+        <Skeleton className="h-9 w-28" />
+        <Skeleton className="h-9 w-32" />
+      </div>
+    </CardContent>
+  </Card>
+)
 
 const ReimbursementsLoading = ({
   participantCount = 3,

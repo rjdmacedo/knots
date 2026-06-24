@@ -11,6 +11,7 @@ import { TRPCError } from '@trpc/server'
 jest.mock('@/lib/prisma', () => ({
   prisma: {
     user: { findUnique: jest.fn() },
+    blockedUser: { findUnique: jest.fn() },
     friend: {
       findUnique: jest.fn(),
       findMany: jest.fn(),
@@ -27,6 +28,7 @@ jest.mock('@/lib/auth/email-service', () => ({
 }))
 
 const mockUserFindUnique = prisma.user.findUnique as jest.Mock
+const mockBlockedUserFindUnique = prisma.blockedUser.findUnique as jest.Mock
 const mockFriendFindUnique = prisma.friend.findUnique as jest.Mock
 const mockFriendFindMany = prisma.friend.findMany as jest.Mock
 const mockFriendUpsert = prisma.friend.upsert as jest.Mock
@@ -66,6 +68,7 @@ describe('friends', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockFriendFindMany.mockResolvedValue([])
+    mockBlockedUserFindUnique.mockResolvedValue(null)
   })
 
   describe('addFriendByEmail', () => {

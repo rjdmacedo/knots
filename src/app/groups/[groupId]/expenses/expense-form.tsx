@@ -248,16 +248,19 @@ export function ExpenseForm({
             conversionRate: undefined,
             category: 1, // category with id 1 is Payment
             paidBy: searchParams.get('from') ?? undefined,
-            paidFor: [
-              searchParams.get('to')
-                ? {
+            paidFor: searchParams.get('to')
+              ? [
+                  {
                     participant: searchParams.get('to')!,
-                    shares: 1,
-                  }
-                : undefined,
-            ],
+                    shares: amountAsDecimal(
+                      Number(searchParams.get('amount')) || 0,
+                      groupCurrency,
+                    ),
+                  },
+                ]
+              : [],
             isReimbursement: true,
-            splitMode: defaultSplittingOptions.splitMode,
+            splitMode: 'BY_AMOUNT',
             saveDefaultSplittingOptions: false,
             documents: [],
             notes: '',
@@ -813,28 +816,6 @@ export function ExpenseForm({
                     </FormControl>
                   </div>
                   <FormMessage />
-
-                  {!isIncome && (
-                    <FormField
-                      control={form.control}
-                      name="isReimbursement"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row gap-2 items-center space-y-0 pt-2">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                            />
-                          </FormControl>
-                          <div>
-                            <FormLabel>
-                              {t('isReimbursementField.label')}
-                            </FormLabel>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                  )}
                 </FormItem>
               )}
             />
