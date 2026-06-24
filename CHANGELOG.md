@@ -1,3 +1,23 @@
+# [1.40.0](https://github.com/rjdmacedo/knots/compare/v1.39.0...v1.40.0) (2026-06-24)
+
+
+### Bug Fixes
+
+* align push notification property tests with actor filtering ([f5f68ec](https://github.com/rjdmacedo/knots/commit/f5f68ecb517ff3552acb674f2c488760dca21915))
+* invalidate sessions when user no longer exists ([a099b29](https://github.com/rjdmacedo/knots/commit/a099b29b9b32b06dc1e51632aebda448795a7fcd))
+
+
+### Features
+
+* add friend detail pages with activity and stats tabs ([5cb43c0](https://github.com/rjdmacedo/knots/commit/5cb43c0c635c579b99d22f6b9a3ac0f09541c3e1))
+* add group settlements with payment request emails ([71ee569](https://github.com/rjdmacedo/knots/commit/71ee569702fbe138e862c8db9944d66d5261b241))
+* add password visibility toggle on login page ([1c13928](https://github.com/rjdmacedo/knots/commit/1c13928a69f636e4ba1b807a849869431e9bbac1))
+* add simplify debts option for group balances ([e4e8f11](https://github.com/rjdmacedo/knots/commit/e4e8f11b013a1e01e2db07bfa97b8deb5293589b))
+* move profile settings to header user menu with theme switcher ([330e5e3](https://github.com/rjdmacedo/knots/commit/330e5e3a7992b64b248bf43c49ce77e896db5c60))
+* recover from stale sessions and runtime errors ([85a6284](https://github.com/rjdmacedo/knots/commit/85a6284b009c38308c86ae10affb21629a66b2b5))
+* redesign global activity feed with card layout ([dd1e812](https://github.com/rjdmacedo/knots/commit/dd1e812ff704f376904ee036e84c8ac8ecc21b0e))
+* unify detail page layout and replace group tabs ([5ffd4fc](https://github.com/rjdmacedo/knots/commit/5ffd4fc3bd47fc547c6266f25affaf2cbb9a1a48))
+
 # [1.39.0](https://github.com/rjdmacedo/knots/compare/v1.38.0...v1.39.0) (2026-06-23)
 
 
