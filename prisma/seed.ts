@@ -1,24 +1,72 @@
-import { faker } from '@faker-js/faker'
-import { PrismaClient, SplitMode } from '@prisma/client'
+import { GroupType, PrismaClient, SplitMode } from '@prisma/client'
 import { hashSync } from 'bcrypt'
-import { sample } from 'lodash-es'
-import { randomUUID } from 'node:crypto'
 
 const prisma = new PrismaClient()
 
 // Pre-hashed password for all seed users: "Password1"
 const SEED_PASSWORD_HASH = hashSync('Password1', 12)
 
+const AMOUNT_CENTS = 1000 // 10,00 €
+const EXPENSES_PER_GROUP = 10
+
+// Resend test inboxes — see https://resend.com/docs/dashboard/emails/send-test-emails
 const SEED_USERS = [
-  { email: 'rafaelmacedo4@gmail.com', name: 'Rafael' },
-  { email: 'alice@example.com', name: 'Alice' },
-  { email: 'bob@example.com', name: 'Bob' },
-]
+  {
+    id: 'seed-user-rafael',
+    email: 'delivered+rafael@resend.dev',
+    name: 'Rafael',
+  },
+  { id: 'seed-user-alice', email: 'delivered+alice@resend.dev', name: 'Alice' },
+  { id: 'seed-user-bob', email: 'delivered+bob@resend.dev', name: 'Bob' },
+  { id: 'seed-user-carol', email: 'delivered+carol@resend.dev', name: 'Carol' },
+  { id: 'seed-user-dave', email: 'delivered+dave@resend.dev', name: 'Dave' },
+] as const
+
+function buildDyadKey(userIdA: string, userIdB: string): string {
+  return [userIdA, userIdB].sort().join(':')
+}
+
+function expenseDateForIndex(index: number): Date {
+  // Fixed timeline: one expense per day starting 2025-01-10, going backwards
+  return new Date(Date.UTC(2025, 0, 10 - index))
+}
+
+async function createExpensesPaidBy(
+  groupId: string,
+  participants: ReadonlyArray<{ id: string }>,
+  groupSlug: string,
+  paidById: string,
+) {
+  for (let i = 0; i < EXPENSES_PER_GROUP; i++) {
+    const expenseId = `seed-expense-${groupSlug}-${i}`
+
+    const expense = await prisma.expense.create({
+      data: {
+        id: expenseId,
+        groupId,
+        title: `Despesa ${i + 1}`,
+        categoryId: 0,
+        expenseDate: expenseDateForIndex(i),
+        amount: AMOUNT_CENTS,
+        paidById,
+        splitMode: SplitMode.EVENLY,
+        isReimbursement: false,
+      },
+    })
+
+    await prisma.expensePaidFor.createMany({
+      data: participants.map((participant) => ({
+        expenseId: expense.id,
+        userId: participant.id,
+        shares: 1,
+      })),
+    })
+  }
+}
 
 async function main() {
   console.log('Seed: clearing existing data...')
 
-  // Order matters because of foreign key relations
   await prisma.expensePaidFor.deleteMany()
   await prisma.expenseDocument.deleteMany()
   await prisma.activity.deleteMany()
@@ -30,177 +78,157 @@ async function main() {
   await prisma.session.deleteMany()
   await prisma.account.deleteMany()
   await prisma.rateLimitAttempt.deleteMany()
+  await prisma.friend.deleteMany()
+  await prisma.blockedUser.deleteMany()
   await prisma.user.deleteMany()
   await prisma.group.deleteMany()
 
   console.log('Seed: creating users...')
 
-  // Create users (pre-verified so they can log in immediately)
   const users = await Promise.all(
-    SEED_USERS.map((u) =>
+    SEED_USERS.map((user) =>
       prisma.user.create({
         data: {
-          name: u.name,
-          email: u.email,
+          id: user.id,
+          name: user.name,
+          email: user.email,
           passwordHash: SEED_PASSWORD_HASH,
-          emailVerified: new Date(), // Pre-verified
+          emailVerified: new Date('2025-01-01T00:00:00.000Z'),
+          preferredCurrency: 'EUR',
         },
       }),
     ),
   )
 
+  const userById = Object.fromEntries(users.map((user) => [user.id, user]))
+  const rafael = userById['seed-user-rafael']!
+  const alice = userById['seed-user-alice']!
+  const bob = userById['seed-user-bob']!
+
   console.log(
-    `Seed: created ${users.length} users (${SEED_USERS.map((u) => u.email).join(', ')})`,
+    `Seed: created ${users.length} users (${SEED_USERS.map((user) => user.email).join(', ')})`,
   )
   console.log('Seed: all users have password "Password1"')
 
-  // Categories are seeded by migrations — reference them by their stable IDs
-  const categoryIds = {
-    general: 0,
-    diningOut: 8,
-    groceries: 9,
-    sports: 6,
-    movies: 4,
-    fuel: 31,
-  } as const
+  console.log('Seed: creating friendships (everyone ↔ everyone)...')
 
-  // Demo group
-  const groupId = randomUUID()
-  const group = await prisma.group.create({
+  const friendRecords = users.flatMap((owner) =>
+    users
+      .filter((target) => target.id !== owner.id)
+      .map((target) => ({
+        userId: owner.id,
+        email: target.email,
+        friendUserId: target.id,
+        name: target.name,
+      })),
+  )
+
+  await prisma.friend.createMany({ data: friendRecords })
+
+  console.log(`Seed: created ${friendRecords.length} friend records`)
+
+  console.log('Seed: creating groups...')
+
+  const demoGroup = await prisma.group.create({
     data: {
-      id: groupId,
+      id: 'seed-group-demo',
       name: 'Demo group',
-      information: 'Example data for local development',
+      type: GroupType.STANDARD,
+      information: '5 membros, 10 despesas de 10,00 €',
       currency: '€',
       currencyCode: 'EUR',
     },
   })
 
-  // Create group memberships — Rafael is the owner, others are members
-  const rafael = users.find((u) => u.email === 'rafaelmacedo4@gmail.com')!
-  await Promise.all(
-    users.map((user) =>
-      prisma.groupMembership.create({
-        data: {
-          userId: user.id,
-          groupId: group.id,
-          role: user.id === rafael.id ? 'OWNER' : 'MEMBER',
-        },
-      }),
-    ),
-  )
+  const rafaelBobDyadGroup = await prisma.group.create({
+    data: {
+      id: 'seed-group-dyad-rafael-bob',
+      name: 'Bob',
+      type: GroupType.DYAD,
+      dyadKey: buildDyadKey(rafael.id, bob.id),
+      currency: '€',
+      currencyCode: 'EUR',
+    },
+  })
 
-  console.log(`Seed: all users added as members of "${group.name}"`)
+  const dyadGroup = await prisma.group.create({
+    data: {
+      id: 'seed-group-dyad-rafael-alice',
+      name: 'Alice',
+      type: GroupType.DYAD,
+      dyadKey: buildDyadKey(rafael.id, alice.id),
+      currency: '€',
+      currencyCode: 'EUR',
+    },
+  })
 
-  // Use users directly as participants (no more Participant model)
-  const participants = users.map((u) => ({ id: u.id, name: u.name }))
+  await prisma.groupMembership.createMany({
+    data: [
+      ...users.map((user) => ({
+        userId: user.id,
+        groupId: demoGroup.id,
+        role: user.id === rafael.id ? ('OWNER' as const) : ('MEMBER' as const),
+      })),
+      ...[rafael, bob].map((user) => ({
+        userId: user.id,
+        groupId: rafaelBobDyadGroup.id,
+        role: user.id === rafael.id ? ('OWNER' as const) : ('MEMBER' as const),
+      })),
+      {
+        userId: rafael.id,
+        groupId: dyadGroup.id,
+        role: 'OWNER' as const,
+      },
+      {
+        userId: alice.id,
+        groupId: dyadGroup.id,
+        role: 'MEMBER' as const,
+      },
+    ],
+  })
 
   console.log(
-    `Seed: created group "${group.name}" with members ${participants
-      .map((p) => p.name)
-      .join(', ')}`,
+    'Seed: creating expenses (10,00 € each, Rafael pays all — creates settlements)...',
   )
 
-  // Helper to generate random cents between min and max euros
-  const amountInCents = (min: number, max: number) =>
-    Math.round(
-      faker.number.float({ min, max, fractionDigits: 2 }).valueOf() * 100,
-    )
+  // Rafael pays every expense so others owe him a round amount per group.
+  await createExpensesPaidBy(demoGroup.id, users, 'demo', rafael.id)
+  await createExpensesPaidBy(
+    dyadGroup.id,
+    [rafael, alice],
+    'dyad-rafael-alice',
+    rafael.id,
+  )
+  await createExpensesPaidBy(
+    rafaelBobDyadGroup.id,
+    [rafael, bob],
+    'dyad-rafael-bob',
+    rafael.id,
+  )
 
-  const today = new Date()
+  const totalExpenses = EXPENSES_PER_GROUP * 3
+  const dyadDebt = (EXPENSES_PER_GROUP * AMOUNT_CENTS) / 2 // 50,00 €
+  const demoDebt =
+    EXPENSES_PER_GROUP * (AMOUNT_CENTS - AMOUNT_CENTS / users.length) // 80,00 €
 
-  type SeedExpenseTemplate = {
-    title: string
-    categoryKey: keyof typeof categoryIds
-    min: number
-    max: number
-  }
-
-  const expenseTemplates: SeedExpenseTemplate[] = [
-    {
-      title: 'Restaurante sexta à noite',
-      categoryKey: 'diningOut',
-      min: 25,
-      max: 60,
-    },
-    {
-      title: 'Supermercado semana',
-      categoryKey: 'groceries',
-      min: 40,
-      max: 120,
-    },
-    {
-      title: 'Natação',
-      categoryKey: 'sports',
-      min: 15,
-      max: 25,
-    },
-    {
-      title: 'Cinema + Pipocas',
-      categoryKey: 'movies',
-      min: 18,
-      max: 35,
-    },
-    {
-      title: 'Combustível',
-      categoryKey: 'fuel',
-      min: 40,
-      max: 90,
-    },
-    {
-      title: 'Almoço fora',
-      categoryKey: 'diningOut',
-      min: 12,
-      max: 30,
-    },
-  ]
-
-  const totalExpenses = faker.number.int({ min: 50, max: 100 })
-
-  for (let i = 0; i < totalExpenses; i++) {
-    const template = sample(expenseTemplates) ?? expenseTemplates[0]
-
-    const monthsAgo = faker.number.int({ min: 0, max: 11 })
-    const expenseDate = new Date(
-      today.getFullYear(),
-      today.getMonth() - monthsAgo,
-      faker.number.int({ min: 1, max: 28 }),
-    )
-
-    const expenseId = randomUUID()
-    const paidByParticipant = sample(participants) ?? participants[0]
-
-    const categoryId = categoryIds[template.categoryKey]
-
-    const expense = await prisma.expense.create({
-      data: {
-        id: expenseId,
-        groupId: group.id,
-        title: template.title,
-        categoryId,
-        expenseDate,
-        amount: amountInCents(template.min, template.max),
-        paidById: paidByParticipant.id,
-        splitMode: SplitMode.EVENLY,
-        isReimbursement: false,
-      },
-    })
-
-    await prisma.expensePaidFor.createMany({
-      data: participants.map((p) => ({
-        expenseId: expense.id,
-        userId: p.id,
-        shares: 1,
-      })),
-    })
-  }
-
-  console.log(`Seed: created ${totalExpenses} shared expenses`)
+  console.log(`Seed: created ${totalExpenses} expenses across 3 groups`)
+  console.log('')
+  console.log('Quick reference (Rafael is creditor everywhere):')
+  console.log(`  • Dyad: Alice/Bob each owe Rafael ${dyadDebt / 100},00 €`)
+  console.log(
+    `  • Demo: Alice/Bob/Carol/Dave each owe Rafael ${demoDebt / 100},00 €`,
+  )
+  console.log(
+    `  • Friend balance Rafael–Alice: ${(dyadDebt + demoDebt) / 100},00 € (50 + 80)`,
+  )
+  console.log(
+    `  • Friend balance Rafael–Bob: ${(dyadDebt + demoDebt) / 100},00 € (50 + 80)`,
+  )
 }
 
 main()
-  .catch((e) => {
-    console.error('Seed: error seeding database', e)
+  .catch((error) => {
+    console.error('Seed: error seeding database', error)
     process.exit(1)
   })
   .finally(async () => {
