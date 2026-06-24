@@ -62,7 +62,7 @@ export const importKnotsProcedure = groupMemberProcedure
 
         for (const expenseData of parsedExpenses) {
           throwIfAborted(signal)
-          const expense = await createExpense(expenseData, groupId)
+          const expense = await createExpense(expenseData, groupId, ctx.user.id)
           createdExpenseIds.push(expense.id)
         }
 

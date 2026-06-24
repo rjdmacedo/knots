@@ -36,11 +36,19 @@ export function getActivityDateGroup(date: Dayjs, today: Dayjs) {
   }
 }
 
-export function groupActivitiesByDate<T extends { time: Date | string }>(
-  activities: T[],
-) {
+function compareActivitiesByTimeDesc<
+  T extends { time: Date | string; id: string },
+>(a: T, b: T) {
+  const timeDiff = dayjs(b.time).valueOf() - dayjs(a.time).valueOf()
+  if (timeDiff !== 0) return timeDiff
+  return b.id.localeCompare(a.id)
+}
+
+export function groupActivitiesByDate<
+  T extends { time: Date | string; id: string },
+>(activities: T[]) {
   const today = dayjs()
-  return activities.reduce(
+  const result = activities.reduce(
     (result, activity) => {
       const activityGroup = getActivityDateGroup(dayjs(activity.time), today)
       result[activityGroup] = result[activityGroup] ?? []
@@ -49,4 +57,10 @@ export function groupActivitiesByDate<T extends { time: Date | string }>(
     },
     {} as Record<string, T[]>,
   )
+
+  for (const activitiesInGroup of Object.values(result)) {
+    activitiesInGroup.sort(compareActivitiesByTimeDesc)
+  }
+
+  return result
 }

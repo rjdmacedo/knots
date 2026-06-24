@@ -64,7 +64,7 @@ describe('getGlobalActivities', () => {
       expect.objectContaining({
         where: { groupId: { in: ['group-1', 'group-2'] } },
         include: { changes: true },
-        orderBy: [{ time: 'desc' }],
+        orderBy: [{ time: 'desc' }, { id: 'desc' }],
       }),
     )
   })

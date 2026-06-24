@@ -1,5 +1,6 @@
 'use client'
 import { Currency } from '@/lib/currency'
+import { cn } from '@/lib/utils'
 import { useLocale, useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { formatFieldValue, getFieldLabel } from './format-change-value'
@@ -15,6 +16,7 @@ interface ChangeListProps {
   groupCurrency: Currency
   participants: Array<{ id: string; name: string }>
   categories: Array<{ id: number; grouping: string; name: string }>
+  indented?: boolean
 }
 
 interface ChangeListItemProps {
@@ -76,6 +78,7 @@ export function ChangeList({
   groupCurrency,
   participants,
   categories,
+  indented = true,
 }: ChangeListProps) {
   const t = useTranslations('Activity')
 
@@ -99,7 +102,9 @@ export function ChangeList({
   const showToggle = filteredChanges.length > COLLAPSE_THRESHOLD
 
   return (
-    <div className="text-xs text-muted-foreground pl-4 mt-1">
+    <div
+      className={cn('text-xs text-muted-foreground mt-1', indented && 'pl-4')}
+    >
       <ul
         aria-label={t('fieldChangesCount', { count: filteredChanges.length })}
       >

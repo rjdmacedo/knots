@@ -8,7 +8,13 @@ import {
 } from '@/lib/utils'
 import { AppRouterOutput } from '@/trpc/routers/_app'
 import { ActivityType } from '@prisma/client'
-import { ChevronRight } from 'lucide-react'
+import {
+  ChevronRight,
+  Pencil,
+  PlusCircle,
+  Settings,
+  Trash2,
+} from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -30,6 +36,7 @@ type Props = {
   dateStyle: DateTimeStyle
   categories: Array<{ id: number; grouping: string; name: string }>
   showGroupName?: boolean
+  variant?: 'default' | 'card'
 }
 
 function useSummary(activity: Activity, participantName?: string) {
@@ -56,6 +63,23 @@ function useSummary(activity: Activity, participantName?: string) {
   }
 }
 
+function ActivityTypeIcon({ activityType }: { activityType: ActivityType }) {
+  const className = 'w-4 h-4 mt-0.5 text-muted-foreground'
+
+  switch (activityType) {
+    case ActivityType.CREATE_EXPENSE:
+      return <PlusCircle className={className} />
+    case ActivityType.UPDATE_EXPENSE:
+      return <Pencil className={className} />
+    case ActivityType.DELETE_EXPENSE:
+      return <Trash2 className={className} />
+    case ActivityType.UPDATE_GROUP:
+      return <Settings className={className} />
+    default:
+      return <Pencil className={className} />
+  }
+}
+
 export function ActivityItem({
   groupId,
   activity,
@@ -64,14 +88,75 @@ export function ActivityItem({
   dateStyle,
   categories,
   showGroupName,
+  variant = 'default',
 }: Props) {
   const router = useRouter()
   const locale = useLocale()
 
   const expenseExists = activity.expense !== undefined
   const summary = useSummary(activity, participant?.name)
+  const isRecent = dateStyle === undefined
+  const timeFormatOptions = isRecent
+    ? ({ timeStyle: 'medium' } as const)
+    : ({ timeStyle: 'short' } as const)
 
   const hasChanges = activity.changes && activity.changes.length > 0
+
+  if (variant === 'card') {
+    return (
+      <div
+        className={cn(
+          'flex justify-between sm:mx-6 px-4 sm:rounded-lg sm:pr-2 sm:pl-4 py-4 text-sm gap-1 items-stretch',
+          expenseExists && 'cursor-pointer hover:bg-accent',
+        )}
+        onClick={() => {
+          if (expenseExists) {
+            router.push(
+              `/groups/${groupId}/expenses/${activity.expenseId}/edit`,
+            )
+          }
+        }}
+      >
+        <div className="flex flex-col items-center mr-2 gap-1">
+          <ActivityTypeIcon activityType={activity.activityType} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="mb-1">{summary}</div>
+          {hasChanges && (
+            <ChangeList
+              changes={activity.changes}
+              groupCurrency={getCurrencyFromGroup(group)}
+              participants={group.participants}
+              categories={categories}
+              indented={false}
+            />
+          )}
+        </div>
+        <div className="flex flex-col justify-between items-end shrink-0">
+          <div className="text-xs text-muted-foreground tabular-nums">
+            {formatDate(activity.time, locale, timeFormatOptions)}
+          </div>
+          {dateStyle !== undefined && (
+            <div className="text-xs text-muted-foreground">
+              {formatDate(activity.time, locale, { dateStyle })}
+            </div>
+          )}
+        </div>
+        {expenseExists && (
+          <Link
+            href={`/groups/${groupId}/expenses/${activity.expenseId}/edit`}
+            className={cn(
+              buttonVariants({ size: 'icon', variant: 'link' }),
+              'self-center hidden sm:flex',
+            )}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <ChevronRight className="w-4 h-4" />
+          </Link>
+        )}
+      </div>
+    )
+  }
 
   return (
     <div
@@ -92,7 +177,7 @@ export function ActivityItem({
           </div>
         )}
         <div className="my-1 text-xs/5 text-muted-foreground">
-          {formatDate(activity.time, locale, { timeStyle: 'short' })}
+          {formatDate(activity.time, locale, timeFormatOptions)}
         </div>
       </div>
       <div className="flex-1">

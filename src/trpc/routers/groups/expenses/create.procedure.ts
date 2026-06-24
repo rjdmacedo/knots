@@ -15,7 +15,7 @@ export const createGroupExpenseProcedure = groupMemberProcedure
   )
   .mutation(async ({ input: { groupId, expenseFormValues }, ctx }) => {
     const userId = ctx.user.id
-    const expense = await createExpense(expenseFormValues, groupId)
+    const expense = await createExpense(expenseFormValues, groupId, userId)
     notifyOnActivity(groupId, ActivityType.CREATE_EXPENSE, {
       userId,
       expenseId: expense.id,
