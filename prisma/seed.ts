@@ -15,11 +15,32 @@ const SEED_USERS = [
     id: 'seed-user-rafael',
     email: 'delivered+rafael@resend.dev',
     name: 'Rafael',
+    username: 'rafael',
   },
-  { id: 'seed-user-alice', email: 'delivered+alice@resend.dev', name: 'Alice' },
-  { id: 'seed-user-bob', email: 'delivered+bob@resend.dev', name: 'Bob' },
-  { id: 'seed-user-carol', email: 'delivered+carol@resend.dev', name: 'Carol' },
-  { id: 'seed-user-dave', email: 'delivered+dave@resend.dev', name: 'Dave' },
+  {
+    id: 'seed-user-alice',
+    email: 'delivered+alice@resend.dev',
+    name: 'Alice',
+    username: 'alice',
+  },
+  {
+    id: 'seed-user-bob',
+    email: 'delivered+bob@resend.dev',
+    name: 'Bob',
+    username: 'bob',
+  },
+  {
+    id: 'seed-user-carol',
+    email: 'delivered+carol@resend.dev',
+    name: 'Carol',
+    username: 'carol',
+  },
+  {
+    id: 'seed-user-dave',
+    email: 'delivered+dave@resend.dev',
+    name: 'Dave',
+    username: 'dave',
+  },
 ] as const
 
 function buildDyadKey(userIdA: string, userIdB: string): string {
@@ -91,6 +112,7 @@ async function main() {
         data: {
           id: user.id,
           name: user.name,
+          username: user.username,
           email: user.email,
           passwordHash: SEED_PASSWORD_HASH,
           emailVerified: new Date('2025-01-01T00:00:00.000Z'),
@@ -133,6 +155,7 @@ async function main() {
     data: {
       id: 'seed-group-demo',
       name: 'Demo group',
+      slug: 'demo-group',
       type: GroupType.STANDARD,
       information: '5 membros, 10 despesas de 10,00 €',
       currency: '€',
@@ -144,6 +167,7 @@ async function main() {
     data: {
       id: 'seed-group-dyad-rafael-bob',
       name: 'Bob',
+      slug: 'dyad-rafael-bob',
       type: GroupType.DYAD,
       dyadKey: buildDyadKey(rafael.id, bob.id),
       currency: '€',
@@ -155,6 +179,7 @@ async function main() {
     data: {
       id: 'seed-group-dyad-rafael-alice',
       name: 'Alice',
+      slug: 'dyad-rafael-alice',
       type: GroupType.DYAD,
       dyadKey: buildDyadKey(rafael.id, alice.id),
       currency: '€',

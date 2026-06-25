@@ -4,6 +4,7 @@
  */
 
 import { prisma } from '@/lib/prisma'
+import { generateUniqueGroupSlug } from '@/lib/slugify'
 import { GroupType } from '@prisma/client'
 import { nanoid } from 'nanoid'
 
@@ -13,11 +14,15 @@ export interface GroupService {
   createGroup(
     name: string,
     userId: string,
-  ): Promise<{ ok: true; groupId: string } | { ok: false; error: GroupError }>
+  ): Promise<
+    | { ok: true; groupId: string; slug: string }
+    | { ok: false; error: GroupError }
+  >
   getUserGroups(userId: string): Promise<
     Array<{
       id: string
       name: string
+      slug: string
       createdAt: Date
       archivedAt: Date | null
       role: 'OWNER' | 'MEMBER'
@@ -35,7 +40,8 @@ function createGroupService(): GroupService {
       name: string,
       userId: string,
     ): Promise<
-      { ok: true; groupId: string } | { ok: false; error: GroupError }
+      | { ok: true; groupId: string; slug: string }
+      | { ok: false; error: GroupError }
     > {
       // Validate group name: must be 1-100 characters
       const trimmedName = name.trim()
@@ -57,11 +63,13 @@ function createGroupService(): GroupService {
 
       // Create the group and add the user as a member in a transaction
       const groupId = nanoid()
+      const slug = await generateUniqueGroupSlug(trimmedName)
       await prisma.$transaction([
         prisma.group.create({
           data: {
             id: groupId,
             name: trimmedName,
+            slug,
           },
         }),
         prisma.groupMembership.create({
@@ -73,13 +81,14 @@ function createGroupService(): GroupService {
         }),
       ])
 
-      return { ok: true, groupId }
+      return { ok: true, groupId, slug }
     },
 
     async getUserGroups(userId: string): Promise<
       Array<{
         id: string
         name: string
+        slug: string
         createdAt: Date
         archivedAt: Date | null
         role: 'OWNER' | 'MEMBER'
@@ -109,6 +118,7 @@ function createGroupService(): GroupService {
         return {
           id: m.group.id,
           name: m.group.name,
+          slug: m.group.slug,
           createdAt: m.group.createdAt,
           archivedAt: m.archivedAt,
           role: m.role,
@@ -118,9 +128,10 @@ function createGroupService(): GroupService {
 
       groups.sort((a, b) => b.lastActiveAt.getTime() - a.lastActiveAt.getTime())
 
-      return groups.map(({ id, name, createdAt, archivedAt, role }) => ({
+      return groups.map(({ id, name, slug, createdAt, archivedAt, role }) => ({
         id,
         name,
+        slug,
         createdAt,
         archivedAt,
         role,

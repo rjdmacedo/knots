@@ -23,5 +23,5 @@ export const createGroupProcedure = protectedProcedure
       },
     })
 
-    return { groupId: group.id }
+    return { groupId: group.id, slug: group.slug }
   })

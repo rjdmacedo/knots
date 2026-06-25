@@ -1,5 +1,6 @@
 import { getCurrency } from '@/lib/currency'
 import { prisma } from '@/lib/prisma'
+import { generateUniqueGroupSlug } from '@/lib/slugify'
 import { GroupType, MembershipRole } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { nanoid } from 'nanoid'
@@ -120,6 +121,7 @@ export async function findOrCreateDyadGroup(
   const currency = getCurrency(currencyCode)
   const groupName = truncateGroupName(friendDisplayName)
   const groupId = nanoid()
+  const slug = await generateUniqueGroupSlug(`${groupName}-dyad`)
 
   try {
     await prisma.$transaction([
@@ -127,6 +129,7 @@ export async function findOrCreateDyadGroup(
         data: {
           id: groupId,
           name: groupName,
+          slug,
           type: GroupType.DYAD,
           dyadKey,
           currency: currency.symbol || '$',

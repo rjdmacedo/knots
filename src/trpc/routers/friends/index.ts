@@ -159,6 +159,51 @@ export const friendsRouter = createTRPCRouter({
       }
     }),
 
+  getFriendByUsername: protectedProcedure
+    .input(z.object({ username: z.string().min(1) }))
+    .query(async ({ ctx, input }) => {
+      // Look up the user by username, then find the Friend record linking them
+      const targetUser = await prisma.user.findUnique({
+        where: { username: input.username },
+        select: { id: true, name: true, email: true },
+      })
+
+      if (!targetUser) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Friend not found.',
+        })
+      }
+
+      const friend = await prisma.friend.findFirst({
+        where: {
+          userId: ctx.user.id,
+          friendUserId: targetUser.id,
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          friendUserId: true,
+        },
+      })
+
+      if (!friend) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Friend not found.',
+        })
+      }
+
+      return {
+        id: friend.id,
+        name: friend.name ?? targetUser.name ?? friend.email.split('@')[0],
+        email: friend.email,
+        friendUserId: friend.friendUserId,
+        isConnected: friend.friendUserId !== null,
+      }
+    }),
+
   getBalanceDetail: protectedProcedure
     .input(z.object({ friendId: z.string().min(1) }))
     .query(async ({ ctx, input }) => {
@@ -326,11 +371,19 @@ export const friendsRouter = createTRPCRouter({
       const displayName =
         friend.name ?? friend.friend?.name ?? friend.email.split('@')[0]
 
-      return findOrCreateDyadGroup(
+      const result = await findOrCreateDyadGroup(
         ctx.user.id,
         friend.friendUserId,
         displayName,
       )
+
+      // Fetch the slug for the group so the client can navigate by slug
+      const group = await prisma.group.findUnique({
+        where: { id: result.groupId },
+        select: { slug: true },
+      })
+
+      return { ...result, slug: group!.slug }
     }),
 
   getStats: protectedProcedure

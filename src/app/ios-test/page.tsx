@@ -1,4 +1,4 @@
-import { ExpenseFormTest } from '@/app/groups/[groupId]/expenses/expense-form-test'
+import { ExpenseFormTest } from '@/app/groups/[groupSlug]/expenses/expense-form-test'
 
 export const metadata = {
   title: 'iOS Viewport Test',

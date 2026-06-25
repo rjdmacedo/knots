@@ -6,6 +6,7 @@ import { GroupType } from '@prisma/client'
 
 export type GroupBalanceBreakdown = {
   groupId: string
+  groupSlug: string
   groupName: string
   groupType: GroupType
   currency: Currency
@@ -14,6 +15,7 @@ export type GroupBalanceBreakdown = {
 
 export type FriendSettlement = {
   groupId: string
+  groupSlug: string
   groupName: string
   groupType: GroupType
   currency: Currency
@@ -56,6 +58,7 @@ export function computeFriendBalance(
   sharedGroups: Array<{
     id: string
     name: string
+    slug: string
     type: GroupType
     currency: string
     currencyCode: string | null
@@ -87,6 +90,7 @@ export function computeFriendBalance(
 
     const breakdown: GroupBalanceBreakdown = {
       groupId: group.id,
+      groupSlug: group.slug,
       groupName: group.name,
       groupType: group.type,
       currency,
@@ -116,6 +120,7 @@ export function computeFriendSettlements(
   sharedGroups: Array<{
     id: string
     name: string
+    slug: string
     type: GroupType
     currency: string
     currencyCode: string | null
@@ -144,6 +149,7 @@ export function computeFriendSettlements(
 
     settlements.push({
       groupId: group.id,
+      groupSlug: group.slug,
       groupName: group.name,
       groupType: group.type,
       currency: getCurrencyFromGroup({

@@ -10,6 +10,7 @@ export type GroupExpense = Awaited<ReturnType<typeof getGroupExpenses>>[number]
 export type FriendExpenseItem = {
   expense: GroupExpense
   groupId: string
+  groupSlug: string
   groupName: string
   groupType: GroupType
   memberCount: number
@@ -76,6 +77,7 @@ export async function getFriendExpenses(
       items.push({
         expense,
         groupId: group.id,
+        groupSlug: group.slug,
         groupName: group.name,
         groupType: group.type,
         memberCount,

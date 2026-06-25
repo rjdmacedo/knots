@@ -20,6 +20,7 @@ enum GroupType {
 model Group {
   id                String                   @id
   name              String
+  slug              String                   @unique
   type              GroupType                @default(STANDARD)
   dyadKey           String?                  @unique
   information       String?                  @db.Text
@@ -191,6 +192,7 @@ model ExpenseCategoryMapping {
 model User {
   id                String    @id @default(cuid())
   name              String
+  username          String    @unique
   email             String    @unique
   emailVerified     DateTime?
   passwordHash      String

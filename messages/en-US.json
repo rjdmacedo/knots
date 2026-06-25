@@ -738,6 +738,8 @@
     "emailTitle": "Email",
     "emailDescription": "Your email address cannot be changed.",
     "displayNameTitle": "Display Name",
+    "usernameTitle": "Username",
+    "usernameDescription": "Your username appears in URLs for your profile. It must be unique.",
     "passwordTitle": "Password",
     "preferencesTitle": "Preferences",
     "preferencesDescription": "Customize your timezone, currency, language, and appearance.",
@@ -792,6 +794,14 @@
       "placeholder": "Enter your display name",
       "saving": "Saving...",
       "submit": "Save Name"
+    },
+    "UsernameForm": {
+      "successToast": "Username updated successfully.",
+      "label": "Username",
+      "placeholder": "your-username",
+      "description": "Used in your profile URL. Only lowercase letters, numbers, and hyphens.",
+      "saving": "Saving...",
+      "submit": "Save Username"
     },
     "PasswordForm": {
       "currentPasswordRequired": "Current password is required",

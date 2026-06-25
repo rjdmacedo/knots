@@ -4,7 +4,7 @@ import {
   ActivityItem,
   type Activity,
   type ActivityGroup,
-} from '@/app/groups/[groupId]/activity/activity-item'
+} from '@/app/groups/[groupSlug]/activity/activity-item'
 import { Badge } from '@/components/ui/badge'
 import {
   Card,
@@ -147,7 +147,7 @@ export function GlobalActivityList() {
                       <div key={activity.id}>
                         <div className="flex items-center gap-2 px-4 pt-3 pb-1">
                           <Link
-                            href={`/groups/${activity.groupId}`}
+                            href={`/groups/${activity.group?.slug ?? activity.groupId}`}
                             className="hover:underline"
                           >
                             <Badge variant="outline">

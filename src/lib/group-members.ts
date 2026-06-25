@@ -83,9 +83,15 @@ export async function addGroupMember(
     })
 
     if (!targetUser) {
+      const { generateUniqueUsername, usernameFromEmail } =
+        await import('@/lib/slugify')
+      const username = await generateUniqueUsername(
+        usernameFromEmail(normalizedEmail),
+      )
       targetUser = await prisma.user.create({
         data: {
           name: name?.trim() || normalizedEmail.split('@')[0],
+          username,
           email: normalizedEmail,
           passwordHash: '',
         },

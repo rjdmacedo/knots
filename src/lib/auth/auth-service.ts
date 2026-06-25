@@ -5,6 +5,7 @@
  */
 
 import { prisma } from '@/lib/prisma'
+import { generateUniqueUsername, usernameFromEmail } from '@/lib/slugify'
 import { z } from 'zod'
 import {
   emailService as realEmailService,
@@ -180,10 +181,14 @@ function createAuthService(emailService: EmailService): AuthService {
         // upgrade it to a real account
         if (!existingUser.passwordHash && !existingUser.emailVerified) {
           const passwordHash = await hashPassword(input.password)
+          const username = await generateUniqueUsername(
+            usernameFromEmail(normalizedEmail),
+          )
           const user = await prisma.user.update({
             where: { id: existingUser.id },
             data: {
               name: input.name.trim(),
+              username,
               passwordHash,
             },
           })
@@ -215,9 +220,13 @@ function createAuthService(emailService: EmailService): AuthService {
 
       // Hash password and create user
       const passwordHash = await hashPassword(input.password)
+      const username = await generateUniqueUsername(
+        usernameFromEmail(normalizedEmail),
+      )
       const user = await prisma.user.create({
         data: {
           name: input.name.trim(),
+          username,
           email: normalizedEmail,
           passwordHash,
         },

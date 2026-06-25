@@ -9,6 +9,7 @@ import { PasswordChangeForm } from './password-change-form'
 import { ProfilePreferences } from './profile-preferences'
 import { SignOutAllButton } from './sign-out-all-button'
 import { SignOutButton } from './sign-out-button'
+import { UsernameChangeForm } from './username-change-form'
 
 export const metadata: Metadata = {
   title: 'Profile Settings',
@@ -25,6 +26,7 @@ export default async function ProfileSettingsPage() {
     <ProfileSettingsContent
       email={profile.email}
       name={profile.name}
+      username={profile.username}
       timezone={profile.timezone}
       preferredCurrency={profile.preferredCurrency}
     />
@@ -34,11 +36,13 @@ export default async function ProfileSettingsPage() {
 function ProfileSettingsContent({
   email,
   name,
+  username,
   timezone,
   preferredCurrency,
 }: {
   email: string
   name: string
+  username: string
   timezone: string | null
   preferredCurrency: string | null
 }) {
@@ -60,6 +64,14 @@ function ProfileSettingsContent({
         <section className="rounded-lg border p-4 space-y-4">
           <h2 className="font-semibold text-lg">{t('displayNameTitle')}</h2>
           <NameChangeForm currentName={name} />
+        </section>
+
+        <section className="rounded-lg border p-4 space-y-4">
+          <h2 className="font-semibold text-lg">{t('usernameTitle')}</h2>
+          <p className="text-sm text-muted-foreground">
+            {t('usernameDescription')}
+          </p>
+          <UsernameChangeForm currentUsername={username} />
         </section>
 
         <section className="rounded-lg border p-4 space-y-4">

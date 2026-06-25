@@ -295,7 +295,7 @@ export function FriendsManagement() {
                             </div>
                           ) : friendBalance ? (
                             <Link
-                              href={`/friends/${friend.id}/expenses`}
+                              href={`/friends/${friend.friendUsername}/expenses`}
                               className="hover:underline"
                             >
                               <FriendBalanceSummary
@@ -315,7 +315,7 @@ export function FriendsManagement() {
                         <TooltipTrigger
                           render={
                             <Link
-                              href={`/friends/${friend.id}/expenses`}
+                              href={`/friends/${friend.friendUsername}/expenses`}
                               className={cn(
                                 buttonVariants({
                                   variant: 'outline',

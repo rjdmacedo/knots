@@ -18,6 +18,7 @@ export type FriendListItem = {
   email: string
   name: string
   friendUserId: string | null
+  friendUsername: string | null
   hasAccount: boolean
   status: FriendConnectionStatus
 }
@@ -37,7 +38,7 @@ function normalizeEmail(email: string): string {
 function getFriendDisplayName(friend: {
   name: string | null
   email: string
-  friend: { name: string } | null
+  friend: { name: string; username: string } | null
 }): string {
   return friend.name ?? friend.friend?.name ?? friend.email.split('@')[0]
 }
@@ -48,7 +49,7 @@ function toFriendListItem(
     email: string
     friendUserId: string | null
     name: string | null
-    friend: { name: string } | null
+    friend: { name: string; username: string } | null
   },
   status: FriendConnectionStatus,
 ): FriendListItem {
@@ -57,6 +58,7 @@ function toFriendListItem(
     email: friend.email,
     name: getFriendDisplayName(friend),
     friendUserId: friend.friendUserId,
+    friendUsername: friend.friend?.username ?? null,
     hasAccount: friend.friendUserId !== null,
     status,
   }
@@ -89,7 +91,7 @@ async function enrichFriendsWithStatus(
     email: string
     friendUserId: string | null
     name: string | null
-    friend: { name: string } | null
+    friend: { name: string; username: string } | null
   }>,
 ): Promise<FriendListItem[]> {
   const ownerEmail = await getUserEmail(ownerUserId)
@@ -114,7 +116,7 @@ async function enrichFriendsWithStatus(
 }
 
 const friendInclude = {
-  friend: { select: { name: true } },
+  friend: { select: { name: true, username: true } },
 } as const
 
 export async function addFriendByEmail(input: {

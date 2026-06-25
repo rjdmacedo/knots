@@ -16,6 +16,17 @@ const changeNameSchema = z.object({
   name: z.string(),
 })
 
+const changeUsernameSchema = z.object({
+  username: z
+    .string()
+    .min(2, 'Username must be at least 2 characters')
+    .max(40, 'Username must be at most 40 characters')
+    .regex(
+      /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/,
+      'Username must only contain lowercase letters, numbers, and hyphens (cannot start or end with a hyphen)',
+    ),
+})
+
 const changePasswordSchema = z.object({
   currentPassword: z.string(),
   newPassword: z.string(),
@@ -45,6 +56,7 @@ export const profileRouter = createTRPCRouter({
       select: {
         id: true,
         name: true,
+        username: true,
         email: true,
         timezone: true,
         preferredCurrency: true,
@@ -73,6 +85,32 @@ export const profileRouter = createTRPCRouter({
           cause: result.error,
         })
       }
+
+      return { success: true }
+    }),
+
+  changeUsername: protectedProcedure
+    .input(changeUsernameSchema)
+    .mutation(async ({ ctx, input }) => {
+      const normalized = input.username.toLowerCase()
+
+      // Check if username is already taken by another user
+      const existing = await prisma.user.findUnique({
+        where: { username: normalized },
+        select: { id: true },
+      })
+
+      if (existing && existing.id !== ctx.user.id) {
+        throw new TRPCError({
+          code: 'CONFLICT',
+          message: 'This username is already taken.',
+        })
+      }
+
+      await prisma.user.update({
+        where: { id: ctx.user.id },
+        data: { username: normalized },
+      })
 
       return { success: true }
     }),
