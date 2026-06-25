@@ -1,63 +1,20 @@
 'use client'
 import { ExpenseCard } from '@/app/groups/[groupId]/expenses/expense-card'
-import { getGroupExpensesAction } from '@/app/groups/[groupId]/expenses/expense-list-fetch-action'
+import { GroupedExpenseCards } from '@/app/groups/[groupId]/expenses/grouped-expense-cards'
 import { buttonVariants } from '@/components/ui/button'
 import { SearchBar } from '@/components/ui/search-bar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn, getCurrencyFromGroup } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
-import dayjs, { type Dayjs } from 'dayjs'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { forwardRef, useEffect, useMemo, useState } from 'react'
+import { forwardRef, useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useSpinDelay } from 'spin-delay'
 import { useDebounce } from 'use-debounce'
 import { useCurrentGroup } from '../current-group-context'
 
 const PAGE_SIZE = 20
-
-type ExpensesType = NonNullable<
-  Awaited<ReturnType<typeof getGroupExpensesAction>>
->
-
-const EXPENSE_GROUPS = {
-  UPCOMING: 'upcoming',
-  THIS_WEEK: 'thisWeek',
-  EARLIER_THIS_MONTH: 'earlierThisMonth',
-  LAST_MONTH: 'lastMonth',
-  EARLIER_THIS_YEAR: 'earlierThisYear',
-  LAST_YEAR: 'lastYear',
-  OLDER: 'older',
-}
-
-function getExpenseGroup(date: Dayjs, today: Dayjs) {
-  if (today.isBefore(date)) {
-    return EXPENSE_GROUPS.UPCOMING
-  } else if (today.isSame(date, 'week')) {
-    return EXPENSE_GROUPS.THIS_WEEK
-  } else if (today.isSame(date, 'month')) {
-    return EXPENSE_GROUPS.EARLIER_THIS_MONTH
-  } else if (today.subtract(1, 'month').isSame(date, 'month')) {
-    return EXPENSE_GROUPS.LAST_MONTH
-  } else if (today.isSame(date, 'year')) {
-    return EXPENSE_GROUPS.EARLIER_THIS_YEAR
-  } else if (today.subtract(1, 'year').isSame(date, 'year')) {
-    return EXPENSE_GROUPS.LAST_YEAR
-  } else {
-    return EXPENSE_GROUPS.OLDER
-  }
-}
-
-function getGroupedExpensesByDate(expenses: ExpensesType) {
-  const today = dayjs()
-  return expenses.reduce((result: { [key: string]: ExpensesType }, expense) => {
-    const expenseGroup = getExpenseGroup(dayjs(expense.expenseDate), today)
-    result[expenseGroup] = result[expenseGroup] ?? []
-    result[expenseGroup].push(expense)
-    return result
-  }, {})
-}
 
 export function ExpenseList() {
   const { groupId, group } = useCurrentGroup()
@@ -107,13 +64,7 @@ const ExpenseListForSearch = ({
   groupId: string
   searchText: string
 }) => {
-  const utils = trpc.useUtils()
   const { group } = useCurrentGroup()
-
-  useEffect(() => {
-    // Invalidation is handled by tRPC mutation callbacks in expense forms.
-    // No need to invalidate on mount.
-  }, [])
 
   const t = useTranslations('Expenses')
   const { ref: loadingRef, inView } = useInView()
@@ -141,11 +92,6 @@ const ExpenseListForSearch = ({
     if (inView && hasMore && !isLoading && !isFetchingNextPage) fetchNextPage()
   }, [fetchNextPage, hasMore, inView, isLoading, isFetchingNextPage])
 
-  const groupedExpensesByDate = useMemo(
-    () => (expenses ? getGroupedExpensesByDate(expenses) : {}),
-    [expenses],
-  )
-
   if (isLoading) return <ExpensesLoading />
 
   if (!expenses || !group) return <ExpensesLoading />
@@ -165,27 +111,19 @@ const ExpenseListForSearch = ({
 
   return (
     <>
-      {Object.values(EXPENSE_GROUPS).map((expenseGroup: string) => {
-        let groupExpenses = groupedExpensesByDate[expenseGroup]
-        if (!groupExpenses || groupExpenses.length === 0) return null
-
-        return (
-          <div key={expenseGroup}>
-            <div className="text-xs py-1 font-semibold sticky top-0 z-10 bg-background px-6">
-              {t(`Groups.${expenseGroup}`)}
-            </div>
-            {groupExpenses.map((expense) => (
-              <ExpenseCard
-                key={expense.id}
-                expense={expense}
-                currency={getCurrencyFromGroup(group)}
-                groupId={groupId}
-                participantCount={group.participants.length}
-              />
-            ))}
-          </div>
-        )
-      })}
+      <GroupedExpenseCards
+        items={expenses}
+        getDate={(expense) => expense.expenseDate}
+        getKey={(expense) => expense.id}
+        renderCard={(expense) => (
+          <ExpenseCard
+            expense={expense}
+            currency={getCurrencyFromGroup(group)}
+            groupId={groupId}
+            participantCount={group.participants.length}
+          />
+        )}
+      />
       {hasMore && <ExpensesLoading ref={loadingRef} />}
     </>
   )

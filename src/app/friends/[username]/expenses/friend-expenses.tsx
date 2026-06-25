@@ -1,6 +1,7 @@
 'use client'
 
 import { ExpenseCard } from '@/app/groups/[groupId]/expenses/expense-card'
+import { GroupedExpenseCards } from '@/app/groups/[groupId]/expenses/grouped-expense-cards'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -17,61 +18,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { FriendExpenseItem } from '@/lib/friend-expenses'
 import { trpc } from '@/trpc/client'
 import { GroupType } from '@prisma/client'
-import dayjs, { type Dayjs } from 'dayjs'
 import { Loader2, Plus } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useMemo } from 'react'
 import { toast } from 'sonner'
 import { useSpinDelay } from 'spin-delay'
-
-const EXPENSE_GROUPS = {
-  UPCOMING: 'upcoming',
-  THIS_WEEK: 'thisWeek',
-  EARLIER_THIS_MONTH: 'earlierThisMonth',
-  LAST_MONTH: 'lastMonth',
-  EARLIER_THIS_YEAR: 'earlierThisYear',
-  LAST_YEAR: 'lastYear',
-  OLDER: 'older',
-}
-
-function getExpenseGroup(date: Dayjs, today: Dayjs) {
-  if (today.isBefore(date)) {
-    return EXPENSE_GROUPS.UPCOMING
-  } else if (today.isSame(date, 'week')) {
-    return EXPENSE_GROUPS.THIS_WEEK
-  } else if (today.isSame(date, 'month')) {
-    return EXPENSE_GROUPS.EARLIER_THIS_MONTH
-  } else if (today.subtract(1, 'month').isSame(date, 'month')) {
-    return EXPENSE_GROUPS.LAST_MONTH
-  } else if (today.isSame(date, 'year')) {
-    return EXPENSE_GROUPS.EARLIER_THIS_YEAR
-  } else if (today.subtract(1, 'year').isSame(date, 'year')) {
-    return EXPENSE_GROUPS.LAST_YEAR
-  } else {
-    return EXPENSE_GROUPS.OLDER
-  }
-}
-
-function getGroupedFriendExpensesByDate(expenses: FriendExpenseItem[]) {
-  const today = dayjs()
-  return expenses.reduce(
-    (result: { [key: string]: FriendExpenseItem[] }, item) => {
-      const expenseGroup = getExpenseGroup(
-        dayjs(item.expense.expenseDate),
-        today,
-      )
-      result[expenseGroup] = result[expenseGroup] ?? []
-      result[expenseGroup].push(item)
-      return result
-    },
-    {},
-  )
-}
 
 type Props = {
   friendId: string
@@ -101,11 +55,6 @@ export function FriendExpenses({ friendId }: Props) {
     delay: 200,
     minDuration: 300,
   })
-
-  const groupedExpensesByDate = useMemo(
-    () => (data?.expenses ? getGroupedFriendExpensesByDate(data.expenses) : {}),
-    [data?.expenses],
-  )
 
   if (isLoading) {
     return <LoadingSkeleton />
@@ -156,44 +105,33 @@ export function FriendExpenses({ friendId }: Props) {
             {t('empty')}
           </p>
         ) : (
-          <>
-            {Object.values(EXPENSE_GROUPS).map((expenseGroup) => {
-              const groupItems = groupedExpensesByDate[expenseGroup]
-              if (!groupItems || groupItems.length === 0) return null
-
-              return (
-                <div key={expenseGroup}>
-                  <div className="text-xs py-1 font-semibold sticky top-0 z-10 bg-background px-6">
-                    {t_expenses(`Groups.${expenseGroup}`)}
-                  </div>
-                  {groupItems.map((item) => (
-                    <div key={`${item.groupId}-${item.expense.id}`}>
-                      <div className="flex items-center gap-2 px-4 pt-3 pb-1">
-                        {item.groupType === GroupType.DYAD ? (
-                          <Badge variant="secondary">
-                            {t('directExpenses')}
-                          </Badge>
-                        ) : (
-                          <Link
-                            href={`/groups/${item.groupId}/expenses`}
-                            className="hover:underline"
-                          >
-                            <Badge variant="outline">{item.groupName}</Badge>
-                          </Link>
-                        )}
-                      </div>
-                      <ExpenseCard
-                        expense={item.expense}
-                        currency={item.currency}
-                        groupId={item.groupId}
-                        participantCount={item.memberCount}
-                      />
-                    </div>
-                  ))}
-                </div>
-              )
-            })}
-          </>
+          <GroupedExpenseCards
+            items={expenses}
+            getDate={(item) => item.expense.expenseDate}
+            getKey={(item) => `${item.groupId}-${item.expense.id}`}
+            renderBeforeCard={(item) => (
+              <div className="flex items-center gap-2 px-4 pt-3 pb-1">
+                {item.groupType === GroupType.DYAD ? (
+                  <Badge variant="secondary">{t('directExpenses')}</Badge>
+                ) : (
+                  <Link
+                    href={`/groups/${item.groupId}/expenses`}
+                    className="hover:underline"
+                  >
+                    <Badge variant="outline">{item.groupName}</Badge>
+                  </Link>
+                )}
+              </div>
+            )}
+            renderCard={(item) => (
+              <ExpenseCard
+                expense={item.expense}
+                currency={item.currency}
+                groupId={item.groupId}
+                participantCount={item.memberCount}
+              />
+            )}
+          />
         )}
       </CardContent>
     </Card>
