@@ -10,6 +10,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
+import { keepPreviousData } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
 
 export interface ExpenseTitleSuggestion {
@@ -46,13 +47,19 @@ export function ExpenseTitleInput({
     { groupId, query: debouncedQuery },
     {
       enabled: isOpen,
+      placeholderData: keepPreviousData,
     },
   )
 
+  const normalizedValue = value.toLowerCase().trim()
   const suggestions = data?.suggestions ?? []
-  const filteredSuggestions = suggestions.filter(
-    (s) => s.title !== value.toLowerCase().trim(),
-  )
+  // Filter out exact matches and narrow by what the user has typed so far,
+  // even while the debounced query is still catching up.
+  const filteredSuggestions = suggestions.filter((s) => {
+    if (s.title === normalizedValue) return false
+    if (normalizedValue && !s.title.startsWith(normalizedValue)) return false
+    return true
+  })
 
   const showSuggestions = isOpen && filteredSuggestions.length > 0
 
@@ -104,7 +111,7 @@ export function ExpenseTitleInput({
       {showSuggestions && (
         <div className="absolute z-50 mt-1 w-full">
           <Command className="rounded-md border border-input shadow-md">
-            <CommandList>
+            <CommandList id="expense-title-suggestions">
               <CommandEmpty>No suggestions found.</CommandEmpty>
               <CommandGroup>
                 {filteredSuggestions.map((suggestion) => (
