@@ -1,3 +1,17 @@
+# [1.41.0](https://github.com/rjdmacedo/knots/compare/v1.40.0...v1.41.0) (2026-06-25)
+
+
+### Bug Fixes
+
+* revert group slug routes and keep user usernames ([588ce60](https://github.com/rjdmacedo/knots/commit/588ce60a8e5243da1126de7c082915cf08596266))
+* update Frankfurter exchange rate API URL ([2aafe03](https://github.com/rjdmacedo/knots/commit/2aafe03b88b04177c4981184278e8f199ca3f4e9))
+
+
+### Features
+
+* default expense currency to user preference ([eae5dd1](https://github.com/rjdmacedo/knots/commit/eae5dd1089f8c493039bd76c2995c2a2d0300e2d))
+* include shared group expenses in friend view ([802d1eb](https://github.com/rjdmacedo/knots/commit/802d1eb92fac1322d6ecce37e78897425ed98c42))
+
 # [1.40.0](https://github.com/rjdmacedo/knots/compare/v1.39.0...v1.40.0) (2026-06-24)
 
 
