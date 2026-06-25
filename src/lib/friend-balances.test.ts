@@ -127,7 +127,6 @@ describe('computeFriendBalance', () => {
       {
         id: 'group-1',
         name: 'Trip',
-        slug: 'trip',
         type: GroupType.STANDARD,
         currency: '€',
         currencyCode: 'EUR',
@@ -196,7 +195,6 @@ describe('computeFriendBalance', () => {
       {
         id: 'group-eur',
         name: 'Europe Trip',
-        slug: 'europe-trip',
         type: GroupType.STANDARD,
         currency: '€',
         currencyCode: 'EUR',
@@ -206,7 +204,6 @@ describe('computeFriendBalance', () => {
       {
         id: 'group-usd',
         name: 'US Trip',
-        slug: 'us-trip',
         type: GroupType.STANDARD,
         currency: '$',
         currencyCode: 'USD',
@@ -264,7 +261,6 @@ describe('computeFriendBalance', () => {
       {
         id: 'group-1',
         name: 'Settled Group',
-        slug: 'settled-group',
         type: GroupType.STANDARD,
         currency: '$',
         currencyCode: 'USD',
@@ -306,7 +302,6 @@ describe('computeFriendSettlements', () => {
       {
         id: 'group-dyad',
         name: 'Alice',
-        slug: 'alice',
         type: GroupType.DYAD,
         currency: '€',
         currencyCode: 'EUR',
@@ -316,7 +311,6 @@ describe('computeFriendSettlements', () => {
       {
         id: 'group-demo',
         name: 'Demo group',
-        slug: 'demo-group',
         type: GroupType.STANDARD,
         currency: '€',
         currencyCode: 'EUR',
@@ -354,7 +348,6 @@ describe('computeFriendSettlements', () => {
       {
         id: 'group-1',
         name: 'Settled',
-        slug: 'settled',
         type: GroupType.STANDARD,
         currency: '€',
         currencyCode: 'EUR',

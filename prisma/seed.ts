@@ -155,7 +155,6 @@ async function main() {
     data: {
       id: 'seed-group-demo',
       name: 'Demo group',
-      slug: 'demo-group',
       type: GroupType.STANDARD,
       information: '5 membros, 10 despesas de 10,00 €',
       currency: '€',
@@ -167,7 +166,6 @@ async function main() {
     data: {
       id: 'seed-group-dyad-rafael-bob',
       name: 'Bob',
-      slug: 'dyad-rafael-bob',
       type: GroupType.DYAD,
       dyadKey: buildDyadKey(rafael.id, bob.id),
       currency: '€',
@@ -179,7 +177,6 @@ async function main() {
     data: {
       id: 'seed-group-dyad-rafael-alice',
       name: 'Alice',
-      slug: 'dyad-rafael-alice',
       type: GroupType.DYAD,
       dyadKey: buildDyadKey(rafael.id, alice.id),
       currency: '€',

@@ -18,43 +18,6 @@ export function slugify(text: string): string {
 }
 
 /**
- * Generates a unique group slug. If the base slug already exists,
- * appends an incrementing numeric suffix (e.g. "trip-to-paris-2").
- */
-export async function generateUniqueGroupSlug(name: string): Promise<string> {
-  const base = slugify(name) || 'group'
-
-  // Check if the base slug is available
-  const existing = await prisma.group.findUnique({
-    where: { slug: base },
-    select: { id: true },
-  })
-
-  if (!existing) return base
-
-  // Find the next available suffix
-  // Look for slugs that start with the base and end with a number
-  const similar = await prisma.group.findMany({
-    where: {
-      slug: { startsWith: `${base}-` },
-    },
-    select: { slug: true },
-  })
-
-  const suffixes = similar
-    .map((g) => {
-      const suffix = g.slug.slice(base.length + 1)
-      const num = parseInt(suffix, 10)
-      return isNaN(num) ? 0 : num
-    })
-    .filter((n) => n > 0)
-
-  const nextSuffix = suffixes.length > 0 ? Math.max(...suffixes) + 1 : 2
-
-  return `${base}-${nextSuffix}`
-}
-
-/**
  * Generates a unique username from an email prefix or provided string.
  * If the base username is taken, appends a numeric suffix.
  */

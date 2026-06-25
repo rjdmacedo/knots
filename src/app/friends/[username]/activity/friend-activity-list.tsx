@@ -4,7 +4,7 @@ import {
   ActivityItem,
   type Activity,
   type ActivityGroup,
-} from '@/app/groups/[groupSlug]/activity/activity-item'
+} from '@/app/groups/[groupId]/activity/activity-item'
 import { Badge } from '@/components/ui/badge'
 import {
   Card,
@@ -146,7 +146,7 @@ export function FriendActivityList({ friendId }: Props) {
                             </Badge>
                           ) : (
                             <Link
-                              href={`/groups/${activity.group?.slug ?? activity.groupId}/activity`}
+                              href={`/groups/${activity.groupId}/activity`}
                               className="hover:underline"
                             >
                               <Badge variant="outline">

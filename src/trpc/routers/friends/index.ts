@@ -371,19 +371,11 @@ export const friendsRouter = createTRPCRouter({
       const displayName =
         friend.name ?? friend.friend?.name ?? friend.email.split('@')[0]
 
-      const result = await findOrCreateDyadGroup(
+      return findOrCreateDyadGroup(
         ctx.user.id,
         friend.friendUserId,
         displayName,
       )
-
-      // Fetch the slug for the group so the client can navigate by slug
-      const group = await prisma.group.findUnique({
-        where: { id: result.groupId },
-        select: { slug: true },
-      })
-
-      return { ...result, slug: group!.slug }
     }),
 
   getStats: protectedProcedure

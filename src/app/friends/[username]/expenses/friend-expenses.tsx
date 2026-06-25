@@ -1,6 +1,6 @@
 'use client'
 
-import { ExpenseCard } from '@/app/groups/[groupSlug]/expenses/expense-card'
+import { ExpenseCard } from '@/app/groups/[groupId]/expenses/expense-card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -89,8 +89,8 @@ export function FriendExpenses({ friendId }: Props) {
   } = trpc.friends.getExpenses.useQuery({ friendId })
 
   const findOrCreateDyadGroup = trpc.friends.findOrCreateDyadGroup.useMutation({
-    onSuccess: ({ slug }) => {
-      router.push(`/groups/${slug}/expenses/create`)
+    onSuccess: ({ groupId }) => {
+      router.push(`/groups/${groupId}/expenses/create`)
     },
     onError: (mutationError) => {
       toast.error(mutationError.message)
@@ -175,7 +175,7 @@ export function FriendExpenses({ friendId }: Props) {
                           </Badge>
                         ) : (
                           <Link
-                            href={`/groups/${item.groupSlug}/expenses`}
+                            href={`/groups/${item.groupId}/expenses`}
                             className="hover:underline"
                           >
                             <Badge variant="outline">{item.groupName}</Badge>

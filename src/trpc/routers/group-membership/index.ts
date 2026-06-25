@@ -29,7 +29,7 @@ export const groupMembershipRouter = createTRPCRouter({
         })
       }
 
-      return { groupId: result.groupId, slug: result.slug }
+      return { groupId: result.groupId }
     }),
 
   /**

@@ -20,7 +20,6 @@ enum GroupType {
 model Group {
   id                String                   @id
   name              String
-  slug              String                   @unique
   type              GroupType                @default(STANDARD)
   dyadKey           String?                  @unique
   information       String?                  @db.Text

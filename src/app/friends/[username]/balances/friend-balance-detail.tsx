@@ -193,7 +193,7 @@ function GroupBreakdownCard({
                   href={
                     group.groupType === GroupType.DYAD
                       ? `/friends/${friendId}/expenses`
-                      : `/groups/${group.groupSlug}/balances`
+                      : `/groups/${group.groupId}/balances`
                   }
                   className="text-xs text-muted-foreground hover:underline"
                 >

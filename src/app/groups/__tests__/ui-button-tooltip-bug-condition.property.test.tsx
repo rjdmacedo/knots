@@ -32,7 +32,7 @@ import * as path from 'path'
 // --- Source file paths ---
 const SHARE_BUTTON_PATH = path.resolve(
   __dirname,
-  '../../groups/[groupSlug]/share-button.tsx',
+  '../../groups/[groupId]/share-button.tsx',
 )
 const PUSH_NOTIFICATION_TOGGLE_PATH = path.resolve(
   __dirname,
@@ -40,19 +40,19 @@ const PUSH_NOTIFICATION_TOGGLE_PATH = path.resolve(
 )
 const EXPORT_BUTTON_PATH = path.resolve(
   __dirname,
-  '../../groups/[groupSlug]/export-button.tsx',
+  '../../groups/[groupId]/export-button.tsx',
 )
 const EXPENSES_PAGE_CLIENT_PATH = path.resolve(
   __dirname,
-  '../../groups/[groupSlug]/expenses/page.client.tsx',
+  '../../groups/[groupId]/expenses/page.client.tsx',
 )
 const CREATE_FROM_RECEIPT_PATH = path.resolve(
   __dirname,
-  '../../groups/[groupSlug]/expenses/create-from-receipt-button.tsx',
+  '../../groups/[groupId]/expenses/create-from-receipt-button.tsx',
 )
 const GROUP_INFORMATION_PATH = path.resolve(
   __dirname,
-  '../../groups/[groupSlug]/information/group-information.tsx',
+  '../../groups/[groupId]/information/group-information.tsx',
 )
 const MY_GROUPS_PATH = path.resolve(__dirname, '../../groups/my-groups.tsx')
 

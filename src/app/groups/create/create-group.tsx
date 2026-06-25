@@ -12,9 +12,9 @@ export const CreateGroup = () => {
   return (
     <GroupForm
       onSubmit={async (groupFormValues) => {
-        const { slug } = await mutateAsync({ groupFormValues })
+        const { groupId } = await mutateAsync({ groupFormValues })
         await utils.groups.invalidate()
-        router.push(`/groups/${slug}`)
+        router.push(`/groups/${groupId}`)
       }}
     />
   )

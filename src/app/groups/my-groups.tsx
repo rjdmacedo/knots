@@ -57,7 +57,6 @@ const GROUP_NAME_MAX = 100
 type UserGroup = {
   id: string
   name: string
-  slug: string
   createdAt: Date
   archivedAt: Date | null
   role: 'OWNER' | 'MEMBER'
@@ -211,7 +210,7 @@ function GroupCard({
     <>
       <div className="flex items-center rounded-lg border transition-colors hover:bg-accent">
         <Link
-          href={`/groups/${group.slug}`}
+          href={`/groups/${group.id}`}
           className="flex flex-1 items-center gap-3 px-4 py-3 min-w-0"
         >
           <Users className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -376,7 +375,7 @@ function CreateGroupDialog({
       onOpenChange(false)
       setName('')
       setError(null)
-      router.push(`/groups/${data.slug}`)
+      router.push(`/groups/${data.groupId}`)
     },
     onError: (err) => {
       setError(err.message)

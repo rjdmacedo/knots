@@ -1,7 +1,7 @@
 'use client'
 
-import { RequestPaymentDialog } from '@/app/groups/[groupSlug]/balances/request-payment-dialog'
-import { SettleAccountsDialog } from '@/app/groups/[groupSlug]/balances/settle-accounts-dialog'
+import { RequestPaymentDialog } from '@/app/groups/[groupId]/balances/request-payment-dialog'
+import { SettleAccountsDialog } from '@/app/groups/[groupId]/balances/settle-accounts-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Currency } from '@/lib/currency'

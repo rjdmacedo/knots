@@ -5,7 +5,6 @@ import {
 } from '@/lib/activity-diff'
 import { prisma } from '@/lib/prisma'
 import { ExpenseFormValues, GroupFormValues } from '@/lib/schemas'
-import { generateUniqueGroupSlug } from '@/lib/slugify'
 import {
   ActivityType,
   Expense,
@@ -21,12 +20,10 @@ export function randomId() {
 }
 
 export async function createGroup(groupFormValues: GroupFormValues) {
-  const slug = await generateUniqueGroupSlug(groupFormValues.name)
   return prisma.group.create({
     data: {
       id: randomId(),
       name: groupFormValues.name,
-      slug,
       information: groupFormValues.information,
       currency: groupFormValues.currency,
       currencyCode: groupFormValues.currencyCode,
@@ -377,17 +374,10 @@ export async function updateGroup(
     changes,
   })
 
-  // Regenerate slug if name changed
-  const nameChanged = nextValues.name !== existingGroup.name
-  const slug = nameChanged
-    ? await generateUniqueGroupSlug(nextValues.name)
-    : undefined
-
   return prisma.group.update({
     where: { id: groupId },
     data: {
       name: nextValues.name,
-      ...(slug && { slug }),
       information: nextValues.information,
       currency: nextValues.currency,
       currencyCode: nextValues.currencyCode,
@@ -409,28 +399,6 @@ export async function getGroup(groupId: string) {
   if (!group) return null
 
   // Map memberships to a participants-compatible shape for backward compatibility
-  return {
-    ...group,
-    participants: group.memberships.map((m) => ({
-      id: m.user.id,
-      name: m.user.name,
-      email: m.user.email,
-    })),
-  }
-}
-
-export async function getGroupBySlug(slug: string) {
-  const group = await prisma.group.findUnique({
-    where: { slug },
-    include: {
-      memberships: {
-        include: { user: { select: { id: true, name: true, email: true } } },
-      },
-    },
-  })
-
-  if (!group) return null
-
   return {
     ...group,
     participants: group.memberships.map((m) => ({
@@ -585,7 +553,6 @@ export async function getGlobalActivities(
       {
         id: group.id,
         name: group.name,
-        slug: group.slug,
         currency: group.currency,
         currencyCode: group.currencyCode,
         participants: group.memberships.map((membership) => ({

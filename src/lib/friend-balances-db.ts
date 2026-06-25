@@ -11,7 +11,6 @@ export async function getSharedGroupsForUsers(
   Array<{
     id: string
     name: string
-    slug: string
     type: GroupType
     currency: string
     currencyCode: string | null
@@ -30,7 +29,6 @@ export async function getSharedGroupsForUsers(
         select: {
           id: true,
           name: true,
-          slug: true,
           type: true,
           currency: true,
           currencyCode: true,
@@ -48,7 +46,6 @@ export async function getSharedGroupsForUsers(
       group: {
         id: string
         name: string
-        slug: string
         type: GroupType
         currency: string
         currencyCode: string | null
@@ -72,7 +69,6 @@ export async function getSharedGroupsForUsers(
   const sharedGroups: Array<{
     id: string
     name: string
-    slug: string
     type: GroupType
     currency: string
     currencyCode: string | null
