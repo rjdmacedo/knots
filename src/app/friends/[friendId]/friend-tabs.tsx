@@ -1,0 +1,34 @@
+'use client'
+
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useTranslations } from 'next-intl'
+import { usePathname, useRouter } from 'next/navigation'
+
+type Props = {
+  friendId: string
+}
+
+export function FriendTabs({ friendId }: Props) {
+  const t = useTranslations()
+  const pathname = usePathname()
+  const value =
+    pathname.replace(/\/friends\/[^/]+\/([^/]+).*/, '$1') || 'expenses'
+  const router = useRouter()
+
+  return (
+    <Tabs
+      value={value}
+      className="min-w-0"
+      onValueChange={(nextValue) => {
+        router.push(`/friends/${friendId}/${nextValue}`)
+      }}
+    >
+      <TabsList className="max-w-full! justify-start overflow-x-auto scrollbar-none border">
+        <TabsTrigger value="expenses">{t('Expenses.title')}</TabsTrigger>
+        <TabsTrigger value="balances">{t('Balances.title')}</TabsTrigger>
+        <TabsTrigger value="stats">{t('Stats.title')}</TabsTrigger>
+        <TabsTrigger value="activity">{t('Activity.title')}</TabsTrigger>
+      </TabsList>
+    </Tabs>
+  )
+}
