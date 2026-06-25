@@ -33,7 +33,7 @@ beforeEach(() => {
 })
 
 describe('getFriendExpenses', () => {
-  it('returns only direct (dyad) expenses between the two friends', async () => {
+  it('returns expenses from all shared groups where both friends are involved', async () => {
     mockGetSharedGroups.mockResolvedValue([
       {
         id: 'group-dyad',
@@ -115,9 +115,17 @@ describe('getFriendExpenses', () => {
 
     const result = await getFriendExpenses(currentUserId, friendUserId)
 
-    expect(result).toHaveLength(1)
-    expect(result[0].expense.id).toBe('exp-dyad')
-    expect(result[0].groupType).toBe(GroupType.DYAD)
+    expect(result).toHaveLength(2)
+    expect(result.map((item) => item.expense.id).sort()).toEqual([
+      'exp-casa',
+      'exp-dyad',
+    ])
+    expect(
+      result.find((item) => item.expense.id === 'exp-dyad')?.groupType,
+    ).toBe(GroupType.DYAD)
+    expect(
+      result.find((item) => item.expense.id === 'exp-casa')?.groupType,
+    ).toBe(GroupType.STANDARD)
   })
 
   it('returns empty array when there are no shared groups', async () => {

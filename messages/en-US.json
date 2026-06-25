@@ -910,7 +910,7 @@
       "backToFriends": "Back to friends",
       "backToFriend": "Back to {name}",
       "listTitle": "Expense history",
-      "listDescription": "Expenses shared directly between you and this friend.",
+      "listDescription": "Expenses you share with this friend, across groups.",
       "create": "Add expense",
       "empty": "No expenses with this friend yet.",
       "directExpenses": "Direct expenses",

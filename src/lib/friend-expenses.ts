@@ -38,15 +38,11 @@ export async function getFriendExpenses(
     friendUserId,
   )
 
-  const dyadGroups = sharedGroups.filter(
-    (group) => group.type === GroupType.DYAD,
-  )
-
-  if (dyadGroups.length === 0) {
+  if (sharedGroups.length === 0) {
     return []
   }
 
-  const groupIds = dyadGroups.map((group) => group.id)
+  const groupIds = sharedGroups.map((group) => group.id)
 
   const memberCounts = await prisma.groupMembership.groupBy({
     by: ['groupId'],
@@ -60,7 +56,7 @@ export async function getFriendExpenses(
 
   const items: FriendExpenseItem[] = []
 
-  for (const group of dyadGroups) {
+  for (const group of sharedGroups) {
     const expenses = await fetchGroupExpenses(group.id)
     const currency = getCurrencyFromGroup({
       currency: group.currency,
