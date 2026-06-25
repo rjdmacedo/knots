@@ -25,13 +25,16 @@ export function CreateExpenseForm({
   const { data: categoriesData } = trpc.categories.list.useQuery()
   const categories = categoriesData?.categories
 
+  const { data: profile, isLoading: isProfileLoading } =
+    trpc.profile.getProfile.useQuery()
+
   const { mutateAsync: createExpenseMutateAsync } =
     trpc.groups.expenses.create.useMutation()
 
   const utils = trpc.useUtils()
   const router = useRouter()
 
-  if (!group || !categories) return null
+  if (!group || !categories || isProfileLoading) return null
 
   const isDyad = group.type === GroupType.DYAD
   const friendId = isDyad
@@ -53,6 +56,7 @@ export function CreateExpenseForm({
         group={group}
         categories={categories}
         currentUserId={currentUserId}
+        preferredCurrency={profile?.preferredCurrency}
         onSubmit={async (expenseFormValues) => {
           await createExpenseMutateAsync({
             groupId,

@@ -158,11 +158,22 @@ async function persistDefaultSplittingOptions(
   }
 }
 
+function getDefaultExpenseCurrency(
+  group: Pick<
+    NonNullable<AppRouterOutput['groups']['get']['group']>,
+    'currencyCode'
+  >,
+  preferredCurrency?: string | null,
+) {
+  return preferredCurrency ?? group.currencyCode ?? undefined
+}
+
 export function ExpenseForm({
   group,
   categories,
   expense,
   currentUserId,
+  preferredCurrency,
   onSubmit,
   onDelete,
   runtimeFeatureFlags,
@@ -171,6 +182,7 @@ export function ExpenseForm({
   categories: AppRouterOutput['categories']['list']['categories']
   expense?: AppRouterOutput['groups']['expenses']['get']['expense']
   currentUserId?: string
+  preferredCurrency?: string | null
   onSubmit: (value: ExpenseFormValues, participantId?: string) => Promise<void>
   onDelete?: (participantId?: string) => Promise<void>
   runtimeFeatureFlags: RuntimeFeatureFlags
@@ -205,6 +217,10 @@ export function ExpenseForm({
   }
   const defaultSplittingOptions = getDefaultSplittingOptions(group)
   const groupCurrency = getCurrencyFromGroup(group)
+  const defaultExpenseCurrency = getDefaultExpenseCurrency(
+    group,
+    preferredCurrency,
+  )
   const form = useForm<ExpenseFormValues>({
     resolver: zodResolver(expenseFormSchema),
     defaultValues: expense
@@ -243,7 +259,7 @@ export function ExpenseForm({
               Number(searchParams.get('amount')) || 0,
               groupCurrency,
             ),
-            originalCurrency: group.currencyCode,
+            originalCurrency: defaultExpenseCurrency,
             originalAmount: undefined,
             conversionRate: undefined,
             category: 1, // category with id 1 is Payment
@@ -272,7 +288,7 @@ export function ExpenseForm({
               ? new Date(searchParams.get('date') as string)
               : new Date(),
             amount: Number(searchParams.get('amount')) || 0,
-            originalCurrency: group.currencyCode ?? undefined,
+            originalCurrency: defaultExpenseCurrency,
             originalAmount: undefined,
             conversionRate: undefined,
             category: searchParams.get('categoryId')
