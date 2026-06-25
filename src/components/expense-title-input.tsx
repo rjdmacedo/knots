@@ -45,12 +45,11 @@ export function ExpenseTitleInput({
   const { data } = trpc.groups.expenses.suggestTitles.useQuery(
     { groupId, query: debouncedQuery },
     {
-      enabled: debouncedQuery.trim().length >= 1,
+      enabled: isOpen,
     },
   )
 
   const suggestions = data?.suggestions ?? []
-  // Filter out exact matches (no point suggesting what's already typed)
   const filteredSuggestions = suggestions.filter(
     (s) => s.title !== value.toLowerCase().trim(),
   )
@@ -92,9 +91,7 @@ export function ExpenseTitleInput({
           setIsOpen(true)
         }}
         onFocus={() => {
-          if (value.trim().length >= 1) {
-            setIsOpen(true)
-          }
+          setIsOpen(true)
         }}
         onBlur={handleBlur}
         placeholder={placeholder}
