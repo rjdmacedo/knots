@@ -1,3 +1,16 @@
+# [1.42.0](https://github.com/rjdmacedo/knots/compare/v1.41.0...v1.42.0) (2026-06-25)
+
+
+### Bug Fixes
+
+* prevent expense title suggestions flicker while typing ([aa6be7b](https://github.com/rjdmacedo/knots/commit/aa6be7b0e4e3ac5baef56d224f76dfcd9b038ce1))
+
+
+### Features
+
+* add friend tabs component for navigation between friend-related views ([4492307](https://github.com/rjdmacedo/knots/commit/44923077661f185499370085f1a05c5723668b5c))
+* suggest frequent expense titles on input focus ([c972da0](https://github.com/rjdmacedo/knots/commit/c972da04a1b65ef715e79fa75cfe1407cb3b434f))
+
 # [1.41.0](https://github.com/rjdmacedo/knots/compare/v1.40.0...v1.41.0) (2026-06-25)
 
 
