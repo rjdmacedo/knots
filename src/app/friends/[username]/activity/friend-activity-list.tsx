@@ -19,7 +19,6 @@ import {
   groupActivitiesByDate,
 } from '@/lib/activity-date-groups'
 import { trpc } from '@/trpc/client'
-import { GroupType } from '@prisma/client'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { forwardRef, useEffect } from 'react'
@@ -29,7 +28,7 @@ import { useSpinDelay } from 'spin-delay'
 const PAGE_SIZE = 20
 
 type FriendActivity = Activity & {
-  group: ActivityGroup & { type: GroupType }
+  group: ActivityGroup & { type: string }
 }
 
 const ActivitiesLoading = forwardRef<HTMLDivElement>((_, ref) => {
@@ -55,7 +54,6 @@ type Props = {
 
 export function FriendActivityList({ friendId }: Props) {
   const t = useTranslations('Activity')
-  const t_expenses = useTranslations('Friends.Expenses')
 
   const { data: categoriesData } = trpc.categories.list.useQuery()
   const categories = categoriesData?.categories ?? []
@@ -140,20 +138,14 @@ export function FriendActivityList({ friendId }: Props) {
                     return (
                       <div key={activity.id}>
                         <div className="flex items-center gap-2 px-4 pt-3 pb-1">
-                          {activity.group.type === GroupType.DYAD ? (
-                            <Badge variant="secondary">
-                              {t_expenses('directExpenses')}
+                          <Link
+                            href={`/groups/${activity.groupId}/activity`}
+                            className="hover:underline"
+                          >
+                            <Badge variant="outline">
+                              {activity.group.name}
                             </Badge>
-                          ) : (
-                            <Link
-                              href={`/groups/${activity.groupId}/activity`}
-                              className="hover:underline"
-                            >
-                              <Badge variant="outline">
-                                {activity.group.name}
-                              </Badge>
-                            </Link>
-                          )}
+                          </Link>
                         </div>
                         <ActivityItem
                           groupId={activity.groupId}

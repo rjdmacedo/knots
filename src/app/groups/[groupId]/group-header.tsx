@@ -9,7 +9,6 @@ import {
 import { PushNotificationToggle } from '@/components/push-notification-toggle'
 import { Skeleton } from '@/components/ui/skeleton'
 import { trpc } from '@/trpc/client'
-import { GroupType } from '@prisma/client'
 import { useTranslations } from 'next-intl'
 
 export const GroupHeader = () => {
@@ -19,7 +18,6 @@ export const GroupHeader = () => {
   const { data: profile } = trpc.profile.getProfile.useQuery()
 
   const basePath = `/groups/${groupId}`
-  const isDyad = group?.type === GroupType.DYAD
   const description =
     group?.information?.trim() ||
     (!isLoading && group ? t('detailDescription') : undefined)
@@ -27,12 +25,10 @@ export const GroupHeader = () => {
   const tabs = [
     { value: 'expenses', label: tTabs('Expenses.title') },
     { value: 'balances', label: tTabs('Balances.title') },
-    ...(isDyad
-      ? []
-      : [{ value: 'information', label: tTabs('Information.title') }]),
+    { value: 'information', label: tTabs('Information.title') },
     { value: 'stats', label: tTabs('Stats.title') },
     { value: 'activity', label: tTabs('Activity.title') },
-    ...(isDyad ? [] : [{ value: 'edit', label: tTabs('Settings.title') }]),
+    { value: 'edit', label: tTabs('Settings.title') },
   ]
 
   return (

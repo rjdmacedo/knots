@@ -32,13 +32,11 @@ export type Props = {
     simplifyDebts: boolean
   }
   onSubmit: (groupFormValues: GroupFormValues) => Promise<void>
-  variant?: 'default' | 'dyad'
 }
 
-export function GroupForm({ group, onSubmit, variant = 'default' }: Props) {
+export function GroupForm({ group, onSubmit }: Props) {
   const locale = useLocale()
   const t = useTranslations('GroupForm')
-  const isDyad = variant === 'dyad'
   const form = useForm<GroupFormValues>({
     resolver: zodResolver(groupFormSchema),
     defaultValues: group
@@ -69,34 +67,30 @@ export function GroupForm({ group, onSubmit, variant = 'default' }: Props) {
       >
         <Card className="mb-4">
           <CardHeader>
-            <CardTitle>
-              {isDyad ? t('CurrencyCodeField.label') : t('title')}
-            </CardTitle>
+            <CardTitle>{t('title')}</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <div className="flex flex-col sm:flex-row gap-4 flex-wrap sm:items-start">
-              {!isDyad && (
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormLabel>{t('NameField.label')}</FormLabel>
-                      <FormControl>
-                        <Input
-                          className="text-base"
-                          placeholder={t('NameField.placeholder')}
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        {t('NameField.description')}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>{t('NameField.label')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="text-base"
+                        placeholder={t('NameField.placeholder')}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {t('NameField.description')}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}
@@ -164,52 +158,48 @@ export function GroupForm({ group, onSubmit, variant = 'default' }: Props) {
               />
             </div>
 
-            {!isDyad && (
-              <FormField
-                control={form.control}
-                name="information"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('InformationField.label')}</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        rows={2}
-                        className="text-base"
-                        {...field}
-                        placeholder={t('InformationField.placeholder')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
+            <FormField
+              control={form.control}
+              name="information"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('InformationField.label')}</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      rows={2}
+                      className="text-base"
+                      {...field}
+                      placeholder={t('InformationField.placeholder')}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-            {!isDyad && (
-              <FormField
-                control={form.control}
-                name="simplifyDebts"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between gap-4 rounded-lg border p-4">
-                    <div className="flex flex-col gap-1">
-                      <FormLabel className="text-base">
-                        {t('SimplifyDebtsField.label')}
-                      </FormLabel>
-                      <FormDescription>
-                        {t('SimplifyDebtsField.description')}
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        aria-label={t('SimplifyDebtsField.label')}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            )}
+            <FormField
+              control={form.control}
+              name="simplifyDebts"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between gap-4 rounded-lg border p-4">
+                  <div className="flex flex-col gap-1">
+                    <FormLabel className="text-base">
+                      {t('SimplifyDebtsField.label')}
+                    </FormLabel>
+                    <FormDescription>
+                      {t('SimplifyDebtsField.description')}
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                      aria-label={t('SimplifyDebtsField.label')}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
           </CardContent>
         </Card>
 

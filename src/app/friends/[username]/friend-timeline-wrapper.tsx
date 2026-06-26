@@ -2,9 +2,13 @@
 
 import { useFriendContext } from '@/app/friends/[username]/friend-context'
 import { Loader2 } from 'lucide-react'
-import { FriendBalanceDetail } from './friend-balance-detail'
+import { FriendTimelineView } from './friend-timeline-view'
 
-export function FriendBalanceWrapper() {
+type Props = {
+  username?: string
+}
+
+export function FriendTimelineWrapper({ username: _username }: Props) {
   const { friendId, isLoading } = useFriendContext()
 
   if (isLoading || !friendId) {
@@ -15,5 +19,5 @@ export function FriendBalanceWrapper() {
     )
   }
 
-  return <FriendBalanceDetail friendId={friendId} />
+  return <FriendTimelineView friendId={friendId} />
 }

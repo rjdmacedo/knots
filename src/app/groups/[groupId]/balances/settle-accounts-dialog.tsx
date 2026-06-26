@@ -152,8 +152,7 @@ export function SettleAccountsDialog({
   const handleConfirm = () => {
     if (!selectedCreditor || parsedAmount === null) return
 
-    const settlementGroupId = selectedCreditor.groupId ?? groupId
-    if (!settlementGroupId) return
+    const settlementGroupId = selectedCreditor.groupId ?? groupId ?? null
 
     recordSettlement({
       groupId: settlementGroupId,

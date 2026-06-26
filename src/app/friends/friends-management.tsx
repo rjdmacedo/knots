@@ -1,5 +1,6 @@
 'use client'
 
+import { Money } from '@/components/money'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,7 +11,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,18 +26,13 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import type { CurrencyBalance } from '@/lib/friend-balances'
 import { trpc } from '@/trpc/client'
 import {
+  ChevronDown,
   Loader2,
   MoreVertical,
   Plus,
-  Receipt,
   Trash2,
   UserPlus,
   X,
@@ -40,10 +41,10 @@ import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { FriendBalanceSummary } from './friend-balance-summary'
 
 export function FriendsManagement() {
   const t = useTranslations('Friends')
+  const tList = useTranslations('Friends.List')
   const [isAdding, setIsAdding] = useState(false)
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
@@ -55,16 +56,11 @@ export function FriendsManagement() {
   } | null>(null)
   const utils = trpc.useUtils()
 
-  const t_bal = useTranslations('Friends.Balances')
   const { data: friends, isLoading, error } = trpc.friends.list.useQuery()
   const { data: incomingRequests, isLoading: isLoadingRequests } =
     trpc.friends.listIncoming.useQuery()
-  const {
-    data: balances,
-    isLoading: isLoadingBalances,
-    error: balanceError,
-    refetch: refetchBalances,
-  } = trpc.friends.listWithBalances.useQuery()
+  const { data: balances, isLoading: isLoadingBalances } =
+    trpc.friends.listWithBalances.useQuery()
 
   const addFriend = trpc.friends.add.useMutation({
     onSuccess: (data) => {
@@ -73,6 +69,7 @@ export function FriendsManagement() {
       setName('')
       setIsAdding(false)
       utils.friends.list.invalidate()
+      utils.friends.listWithBalances.invalidate()
     },
     onError: (mutationError) => {
       toast.error(mutationError.message)
@@ -83,6 +80,7 @@ export function FriendsManagement() {
     onSuccess: () => {
       toast.success(t('removedToast'))
       utils.friends.list.invalidate()
+      utils.friends.listWithBalances.invalidate()
     },
     onError: (mutationError) => {
       toast.error(mutationError.message)
@@ -94,6 +92,7 @@ export function FriendsManagement() {
       toast.success(t('acceptedToast', { name: data.name }))
       utils.friends.list.invalidate()
       utils.friends.listIncoming.invalidate()
+      utils.friends.listWithBalances.invalidate()
     },
     onError: (mutationError) => {
       toast.error(mutationError.message)
@@ -113,7 +112,6 @@ export function FriendsManagement() {
   const unblockUser = trpc.profile.unblockUser.useMutation({
     onSuccess: () => {
       utils.profile.getBlockedUsers.invalidate()
-      // After unblocking, proceed with the add
       addFriend.mutate({
         email: pendingBlockedEmail,
         ...(name.trim() ? { name: name.trim() } : {}),
@@ -132,7 +130,6 @@ export function FriendsManagement() {
 
     const normalizedEmail = email.trim().toLowerCase()
 
-    // Check if this email is blocked by the current user
     const result = await utils.profile.checkBlocked.fetch({
       email: normalizedEmail,
     })
@@ -149,6 +146,29 @@ export function FriendsManagement() {
     })
   }
 
+  // Compute aggregate totals per currency and split friends into unsettled/settled
+  const aggregateTotals = computeAggregateTotals(balances ?? [])
+  const unsettledFriends = (friends ?? []).filter((friend) => {
+    if (!friend.friendUserId) return false
+    const fb = balances?.find((b) => b.friendId === friend.id)
+    if (!fb) return false
+    return fb.balances.some((b) => b.totalAmount !== 0)
+  })
+  const settledFriends = (friends ?? []).filter((friend) => {
+    if (!friend.friendUserId) return true // friends without account go to settled section
+    const fb = balances?.find((b) => b.friendId === friend.id)
+    if (!fb) return true
+    return fb.balances.every((b) => b.totalAmount === 0)
+  })
+  // Pending friends (not yet connected) are always shown separately
+  const pendingFriends = (friends ?? []).filter((f) => f.status === 'pending')
+  const connectedUnsettled = unsettledFriends.filter(
+    (f) => f.status === 'connected',
+  )
+  const connectedSettled = settledFriends.filter(
+    (f) => f.status === 'connected',
+  )
+
   if (isLoading || isLoadingRequests) {
     return (
       <div className="flex items-center justify-center py-12 text-muted-foreground">
@@ -164,6 +184,7 @@ export function FriendsManagement() {
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Incoming requests section */}
       {incomingRequests && incomingRequests.length > 0 && (
         <section className="rounded-lg border p-4 space-y-4">
           <div>
@@ -231,147 +252,73 @@ export function FriendsManagement() {
         </section>
       )}
 
-      <section className="rounded-lg border p-4 space-y-4">
-        <div>
-          <h2 className="font-semibold text-lg">{t('listTitle')}</h2>
-          <p className="text-sm text-muted-foreground">
-            {t('listDescription')}
-          </p>
-        </div>
-
-        {friends && friends.length > 0 ? (
+      {/* Pending friends (not yet connected) */}
+      {pendingFriends.length > 0 && (
+        <section className="rounded-lg border p-4 space-y-4">
+          <div>
+            <h2 className="font-semibold text-lg">{t('pending')}</h2>
+          </div>
           <ul className="flex flex-col gap-2">
-            {friends.map((friend) => {
-              const hasAccount = friend.friendUserId !== null
+            {pendingFriends.map((friend) => (
+              <FriendRow
+                key={friend.id}
+                friend={friend}
+                onRemove={() =>
+                  setFriendToRemove({ id: friend.id, name: friend.name })
+                }
+              />
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {/* 11.1: Aggregate header */}
+      {!isLoadingBalances && (
+        <FriendsAggregateHeader totals={aggregateTotals} />
+      )}
+
+      {/* 11.2 & 11.4: Non-zero balance friends */}
+      {isLoadingBalances ? (
+        <div className="space-y-2">
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-12 w-full" />
+        </div>
+      ) : connectedUnsettled.length > 0 ? (
+        <section className="space-y-2">
+          <ul className="flex flex-col gap-2">
+            {connectedUnsettled.map((friend) => {
               const friendBalance = balances?.find(
                 (b) => b.friendId === friend.id,
               )
-
               return (
-                <li
+                <FriendDebtRow
                   key={friend.id}
-                  className="flex items-center justify-between gap-2 rounded-md border px-3 py-2"
-                >
-                  <div className="flex items-center gap-2 min-w-0 flex-1">
-                    <div
-                      className={cn(
-                        'flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-sm font-medium ring-2 ring-offset-2 ring-offset-background',
-                        friend.status === 'pending'
-                          ? 'ring-debt/30'
-                          : 'ring-primary/70',
-                      )}
-                    >
-                      {friend.name.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                        <span className="text-sm font-medium">
-                          {friend.name}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {friend.hasAccount ? t('hasAccount') : t('noAccount')}
-                        </span>
-                      </div>
-                      <p className="text-xs text-muted-foreground truncate">
-                        {friend.email}
-                      </p>
-                      {hasAccount && (
-                        <div className="mt-1">
-                          {isLoadingBalances ? (
-                            <Skeleton className="h-3 w-24" />
-                          ) : balanceError ? (
-                            <div className="flex items-center gap-1">
-                              <span className="text-xs text-destructive">
-                                {t_bal('loadError')}
-                              </span>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-5 px-1 text-xs"
-                                onClick={() => refetchBalances()}
-                              >
-                                {t_bal('retry')}
-                              </Button>
-                            </div>
-                          ) : friendBalance ? (
-                            <Link
-                              href={`/friends/${friend.friendUsername}/expenses`}
-                              className="hover:underline"
-                            >
-                              <FriendBalanceSummary
-                                balances={friendBalance.balances}
-                                friendName={friend.name}
-                              />
-                            </Link>
-                          ) : null}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-1 shrink-0">
-                    {hasAccount && (
-                      <Tooltip>
-                        <TooltipTrigger
-                          render={
-                            <Link
-                              href={`/friends/${friend.friendUsername}/expenses`}
-                              className={cn(
-                                buttonVariants({
-                                  variant: 'outline',
-                                  size: 'icon-sm',
-                                }),
-                              )}
-                              aria-label={t('viewFriendExpenses')}
-                            />
-                          }
-                        >
-                          <Receipt className="size-4" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          {t('viewFriendExpenses')}
-                        </TooltipContent>
-                      </Tooltip>
-                    )}
-
-                    <DropdownMenu>
-                      <DropdownMenuTrigger
-                        render={
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 shrink-0"
-                            aria-label={t('friendActions')}
-                          />
-                        }
-                      >
-                        <MoreVertical className="h-4 w-4" />
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          variant="destructive"
-                          onClick={() =>
-                            setFriendToRemove({
-                              id: friend.id,
-                              name: friend.name,
-                            })
-                          }
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          {t('removeFriend')}
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </li>
+                  friend={friend}
+                  balances={friendBalance?.balances ?? []}
+                  onRemove={() =>
+                    setFriendToRemove({ id: friend.id, name: friend.name })
+                  }
+                />
               )
             })}
           </ul>
-        ) : (
-          <p className="text-sm text-muted-foreground">{t('empty')}</p>
-        )}
-      </section>
+        </section>
+      ) : (
+        <p className="text-sm text-muted-foreground">
+          {tList('noUnsettledFriends')}
+        </p>
+      )}
 
+      {/* 11.3: Settled friends collapsible */}
+      {connectedSettled.length > 0 && (
+        <FriendsSettledSection
+          friends={connectedSettled}
+          balances={balances ?? []}
+          onRemoveFriend={(id, name) => setFriendToRemove({ id, name })}
+        />
+      )}
+
+      {/* 11.5: Add friend section */}
       <section className="rounded-lg border p-4 space-y-4">
         <div>
           <h2 className="font-semibold text-lg">{t('addTitle')}</h2>
@@ -434,6 +381,7 @@ export function FriendsManagement() {
         )}
       </section>
 
+      {/* Remove friend dialog */}
       <AlertDialog
         open={friendToRemove !== null}
         onOpenChange={(open) => {
@@ -465,6 +413,7 @@ export function FriendsManagement() {
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* Unblock dialog */}
       <AlertDialog open={showUnblockDialog} onOpenChange={setShowUnblockDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -494,5 +443,268 @@ export function FriendsManagement() {
         </AlertDialogContent>
       </AlertDialog>
     </div>
+  )
+}
+
+// --- Sub-components ---
+
+type AggregateTotals = {
+  owed: { currency: CurrencyBalance['currency']; amount: number }[]
+  owing: { currency: CurrencyBalance['currency']; amount: number }[]
+}
+
+function computeAggregateTotals(
+  balances: { friendId: string; balances: CurrencyBalance[] }[],
+): AggregateTotals {
+  const owedMap = new Map<
+    string,
+    { currency: CurrencyBalance['currency']; amount: number }
+  >()
+  const owingMap = new Map<
+    string,
+    { currency: CurrencyBalance['currency']; amount: number }
+  >()
+
+  for (const friend of balances) {
+    for (const b of friend.balances) {
+      if (b.totalAmount > 0) {
+        // Friend owes me
+        const key = b.currency.code
+        const existing = owedMap.get(key)
+        if (existing) {
+          existing.amount += b.totalAmount
+        } else {
+          owedMap.set(key, { currency: b.currency, amount: b.totalAmount })
+        }
+      } else if (b.totalAmount < 0) {
+        // I owe friend
+        const key = b.currency.code
+        const existing = owingMap.get(key)
+        if (existing) {
+          existing.amount += Math.abs(b.totalAmount)
+        } else {
+          owingMap.set(key, {
+            currency: b.currency,
+            amount: Math.abs(b.totalAmount),
+          })
+        }
+      }
+    }
+  }
+
+  return {
+    owed: Array.from(owedMap.values()),
+    owing: Array.from(owingMap.values()),
+  }
+}
+
+/** 11.1: Aggregate header showing total owed/owing per currency */
+function FriendsAggregateHeader({ totals }: { totals: AggregateTotals }) {
+  const tList = useTranslations('Friends.List')
+
+  if (totals.owed.length === 0 && totals.owing.length === 0) {
+    return null
+  }
+
+  return (
+    <div className="rounded-lg border p-4 space-y-1">
+      {totals.owed.map((entry) => (
+        <p
+          key={`owed-${entry.currency.code}`}
+          className="text-sm font-medium text-credit"
+        >
+          {totals.owed.length > 1
+            ? tList('totalOwedToYouMulti')
+            : tList('totalOwedToYouMulti')}{' '}
+          <Money currency={entry.currency} amount={entry.amount} colored />
+        </p>
+      ))}
+      {totals.owing.map((entry) => (
+        <p
+          key={`owing-${entry.currency.code}`}
+          className="text-sm font-medium text-debt"
+        >
+          {tList('totalYouOweMulti')}{' '}
+          <Money currency={entry.currency} amount={-entry.amount} colored />
+        </p>
+      ))}
+    </div>
+  )
+}
+
+/** 11.3: Settled friends collapsible section */
+function FriendsSettledSection({
+  friends,
+  balances,
+  onRemoveFriend,
+}: {
+  friends: {
+    id: string
+    name: string
+    friendUserId: string | null
+    friendUsername: string | null
+    status: string
+  }[]
+  balances: { friendId: string; balances: CurrencyBalance[] }[]
+  onRemoveFriend: (id: string, name: string) => void
+}) {
+  const tList = useTranslations('Friends.List')
+
+  return (
+    <Collapsible>
+      <CollapsibleTrigger className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer w-full py-2">
+        <ChevronDown className="h-4 w-4 transition-transform [[data-panel-open]_&]:rotate-180" />
+        {tList('showSettledFriends', { count: friends.length })}
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <ul className="flex flex-col gap-2 pt-2">
+          {friends.map((friend) => {
+            const friendBalance = balances?.find(
+              (b) => b.friendId === friend.id,
+            )
+            return (
+              <FriendDebtRow
+                key={friend.id}
+                friend={friend}
+                balances={friendBalance?.balances ?? []}
+                onRemove={() => onRemoveFriend(friend.id, friend.name)}
+              />
+            )
+          })}
+        </ul>
+      </CollapsibleContent>
+    </Collapsible>
+  )
+}
+
+/** 11.4: Simplified friend row — avatar + name + balance per currency → link to /friends/[username] */
+function FriendDebtRow({
+  friend,
+  balances,
+  onRemove,
+}: {
+  friend: {
+    id: string
+    name: string
+    friendUserId: string | null
+    friendUsername: string | null
+    status: string
+  }
+  balances: CurrencyBalance[]
+  onRemove: () => void
+}) {
+  const t = useTranslations('Friends')
+  const tBal = useTranslations('Friends.Balances')
+  const nonZeroBalances = balances.filter((b) => b.totalAmount !== 0)
+
+  return (
+    <li className="flex items-center justify-between gap-2 rounded-md border px-3 py-2">
+      <Link
+        href={friend.friendUsername ? `/friends/${friend.friendUsername}` : '#'}
+        className="flex items-center gap-3 min-w-0 flex-1 hover:opacity-80 transition-opacity"
+      >
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-sm font-medium">
+          {friend.name.charAt(0).toUpperCase()}
+        </div>
+        <div className="min-w-0 flex-1">
+          <span className="text-sm font-medium">{friend.name}</span>
+          {nonZeroBalances.length > 0 ? (
+            <div className="flex flex-col gap-0.5">
+              {nonZeroBalances.map((b) => (
+                <div key={b.currency.code} className="text-xs">
+                  <span className="text-muted-foreground">
+                    {b.totalAmount > 0
+                      ? tBal('friendOwesYou', { name: friend.name })
+                      : tBal('youOweFriend', { name: friend.name })}
+                  </span>{' '}
+                  <Money
+                    currency={b.currency}
+                    amount={Math.abs(b.totalAmount)}
+                    colored
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-muted-foreground">{tBal('settled')}</p>
+          )}
+        </div>
+      </Link>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 shrink-0"
+              aria-label={t('friendActions')}
+            />
+          }
+        >
+          <MoreVertical className="h-4 w-4" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem variant="destructive" onClick={onRemove}>
+            <Trash2 className="h-4 w-4" />
+            {t('removeFriend')}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </li>
+  )
+}
+
+/** Simple row for pending friends without balance info */
+function FriendRow({
+  friend,
+  onRemove,
+}: {
+  friend: {
+    id: string
+    name: string
+    email: string
+    friendUsername: string | null
+    status: string
+  }
+  onRemove: () => void
+}) {
+  const t = useTranslations('Friends')
+
+  return (
+    <li className="flex items-center justify-between gap-2 rounded-md border px-3 py-2">
+      <div className="flex items-center gap-3 min-w-0 flex-1">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-sm font-medium ring-2 ring-offset-2 ring-offset-background ring-debt/30">
+          {friend.name.charAt(0).toUpperCase()}
+        </div>
+        <div className="min-w-0">
+          <span className="text-sm font-medium">{friend.name}</span>
+          <p className="text-xs text-muted-foreground truncate">
+            {friend.email}
+          </p>
+        </div>
+      </div>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 shrink-0"
+              aria-label={t('friendActions')}
+            />
+          }
+        >
+          <MoreVertical className="h-4 w-4" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem variant="destructive" onClick={onRemove}>
+            <Trash2 className="h-4 w-4" />
+            {t('removeFriend')}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </li>
   )
 }

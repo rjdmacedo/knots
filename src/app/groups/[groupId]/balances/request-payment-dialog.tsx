@@ -83,8 +83,7 @@ export function RequestPaymentDialog({
 
   const handleSubmit = () => {
     if (!selectedReimbursement) return
-    const requestGroupId = selectedReimbursement.groupId ?? groupId
-    if (!requestGroupId) return
+    const requestGroupId = selectedReimbursement.groupId ?? groupId ?? null
 
     requestPayment.mutate({
       groupId: requestGroupId,
