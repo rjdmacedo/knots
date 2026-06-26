@@ -856,6 +856,83 @@
         "lastYear": "Anul trecut",
         "older": "Mai vechi"
       }
+    },
+    "List": {
+      "totalOwedToYou": "În total, ți se datorează {amount}",
+      "totalYouOwe": "În total, datorezi {amount}",
+      "totalOwedToYouMulti": "În total, ți se datorează",
+      "totalYouOweMulti": "În total, datorezi",
+      "showSettledFriends": "Arată {count} prieteni achitați",
+      "hideSettledFriends": "Ascunde prietenii achitați",
+      "noUnsettledFriends": "Ești la zi cu toată lumea.",
+      "debtSectionTitle": "Solduri",
+      "manageSectionTitle": "Toți prietenii"
+    },
+    "Timeline": {
+      "addExpense": "Adaugă cheltuială",
+      "empty": "Nicio activitate cu acest prieten încă.",
+      "loadError": "Nu s-a putut încărca cronologia.",
+      "retry": "Reîncearcă",
+      "groupSettled": "Totul achitat",
+      "groupShared": "Grup partajat",
+      "youLent": "ai împrumutat {amount}",
+      "youBorrowed": "datorezi {amount}",
+      "friendOwesYou": "{name} îți datorează {amount}",
+      "youOweFriend": "Datorezi {amount} lui {name}",
+      "paid": "{payer} a plătit lui {payee} {amount}",
+      "groups": {
+        "upcoming": "Viitoare",
+        "thisWeek": "Săptămâna aceasta",
+        "earlierThisMonth": "Mai devreme luna aceasta",
+        "lastMonth": "Luna trecută",
+        "earlierThisYear": "Mai devreme anul acesta",
+        "lastYear": "Anul trecut",
+        "older": "Mai vechi"
+      }
+    },
+    "PaymentDetail": {
+      "title": "Plată",
+      "paid": "{payer} a plătit lui {payee}",
+      "addedBy": "Adăugat de {name} pe {date}",
+      "disclaimer": "Această plată a fost înregistrată prin \"Înregistrează o plată\". Nu au fost transferați bani.",
+      "edit": "Editează",
+      "delete": "Șterge",
+      "deleteConfirm": "Ștergi această plată?",
+      "deleteDescription": "Acest lucru va ajusta soldurile ca și cum plata nu ar fi avut loc.",
+      "notFound": "Plata nu a fost găsită.",
+      "backToFriend": "Înapoi la {name}",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "deleting": "Deleting..."
+    },
+    "DirectExpense": {
+      "title": "Adaugă o cheltuială",
+      "description": "Cu {name}",
+      "descriptionLabel": "Descriere",
+      "descriptionPlaceholder": "Introduceți o descriere",
+      "amountLabel": "Sumă",
+      "paidByLabel": "Plătit de",
+      "paidByYou": "Tu",
+      "splitEqually": "Plătit de {payer} și împărțit în mod egal",
+      "dateLabel": "Data",
+      "save": "Salvează",
+      "saving": "Se salvează…",
+      "cancel": "Anulează",
+      "success": "Cheltuială adăugată.",
+      "error": "Nu s-a putut adăuga cheltuiala."
+    },
+    "SettleAll": {
+      "button": "Achită tot",
+      "title": "Achită toate soldurile",
+      "description": "Aceasta va achita toate soldurile tale cu {name} în {currency}.",
+      "breakdown": "Detalii",
+      "directBucket": "Direct",
+      "confirm": "Achită tot",
+      "settling": "Se achită…",
+      "success": "Toate soldurile achitate.",
+      "error": "Nu s-au putut achita soldurile.",
+      "timelineLabel": "A achitat toate soldurile — {amount}",
+      "consolidationDisclaimer": "Această plată face parte dintr-o achitare totală a soldurilor. Knots a descompus-o în achitări individuale pe grup.",
+      "onlyOneBucket": "Un singur sold de achitat — folosește achitarea pe grup."
     }
   },
   "Members": {

@@ -927,6 +927,86 @@
         "lastYear": "Last year",
         "older": "Older"
       }
+    },
+    "List": {
+      "totalOwedToYou": "In total, you are owed {amount}",
+      "totalYouOwe": "In total, you owe {amount}",
+      "totalOwedToYouMulti": "In total, you are owed",
+      "totalYouOweMulti": "In total, you owe",
+      "showSettledFriends": "Show {count} settled friends",
+      "hideSettledFriends": "Hide settled friends",
+      "noUnsettledFriends": "You're all settled up with everyone.",
+      "debtSectionTitle": "Balances",
+      "manageSectionTitle": "All friends"
+    },
+    "Timeline": {
+      "addExpense": "Add expense",
+      "empty": "No activity with this friend yet.",
+      "loadError": "Could not load timeline.",
+      "retry": "Retry",
+      "groupSettled": "All settled up",
+      "groupShared": "Shared group",
+      "youLent": "you lent {amount}",
+      "youBorrowed": "you borrowed {amount}",
+      "friendOwesYou": "{name} owes you {amount}",
+      "youOweFriend": "You owe {name} {amount}",
+      "paid": "{payer} paid {payee} {amount}",
+      "groups": {
+        "upcoming": "Upcoming",
+        "thisWeek": "This week",
+        "earlierThisMonth": "Earlier this month",
+        "lastMonth": "Last month",
+        "earlierThisYear": "Earlier this year",
+        "lastYear": "Last year",
+        "older": "Older"
+      }
+    },
+    "PaymentDetail": {
+      "title": "Payment",
+      "paid": "{payer} paid {payee}",
+      "addedBy": "Added by {name} on {date}",
+      "disclaimer": "This payment was recorded using \"Record a payment\". No money was transferred.",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteConfirm": "Delete this payment?",
+      "deleteDescription": "This will adjust balances as if the payment never happened.",
+      "deleting": "Deleting…",
+      "notFound": "Payment not found.",
+      "backToFriend": "Back to {name}"
+    },
+    "DirectExpense": {
+      "title": "Add an expense",
+      "description": "With {name}",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Enter a description",
+      "amountLabel": "Amount",
+      "paidByLabel": "Paid by",
+      "paidByYou": "You",
+      "splitEqually": "Paid by {payer} and split equally",
+      "dateLabel": "Date",
+      "attachLabel": "Attach image or PDF",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "Add notes (optional)",
+      "save": "Save",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "success": "Expense added.",
+      "error": "Could not add expense."
+    },
+    "SettleAll": {
+      "button": "Settle all",
+      "title": "Settle all balances",
+      "description": "This will settle all your balances with {name} in {currency}.",
+      "breakdown": "Breakdown",
+      "directBucket": "Direct",
+      "confirm": "Settle all",
+      "settling": "Settling…",
+      "success": "All balances settled.",
+      "error": "Could not settle balances.",
+      "timelineLabel": "Settled all balances — {amount}",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "onlyOneBucket": "Only one balance bucket — use per-group settle instead."
     }
   },
   "Members": {

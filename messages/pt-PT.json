@@ -940,6 +940,86 @@
         "lastYear": "Ano passado",
         "older": "Mais antigas"
       }
+    },
+    "List": {
+      "totalOwedToYou": "No total, devem-lhe {amount}",
+      "totalYouOwe": "No total, deve {amount}",
+      "totalOwedToYouMulti": "No total, devem-lhe",
+      "totalYouOweMulti": "No total, deve",
+      "showSettledFriends": "Mostrar {count} amigos com contas liquidadas",
+      "hideSettledFriends": "Ocultar amigos com contas liquidadas",
+      "noUnsettledFriends": "Está acertado com todos.",
+      "debtSectionTitle": "Saldos",
+      "manageSectionTitle": "Todos os amigos"
+    },
+    "Timeline": {
+      "addExpense": "Adicionar despesa",
+      "empty": "Ainda não há actividade com este amigo.",
+      "loadError": "Não foi possível carregar a cronologia.",
+      "retry": "Tentar novamente",
+      "groupSettled": "Contas liquidadas",
+      "groupShared": "Grupo partilhado",
+      "youLent": "emprestou {amount}",
+      "youBorrowed": "deve {amount}",
+      "friendOwesYou": "{name} deve-lhe {amount}",
+      "youOweFriend": "Deve {amount} a {name}",
+      "paid": "{payer} pagou {payee} {amount}",
+      "groups": {
+        "upcoming": "Próximas",
+        "thisWeek": "Esta semana",
+        "earlierThisMonth": "Anteriormente este mês",
+        "lastMonth": "Mês passado",
+        "earlierThisYear": "Anteriormente este ano",
+        "lastYear": "Ano passado",
+        "older": "Mais antigas"
+      }
+    },
+    "PaymentDetail": {
+      "title": "Pagamento",
+      "paid": "{payer} pagou {payee}",
+      "addedBy": "Adicionado por {name} em {date}",
+      "disclaimer": "Este pagamento foi adicionado utilizando a funcionalidade \"Registar um pagamento\". Não foi transferido dinheiro.",
+      "consolidationDisclaimer": "Este pagamento faz parte de uma liquidação total de saldos. O Knots decompôs em liquidações individuais por grupo.",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "deleteConfirm": "Eliminar este pagamento?",
+      "deleteDescription": "Isto ajustará os saldos como se o pagamento nunca tivesse acontecido.",
+      "deleting": "A eliminar…",
+      "notFound": "Pagamento não encontrado.",
+      "backToFriend": "Voltar a {name}"
+    },
+    "DirectExpense": {
+      "title": "Adicionar uma despesa",
+      "description": "Com {name}",
+      "descriptionLabel": "Descrição",
+      "descriptionPlaceholder": "Insira a descrição",
+      "amountLabel": "Valor",
+      "paidByLabel": "Pago por",
+      "paidByYou": "Si",
+      "splitEqually": "Pago por {payer} e dividido em partes iguais",
+      "dateLabel": "Data",
+      "attachLabel": "Anexar imagem ou PDF",
+      "notesLabel": "Notas",
+      "notesPlaceholder": "Adicionar notas (opcional)",
+      "save": "Guardar",
+      "saving": "A guardar…",
+      "cancel": "Cancelar",
+      "success": "Despesa adicionada.",
+      "error": "Não foi possível adicionar a despesa."
+    },
+    "SettleAll": {
+      "button": "Liquidar tudo",
+      "title": "Liquidar todos os saldos",
+      "description": "Isto liquidará todos os saldos com {name} em {currency}.",
+      "breakdown": "Detalhes",
+      "directBucket": "Direto",
+      "confirm": "Liquidar tudo",
+      "settling": "A liquidar…",
+      "success": "Todos os saldos foram liquidados.",
+      "error": "Não foi possível liquidar os saldos.",
+      "timelineLabel": "Liquidou todos os saldos — {amount}",
+      "consolidationDisclaimer": "Este pagamento faz parte de uma liquidação total de saldos. O Knots desagregou-o em liquidações individuais por grupo.",
+      "onlyOneBucket": "Apenas um saldo pendente — utilize a liquidação por grupo."
     }
   },
   "Members": {

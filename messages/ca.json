@@ -856,6 +856,86 @@
         "lastYear": "L'any passat",
         "older": "Més antics"
       }
+    },
+    "List": {
+      "totalOwedToYou": "En total, et deuen {amount}",
+      "totalYouOwe": "En total, deus {amount}",
+      "totalOwedToYouMulti": "En total, et deuen",
+      "totalYouOweMulti": "En total, deus",
+      "showSettledFriends": "Mostra {count} amics liquidats",
+      "hideSettledFriends": "Amaga amics liquidats",
+      "noUnsettledFriends": "Estàs al dia amb tothom.",
+      "debtSectionTitle": "Saldos",
+      "manageSectionTitle": "Tots els amics"
+    },
+    "Timeline": {
+      "addExpense": "Afegir despesa",
+      "empty": "Encara no hi ha activitat amb aquest amic.",
+      "loadError": "No s'ha pogut carregar la cronologia.",
+      "retry": "Torna-ho a provar",
+      "groupSettled": "Tot liquidat",
+      "groupShared": "Grup compartit",
+      "youLent": "has prestat {amount}",
+      "youBorrowed": "deus {amount}",
+      "friendOwesYou": "{name} et deu {amount}",
+      "youOweFriend": "Deus {amount} a {name}",
+      "paid": "{payer} ha pagat a {payee} {amount}",
+      "groups": {
+        "upcoming": "Pròxims",
+        "thisWeek": "Aquesta setmana",
+        "earlierThisMonth": "Abans aquest mes",
+        "lastMonth": "Mes passat",
+        "earlierThisYear": "Abans aquest any",
+        "lastYear": "Any passat",
+        "older": "Més antics"
+      }
+    },
+    "PaymentDetail": {
+      "title": "Pagament",
+      "paid": "{payer} ha pagat a {payee}",
+      "addedBy": "Afegit per {name} el {date}",
+      "disclaimer": "Aquest pagament es va registrar amb \"Registrar un pagament\". No es va transferir cap diners.",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "deleteConfirm": "Eliminar aquest pagament?",
+      "deleteDescription": "Això ajustarà els saldos com si el pagament mai hagués passat.",
+      "deleting": "Deleting…",
+      "notFound": "Pagament no trobat.",
+      "backToFriend": "Tornar a {name}",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group."
+    },
+    "DirectExpense": {
+      "title": "Afegir una despesa",
+      "description": "Amb {name}",
+      "descriptionLabel": "Descripció",
+      "descriptionPlaceholder": "Introdueix una descripció",
+      "amountLabel": "Import",
+      "paidByLabel": "Pagat per",
+      "paidByYou": "Tu",
+      "splitEqually": "Pagat per {payer} i dividit a parts iguals",
+      "dateLabel": "Data",
+      "attachLabel": "Adjuntar imatge o PDF",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "Afegir notes (opcional)",
+      "save": "Desar",
+      "saving": "Desant…",
+      "cancel": "Cancel·lar",
+      "success": "Despesa afegida.",
+      "error": "No s'ha pogut afegir la despesa."
+    },
+    "SettleAll": {
+      "button": "Liquidar tot",
+      "title": "Liquidar tots els saldos",
+      "description": "Això liquidarà tots els teus saldos amb {name} en {currency}.",
+      "breakdown": "Desglossament",
+      "directBucket": "Directe",
+      "confirm": "Liquidar tot",
+      "settling": "Liquidant…",
+      "success": "Tots els saldos liquidats.",
+      "error": "No s'han pogut liquidar els saldos.",
+      "timelineLabel": "Ha liquidat tots els saldos — {amount}",
+      "consolidationDisclaimer": "Aquest pagament forma part d'una liquidació total de saldos. Knots l'ha descompost en liquidacions individuals per grup.",
+      "onlyOneBucket": "Només un saldo pendent — fes servir la liquidació per grup."
     }
   },
   "Members": {

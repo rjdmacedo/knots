@@ -856,6 +856,83 @@
         "lastYear": "Минулого року",
         "older": "Старіші"
       }
+    },
+    "List": {
+      "totalOwedToYou": "Загалом вам винні {amount}",
+      "totalYouOwe": "Загалом ви винні {amount}",
+      "totalOwedToYouMulti": "Загалом вам винні",
+      "totalYouOweMulti": "Загалом ви винні",
+      "showSettledFriends": "Показати {count} розрахованих друзів",
+      "hideSettledFriends": "Сховати розрахованих друзів",
+      "noUnsettledFriends": "Ви розрахувалися з усіма.",
+      "debtSectionTitle": "Баланси",
+      "manageSectionTitle": "Усі друзі"
+    },
+    "Timeline": {
+      "addExpense": "Додати витрату",
+      "empty": "Ще немає активності з цим другом.",
+      "loadError": "Не вдалося завантажити хронологію.",
+      "retry": "Повторити",
+      "groupSettled": "Все розраховано",
+      "groupShared": "Спільна група",
+      "youLent": "ви позичили {amount}",
+      "youBorrowed": "ви винні {amount}",
+      "friendOwesYou": "{name} винен вам {amount}",
+      "youOweFriend": "Ви винні {name} {amount}",
+      "paid": "{payer} заплатив {payee} {amount}",
+      "groups": {
+        "upcoming": "Майбутні",
+        "thisWeek": "Цього тижня",
+        "earlierThisMonth": "Раніше цього місяця",
+        "lastMonth": "Минулого місяця",
+        "earlierThisYear": "Раніше цього року",
+        "lastYear": "Минулого року",
+        "older": "Старіші"
+      }
+    },
+    "PaymentDetail": {
+      "title": "Платіж",
+      "paid": "{payer} заплатив {payee}",
+      "addedBy": "Додано користувачем {name} {date}",
+      "disclaimer": "Цей платіж був записаний через \"Записати платіж\". Кошти не переказувалися.",
+      "edit": "Редагувати",
+      "delete": "Видалити",
+      "deleteConfirm": "Видалити цей платіж?",
+      "deleteDescription": "Це скоригує баланси так, наче платежу не було.",
+      "notFound": "Платіж не знайдено.",
+      "backToFriend": "Назад до {name}",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "deleting": "Deleting..."
+    },
+    "DirectExpense": {
+      "title": "Додати витрату",
+      "description": "З {name}",
+      "descriptionLabel": "Опис",
+      "descriptionPlaceholder": "Введіть опис",
+      "amountLabel": "Сума",
+      "paidByLabel": "Оплатив",
+      "paidByYou": "Ви",
+      "splitEqually": "Оплатив {payer}, поділено порівну",
+      "dateLabel": "Дата",
+      "save": "Зберегти",
+      "saving": "Збереження…",
+      "cancel": "Скасувати",
+      "success": "Витрату додано.",
+      "error": "Не вдалося додати витрату."
+    },
+    "SettleAll": {
+      "button": "Розрахувати все",
+      "title": "Розрахувати всі баланси",
+      "description": "Це розрахує всі ваші баланси з {name} у {currency}.",
+      "breakdown": "Деталізація",
+      "directBucket": "Прямий",
+      "confirm": "Розрахувати все",
+      "settling": "Розрахунок…",
+      "success": "Усі баланси розраховано.",
+      "error": "Не вдалося розрахувати баланси.",
+      "timelineLabel": "Розрахував усі баланси — {amount}",
+      "consolidationDisclaimer": "Цей платіж є частиною повного розрахунку балансів. Knots розділив його на індивідуальні розрахунки за групами.",
+      "onlyOneBucket": "Лише один баланс для розрахунку — скористайтеся розрахунком за групами."
     }
   },
   "Members": {

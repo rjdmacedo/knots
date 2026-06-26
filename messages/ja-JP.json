@@ -856,6 +856,83 @@
         "lastYear": "昨年",
         "older": "それ以前"
       }
+    },
+    "List": {
+      "totalOwedToYou": "合計であなたに{amount}の貸しがあります",
+      "totalYouOwe": "合計であなたは{amount}借りています",
+      "totalOwedToYouMulti": "合計であなたに貸しがあります",
+      "totalYouOweMulti": "合計であなたは借りています",
+      "showSettledFriends": "精算済みの{count}人の友達を表示",
+      "hideSettledFriends": "精算済みの友達を非表示",
+      "noUnsettledFriends": "全員と精算済みです。",
+      "debtSectionTitle": "残高",
+      "manageSectionTitle": "すべての友達"
+    },
+    "Timeline": {
+      "addExpense": "支出を追加",
+      "empty": "この友達とのアクティビティはまだありません。",
+      "loadError": "タイムラインを読み込めませんでした。",
+      "retry": "再試行",
+      "groupSettled": "すべて精算済み",
+      "groupShared": "共有グループ",
+      "youLent": "{amount}を貸しました",
+      "youBorrowed": "{amount}を借りています",
+      "friendOwesYou": "{name}があなたに{amount}借りています",
+      "youOweFriend": "あなたは{name}に{amount}借りています",
+      "paid": "{payer}が{payee}に{amount}支払いました",
+      "groups": {
+        "upcoming": "今後",
+        "thisWeek": "今週",
+        "earlierThisMonth": "今月前半",
+        "lastMonth": "先月",
+        "earlierThisYear": "今年前半",
+        "lastYear": "昨年",
+        "older": "それ以前"
+      }
+    },
+    "PaymentDetail": {
+      "title": "支払い",
+      "paid": "{payer}が{payee}に支払いました",
+      "addedBy": "{name}が{date}に追加",
+      "disclaimer": "この支払いは「支払いを記録」で記録されました。実際の送金は行われていません。",
+      "edit": "編集",
+      "delete": "削除",
+      "deleteConfirm": "この支払いを削除しますか？",
+      "deleteDescription": "支払いが無かったかのように残高が調整されます。",
+      "notFound": "支払いが見つかりません。",
+      "backToFriend": "{name}に戻る",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "deleting": "Deleting..."
+    },
+    "DirectExpense": {
+      "title": "支出を追加",
+      "description": "{name}と",
+      "descriptionLabel": "説明",
+      "descriptionPlaceholder": "説明を入力",
+      "amountLabel": "金額",
+      "paidByLabel": "支払者",
+      "paidByYou": "あなた",
+      "splitEqually": "{payer}が支払い、均等に分割",
+      "dateLabel": "日付",
+      "save": "保存",
+      "saving": "保存中…",
+      "cancel": "キャンセル",
+      "success": "支出を追加しました。",
+      "error": "支出を追加できませんでした。"
+    },
+    "SettleAll": {
+      "button": "すべて精算",
+      "title": "すべての残高を精算",
+      "description": "{name}との{currency}のすべての残高を精算します。",
+      "breakdown": "内訳",
+      "directBucket": "直接",
+      "confirm": "すべて精算",
+      "settling": "精算中…",
+      "success": "すべての残高が精算されました。",
+      "error": "残高を精算できませんでした。",
+      "timelineLabel": "すべての残高を精算 — {amount}",
+      "consolidationDisclaimer": "この支払いは全残高精算の一部です。Knotsがグループごとに個別の精算に分割しました。",
+      "onlyOneBucket": "残高は1件のみ — グループごとの精算を使用してください。"
     }
   },
   "Members": {

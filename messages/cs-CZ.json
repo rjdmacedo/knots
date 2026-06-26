@@ -856,6 +856,86 @@
         "lastYear": "Minulý rok",
         "older": "Starší"
       }
+    },
+    "List": {
+      "totalOwedToYou": "Celkem ti dluží {amount}",
+      "totalYouOwe": "Celkem dlužíš {amount}",
+      "totalOwedToYouMulti": "Celkem ti dluží",
+      "totalYouOweMulti": "Celkem dlužíš",
+      "showSettledFriends": "Zobrazit {count} vyrovnaných přátel",
+      "hideSettledFriends": "Skrýt vyrovnané přátele",
+      "noUnsettledFriends": "Se všemi jsi vyrovnán.",
+      "debtSectionTitle": "Zůstatky",
+      "manageSectionTitle": "Všichni přátelé"
+    },
+    "Timeline": {
+      "addExpense": "Přidat výdaj",
+      "empty": "Zatím žádná aktivita s tímto přítelem.",
+      "loadError": "Nepodařilo se načíst časovou osu.",
+      "retry": "Zkusit znovu",
+      "groupSettled": "Vše vyrovnáno",
+      "groupShared": "Sdílená skupina",
+      "youLent": "půjčil jsi {amount}",
+      "youBorrowed": "dlužíš {amount}",
+      "friendOwesYou": "{name} ti dluží {amount}",
+      "youOweFriend": "Dlužíš {name} {amount}",
+      "paid": "{payer} zaplatil {payee} {amount}",
+      "groups": {
+        "upcoming": "Nadcházející",
+        "thisWeek": "Tento týden",
+        "earlierThisMonth": "Dříve tento měsíc",
+        "lastMonth": "Minulý měsíc",
+        "earlierThisYear": "Dříve tento rok",
+        "lastYear": "Minulý rok",
+        "older": "Starší"
+      }
+    },
+    "PaymentDetail": {
+      "title": "Platba",
+      "paid": "{payer} zaplatil {payee}",
+      "addedBy": "Přidáno uživatelem {name} dne {date}",
+      "disclaimer": "Tato platba byla zaznamenána přes \"Zaznamenat platbu\". Žádné peníze nebyly převedeny.",
+      "edit": "Upravit",
+      "delete": "Smazat",
+      "deleteConfirm": "Smazat tuto platbu?",
+      "deleteDescription": "Toto upraví zůstatky, jako by platba nikdy neproběhla.",
+      "deleting": "Deleting…",
+      "notFound": "Platba nenalezena.",
+      "backToFriend": "Zpět k {name}",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group."
+    },
+    "DirectExpense": {
+      "title": "Přidat výdaj",
+      "description": "S {name}",
+      "descriptionLabel": "Popis",
+      "descriptionPlaceholder": "Zadejte popis",
+      "amountLabel": "Částka",
+      "paidByLabel": "Zaplaceno",
+      "paidByYou": "Ty",
+      "splitEqually": "Zaplaceno uživatelem {payer} a rozděleno rovným dílem",
+      "dateLabel": "Datum",
+      "attachLabel": "Připojit obrázek nebo PDF",
+      "notesLabel": "Poznámky",
+      "notesPlaceholder": "Přidat poznámky (volitelné)",
+      "save": "Uložit",
+      "saving": "Ukládání…",
+      "cancel": "Zrušit",
+      "success": "Výdaj přidán.",
+      "error": "Nepodařilo se přidat výdaj."
+    },
+    "SettleAll": {
+      "button": "Vyrovnat vše",
+      "title": "Vyrovnat všechny zůstatky",
+      "description": "Toto vyrovná všechny tvoje zůstatky s {name} v {currency}.",
+      "breakdown": "Rozpis",
+      "directBucket": "Přímý",
+      "confirm": "Vyrovnat vše",
+      "settling": "Vyrovnávání…",
+      "success": "Všechny zůstatky vyrovnány.",
+      "error": "Nepodařilo se vyrovnat zůstatky.",
+      "timelineLabel": "Vyrovnal všechny zůstatky — {amount}",
+      "consolidationDisclaimer": "Tato platba je součástí celkového vyrovnání zůstatků. Knots ji rozložil na jednotlivá vyrovnání za skupinu.",
+      "onlyOneBucket": "Pouze jeden nevyrovnaný zůstatek — použij vyrovnání za skupinu."
     }
   },
   "Members": {

@@ -856,6 +856,86 @@
         "lastYear": "L'année dernière",
         "older": "Plus ancien"
       }
+    },
+    "List": {
+      "totalOwedToYou": "Au total, on vous doit {amount}",
+      "totalYouOwe": "Au total, vous devez {amount}",
+      "totalOwedToYouMulti": "Au total, on vous doit",
+      "totalYouOweMulti": "Au total, vous devez",
+      "showSettledFriends": "Afficher {count} amis réglés",
+      "hideSettledFriends": "Masquer les amis réglés",
+      "noUnsettledFriends": "Vous êtes à jour avec tout le monde.",
+      "debtSectionTitle": "Soldes",
+      "manageSectionTitle": "Tous les amis"
+    },
+    "Timeline": {
+      "addExpense": "Ajouter une dépense",
+      "empty": "Aucune activité avec cet ami pour le moment.",
+      "loadError": "Impossible de charger la chronologie.",
+      "retry": "Réessayer",
+      "groupSettled": "Tout est réglé",
+      "groupShared": "Groupe partagé",
+      "youLent": "vous avez prêté {amount}",
+      "youBorrowed": "vous devez {amount}",
+      "friendOwesYou": "{name} vous doit {amount}",
+      "youOweFriend": "Vous devez {amount} à {name}",
+      "paid": "{payer} a payé {payee} {amount}",
+      "groups": {
+        "upcoming": "À venir",
+        "thisWeek": "Cette semaine",
+        "earlierThisMonth": "Plus tôt ce mois-ci",
+        "lastMonth": "Le mois dernier",
+        "earlierThisYear": "Plus tôt cette année",
+        "lastYear": "L'année dernière",
+        "older": "Plus ancien"
+      }
+    },
+    "PaymentDetail": {
+      "title": "Paiement",
+      "paid": "{payer} a payé {payee}",
+      "addedBy": "Ajouté par {name} le {date}",
+      "disclaimer": "Ce paiement a été enregistré via « Enregistrer un paiement ». Aucun argent n'a été transféré.",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "deleteConfirm": "Supprimer ce paiement ?",
+      "deleteDescription": "Cela ajustera les soldes comme si le paiement n'avait jamais eu lieu.",
+      "deleting": "Deleting…",
+      "notFound": "Paiement introuvable.",
+      "backToFriend": "Retour à {name}",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group."
+    },
+    "DirectExpense": {
+      "title": "Ajouter une dépense",
+      "description": "Avec {name}",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Entrez une description",
+      "amountLabel": "Montant",
+      "paidByLabel": "Payé par",
+      "paidByYou": "Vous",
+      "splitEqually": "Payé par {payer} et partagé à parts égales",
+      "dateLabel": "Date",
+      "attachLabel": "Joindre une image ou un PDF",
+      "notesLabel": "Notes",
+      "notesPlaceholder": "Ajouter des notes (optionnel)",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "cancel": "Annuler",
+      "success": "Dépense ajoutée.",
+      "error": "Impossible d'ajouter la dépense."
+    },
+    "SettleAll": {
+      "button": "Tout régler",
+      "title": "Régler tous les soldes",
+      "description": "Cela réglera tous vos soldes avec {name} en {currency}.",
+      "breakdown": "Détail",
+      "directBucket": "Direct",
+      "confirm": "Tout régler",
+      "settling": "Règlement…",
+      "success": "Tous les soldes réglés.",
+      "error": "Impossible de régler les soldes.",
+      "timelineLabel": "A réglé tous les soldes — {amount}",
+      "consolidationDisclaimer": "Ce paiement fait partie d'un règlement total des soldes. Knots l'a décomposé en règlements individuels par groupe.",
+      "onlyOneBucket": "Un seul solde en attente — utilisez le règlement par groupe."
     }
   },
   "Members": {

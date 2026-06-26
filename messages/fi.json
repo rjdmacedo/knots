@@ -856,6 +856,86 @@
         "lastYear": "Viime vuonna",
         "older": "Vanhemmat"
       }
+    },
+    "List": {
+      "totalOwedToYou": "Yhteensä sinulle ollaan velkaa {amount}",
+      "totalYouOwe": "Yhteensä olet velkaa {amount}",
+      "totalOwedToYouMulti": "Yhteensä sinulle ollaan velkaa",
+      "totalYouOweMulti": "Yhteensä olet velkaa",
+      "showSettledFriends": "Näytä {count} tasatut ystävät",
+      "hideSettledFriends": "Piilota tasatut ystävät",
+      "noUnsettledFriends": "Olet tasoissa kaikkien kanssa.",
+      "debtSectionTitle": "Saldot",
+      "manageSectionTitle": "Kaikki ystävät"
+    },
+    "Timeline": {
+      "addExpense": "Lisää kulu",
+      "empty": "Ei vielä toimintaa tämän ystävän kanssa.",
+      "loadError": "Aikajanaa ei voitu ladata.",
+      "retry": "Yritä uudelleen",
+      "groupSettled": "Kaikki tasoissa",
+      "groupShared": "Jaettu ryhmä",
+      "youLent": "lainasit {amount}",
+      "youBorrowed": "olet velkaa {amount}",
+      "friendOwesYou": "{name} on sinulle velkaa {amount}",
+      "youOweFriend": "Olet velkaa {name} {amount}",
+      "paid": "{payer} maksoi {payee} {amount}",
+      "groups": {
+        "upcoming": "Tulossa",
+        "thisWeek": "Tällä viikolla",
+        "earlierThisMonth": "Aiemmin tässä kuussa",
+        "lastMonth": "Viime kuussa",
+        "earlierThisYear": "Aiemmin tänä vuonna",
+        "lastYear": "Viime vuonna",
+        "older": "Vanhemmat"
+      }
+    },
+    "PaymentDetail": {
+      "title": "Maksu",
+      "paid": "{payer} maksoi {payee}",
+      "addedBy": "Lisännyt {name} {date}",
+      "disclaimer": "Tämä maksu kirjattiin \"Kirjaa maksu\" -toiminnolla. Rahaa ei siirretty.",
+      "edit": "Muokkaa",
+      "delete": "Poista",
+      "deleteConfirm": "Poistetaanko tämä maksu?",
+      "deleteDescription": "Tämä muuttaa saldoja kuin maksua ei olisi koskaan tapahtunut.",
+      "deleting": "Deleting…",
+      "notFound": "Maksua ei löytynyt.",
+      "backToFriend": "Takaisin: {name}",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group."
+    },
+    "DirectExpense": {
+      "title": "Lisää kulu",
+      "description": "Yhteinen: {name}",
+      "descriptionLabel": "Kuvaus",
+      "descriptionPlaceholder": "Syötä kuvaus",
+      "amountLabel": "Summa",
+      "paidByLabel": "Maksaja",
+      "paidByYou": "Sinä",
+      "splitEqually": "Maksoi {payer}, jaettu tasan",
+      "dateLabel": "Päivämäärä",
+      "attachLabel": "Liitä kuva tai PDF",
+      "notesLabel": "Muistiinpanot",
+      "notesPlaceholder": "Lisää muistiinpanot (valinnainen)",
+      "save": "Tallenna",
+      "saving": "Tallennetaan…",
+      "cancel": "Peruuta",
+      "success": "Kulu lisätty.",
+      "error": "Kulua ei voitu lisätä."
+    },
+    "SettleAll": {
+      "button": "Tasaa kaikki",
+      "title": "Tasaa kaikki saldot",
+      "description": "Tämä tasaa kaikki saldosi {name} kanssa valuutassa {currency}.",
+      "breakdown": "Erittely",
+      "directBucket": "Suora",
+      "confirm": "Tasaa kaikki",
+      "settling": "Tasataan…",
+      "success": "Kaikki saldot tasattu.",
+      "error": "Saldoja ei voitu tasata.",
+      "timelineLabel": "Tasasi kaikki saldot — {amount}",
+      "consolidationDisclaimer": "Tämä maksu on osa kokonaisvaltaista saldojen tasausta. Knots jakoi sen yksittäisiksi tasauksiksi ryhmittäin.",
+      "onlyOneBucket": "Vain yksi avoin saldo — käytä ryhmäkohtaista tasausta."
     }
   },
   "Members": {

@@ -856,6 +856,86 @@
         "lastYear": "Ultimo anno",
         "older": "Più vecchio"
       }
+    },
+    "List": {
+      "totalOwedToYou": "In totale, ti devono {amount}",
+      "totalYouOwe": "In totale, devi {amount}",
+      "totalOwedToYouMulti": "In totale, ti devono",
+      "totalYouOweMulti": "In totale, devi",
+      "showSettledFriends": "Mostra {count} amici saldati",
+      "hideSettledFriends": "Nascondi amici saldati",
+      "noUnsettledFriends": "Sei in pari con tutti.",
+      "debtSectionTitle": "Saldi",
+      "manageSectionTitle": "Tutti gli amici"
+    },
+    "Timeline": {
+      "addExpense": "Aggiungi spesa",
+      "empty": "Nessuna attività con questo amico ancora.",
+      "loadError": "Impossibile caricare la cronologia.",
+      "retry": "Riprova",
+      "groupSettled": "Tutto saldato",
+      "groupShared": "Gruppo condiviso",
+      "youLent": "hai prestato {amount}",
+      "youBorrowed": "devi {amount}",
+      "friendOwesYou": "{name} ti deve {amount}",
+      "youOweFriend": "Devi {amount} a {name}",
+      "paid": "{payer} ha pagato {payee} {amount}",
+      "groups": {
+        "upcoming": "Prossimi",
+        "thisWeek": "Questa settimana",
+        "earlierThisMonth": "Prima questo mese",
+        "lastMonth": "Mese scorso",
+        "earlierThisYear": "Prima quest'anno",
+        "lastYear": "Anno scorso",
+        "older": "Più vecchi"
+      }
+    },
+    "PaymentDetail": {
+      "title": "Pagamento",
+      "paid": "{payer} ha pagato {payee}",
+      "addedBy": "Aggiunto da {name} il {date}",
+      "disclaimer": "Questo pagamento è stato registrato con \"Registra un pagamento\". Nessun denaro è stato trasferito.",
+      "edit": "Modifica",
+      "delete": "Elimina",
+      "deleteConfirm": "Eliminare questo pagamento?",
+      "deleteDescription": "Questo modificherà i saldi come se il pagamento non fosse mai avvenuto.",
+      "deleting": "Deleting…",
+      "notFound": "Pagamento non trovato.",
+      "backToFriend": "Torna a {name}",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group."
+    },
+    "DirectExpense": {
+      "title": "Aggiungi una spesa",
+      "description": "Con {name}",
+      "descriptionLabel": "Descrizione",
+      "descriptionPlaceholder": "Inserisci una descrizione",
+      "amountLabel": "Importo",
+      "paidByLabel": "Pagato da",
+      "paidByYou": "Tu",
+      "splitEqually": "Pagato da {payer} e diviso equamente",
+      "dateLabel": "Data",
+      "attachLabel": "Allega immagine o PDF",
+      "notesLabel": "Note",
+      "notesPlaceholder": "Aggiungi note (opzionale)",
+      "save": "Salva",
+      "saving": "Salvataggio…",
+      "cancel": "Annulla",
+      "success": "Spesa aggiunta.",
+      "error": "Impossibile aggiungere la spesa."
+    },
+    "SettleAll": {
+      "button": "Salda tutto",
+      "title": "Salda tutti i saldi",
+      "description": "Questo salderà tutti i tuoi saldi con {name} in {currency}.",
+      "breakdown": "Dettaglio",
+      "directBucket": "Diretto",
+      "confirm": "Salda tutto",
+      "settling": "Saldando…",
+      "success": "Tutti i saldi saldati.",
+      "error": "Impossibile saldare i saldi.",
+      "timelineLabel": "Ha saldato tutti i saldi — {amount}",
+      "consolidationDisclaimer": "Questo pagamento fa parte di un saldo totale. Knots lo ha suddiviso in saldi individuali per gruppo.",
+      "onlyOneBucket": "Solo un saldo in sospeso — usa il saldo per gruppo."
     }
   },
   "Members": {

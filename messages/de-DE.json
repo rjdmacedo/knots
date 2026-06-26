@@ -856,6 +856,86 @@
         "lastYear": "Letztes Jahr",
         "older": "Älter"
       }
+    },
+    "List": {
+      "totalOwedToYou": "Insgesamt schuldet man dir {amount}",
+      "totalYouOwe": "Insgesamt schuldest du {amount}",
+      "totalOwedToYouMulti": "Insgesamt schuldet man dir",
+      "totalYouOweMulti": "Insgesamt schuldest du",
+      "showSettledFriends": "{count} ausgeglichene Freunde anzeigen",
+      "hideSettledFriends": "Ausgeglichene Freunde ausblenden",
+      "noUnsettledFriends": "Du bist mit allen ausgeglichen.",
+      "debtSectionTitle": "Salden",
+      "manageSectionTitle": "Alle Freunde"
+    },
+    "Timeline": {
+      "addExpense": "Ausgabe hinzufügen",
+      "empty": "Noch keine Aktivität mit diesem Freund.",
+      "loadError": "Zeitleiste konnte nicht geladen werden.",
+      "retry": "Erneut versuchen",
+      "groupSettled": "Alles ausgeglichen",
+      "groupShared": "Geteilte Gruppe",
+      "youLent": "du hast {amount} verliehen",
+      "youBorrowed": "du schuldest {amount}",
+      "friendOwesYou": "{name} schuldet dir {amount}",
+      "youOweFriend": "Du schuldest {name} {amount}",
+      "paid": "{payer} hat {payee} {amount} bezahlt",
+      "groups": {
+        "upcoming": "Bevorstehend",
+        "thisWeek": "Diese Woche",
+        "earlierThisMonth": "Früher diesen Monat",
+        "lastMonth": "Letzten Monat",
+        "earlierThisYear": "Früher dieses Jahr",
+        "lastYear": "Letztes Jahr",
+        "older": "Älter"
+      }
+    },
+    "PaymentDetail": {
+      "title": "Zahlung",
+      "paid": "{payer} hat {payee} bezahlt",
+      "addedBy": "Hinzugefügt von {name} am {date}",
+      "disclaimer": "Diese Zahlung wurde mit \"Zahlung erfassen\" eingetragen. Es wurde kein Geld überwiesen.",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "deleteConfirm": "Diese Zahlung löschen?",
+      "deleteDescription": "Die Salden werden so angepasst, als ob die Zahlung nie stattgefunden hätte.",
+      "deleting": "Deleting…",
+      "notFound": "Zahlung nicht gefunden.",
+      "backToFriend": "Zurück zu {name}",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group."
+    },
+    "DirectExpense": {
+      "title": "Ausgabe hinzufügen",
+      "description": "Mit {name}",
+      "descriptionLabel": "Beschreibung",
+      "descriptionPlaceholder": "Beschreibung eingeben",
+      "amountLabel": "Betrag",
+      "paidByLabel": "Bezahlt von",
+      "paidByYou": "Du",
+      "splitEqually": "Bezahlt von {payer} und gleichmäßig aufgeteilt",
+      "dateLabel": "Datum",
+      "attachLabel": "Bild oder PDF anhängen",
+      "notesLabel": "Notizen",
+      "notesPlaceholder": "Notizen hinzufügen (optional)",
+      "save": "Speichern",
+      "saving": "Speichern…",
+      "cancel": "Abbrechen",
+      "success": "Ausgabe hinzugefügt.",
+      "error": "Ausgabe konnte nicht hinzugefügt werden."
+    },
+    "SettleAll": {
+      "button": "Alles ausgleichen",
+      "title": "Alle Salden ausgleichen",
+      "description": "Dies gleicht alle deine Salden mit {name} in {currency} aus.",
+      "breakdown": "Aufschlüsselung",
+      "directBucket": "Direkt",
+      "confirm": "Alles ausgleichen",
+      "settling": "Ausgleichen…",
+      "success": "Alle Salden ausgeglichen.",
+      "error": "Salden konnten nicht ausgeglichen werden.",
+      "timelineLabel": "Alle Salden ausgeglichen — {amount}",
+      "consolidationDisclaimer": "Diese Zahlung ist Teil eines Gesamtausgleichs. Knots hat ihn in einzelne Ausgleiche pro Gruppe aufgeteilt.",
+      "onlyOneBucket": "Nur ein offener Saldo — nutze den Gruppenausgleich."
     }
   },
   "Members": {

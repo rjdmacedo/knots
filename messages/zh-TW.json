@@ -856,6 +856,83 @@
         "lastYear": "去年",
         "older": "更早"
       }
+    },
+    "List": {
+      "totalOwedToYou": "總計別人欠你 {amount}",
+      "totalYouOwe": "總計你欠 {amount}",
+      "totalOwedToYouMulti": "總計別人欠你",
+      "totalYouOweMulti": "總計你欠",
+      "showSettledFriends": "顯示 {count} 位已結清的朋友",
+      "hideSettledFriends": "隱藏已結清的朋友",
+      "noUnsettledFriends": "你和所有人都已結清。",
+      "debtSectionTitle": "餘額",
+      "manageSectionTitle": "所有朋友"
+    },
+    "Timeline": {
+      "addExpense": "新增支出",
+      "empty": "與該朋友暫無活動。",
+      "loadError": "無法載入時間軸。",
+      "retry": "重試",
+      "groupSettled": "全部結清",
+      "groupShared": "共享群組",
+      "youLent": "你借出了 {amount}",
+      "youBorrowed": "你欠 {amount}",
+      "friendOwesYou": "{name} 欠你 {amount}",
+      "youOweFriend": "你欠 {name} {amount}",
+      "paid": "{payer} 向 {payee} 支付了 {amount}",
+      "groups": {
+        "upcoming": "即將到來",
+        "thisWeek": "本週",
+        "earlierThisMonth": "本月稍早",
+        "lastMonth": "上個月",
+        "earlierThisYear": "今年稍早",
+        "lastYear": "去年",
+        "older": "更早"
+      }
+    },
+    "PaymentDetail": {
+      "title": "付款",
+      "paid": "{payer} 向 {payee} 付款",
+      "addedBy": "由 {name} 於 {date} 新增",
+      "disclaimer": "此付款透過「記錄付款」功能記錄，實際未進行轉帳。",
+      "edit": "編輯",
+      "delete": "刪除",
+      "deleteConfirm": "刪除此付款？",
+      "deleteDescription": "這將調整餘額，如同付款從未發生。",
+      "notFound": "未找到付款。",
+      "backToFriend": "返回 {name}",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "deleting": "Deleting..."
+    },
+    "DirectExpense": {
+      "title": "新增支出",
+      "description": "與 {name}",
+      "descriptionLabel": "描述",
+      "descriptionPlaceholder": "輸入描述",
+      "amountLabel": "金額",
+      "paidByLabel": "付款人",
+      "paidByYou": "你",
+      "splitEqually": "由 {payer} 支付並平分",
+      "dateLabel": "日期",
+      "save": "儲存",
+      "saving": "儲存中…",
+      "cancel": "取消",
+      "success": "支出已新增。",
+      "error": "無法新增支出。"
+    },
+    "SettleAll": {
+      "button": "全部結清",
+      "title": "結清所有餘額",
+      "description": "這將結清你與 {name} 在 {currency} 中的所有餘額。",
+      "breakdown": "明細",
+      "directBucket": "直接",
+      "confirm": "全部結清",
+      "settling": "結清中…",
+      "success": "所有餘額已結清。",
+      "error": "無法結清餘額。",
+      "timelineLabel": "結清了所有餘額 — {amount}",
+      "consolidationDisclaimer": "此付款是全額餘額結算的一部分。Knots 將其分解為每個群組的單獨結算。",
+      "onlyOneBucket": "僅一個待結清餘額 — 請使用按群組結清。"
     }
   },
   "Members": {

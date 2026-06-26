@@ -856,6 +856,83 @@
         "lastYear": "Geçen yıl",
         "older": "Daha eski"
       }
+    },
+    "List": {
+      "totalOwedToYou": "Toplamda size {amount} borçlular",
+      "totalYouOwe": "Toplamda {amount} borçlusunuz",
+      "totalOwedToYouMulti": "Toplamda size borçlular",
+      "totalYouOweMulti": "Toplamda borçlusunuz",
+      "showSettledFriends": "{count} hesabı kapatılmış arkadaşı göster",
+      "hideSettledFriends": "Hesabı kapatılmış arkadaşları gizle",
+      "noUnsettledFriends": "Herkesle hesabınız kapatılmış.",
+      "debtSectionTitle": "Bakiyeler",
+      "manageSectionTitle": "Tüm arkadaşlar"
+    },
+    "Timeline": {
+      "addExpense": "Harcama ekle",
+      "empty": "Bu arkadaşla henüz bir aktivite yok.",
+      "loadError": "Zaman çizelgesi yüklenemedi.",
+      "retry": "Tekrar dene",
+      "groupSettled": "Tamamı kapatıldı",
+      "groupShared": "Ortak grup",
+      "youLent": "{amount} ödünç verdiniz",
+      "youBorrowed": "{amount} borçlusunuz",
+      "friendOwesYou": "{name} size {amount} borçlu",
+      "youOweFriend": "{name} kişisine {amount} borçlusunuz",
+      "paid": "{payer}, {payee} kişisine {amount} ödedi",
+      "groups": {
+        "upcoming": "Yaklaşan",
+        "thisWeek": "Bu hafta",
+        "earlierThisMonth": "Bu ay içinde",
+        "lastMonth": "Geçen ay",
+        "earlierThisYear": "Bu yıl içinde",
+        "lastYear": "Geçen yıl",
+        "older": "Daha eski"
+      }
+    },
+    "PaymentDetail": {
+      "title": "Ödeme",
+      "paid": "{payer}, {payee} kişisine ödedi",
+      "addedBy": "{name} tarafından {date} tarihinde eklendi",
+      "disclaimer": "Bu ödeme \"Ödeme kaydet\" ile kaydedildi. Para transferi yapılmadı.",
+      "edit": "Düzenle",
+      "delete": "Sil",
+      "deleteConfirm": "Bu ödeme silinsin mi?",
+      "deleteDescription": "Bu, bakiyeleri ödeme hiç yapılmamış gibi ayarlayacaktır.",
+      "notFound": "Ödeme bulunamadı.",
+      "backToFriend": "{name} kişisine geri dön",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "deleting": "Deleting..."
+    },
+    "DirectExpense": {
+      "title": "Harcama ekle",
+      "description": "{name} ile",
+      "descriptionLabel": "Açıklama",
+      "descriptionPlaceholder": "Bir açıklama girin",
+      "amountLabel": "Tutar",
+      "paidByLabel": "Ödeyen",
+      "paidByYou": "Siz",
+      "splitEqually": "{payer} tarafından ödendi ve eşit bölündü",
+      "dateLabel": "Tarih",
+      "save": "Kaydet",
+      "saving": "Kaydediliyor…",
+      "cancel": "İptal",
+      "success": "Harcama eklendi.",
+      "error": "Harcama eklenemedi."
+    },
+    "SettleAll": {
+      "button": "Tümünü kapat",
+      "title": "Tüm bakiyeleri kapat",
+      "description": "Bu, {name} ile {currency} cinsinden tüm bakiyelerinizi kapatacaktır.",
+      "breakdown": "Ayrıntılar",
+      "directBucket": "Doğrudan",
+      "confirm": "Tümünü kapat",
+      "settling": "Kapatılıyor…",
+      "success": "Tüm bakiyeler kapatıldı.",
+      "error": "Bakiyeler kapatılamadı.",
+      "timelineLabel": "Tüm bakiyeleri kapattı — {amount}",
+      "consolidationDisclaimer": "Bu ödeme, tam bir bakiye kapatma işleminin parçasıdır. Knots bunu grup bazında bireysel kapatmalara böldü.",
+      "onlyOneBucket": "Yalnızca bir açık bakiye — grup bazında kapatmayı kullanın."
     }
   },
   "Members": {

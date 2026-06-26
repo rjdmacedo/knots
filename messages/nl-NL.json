@@ -856,6 +856,83 @@
         "lastYear": "Vorig jaar",
         "older": "Ouder"
       }
+    },
+    "List": {
+      "totalOwedToYou": "In totaal ben je {amount} verschuldigd",
+      "totalYouOwe": "In totaal ben je {amount} schuldig",
+      "totalOwedToYouMulti": "In totaal ben je verschuldigd",
+      "totalYouOweMulti": "In totaal ben je schuldig",
+      "showSettledFriends": "Toon {count} verrekende vrienden",
+      "hideSettledFriends": "Verberg verrekende vrienden",
+      "noUnsettledFriends": "Je bent met iedereen verrekend.",
+      "debtSectionTitle": "Saldi",
+      "manageSectionTitle": "Alle vrienden"
+    },
+    "Timeline": {
+      "addExpense": "Uitgave toevoegen",
+      "empty": "Nog geen activiteit met deze vriend.",
+      "loadError": "Tijdlijn kon niet worden geladen.",
+      "retry": "Opnieuw proberen",
+      "groupSettled": "Alles verrekend",
+      "groupShared": "Gedeelde groep",
+      "youLent": "je leende {amount}",
+      "youBorrowed": "je bent {amount} schuldig",
+      "friendOwesYou": "{name} is je {amount} schuldig",
+      "youOweFriend": "Je bent {name} {amount} schuldig",
+      "paid": "{payer} betaalde {payee} {amount}",
+      "groups": {
+        "upcoming": "Aankomend",
+        "thisWeek": "Deze week",
+        "earlierThisMonth": "Eerder deze maand",
+        "lastMonth": "Vorige maand",
+        "earlierThisYear": "Eerder dit jaar",
+        "lastYear": "Vorig jaar",
+        "older": "Ouder"
+      }
+    },
+    "PaymentDetail": {
+      "title": "Betaling",
+      "paid": "{payer} betaalde {payee}",
+      "addedBy": "Toegevoegd door {name} op {date}",
+      "disclaimer": "Deze betaling is geregistreerd via \"Betaling vastleggen\". Er is geen geld overgemaakt.",
+      "edit": "Bewerken",
+      "delete": "Verwijderen",
+      "deleteConfirm": "Deze betaling verwijderen?",
+      "deleteDescription": "Dit past de saldi aan alsof de betaling nooit heeft plaatsgevonden.",
+      "notFound": "Betaling niet gevonden.",
+      "backToFriend": "Terug naar {name}",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "deleting": "Deleting..."
+    },
+    "DirectExpense": {
+      "title": "Uitgave toevoegen",
+      "description": "Met {name}",
+      "descriptionLabel": "Beschrijving",
+      "descriptionPlaceholder": "Voer een beschrijving in",
+      "amountLabel": "Bedrag",
+      "paidByLabel": "Betaald door",
+      "paidByYou": "Jij",
+      "splitEqually": "Betaald door {payer} en gelijk verdeeld",
+      "dateLabel": "Datum",
+      "save": "Opslaan",
+      "saving": "Opslaan…",
+      "cancel": "Annuleren",
+      "success": "Uitgave toegevoegd.",
+      "error": "Kon uitgave niet toevoegen."
+    },
+    "SettleAll": {
+      "button": "Alles verrekenen",
+      "title": "Alle saldi verrekenen",
+      "description": "Dit verrekent al je saldi met {name} in {currency}.",
+      "breakdown": "Uitsplitsing",
+      "directBucket": "Direct",
+      "confirm": "Alles verrekenen",
+      "settling": "Verrekenen…",
+      "success": "Alle saldi verrekend.",
+      "error": "Kon saldi niet verrekenen.",
+      "timelineLabel": "Alle saldi verrekend — {amount}",
+      "consolidationDisclaimer": "Deze betaling maakt deel uit van een totale verrekening. Knots heeft het opgesplitst in individuele verrekeningen per groep.",
+      "onlyOneBucket": "Slechts één openstaand saldo — gebruik verrekening per groep."
     }
   },
   "Members": {

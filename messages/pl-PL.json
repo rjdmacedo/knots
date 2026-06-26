@@ -856,6 +856,83 @@
         "lastYear": "Poprzedni rok",
         "older": "Starsze"
       }
+    },
+    "List": {
+      "totalOwedToYou": "W sumie jesteś winien {amount}",
+      "totalYouOwe": "W sumie jesteś dłużny {amount}",
+      "totalOwedToYouMulti": "W sumie jesteś winien",
+      "totalYouOweMulti": "W sumie jesteś dłużny",
+      "showSettledFriends": "Pokaż {count} rozliczonych znajomych",
+      "hideSettledFriends": "Ukryj rozliczonych znajomych",
+      "noUnsettledFriends": "Jesteś rozliczony ze wszystkimi.",
+      "debtSectionTitle": "Salda",
+      "manageSectionTitle": "Wszyscy znajomi"
+    },
+    "Timeline": {
+      "addExpense": "Dodaj wydatek",
+      "empty": "Brak aktywności z tym znajomym.",
+      "loadError": "Nie udało się załadować osi czasu.",
+      "retry": "Spróbuj ponownie",
+      "groupSettled": "Wszystko rozliczone",
+      "groupShared": "Wspólna grupa",
+      "youLent": "pożyczyłeś {amount}",
+      "youBorrowed": "jesteś winien {amount}",
+      "friendOwesYou": "{name} jest ci winien {amount}",
+      "youOweFriend": "Jesteś winien {name} {amount}",
+      "paid": "{payer} zapłacił {payee} {amount}",
+      "groups": {
+        "upcoming": "Nadchodzące",
+        "thisWeek": "Ten tydzień",
+        "earlierThisMonth": "Wcześniej w tym miesiącu",
+        "lastMonth": "Ostatni miesiąc",
+        "earlierThisYear": "Wcześniej w tym roku",
+        "lastYear": "Ostatni rok",
+        "older": "Starsze"
+      }
+    },
+    "PaymentDetail": {
+      "title": "Płatność",
+      "paid": "{payer} zapłacił {payee}",
+      "addedBy": "Dodane przez {name} dnia {date}",
+      "disclaimer": "Ta płatność została zarejestrowana przez \"Zarejestruj płatność\". Nie przesłano żadnych pieniędzy.",
+      "edit": "Edytuj",
+      "delete": "Usuń",
+      "deleteConfirm": "Usunąć tę płatność?",
+      "deleteDescription": "To dostosuje salda tak, jakby płatność nigdy nie miała miejsca.",
+      "notFound": "Płatność nie znaleziona.",
+      "backToFriend": "Wróć do {name}",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "deleting": "Deleting..."
+    },
+    "DirectExpense": {
+      "title": "Dodaj wydatek",
+      "description": "Z {name}",
+      "descriptionLabel": "Opis",
+      "descriptionPlaceholder": "Wprowadź opis",
+      "amountLabel": "Kwota",
+      "paidByLabel": "Zapłacone przez",
+      "paidByYou": "Ty",
+      "splitEqually": "Zapłacone przez {payer} i podzielone po równo",
+      "dateLabel": "Data",
+      "save": "Zapisz",
+      "saving": "Zapisywanie…",
+      "cancel": "Anuluj",
+      "success": "Wydatek dodany.",
+      "error": "Nie udało się dodać wydatku."
+    },
+    "SettleAll": {
+      "button": "Rozlicz wszystko",
+      "title": "Rozlicz wszystkie salda",
+      "description": "To rozliczy wszystkie Twoje salda z {name} w {currency}.",
+      "breakdown": "Szczegóły",
+      "directBucket": "Bezpośredni",
+      "confirm": "Rozlicz wszystko",
+      "settling": "Rozliczanie…",
+      "success": "Wszystkie salda rozliczone.",
+      "error": "Nie udało się rozliczyć sald.",
+      "timelineLabel": "Rozliczył wszystkie salda — {amount}",
+      "consolidationDisclaimer": "Ta płatność jest częścią pełnego rozliczenia sald. Knots podzielił ją na indywidualne rozliczenia per grupa.",
+      "onlyOneBucket": "Tylko jedno saldo do rozliczenia — użyj rozliczenia grupowego."
     }
   },
   "Members": {

@@ -856,6 +856,83 @@
         "lastYear": "В прошлом году",
         "older": "Очень давно"
       }
+    },
+    "List": {
+      "totalOwedToYou": "Всего вам должны {amount}",
+      "totalYouOwe": "Всего вы должны {amount}",
+      "totalOwedToYouMulti": "Всего вам должны",
+      "totalYouOweMulti": "Всего вы должны",
+      "showSettledFriends": "Показать {count} рассчитавшихся друзей",
+      "hideSettledFriends": "Скрыть рассчитавшихся друзей",
+      "noUnsettledFriends": "Вы в расчёте со всеми.",
+      "debtSectionTitle": "Балансы",
+      "manageSectionTitle": "Все друзья"
+    },
+    "Timeline": {
+      "addExpense": "Добавить расход",
+      "empty": "Пока нет активности с этим другом.",
+      "loadError": "Не удалось загрузить хронологию.",
+      "retry": "Повторить",
+      "groupSettled": "Всё рассчитано",
+      "groupShared": "Общая группа",
+      "youLent": "вы одолжили {amount}",
+      "youBorrowed": "вы должны {amount}",
+      "friendOwesYou": "{name} должен вам {amount}",
+      "youOweFriend": "Вы должны {name} {amount}",
+      "paid": "{payer} заплатил {payee} {amount}",
+      "groups": {
+        "upcoming": "Предстоящие",
+        "thisWeek": "На этой неделе",
+        "earlierThisMonth": "Ранее в этом месяце",
+        "lastMonth": "В прошлом месяце",
+        "earlierThisYear": "Ранее в этом году",
+        "lastYear": "В прошлом году",
+        "older": "Старше"
+      }
+    },
+    "PaymentDetail": {
+      "title": "Платёж",
+      "paid": "{payer} заплатил {payee}",
+      "addedBy": "Добавлено пользователем {name} {date}",
+      "disclaimer": "Этот платёж был записан через \"Записать платёж\". Деньги не переводились.",
+      "edit": "Редактировать",
+      "delete": "Удалить",
+      "deleteConfirm": "Удалить этот платёж?",
+      "deleteDescription": "Это скорректирует балансы так, как будто платежа не было.",
+      "notFound": "Платёж не найден.",
+      "backToFriend": "Назад к {name}",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "deleting": "Deleting..."
+    },
+    "DirectExpense": {
+      "title": "Добавить расход",
+      "description": "С {name}",
+      "descriptionLabel": "Описание",
+      "descriptionPlaceholder": "Введите описание",
+      "amountLabel": "Сумма",
+      "paidByLabel": "Оплатил",
+      "paidByYou": "Вы",
+      "splitEqually": "Оплатил {payer}, поделено поровну",
+      "dateLabel": "Дата",
+      "save": "Сохранить",
+      "saving": "Сохранение…",
+      "cancel": "Отмена",
+      "success": "Расход добавлен.",
+      "error": "Не удалось добавить расход."
+    },
+    "SettleAll": {
+      "button": "Рассчитать всё",
+      "title": "Рассчитать все балансы",
+      "description": "Это рассчитает все ваши балансы с {name} в {currency}.",
+      "breakdown": "Детализация",
+      "directBucket": "Прямой",
+      "confirm": "Рассчитать всё",
+      "settling": "Расчёт…",
+      "success": "Все балансы рассчитаны.",
+      "error": "Не удалось рассчитать балансы.",
+      "timelineLabel": "Рассчитал все балансы — {amount}",
+      "consolidationDisclaimer": "Этот платёж является частью полного расчёта балансов. Knots разделил его на индивидуальные расчёты по группам.",
+      "onlyOneBucket": "Только один баланс для расчёта — используйте расчёт по группам."
     }
   },
   "Members": {
