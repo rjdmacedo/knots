@@ -1,4 +1,4 @@
-import { GroupType, PrismaClient, SplitMode } from '@prisma/client'
+import { PrismaClient, SplitMode } from '@prisma/client'
 import { hashSync } from 'bcrypt'
 
 const prisma = new PrismaClient()
@@ -43,17 +43,13 @@ const SEED_USERS = [
   },
 ] as const
 
-function buildDyadKey(userIdA: string, userIdB: string): string {
-  return [userIdA, userIdB].sort().join(':')
-}
-
 function expenseDateForIndex(index: number): Date {
   // Fixed timeline: one expense per day starting 2025-01-10, going backwards
   return new Date(Date.UTC(2025, 0, 10 - index))
 }
 
 async function createExpensesPaidBy(
-  groupId: string,
+  groupId: string | null,
   participants: ReadonlyArray<{ id: string }>,
   groupSlug: string,
   paidById: string,
@@ -64,7 +60,7 @@ async function createExpensesPaidBy(
     const expense = await prisma.expense.create({
       data: {
         id: expenseId,
-        groupId,
+        groupId: groupId ?? undefined,
         title: `Despesa ${i + 1}`,
         categoryId: 0,
         expenseDate: expenseDateForIndex(i),
@@ -126,6 +122,8 @@ async function main() {
   const rafael = userById['seed-user-rafael']!
   const alice = userById['seed-user-alice']!
   const bob = userById['seed-user-bob']!
+  const carol = userById['seed-user-carol']!
+  const dave = userById['seed-user-dave']!
 
   console.log(
     `Seed: created ${users.length} users (${SEED_USERS.map((user) => user.email).join(', ')})`,
@@ -151,34 +149,21 @@ async function main() {
 
   console.log('Seed: creating groups...')
 
-  const demoGroup = await prisma.group.create({
+  const group1 = await prisma.group.create({
     data: {
-      id: 'seed-group-demo',
-      name: 'Demo group',
-      type: GroupType.STANDARD,
-      information: '5 membros, 10 despesas de 10,00 €',
+      id: 'seed-group-1',
+      name: 'Grupo Rafael, Alice e Bob',
+      information: 'Grupo de teste com Rafael, Alice e Bob',
       currency: '€',
       currencyCode: 'EUR',
     },
   })
 
-  const rafaelBobDyadGroup = await prisma.group.create({
+  const group2 = await prisma.group.create({
     data: {
-      id: 'seed-group-dyad-rafael-bob',
-      name: 'Bob',
-      type: GroupType.DYAD,
-      dyadKey: buildDyadKey(rafael.id, bob.id),
-      currency: '€',
-      currencyCode: 'EUR',
-    },
-  })
-
-  const dyadGroup = await prisma.group.create({
-    data: {
-      id: 'seed-group-dyad-rafael-alice',
-      name: 'Alice',
-      type: GroupType.DYAD,
-      dyadKey: buildDyadKey(rafael.id, alice.id),
+      id: 'seed-group-2',
+      name: 'Grupo Rafael, Carol e Dave',
+      information: 'Grupo de teste com Rafael, Carol e Dave',
       currency: '€',
       currencyCode: 'EUR',
     },
@@ -186,24 +171,36 @@ async function main() {
 
   await prisma.groupMembership.createMany({
     data: [
-      ...users.map((user) => ({
-        userId: user.id,
-        groupId: demoGroup.id,
-        role: user.id === rafael.id ? ('OWNER' as const) : ('MEMBER' as const),
-      })),
-      ...[rafael, bob].map((user) => ({
-        userId: user.id,
-        groupId: rafaelBobDyadGroup.id,
-        role: user.id === rafael.id ? ('OWNER' as const) : ('MEMBER' as const),
-      })),
+      // Members of Group 1
       {
         userId: rafael.id,
-        groupId: dyadGroup.id,
+        groupId: group1.id,
         role: 'OWNER' as const,
       },
       {
         userId: alice.id,
-        groupId: dyadGroup.id,
+        groupId: group1.id,
+        role: 'MEMBER' as const,
+      },
+      {
+        userId: bob.id,
+        groupId: group1.id,
+        role: 'MEMBER' as const,
+      },
+      // Members of Group 2
+      {
+        userId: rafael.id,
+        groupId: group2.id,
+        role: 'OWNER' as const,
+      },
+      {
+        userId: carol.id,
+        groupId: group2.id,
+        role: 'MEMBER' as const,
+      },
+      {
+        userId: dave.id,
+        groupId: group2.id,
         role: 'MEMBER' as const,
       },
     ],
@@ -214,37 +211,56 @@ async function main() {
   )
 
   // Rafael pays every expense so others owe him a round amount per group.
-  await createExpensesPaidBy(demoGroup.id, users, 'demo', rafael.id)
   await createExpensesPaidBy(
-    dyadGroup.id,
+    group1.id,
+    [rafael, alice, bob],
+    'group-1',
+    rafael.id,
+  )
+  await createExpensesPaidBy(
+    group2.id,
+    [rafael, carol, dave],
+    'group-2',
+    rafael.id,
+  )
+  await createExpensesPaidBy(
+    null,
     [rafael, alice],
-    'dyad-rafael-alice',
+    'direct-rafael-alice',
     rafael.id,
   )
   await createExpensesPaidBy(
-    rafaelBobDyadGroup.id,
+    null,
     [rafael, bob],
-    'dyad-rafael-bob',
+    'direct-rafael-bob',
     rafael.id,
   )
 
-  const totalExpenses = EXPENSES_PER_GROUP * 3
-  const dyadDebt = (EXPENSES_PER_GROUP * AMOUNT_CENTS) / 2 // 50,00 €
-  const demoDebt =
-    EXPENSES_PER_GROUP * (AMOUNT_CENTS - AMOUNT_CENTS / users.length) // 80,00 €
+  const totalExpenses = EXPENSES_PER_GROUP * 4
+  const directDebt = (EXPENSES_PER_GROUP * AMOUNT_CENTS) / 2 // 50,00 €
+  const groupDebt = (EXPENSES_PER_GROUP * AMOUNT_CENTS) / 3 // ~33,33 €
 
-  console.log(`Seed: created ${totalExpenses} expenses across 3 groups`)
+  console.log(`Seed: created ${totalExpenses} expenses across 4 contexts`)
   console.log('')
   console.log('Quick reference (Rafael is creditor everywhere):')
-  console.log(`  • Dyad: Alice/Bob each owe Rafael ${dyadDebt / 100},00 €`)
+  console.log(`  • Direct: Alice/Bob each owe Rafael ${directDebt / 100},00 €`)
   console.log(
-    `  • Demo: Alice/Bob/Carol/Dave each owe Rafael ${demoDebt / 100},00 €`,
+    `  • Grupo 1: Alice/Bob each owe Rafael ${Math.round(groupDebt) / 100} €`,
   )
   console.log(
-    `  • Friend balance Rafael–Alice: ${(dyadDebt + demoDebt) / 100},00 € (50 + 80)`,
+    `  • Grupo 2: Carol/Dave each owe Rafael ${Math.round(groupDebt) / 100} €`,
   )
   console.log(
-    `  • Friend balance Rafael–Bob: ${(dyadDebt + demoDebt) / 100},00 € (50 + 80)`,
+    `  • Friend balance Rafael–Alice: ${Math.round(directDebt + groupDebt) / 100} €`,
+  )
+  console.log(
+    `  • Friend balance Rafael–Bob: ${Math.round(directDebt + groupDebt) / 100} €`,
+  )
+  console.log(
+    `  • Friend balance Rafael–Carol: ${Math.round(groupDebt) / 100} €`,
+  )
+  console.log(
+    `  • Friend balance Rafael–Dave: ${Math.round(groupDebt) / 100} €`,
   )
 }
 
