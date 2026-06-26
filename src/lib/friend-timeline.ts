@@ -1,4 +1,5 @@
 import type { getGroupExpenses } from '@/lib/api'
+import { CreationMethod } from '@prisma/client'
 import { getReimbursements } from '@/lib/balances'
 import { getPairwiseBalance } from '@/lib/friend-balances'
 
@@ -39,7 +40,7 @@ export type TimelinePayment = {
   fromUserName: string
   toUserId: string
   toUserName: string
-  creationMethod: 'PAYMENT' | 'DEBT_CONSOLIDATION' | null
+  creationMethod: CreationMethod | null
   bundleId: string | null
 }
 
@@ -65,7 +66,7 @@ export type SharedGroupInput = {
 export type DirectExpenseInput = {
   expense: ExpenseRecord
   currency: string
-  creationMethod?: 'PAYMENT' | 'DEBT_CONSOLIDATION' | null
+  creationMethod?: CreationMethod | null
   bundleId?: string | null
 }
 
@@ -99,7 +100,7 @@ export function buildFriendTimeline(params: {
     groupId: string | null
     groupName: string | null
     currency: string
-    creationMethod?: 'PAYMENT' | 'DEBT_CONSOLIDATION' | null
+    creationMethod?: CreationMethod | null
     bundleId?: string | null
   }>
 }): TimelineEntry[] {
@@ -236,7 +237,7 @@ function buildPaymentEntry(
     groupId: string | null
     groupName: string | null
     currency: string
-    creationMethod?: 'PAYMENT' | 'DEBT_CONSOLIDATION' | null
+    creationMethod?: CreationMethod | null
     bundleId?: string | null
   },
   currentUserId: string,
