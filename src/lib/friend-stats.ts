@@ -21,7 +21,6 @@ import {
   getTotalGroupSpending,
 } from '@/lib/totals'
 import { getCurrencyFromGroup } from '@/lib/utils'
-import { GroupType } from '@prisma/client'
 
 type Expense = NonNullable<Awaited<ReturnType<typeof GetGroupExpenses>>[number]>
 
@@ -147,9 +146,11 @@ export async function getFriendStats(
     const expenses = await getGroupExpenses(group.id)
 
     for (const expense of expenses) {
-      const includeExpense =
-        group.type === GroupType.DYAD ||
-        expenseInvolvesBothUsers(expense, currentUserId, friendUserId)
+      const includeExpense = expenseInvolvesBothUsers(
+        expense,
+        currentUserId,
+        friendUserId,
+      )
 
       if (!includeExpense) continue
 

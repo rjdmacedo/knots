@@ -198,7 +198,7 @@ describe('getGlobalActivities', () => {
     await getGlobalActivities('user-1')
 
     expect(mockExpenseFindMany).toHaveBeenCalledWith({
-      where: { id: { in: ['expense-1'] } },
+      where: { id: { in: ['expense-1'] }, groupId: { not: null } },
     })
     expect(mockGroupFindMany).toHaveBeenCalledWith({
       where: { id: { in: ['group-1', 'group-2'] } },

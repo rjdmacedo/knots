@@ -231,7 +231,7 @@ describe('friends', () => {
         where: {
           userId_email: { userId: ownerId, email: 'friend@example.com' },
         },
-        include: { friend: { select: { name: true } } },
+        include: { friend: { select: { name: true, username: true } } },
       })
     })
   })

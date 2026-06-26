@@ -8,7 +8,6 @@ import { ExpenseFormValues, GroupFormValues } from '@/lib/schemas'
 import {
   ActivityType,
   Expense,
-  GroupType,
   RecurrenceRule,
   RecurringExpenseLink,
 } from '@prisma/client'
@@ -357,18 +356,7 @@ export async function updateGroup(
   const existingGroup = await getGroup(groupId)
   if (!existingGroup) throw new Error('Invalid group ID')
 
-  const isDyad = existingGroup.type === GroupType.DYAD
-  const nextValues = isDyad
-    ? {
-        name: existingGroup.name,
-        information: existingGroup.information ?? '',
-        currency: groupFormValues.currency,
-        currencyCode: groupFormValues.currencyCode,
-        simplifyDebts: existingGroup.simplifyDebts,
-      }
-    : groupFormValues
-
-  const changes = computeGroupChanges(existingGroup, nextValues)
+  const changes = computeGroupChanges(existingGroup, groupFormValues)
 
   await logActivity(groupId, ActivityType.UPDATE_GROUP, {
     changes,
@@ -377,11 +365,11 @@ export async function updateGroup(
   return prisma.group.update({
     where: { id: groupId },
     data: {
-      name: nextValues.name,
-      information: nextValues.information,
-      currency: nextValues.currency,
-      currencyCode: nextValues.currencyCode,
-      simplifyDebts: nextValues.simplifyDebts,
+      name: groupFormValues.name,
+      information: groupFormValues.information,
+      currency: groupFormValues.currency,
+      currencyCode: groupFormValues.currencyCode,
+      simplifyDebts: groupFormValues.simplifyDebts,
     },
   })
 }
@@ -457,8 +445,8 @@ export async function getGroupExpenseCount(groupId: string) {
 }
 
 export async function getExpense(groupId: string, expenseId: string) {
-  return prisma.expense.findUnique({
-    where: { id: expenseId },
+  return prisma.expense.findFirst({
+    where: { id: expenseId, groupId },
     include: {
       paidBy: { select: { id: true, name: true, email: true } },
       paidFor: {
@@ -535,7 +523,7 @@ export async function getGlobalActivities(
 
   const [expenses, groups] = await Promise.all([
     prisma.expense.findMany({
-      where: { id: { in: expenseIds } },
+      where: { id: { in: expenseIds }, groupId: { not: null } },
     }),
     prisma.group.findMany({
       where: { id: { in: activityGroupIds } },
@@ -700,7 +688,7 @@ async function createRecurringExpenses() {
               expenseDate: newExpenseDate,
               recurringExpenseLink: {
                 create: {
-                  groupId: currentExpenseRecord.groupId,
+                  groupId: currentExpenseRecord.groupId!,
                   id: newRecurringExpenseLinkId,
                   nextExpenseDate: newRecurringExpenseNextExpenseDate,
                 },
@@ -741,7 +729,7 @@ async function createRecurringExpenses() {
       if (newExpense === null) break
 
       // Set the values for the next iteration of the for-loop in case multiple recurring Expenses need to be created
-      currentExpenseRecord = newExpense
+      currentExpenseRecord = newExpense as typeof currentExpenseRecord
       currentReccuringExpenseLinkId = newRecurringExpenseLinkId
       newExpenseDate = newRecurringExpenseNextExpenseDate
     }

@@ -1,7 +1,6 @@
 import { getGroupExpenses } from '@/lib/api'
 import { getSharedGroupsForUsers } from '@/lib/friend-balances-db'
 import { getFriendExpenses } from '@/lib/friend-expenses'
-import { GroupType } from '@prisma/client'
 
 jest.mock('@/lib/friend-balances-db', () => ({
   getSharedGroupsForUsers: jest.fn(),
@@ -36,29 +35,27 @@ describe('getFriendExpenses', () => {
   it('returns expenses from all shared groups where both friends are involved', async () => {
     mockGetSharedGroups.mockResolvedValue([
       {
-        id: 'group-dyad',
+        id: 'group-direct',
         name: 'Ana',
-        type: GroupType.DYAD,
         currency: '€',
         currencyCode: 'EUR',
       },
       {
         id: 'group-casa',
         name: 'Casa',
-        type: GroupType.STANDARD,
         currency: '€',
         currencyCode: 'EUR',
       },
     ])
     mockGroupBy.mockResolvedValue([
-      { groupId: 'group-dyad', _count: { groupId: 2 } },
+      { groupId: 'group-direct', _count: { groupId: 2 } },
       { groupId: 'group-casa', _count: { groupId: 3 } },
     ])
     mockGetGroupExpenses.mockImplementation(async (groupId: string) => {
-      if (groupId === 'group-dyad') {
+      if (groupId === 'group-direct') {
         return [
           {
-            id: 'exp-dyad',
+            id: 'exp-direct',
             title: 'Coffee',
             amount: 500,
             expenseDate: new Date('2026-06-01'),
@@ -118,14 +115,8 @@ describe('getFriendExpenses', () => {
     expect(result).toHaveLength(2)
     expect(result.map((item) => item.expense.id).sort()).toEqual([
       'exp-casa',
-      'exp-dyad',
+      'exp-direct',
     ])
-    expect(
-      result.find((item) => item.expense.id === 'exp-dyad')?.groupType,
-    ).toBe(GroupType.DYAD)
-    expect(
-      result.find((item) => item.expense.id === 'exp-casa')?.groupType,
-    ).toBe(GroupType.STANDARD)
   })
 
   it('returns empty array when there are no shared groups', async () => {

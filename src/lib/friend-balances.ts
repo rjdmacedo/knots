@@ -5,17 +5,17 @@ import { getCurrencyFromGroup } from '@/lib/utils'
 import { GroupType } from '@prisma/client'
 
 export type GroupBalanceBreakdown = {
-  groupId: string
-  groupName: string
-  groupType: GroupType
+  groupId: string | null // null = direct ledger
+  groupName: string | null // null for direct
+  groupType: GroupType | null // null for direct
   currency: Currency
   amount: number // minor units; positive = friend owes user
 }
 
 export type FriendSettlement = {
-  groupId: string
-  groupName: string
-  groupType: GroupType
+  groupId: string | null
+  groupName: string | null
+  groupType: GroupType | null
   currency: Currency
   from: string
   to: string
@@ -32,7 +32,6 @@ export type FriendBalanceSummary = {
   friendId: string
   friendUserId: string
   name: string
-  dyadGroupId: string | null
   balances: CurrencyBalance[] // empty if no shared groups or all zero
 }
 
@@ -49,7 +48,7 @@ export function getPairwiseBalance(
   }, 0)
 }
 
-/** Compute balances for one friend across shared groups. */
+/** Compute balances for one friend across shared groups and direct expenses. */
 export function computeFriendBalance(
   currentUserId: string,
   friendUserId: string,
@@ -60,6 +59,10 @@ export function computeFriendBalance(
     currency: string
     currencyCode: string | null
     simplifyDebts: boolean
+    expenses: NonNullable<Awaited<ReturnType<typeof getGroupExpenses>>>
+  }>,
+  directExpenses?: Array<{
+    currency: Currency
     expenses: NonNullable<Awaited<ReturnType<typeof getGroupExpenses>>>
   }>,
 ): CurrencyBalance[] {
@@ -106,6 +109,45 @@ export function computeFriendBalance(
     }
   }
 
+  // Include the direct bucket(s) (groupId = null) if direct expenses exist
+  if (directExpenses) {
+    for (const bucket of directExpenses) {
+      if (bucket.expenses.length === 0) continue
+
+      const reimbursements = getReimbursements(bucket.expenses, {
+        simplifyDebts: false,
+      })
+      const amount = getPairwiseBalance(
+        reimbursements,
+        currentUserId,
+        friendUserId,
+      )
+
+      const currency = bucket.currency
+      const currencyKey = currency.code || currency.symbol
+
+      const breakdown: GroupBalanceBreakdown = {
+        groupId: null,
+        groupName: null,
+        groupType: null,
+        currency,
+        amount,
+      }
+
+      const existing = currencyMap.get(currencyKey)
+      if (existing) {
+        existing.totalAmount += amount
+        existing.groups.push(breakdown)
+      } else {
+        currencyMap.set(currencyKey, {
+          currency,
+          totalAmount: amount,
+          groups: [breakdown],
+        })
+      }
+    }
+  }
+
   return Array.from(currencyMap.values())
 }
 
@@ -120,6 +162,10 @@ export function computeFriendSettlements(
     currency: string
     currencyCode: string | null
     simplifyDebts: boolean
+    expenses: NonNullable<Awaited<ReturnType<typeof getGroupExpenses>>>
+  }>,
+  directExpenses?: Array<{
+    currency: Currency
     expenses: NonNullable<Awaited<ReturnType<typeof getGroupExpenses>>>
   }>,
 ): FriendSettlement[] {
@@ -154,6 +200,34 @@ export function computeFriendSettlements(
       to: debt.to,
       amount: debt.amount,
     })
+  }
+
+  // Include the direct bucket(s) (groupId = null) if there's a non-zero balance
+  if (directExpenses) {
+    for (const bucket of directExpenses) {
+      const reimbursements = getReimbursements(bucket.expenses, {
+        simplifyDebts: false,
+      })
+      const debt = reimbursements.find(
+        (reimbursement) =>
+          (reimbursement.from === currentUserId &&
+            reimbursement.to === friendUserId) ||
+          (reimbursement.from === friendUserId &&
+            reimbursement.to === currentUserId),
+      )
+
+      if (debt) {
+        settlements.push({
+          groupId: null,
+          groupName: null,
+          groupType: null,
+          currency: bucket.currency,
+          from: debt.from,
+          to: debt.to,
+          amount: debt.amount,
+        })
+      }
+    }
   }
 
   return settlements

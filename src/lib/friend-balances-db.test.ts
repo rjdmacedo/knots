@@ -1,6 +1,5 @@
 import { getSharedGroupsForUsers } from '@/lib/friend-balances-db'
 import { prisma } from '@/lib/prisma'
-import { GroupType } from '@prisma/client'
 
 jest.mock('@/lib/prisma', () => ({
   prisma: {
@@ -18,7 +17,6 @@ const friendUserId = 'user-2'
 const standardGroup = {
   id: 'group-1',
   name: 'Trip',
-  type: GroupType.STANDARD,
   currency: '€',
   currencyCode: 'EUR',
 }
@@ -60,6 +58,7 @@ describe('getSharedGroupsForUsers', () => {
             type: true,
             currency: true,
             currencyCode: true,
+            simplifyDebts: true,
           },
         },
       },
@@ -74,7 +73,6 @@ describe('getSharedGroupsForUsers', () => {
         group: {
           id: 'group-1',
           name: 'Solo group',
-          type: GroupType.STANDARD,
           currency: '$',
           currencyCode: 'USD',
         },
@@ -112,7 +110,6 @@ describe('getSharedGroupsForUsers', () => {
         group: {
           id: 'group-2',
           name: 'Flat',
-          type: GroupType.STANDARD,
           currency: '$',
           currencyCode: 'USD',
         },
@@ -123,7 +120,6 @@ describe('getSharedGroupsForUsers', () => {
         group: {
           id: 'group-2',
           name: 'Flat',
-          type: GroupType.STANDARD,
           currency: '$',
           currencyCode: 'USD',
         },
@@ -134,7 +130,6 @@ describe('getSharedGroupsForUsers', () => {
         group: {
           id: 'group-3',
           name: 'Private',
-          type: GroupType.STANDARD,
           currency: '£',
           currencyCode: 'GBP',
         },
@@ -148,7 +143,6 @@ describe('getSharedGroupsForUsers', () => {
     expect(result).toContainEqual({
       id: 'group-2',
       name: 'Flat',
-      type: GroupType.STANDARD,
       currency: '$',
       currencyCode: 'USD',
     })
@@ -162,7 +156,6 @@ describe('getSharedGroupsForUsers', () => {
         group: {
           id: 'group-1',
           name: 'Old Group',
-          type: GroupType.STANDARD,
           currency: '$',
           currencyCode: null,
         },
@@ -173,7 +166,6 @@ describe('getSharedGroupsForUsers', () => {
         group: {
           id: 'group-1',
           name: 'Old Group',
-          type: GroupType.STANDARD,
           currency: '$',
           currencyCode: null,
         },
@@ -186,7 +178,6 @@ describe('getSharedGroupsForUsers', () => {
       {
         id: 'group-1',
         name: 'Old Group',
-        type: GroupType.STANDARD,
         currency: '$',
         currencyCode: null,
       },

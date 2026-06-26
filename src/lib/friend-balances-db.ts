@@ -2,6 +2,55 @@ import { prisma } from '@/lib/prisma'
 import { GroupType } from '@prisma/client'
 
 /**
+ * Returns direct expenses (groupId = null) that involve both users.
+ * An expense "involves" a user if they are either the payer (paidById) or a participant (in paidFor).
+ * Returns in the same shape as getGroupExpenses for compatibility with the balance engine.
+ */
+export async function getDirectExpensesBetweenUsers(
+  userId: string,
+  friendUserId: string,
+) {
+  return prisma.expense.findMany({
+    select: {
+      amount: true,
+      category: true,
+      createdAt: true,
+      expenseDate: true,
+      id: true,
+      isReimbursement: true,
+      paidBy: { select: { id: true, name: true } },
+      paidFor: {
+        select: {
+          user: { select: { id: true, name: true } },
+          shares: true,
+        },
+      },
+      splitMode: true,
+      recurrenceRule: true,
+      title: true,
+      notes: true,
+      _count: { select: { documents: true } },
+    },
+    where: {
+      groupId: null,
+      // Expense involves both users: each must be either the payer or a participant
+      AND: [
+        {
+          OR: [{ paidById: userId }, { paidFor: { some: { userId } } }],
+        },
+        {
+          OR: [
+            { paidById: friendUserId },
+            { paidFor: { some: { userId: friendUserId } } },
+          ],
+        },
+      ],
+    },
+    orderBy: [{ expenseDate: 'desc' }, { createdAt: 'desc' }],
+  })
+}
+
+/**
  * Returns groups where both users have active (non-archived) memberships.
  */
 export async function getSharedGroupsForUsers(

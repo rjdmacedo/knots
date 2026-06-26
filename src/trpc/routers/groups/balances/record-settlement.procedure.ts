@@ -1,11 +1,10 @@
-import { createExpense, getGroup } from '@/lib/api'
+import { createExpense, getGroup, randomId } from '@/lib/api'
 import { emailService } from '@/lib/auth/email-service'
 import { upsertCategoryMapping } from '@/lib/category-mapping'
 import { prisma } from '@/lib/prisma'
 import { isBlockedBy } from '@/lib/profile/block-check'
 import { notifyOnActivity } from '@/lib/push/notify-on-activity'
 import {
-  buildFriendBalancesUrl,
   buildSettleBalancesUrl,
   buildSettlementFormValues,
   findDebtBetween,
@@ -14,15 +13,15 @@ import {
   getSuggestedReimbursementsForGroup,
 } from '@/lib/settlements'
 import { getCurrencyFromGroup } from '@/lib/utils'
-import { groupMemberProcedure } from '@/trpc/init'
-import { ActivityType, GroupType } from '@prisma/client'
+import { protectedProcedure } from '@/trpc/init'
+import { ActivityType } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-export const recordSettlementProcedure = groupMemberProcedure
+export const recordSettlementProcedure = protectedProcedure
   .input(
     z.object({
-      groupId: z.string().min(1),
+      groupId: z.string().min(1).nullable(),
       fromUserId: z.string().min(1),
       toUserId: z.string().min(1),
       amount: z.number().int().positive().max(10_000_000_00),
@@ -33,6 +32,66 @@ export const recordSettlementProcedure = groupMemberProcedure
       throw new TRPCError({
         code: 'FORBIDDEN',
         message: 'You can only record payments that you made.',
+      })
+    }
+
+    // Direct settlement (no group) — create payment with groupId = null
+    if (input.groupId === null) {
+      // Verify that the other user is a connected friend
+      const friend = await prisma.friend.findFirst({
+        where: {
+          userId: ctx.user.id,
+          friendUserId: input.toUserId,
+        },
+        select: { id: true },
+      })
+
+      if (!friend) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Friend not found.',
+        })
+      }
+
+      const expenseId = randomId()
+      const expense = await prisma.expense.create({
+        data: {
+          id: expenseId,
+          groupId: null,
+          expenseDate: new Date(),
+          title: '',
+          amount: input.amount,
+          paidById: input.fromUserId,
+          isReimbursement: true,
+          splitMode: 'EVENLY',
+          creationMethod: 'PAYMENT',
+          categoryId: 1, // Payment category
+          paidFor: {
+            create: {
+              userId: input.toUserId,
+              shares: 1,
+            },
+          },
+        },
+      })
+
+      return { expenseId: expense.id }
+    }
+
+    // Group settlement — verify group membership
+    const membership = await prisma.groupMembership.findUnique({
+      where: {
+        userId_groupId: {
+          userId: ctx.user.id,
+          groupId: input.groupId,
+        },
+      },
+    })
+
+    if (!membership) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Group not found.',
       })
     }
 
@@ -83,7 +142,6 @@ export const recordSettlementProcedure = groupMemberProcedure
 
     const group = await getGroup(input.groupId)
     if (group) {
-      const isDirectBalance = group.type === GroupType.DYAD
       const [payer, creditor] = await Promise.all([
         prisma.user.findUnique({
           where: { id: input.fromUserId },
@@ -107,18 +165,6 @@ export const recordSettlementProcedure = groupMemberProcedure
         }).format(input.amount / 10 ** currency.decimal_digits)
 
         let balancesLink = buildSettleBalancesUrl(input.groupId)
-        if (isDirectBalance) {
-          const friend = await prisma.friend.findFirst({
-            where: {
-              userId: input.toUserId,
-              friendUserId: input.fromUserId,
-            },
-            select: { id: true },
-          })
-          if (friend) {
-            balancesLink = buildFriendBalancesUrl(friend.id)
-          }
-        }
 
         const updatedReimbursements = await getSuggestedReimbursementsForGroup(
           input.groupId,
@@ -141,7 +187,7 @@ export const recordSettlementProcedure = groupMemberProcedure
           formattedAmount,
           balancesLink,
           remainingBalance,
-          isDirectBalance,
+          false,
         )
 
         if (!emailResult.ok) {

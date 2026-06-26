@@ -34,10 +34,6 @@ function shouldIncludeActivity(
     return false
   }
 
-  if (groupType === GroupType.DYAD) {
-    return true
-  }
-
   if (expense) {
     return expenseInvolvesBothUsers(expense, currentUserId, friendUserId)
   }
@@ -75,7 +71,7 @@ export async function getFriendActivities(
     .filter(Boolean) as string[]
 
   const expenses = await prisma.expense.findMany({
-    where: { id: { in: expenseIds } },
+    where: { id: { in: expenseIds }, groupId: { not: null } },
     select: {
       id: true,
       groupId: true,

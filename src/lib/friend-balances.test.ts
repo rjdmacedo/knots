@@ -1,4 +1,3 @@
-import { GroupType } from '@prisma/client'
 import {
   computeFriendBalance,
   computeFriendSettlements,
@@ -84,6 +83,16 @@ describe('computeFriendBalance', () => {
   const currentUserId = 'user-1'
   const friendUserId = 'user-2'
 
+  const eurCurrency = {
+    name: 'Euro',
+    symbol_native: '€',
+    symbol: '€',
+    code: 'EUR',
+    name_plural: 'euros',
+    rounding: 0,
+    decimal_digits: 2,
+  }
+
   beforeEach(() => {
     jest.clearAllMocks()
   })
@@ -127,7 +136,6 @@ describe('computeFriendBalance', () => {
       {
         id: 'group-1',
         name: 'Trip',
-        type: GroupType.STANDARD,
         currency: '€',
         currencyCode: 'EUR',
         simplifyDebts: true,
@@ -195,7 +203,6 @@ describe('computeFriendBalance', () => {
       {
         id: 'group-eur',
         name: 'Europe Trip',
-        type: GroupType.STANDARD,
         currency: '€',
         currencyCode: 'EUR',
         simplifyDebts: true,
@@ -204,7 +211,6 @@ describe('computeFriendBalance', () => {
       {
         id: 'group-usd',
         name: 'US Trip',
-        type: GroupType.STANDARD,
         currency: '$',
         currencyCode: 'USD',
         simplifyDebts: true,
@@ -261,7 +267,6 @@ describe('computeFriendBalance', () => {
       {
         id: 'group-1',
         name: 'Settled Group',
-        type: GroupType.STANDARD,
         currency: '$',
         currencyCode: 'USD',
         simplifyDebts: true,
@@ -277,6 +282,385 @@ describe('computeFriendBalance', () => {
 
     expect(result).toHaveLength(1)
     expect(result[0].totalAmount).toBe(0)
+  })
+
+  describe('direct expenses (groupId = null)', () => {
+    it('a direct expense shows up in the "direct" bucket', () => {
+      const directMockExpenses = [
+        {
+          id: 'direct-expense-1',
+          amount: 2000,
+          title: 'Coffee',
+          expenseDate: new Date(),
+          createdAt: new Date(),
+          isReimbursement: false,
+          splitMode: 'EVENLY' as const,
+          recurrenceRule: null,
+          notes: null,
+          category: null,
+          _count: { documents: 0 },
+          paidBy: { id: currentUserId, name: 'Current User' },
+          paidFor: [
+            { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
+            { user: { id: friendUserId, name: 'Friend' }, shares: 1 },
+          ],
+        },
+      ]
+
+      // Direct expenses use getReimbursements with simplifyDebts: false
+      mockedGetReimbursements.mockReturnValue([
+        { from: friendUserId, to: currentUserId, amount: 1000 },
+      ])
+
+      const result = computeFriendBalance(
+        currentUserId,
+        friendUserId,
+        [], // no shared groups
+        [{ currency: eurCurrency, expenses: directMockExpenses }],
+      )
+
+      expect(result).toHaveLength(1)
+      expect(result[0].currency.code).toBe('EUR')
+      expect(result[0].totalAmount).toBe(1000)
+      expect(result[0].groups).toHaveLength(1)
+      expect(result[0].groups[0].groupId).toBeNull()
+      expect(result[0].groups[0].groupName).toBeNull()
+      expect(result[0].groups[0].amount).toBe(1000)
+    })
+
+    it('a direct payment (isReimbursement = true) reduces the direct bucket balance', () => {
+      const directMockExpenses = [
+        {
+          id: 'direct-expense-1',
+          amount: 2000,
+          title: 'Lunch',
+          expenseDate: new Date('2024-01-01'),
+          createdAt: new Date('2024-01-01'),
+          isReimbursement: false,
+          splitMode: 'EVENLY' as const,
+          recurrenceRule: null,
+          notes: null,
+          category: null,
+          _count: { documents: 0 },
+          paidBy: { id: currentUserId, name: 'Current User' },
+          paidFor: [
+            { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
+            { user: { id: friendUserId, name: 'Friend' }, shares: 1 },
+          ],
+        },
+        {
+          id: 'direct-payment-1',
+          amount: 500,
+          title: 'Payment',
+          expenseDate: new Date('2024-01-02'),
+          createdAt: new Date('2024-01-02'),
+          isReimbursement: true,
+          splitMode: 'EVENLY' as const,
+          recurrenceRule: null,
+          notes: null,
+          category: null,
+          _count: { documents: 0 },
+          paidBy: { id: friendUserId, name: 'Friend' },
+          paidFor: [
+            { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
+          ],
+        },
+      ]
+
+      // After the expense (1000 owed) minus payment (500 paid back), net = 500
+      mockedGetReimbursements.mockReturnValue([
+        { from: friendUserId, to: currentUserId, amount: 500 },
+      ])
+
+      const result = computeFriendBalance(
+        currentUserId,
+        friendUserId,
+        [],
+        [{ currency: eurCurrency, expenses: directMockExpenses }],
+      )
+
+      expect(result).toHaveLength(1)
+      expect(result[0].totalAmount).toBe(500)
+      expect(result[0].groups[0].groupId).toBeNull()
+      expect(result[0].groups[0].amount).toBe(500)
+    })
+
+    it('multiple direct expenses accumulate correctly in the direct bucket', () => {
+      const directMockExpenses = [
+        {
+          id: 'direct-expense-1',
+          amount: 2000,
+          title: 'Lunch',
+          expenseDate: new Date('2024-01-01'),
+          createdAt: new Date('2024-01-01'),
+          isReimbursement: false,
+          splitMode: 'EVENLY' as const,
+          recurrenceRule: null,
+          notes: null,
+          category: null,
+          _count: { documents: 0 },
+          paidBy: { id: currentUserId, name: 'Current User' },
+          paidFor: [
+            { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
+            { user: { id: friendUserId, name: 'Friend' }, shares: 1 },
+          ],
+        },
+        {
+          id: 'direct-expense-2',
+          amount: 1000,
+          title: 'Coffee',
+          expenseDate: new Date('2024-01-02'),
+          createdAt: new Date('2024-01-02'),
+          isReimbursement: false,
+          splitMode: 'EVENLY' as const,
+          recurrenceRule: null,
+          notes: null,
+          category: null,
+          _count: { documents: 0 },
+          paidBy: { id: friendUserId, name: 'Friend' },
+          paidFor: [
+            { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
+            { user: { id: friendUserId, name: 'Friend' }, shares: 1 },
+          ],
+        },
+      ]
+
+      // Expense 1: friend owes 1000 to current user
+      // Expense 2: current user owes 500 to friend
+      // Net: friend owes 500
+      mockedGetReimbursements.mockReturnValue([
+        { from: friendUserId, to: currentUserId, amount: 500 },
+      ])
+
+      const result = computeFriendBalance(
+        currentUserId,
+        friendUserId,
+        [],
+        [{ currency: eurCurrency, expenses: directMockExpenses }],
+      )
+
+      expect(result).toHaveLength(1)
+      expect(result[0].totalAmount).toBe(500)
+      expect(result[0].groups).toHaveLength(1)
+      expect(result[0].groups[0].groupId).toBeNull()
+      expect(result[0].groups[0].amount).toBe(500)
+    })
+
+    it('direct balance is independent of group balances', () => {
+      const groupMockExpenses = [
+        {
+          id: 'group-expense-1',
+          amount: 4000,
+          title: 'Dinner',
+          expenseDate: new Date(),
+          createdAt: new Date(),
+          isReimbursement: false,
+          splitMode: 'EVENLY' as const,
+          recurrenceRule: null,
+          notes: null,
+          category: null,
+          _count: { documents: 0 },
+          paidBy: { id: currentUserId, name: 'Current User' },
+          paidFor: [
+            { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
+            { user: { id: friendUserId, name: 'Friend' }, shares: 1 },
+          ],
+        },
+      ]
+
+      const directMockExpenses = [
+        {
+          id: 'direct-expense-1',
+          amount: 1000,
+          title: 'Taxi',
+          expenseDate: new Date(),
+          createdAt: new Date(),
+          isReimbursement: false,
+          splitMode: 'EVENLY' as const,
+          recurrenceRule: null,
+          notes: null,
+          category: null,
+          _count: { documents: 0 },
+          paidBy: { id: friendUserId, name: 'Friend' },
+          paidFor: [
+            { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
+            { user: { id: friendUserId, name: 'Friend' }, shares: 1 },
+          ],
+        },
+      ]
+
+      // Group: friend owes current user 2000
+      mockedGetReimbursements
+        .mockReturnValueOnce([
+          { from: friendUserId, to: currentUserId, amount: 2000 },
+        ])
+        // Direct: current user owes friend 500
+        .mockReturnValueOnce([
+          { from: currentUserId, to: friendUserId, amount: 500 },
+        ])
+
+      mockedGetBalances.mockReturnValue({})
+
+      const sharedGroups = [
+        {
+          id: 'group-1',
+          name: 'House',
+          currency: '€',
+          currencyCode: 'EUR',
+          simplifyDebts: true,
+          expenses: groupMockExpenses,
+        },
+      ]
+
+      const result = computeFriendBalance(
+        currentUserId,
+        friendUserId,
+        sharedGroups,
+        [{ currency: eurCurrency, expenses: directMockExpenses }],
+      )
+
+      expect(result).toHaveLength(1)
+      // Total: 2000 (group) + (-500) (direct) = 1500
+      expect(result[0].totalAmount).toBe(1500)
+      expect(result[0].groups).toHaveLength(2)
+
+      // Group bucket
+      const groupBucket = result[0].groups.find((g) => g.groupId === 'group-1')
+      expect(groupBucket).toBeDefined()
+      expect(groupBucket!.amount).toBe(2000)
+      expect(groupBucket!.groupName).toBe('House')
+
+      // Direct bucket
+      const directBucket = result[0].groups.find((g) => g.groupId === null)
+      expect(directBucket).toBeDefined()
+      expect(directBucket!.amount).toBe(-500)
+      expect(directBucket!.groupName).toBeNull()
+    })
+
+    it('total friend balance includes both group and direct buckets', () => {
+      const groupMockExpenses = [
+        {
+          id: 'group-expense-1',
+          amount: 6000,
+          title: 'Hotel',
+          expenseDate: new Date(),
+          createdAt: new Date(),
+          isReimbursement: false,
+          splitMode: 'EVENLY' as const,
+          recurrenceRule: null,
+          notes: null,
+          category: null,
+          _count: { documents: 0 },
+          paidBy: { id: currentUserId, name: 'Current User' },
+          paidFor: [
+            { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
+            { user: { id: friendUserId, name: 'Friend' }, shares: 1 },
+          ],
+        },
+      ]
+
+      const directMockExpenses = [
+        {
+          id: 'direct-expense-1',
+          amount: 2000,
+          title: 'Gift',
+          expenseDate: new Date(),
+          createdAt: new Date(),
+          isReimbursement: false,
+          splitMode: 'EVENLY' as const,
+          recurrenceRule: null,
+          notes: null,
+          category: null,
+          _count: { documents: 0 },
+          paidBy: { id: currentUserId, name: 'Current User' },
+          paidFor: [
+            { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
+            { user: { id: friendUserId, name: 'Friend' }, shares: 1 },
+          ],
+        },
+      ]
+
+      // Group: friend owes 3000
+      mockedGetReimbursements
+        .mockReturnValueOnce([
+          { from: friendUserId, to: currentUserId, amount: 3000 },
+        ])
+        // Direct: friend owes 1000
+        .mockReturnValueOnce([
+          { from: friendUserId, to: currentUserId, amount: 1000 },
+        ])
+
+      mockedGetBalances.mockReturnValue({})
+
+      const sharedGroups = [
+        {
+          id: 'group-1',
+          name: 'Trip',
+          currency: '€',
+          currencyCode: 'EUR',
+          simplifyDebts: true,
+          expenses: groupMockExpenses,
+        },
+      ]
+
+      const result = computeFriendBalance(
+        currentUserId,
+        friendUserId,
+        sharedGroups,
+        [{ currency: eurCurrency, expenses: directMockExpenses }],
+      )
+
+      expect(result).toHaveLength(1)
+      // Total = group (3000) + direct (1000) = 4000
+      expect(result[0].totalAmount).toBe(4000)
+      expect(result[0].groups).toHaveLength(2)
+
+      const groupBucket = result[0].groups.find((g) => g.groupId === 'group-1')
+      expect(groupBucket!.amount).toBe(3000)
+
+      const directBucket = result[0].groups.find((g) => g.groupId === null)
+      expect(directBucket!.amount).toBe(1000)
+    })
+
+    it('does not add a direct bucket when directExpenses is undefined', () => {
+      mockedGetBalances.mockReturnValue({})
+      mockedGetReimbursements.mockReturnValue([
+        { from: friendUserId, to: currentUserId, amount: 1000 },
+      ])
+
+      const sharedGroups = [
+        {
+          id: 'group-1',
+          name: 'House',
+          currency: '€',
+          currencyCode: 'EUR',
+          simplifyDebts: true,
+          expenses: [],
+        },
+      ]
+
+      const result = computeFriendBalance(
+        currentUserId,
+        friendUserId,
+        sharedGroups,
+        undefined,
+      )
+
+      expect(result).toHaveLength(1)
+      expect(result[0].groups).toHaveLength(1)
+      expect(result[0].groups[0].groupId).toBe('group-1')
+    })
+
+    it('does not add a direct bucket when directExpenses array is empty', () => {
+      const result = computeFriendBalance(
+        currentUserId,
+        friendUserId,
+        [],
+        [{ currency: eurCurrency, expenses: [] }],
+      )
+
+      expect(result).toEqual([])
+    })
   })
 })
 
@@ -300,9 +684,8 @@ describe('computeFriendSettlements', () => {
 
     const sharedGroups = [
       {
-        id: 'group-dyad',
+        id: 'group-direct',
         name: 'Alice',
-        type: GroupType.DYAD,
         currency: '€',
         currencyCode: 'EUR',
         simplifyDebts: true,
@@ -311,7 +694,6 @@ describe('computeFriendSettlements', () => {
       {
         id: 'group-demo',
         name: 'Demo group',
-        type: GroupType.STANDARD,
         currency: '€',
         currencyCode: 'EUR',
         simplifyDebts: true,
@@ -327,7 +709,7 @@ describe('computeFriendSettlements', () => {
 
     expect(result).toHaveLength(2)
     expect(result[0]).toMatchObject({
-      groupId: 'group-dyad',
+      groupId: 'group-direct',
       from: friendUserId,
       to: currentUserId,
       amount: 5000,
@@ -348,7 +730,6 @@ describe('computeFriendSettlements', () => {
       {
         id: 'group-1',
         name: 'Settled',
-        type: GroupType.STANDARD,
         currency: '€',
         currencyCode: 'EUR',
         simplifyDebts: true,
@@ -368,7 +749,6 @@ describe('sortFriendBalances', () => {
     friendId: `friend-${name}`,
     friendUserId: `user-${name}`,
     name,
-    dyadGroupId: null,
     balances:
       totalAmount === 0
         ? []
