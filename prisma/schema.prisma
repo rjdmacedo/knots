@@ -12,16 +12,14 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-enum GroupType {
-  STANDARD
-  DYAD
+enum CreationMethod {
+  PAYMENT
+  DEBT_CONSOLIDATION
 }
 
 model Group {
   id                String                   @id
   name              String
-  type              GroupType                @default(STANDARD)
-  dyadKey           String?                  @unique
   information       String?                  @db.Text
   currency          String                   @default("$")
   currencyCode      String?
@@ -47,7 +45,7 @@ model Category {
 
 model Expense {
   id               String            @id
-  group            Group             @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  group            Group?            @relation(fields: [groupId], references: [id], onDelete: Cascade)
   expenseDate      DateTime          @default(dbgenerated("CURRENT_DATE")) @db.Date
   title            String
   category         Category?         @relation(fields: [categoryId], references: [id])
@@ -59,12 +57,14 @@ model Expense {
   paidBy           User              @relation("ExpensesPaidBy", fields: [paidById], references: [id])
   paidById         String
   paidFor          ExpensePaidFor[]
-  groupId          String
+  groupId          String?
   isReimbursement  Boolean           @default(false)
   splitMode        SplitMode         @default(EVENLY)
   createdAt        DateTime          @default(now())
   documents        ExpenseDocument[]
   notes            String?
+  creationMethod   CreationMethod?
+  bundleId         String?
 
   recurrenceRule         RecurrenceRule?       @default(NONE)
   recurringExpenseLink   RecurringExpenseLink?
