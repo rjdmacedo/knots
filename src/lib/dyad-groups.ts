@@ -6,6 +6,77 @@ import { nanoid } from 'nanoid'
 
 const MAX_GROUP_NAME_LENGTH = 100
 
+function defaultCurrencyCode(): string {
+  return process.env.NEXT_PUBLIC_DEFAULT_CURRENCY_CODE || 'USD'
+}
+
+export async function resolveDyadCurrencyCode(
+  userIdA: string,
+  userIdB: string,
+): Promise<string> {
+  const users = await prisma.user.findMany({
+    where: { id: { in: [userIdA, userIdB] } },
+    select: { preferredCurrency: true },
+  })
+
+  const preferences = users
+    .map((user) => user.preferredCurrency)
+    .filter((currency): currency is string => !!currency)
+
+  if (preferences.length === 0) {
+    return defaultCurrencyCode()
+  }
+
+  const uniquePreferences = Array.from(new Set(preferences))
+  if (uniquePreferences.length === 1) {
+    return uniquePreferences[0]
+  }
+
+  return defaultCurrencyCode()
+}
+
+export async function syncDyadGroupCurrency(groupId: string): Promise<boolean> {
+  const group = await prisma.group.findUnique({
+    where: { id: groupId },
+    select: {
+      type: true,
+      currencyCode: true,
+      memberships: { select: { userId: true } },
+      _count: { select: { expenses: true } },
+    },
+  })
+
+  if (
+    !group ||
+    group.type !== GroupType.DYAD ||
+    group.memberships.length !== 2 ||
+    group._count.expenses > 0
+  ) {
+    return false
+  }
+
+  const [memberA, memberB] = group.memberships
+  const currencyCode = await resolveDyadCurrencyCode(
+    memberA.userId,
+    memberB.userId,
+  )
+
+  if (!currencyCode || currencyCode === group.currencyCode) {
+    return false
+  }
+
+  const currency = getCurrency(currencyCode)
+  await prisma.group.update({
+    where: { id: groupId },
+    data: {
+      currency: currency.symbol || '$',
+      currencyCode: currency.code || currencyCode,
+    },
+  })
+
+  return true
+}
+
 export function buildDyadKey(userIdA: string, userIdB: string): string {
   return [userIdA, userIdB].sort().join(':')
 }
@@ -105,18 +176,15 @@ export async function findOrCreateDyadGroup(
       })
     }
 
+    await syncDyadGroupCurrency(existing.id)
+
     return { groupId: existing.id, created: false }
   }
 
-  const currentUser = await prisma.user.findUnique({
-    where: { id: currentUserId },
-    select: { preferredCurrency: true },
-  })
-
-  const currencyCode =
-    currentUser?.preferredCurrency ||
-    process.env.NEXT_PUBLIC_DEFAULT_CURRENCY_CODE ||
-    'USD'
+  const currencyCode = await resolveDyadCurrencyCode(
+    currentUserId,
+    friendUserId,
+  )
   const currency = getCurrency(currencyCode)
   const groupName = truncateGroupName(friendDisplayName)
   const groupId = nanoid()
@@ -161,6 +229,7 @@ export async function findOrCreateDyadGroup(
       })
 
       if (raced) {
+        await syncDyadGroupCurrency(raced.id)
         return { groupId: raced.id, created: false }
       }
     }

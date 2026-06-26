@@ -1,10 +1,12 @@
 import { getGroup } from '@/lib/api'
+import { syncDyadGroupCurrency } from '@/lib/dyad-groups'
 import { groupMemberProcedure } from '@/trpc/init'
 import { z } from 'zod'
 
 export const getGroupProcedure = groupMemberProcedure
   .input(z.object({ groupId: z.string().min(1) }))
   .query(async ({ input: { groupId } }) => {
+    await syncDyadGroupCurrency(groupId)
     const group = await getGroup(groupId)
     if (!group) return { group: null }
 
