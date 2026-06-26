@@ -1,4 +1,4 @@
- # Implementation Plan: Friend Timeline (Splitwise-style)
+# Implementation Plan: Friend Timeline (Splitwise-style)
 
 ## Overview
 
@@ -61,7 +61,7 @@ Migrate from DYAD groups to nullable `groupId`. Redesign friend UX: debt-focused
   - [x] 5.2 `pnpm check-types` passes
 
 - [x] 6. i18n — ALL 19 locale files
-  - [x] 6.1 Add keys to `messages/en-US.json` under `Friends.Timeline`, `Friends.List`, `Friends.PaymentDetail`, `Friends.DirectExpense`    - [x] 6.2 Propagate to all other 18 locale files per `i18n-translations.md`
+  - [x] 6.1 Add keys to `messages/en-US.json` under `Friends.Timeline`, `Friends.List`, `Friends.PaymentDetail`, `Friends.DirectExpense` - [x] 6.2 Propagate to all other 18 locale files per `i18n-translations.md`
   - [x] 6.3 Validate JSON syntax
   - _Requirements: 10.1–10.3_
 

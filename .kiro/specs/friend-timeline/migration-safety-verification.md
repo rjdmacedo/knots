@@ -34,6 +34,7 @@ WHERE "groupId" IN (SELECT id FROM "Group" WHERE type = 'DYAD');
 ```
 
 This UPDATE:
+
 - Changes `Expense.groupId` from a DYAD group ID to `NULL`
 - Does **NOT** delete the `Expense` record itself
 - Since `ExpensePaidFor` cascades on **DELETE** of its parent `Expense` (not on UPDATE of unrelated columns), participant shares are untouched
@@ -49,6 +50,7 @@ FOREIGN KEY ("groupId") REFERENCES "Group"("id") ON DELETE CASCADE
 This means: if a `Group` row is **deleted**, all `Expense` rows referencing it are cascaded-deleted. **However**, the migration sets `groupId = NULL` on DYAD expenses **before** deleting the DYAD groups. After the UPDATE, those expenses no longer reference the DYAD groups, so the subsequent `DELETE FROM "Group" WHERE type = 'DYAD'` will NOT cascade to any expenses.
 
 **Correct migration order:**
+
 1. `UPDATE "Expense" SET "groupId" = NULL WHERE "groupId" IN (SELECT id FROM "Group" WHERE type = 'DYAD')`
 2. `DELETE FROM "GroupMembership" WHERE "groupId" IN (SELECT id FROM "Group" WHERE type = 'DYAD')`
 3. `DELETE FROM "Group" WHERE type = 'DYAD'`
@@ -70,6 +72,7 @@ The `shares` column on `ExpensePaidFor` (which stores the split amounts/weights)
 ## Conclusion
 
 The planned migration is safe for `ExpensePaidFor` because:
+
 - `ExpensePaidFor` references `Expense.id`, not `Expense.groupId` or `Group.id`
 - Setting `groupId = NULL` on an `Expense` is a simple column update — no cascade triggers
 - DYAD groups are deleted **after** their expenses are detached, preventing cascade deletion

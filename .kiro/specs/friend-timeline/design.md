@@ -16,7 +16,7 @@ Eliminate the `GroupType.DYAD` hack. Direct expenses and payments live as `Expen
 ### Splitwise → Knots field mapping
 
 | Splitwise                               | Knots                                             |
-|-----------------------------------------|---------------------------------------------------|
+| --------------------------------------- | ------------------------------------------------- |
 | `group_id: null`                        | `Expense.groupId = null`                          |
 | `payment: true`                         | `Expense.isReimbursement = true`                  |
 | `description`                           | `Expense.title`                                   |
