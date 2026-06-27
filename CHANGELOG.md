@@ -1,3 +1,15 @@
+# [1.43.0](https://github.com/rjdmacedo/knots/compare/v1.42.0...v1.43.0) (2026-06-27)
+
+
+### Features
+
+* add unified expense detail pages for groups and friends ([39ba9a4](https://github.com/rjdmacedo/knots/commit/39ba9a4be812343334ad10653de5a3e87f1f23b9))
+* extend expense and friend APIs for unified detail flow ([ce199a4](https://github.com/rjdmacedo/knots/commit/ce199a4947d68cefceb5552c1480b993e6507d90))
+* implement friend timeline UI, direct expenses flow and clean up old views ([2751792](https://github.com/rjdmacedo/knots/commit/2751792c5a9a1456dddbda48fd3b9304250a63b1))
+* improve friend profile tabs and timeline UX ([8728719](https://github.com/rjdmacedo/knots/commit/8728719b9013630c7b74646b3abe7b8efe4bd001))
+* replace dedicated expense routes with floating create/edit dialog ([22e9aa9](https://github.com/rjdmacedo/knots/commit/22e9aa9af4bf1eb1d35ee9b6f21f536434281a7d))
+* resolve dyad group currency from both members' preferences ([dfe8d11](https://github.com/rjdmacedo/knots/commit/dfe8d117394ae21ddb0b4b55af645b25f4218aeb))
+
 # [1.42.0](https://github.com/rjdmacedo/knots/compare/v1.41.0...v1.42.0) (2026-06-25)
 
 
