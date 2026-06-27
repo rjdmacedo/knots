@@ -37,39 +37,19 @@ export function ExpenseFormCollapsible({
     <Collapsible
       open={open}
       onOpenChange={setOpen}
-      className={cn('rounded-lg border border-border', className)}
+      className={cn('rounded-md data-open:bg-muted', className)}
     >
       <CollapsibleTrigger
-        render={
-          <Button
-            type="button"
-            variant="ghost"
-            className="flex h-auto min-h-11 w-full items-center justify-between gap-3 whitespace-normal rounded-lg px-4 py-3 font-medium hover:bg-muted/50"
-          />
-        }
+        render={<Button type="button" variant="ghost" className="w-full" />}
       >
-        <span className="flex min-w-0 flex-1 flex-col items-start gap-0.5 text-left">
-          <span className="text-sm">{title}</span>
-          {description ? (
-            <span
-              className={cn(
-                'text-xs font-normal text-muted-foreground transition-opacity duration-200',
-                open && 'opacity-0',
-              )}
-            >
-              {description}
-            </span>
-          ) : null}
-        </span>
-        <ChevronDown
-          className={cn(
-            'size-4 shrink-0 text-muted-foreground transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]',
-            open && 'rotate-180',
-          )}
-        />
+        {title}
+        <ChevronDown className="ml-auto transition-transform group-data-panel-open/button:rotate-180" />
       </CollapsibleTrigger>
-      <CollapsibleContent className="border-t border-border px-4 py-3">
-        {children}
+      <CollapsibleContent className="flex w-full min-w-0 flex-col items-stretch gap-2 p-2.5 pt-0 text-sm">
+        {description ? (
+          <p className="text-muted-foreground">{description}</p>
+        ) : null}
+        <div className="w-full min-w-0">{children}</div>
       </CollapsibleContent>
     </Collapsible>
   )

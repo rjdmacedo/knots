@@ -327,9 +327,36 @@ export function ExpenseForm({
   const searchParams = useSearchParams()
   const sectionBleedX = embedded ? '' : '-mx-6 px-6'
   const linkBleedX = embedded ? '' : '-mx-4'
-  const fieldsGridClass = embedded
-    ? 'grid min-w-0 grid-cols-2 items-start gap-4 sm:gap-6'
-    : 'grid min-w-0 grid-cols-2 items-start gap-6'
+  const isMobileEmbedded = embedded && !isDesktop
+  const fieldsGridClass = isMobileEmbedded
+    ? 'grid min-w-0 grid-cols-1 items-start gap-4'
+    : embedded
+      ? 'grid min-w-0 grid-cols-2 items-start gap-4 sm:gap-6'
+      : 'grid min-w-0 grid-cols-2 items-start gap-6'
+  const participantRowClass = cn(
+    'border-t',
+    sectionBleedX,
+    isMobileEmbedded
+      ? 'flex flex-wrap items-center py-2'
+      : 'flex flex-wrap gap-y-4 items-center py-3',
+  )
+  const participantFormItemClass = cn(
+    'flex min-w-0 flex-1 flex-row space-x-3 space-y-0',
+    isMobileEmbedded ? 'items-center' : 'items-start',
+  )
+  const participantSharesClass = isMobileEmbedded
+    ? 'flex w-full basis-full flex-col gap-2'
+    : 'flex'
+  const shareInputRowClass = isMobileEmbedded
+    ? 'flex flex-col items-stretch gap-2'
+    : 'flex gap-1 items-center'
+  const shareInputClass = cn(
+    'text-base -my-2',
+    isMobileEmbedded ? 'w-full' : 'w-[80px]',
+  )
+  const collapsibleFieldsGridClass = embedded
+    ? 'grid w-full min-w-0 grid-cols-1 items-start gap-4 sm:grid-cols-2 sm:gap-6'
+    : fieldsGridClass
 
   const getDefaultPaidBy = (): string | undefined => {
     if (!isCreate) return undefined
@@ -1202,7 +1229,9 @@ export function ExpenseForm({
                   isLoading={exchangeRate.isLoading}
                   exchangeError={exchangeRate.error}
                   onRefresh={() => exchangeRate.refresh()}
-                  className={cn(group.id === 'direct' && 'col-start-2')}
+                  className={cn(
+                    group.id === 'direct' && !isMobileEmbedded && 'col-start-2',
+                  )}
                 />
               )}
             </ExpenseFormSectionContent>
@@ -1267,12 +1296,9 @@ export function ExpenseForm({
                               data-id={`${id}/${form.getValues().splitMode}/${
                                 group.currency
                               }`}
-                              className={cn(
-                                'flex flex-wrap gap-y-4 items-center border-t py-3',
-                                sectionBleedX,
-                              )}
+                              className={participantRowClass}
                             >
-                              <FormItem className="flex-1 flex flex-row items-start space-x-3 space-y-0">
+                              <FormItem className={participantFormItemClass}>
                                 <FormControl>
                                   <Checkbox
                                     checked={field.value?.some(
@@ -1360,7 +1386,7 @@ export function ExpenseForm({
                                     )}
                                 </FormLabel>
                               </FormItem>
-                              <div className="flex">
+                              <div className={participantSharesClass}>
                                 {form.getValues().splitMode === 'BY_AMOUNT' &&
                                   !!conversionRequired && (
                                     <FormField
@@ -1382,7 +1408,7 @@ export function ExpenseForm({
                                         )
                                         return (
                                           <div>
-                                            <div className="flex gap-1 items-center">
+                                            <div className={shareInputRowClass}>
                                               {sharesLabel}
                                               <FormControl>
                                                 <Input
@@ -1392,7 +1418,7 @@ export function ExpenseForm({
                                                         participant === id,
                                                     ),
                                                   )}
-                                                  className="text-base w-[80px] -my-2"
+                                                  className={shareInputClass}
                                                   type="text"
                                                   inputMode="decimal"
                                                   disabled={
@@ -1488,7 +1514,7 @@ export function ExpenseForm({
                                       )
                                       return (
                                         <div>
-                                          <div className="flex gap-1 items-center">
+                                          <div className={shareInputRowClass}>
                                             {form.getValues().splitMode ===
                                               'BY_AMOUNT' && sharesLabel}
                                             <FormControl>
@@ -1499,7 +1525,7 @@ export function ExpenseForm({
                                                       participant === id,
                                                   ),
                                                 )}
-                                                className="text-base w-[80px] -my-2"
+                                                className={shareInputClass}
                                                 type="text"
                                                 disabled={
                                                   !field.value?.some(
@@ -1581,13 +1607,8 @@ export function ExpenseForm({
                             control={form.control}
                             name="paidFor"
                             render={({ field }) => (
-                              <div
-                                className={cn(
-                                  'flex flex-wrap gap-y-4 items-center border-t py-3',
-                                  sectionBleedX,
-                                )}
-                              >
-                                <FormItem className="flex-1 flex flex-row items-start space-x-3 space-y-0">
+                              <div className={participantRowClass}>
+                                <FormItem className={participantFormItemClass}>
                                   <FormControl>
                                     <Checkbox
                                       checked={field.value?.some(
@@ -1698,9 +1719,9 @@ export function ExpenseForm({
                   control={form.control}
                   name="notes"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="w-full">
                       <FormControl>
-                        <Textarea className="text-base" {...field} />
+                        <Textarea className="text-base w-full" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1713,7 +1734,7 @@ export function ExpenseForm({
                 description={t(`${sExpense}.splitModeDescription`)}
                 defaultOpen={form.getValues().splitMode !== 'EVENLY'}
               >
-                <div className={cn('grid', fieldsGridClass)}>
+                <div className={collapsibleFieldsGridClass}>
                   <FormField
                     control={form.control}
                     name="splitMode"
@@ -1791,7 +1812,12 @@ export function ExpenseForm({
                     control={form.control}
                     name="saveDefaultSplittingOptions"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-center gap-2 self-center space-y-0">
+                      <FormItem
+                        className={cn(
+                          'flex flex-row items-center gap-2 space-y-0',
+                          isMobileEmbedded ? 'self-start' : 'self-center',
+                        )}
+                      >
                         <FormControl>
                           <Checkbox
                             checked={field.value}
