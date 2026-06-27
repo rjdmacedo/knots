@@ -178,7 +178,7 @@ describe('buildFriendTimeline', () => {
       })
 
       const directExpenses: DirectExpenseInput[] = [
-        { expense, currency: 'EUR' },
+        { expense, currency: 'EUR', currencyCode: 'EUR' },
       ]
 
       const result = buildFriendTimeline({
@@ -216,7 +216,7 @@ describe('buildFriendTimeline', () => {
       })
 
       const directExpenses: DirectExpenseInput[] = [
-        { expense, currency: 'USD' },
+        { expense, currency: 'USD', currencyCode: 'USD' },
       ]
 
       const result = buildFriendTimeline({
@@ -373,7 +373,7 @@ describe('buildFriendTimeline', () => {
       })
 
       const directExpenses: DirectExpenseInput[] = [
-        { expense, currency: 'EUR' },
+        { expense, currency: 'EUR', currencyCode: 'EUR' },
       ]
 
       const result = buildFriendTimeline({
@@ -407,7 +407,7 @@ describe('buildFriendTimeline', () => {
       })
 
       const directExpenses: DirectExpenseInput[] = [
-        { expense, currency: 'EUR' },
+        { expense, currency: 'EUR', currencyCode: 'EUR' },
       ]
 
       const result = buildFriendTimeline({

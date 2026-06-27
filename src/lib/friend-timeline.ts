@@ -1,7 +1,8 @@
 import type { getGroupExpenses } from '@/lib/api'
-import { CreationMethod } from '@prisma/client'
 import { getReimbursements } from '@/lib/balances'
 import { getPairwiseBalance } from '@/lib/friend-balances'
+import { getCurrencyFromGroup } from '@/lib/utils'
+import { Category, CreationMethod } from '@prisma/client'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -11,7 +12,8 @@ export type TimelineGroupSummary = {
   groupName: string
   activityDate: Date // max expenseDate of shared expenses in this group
   balanceAmount: number // minor units; pairwise (positive = friend owes you)
-  currency: string
+  currency: string // group currency symbol (e.g. €)
+  currencyCode?: string | null // ISO code when set (e.g. EUR)
   isSettled: boolean
 }
 
@@ -22,10 +24,12 @@ export type TimelineExpense = {
   expenseDate: Date
   amount: number // total cost in minor units
   currency: string
+  currencyCode?: string | null
   paidById: string
   paidByName: string
   userShare: number // from current user POV: positive = lent, negative = borrowed
   participantCount: number // 2+ (can be multi-participant)
+  category: Category | null
 }
 
 export type TimelinePayment = {
@@ -36,6 +40,7 @@ export type TimelinePayment = {
   expenseDate: Date
   amount: number
   currency: string
+  currencyCode?: string | null
   fromUserId: string
   fromUserName: string
   toUserId: string
@@ -59,6 +64,7 @@ export type SharedGroupInput = {
   id: string
   name: string
   currency: string
+  currencyCode?: string | null
   simplifyDebts: boolean
   expenses: ExpenseRecord[]
 }
@@ -66,6 +72,7 @@ export type SharedGroupInput = {
 export type DirectExpenseInput = {
   expense: ExpenseRecord
   currency: string
+  currencyCode?: string | null
   creationMethod?: CreationMethod | null
   bundleId?: string | null
 }
@@ -100,6 +107,7 @@ export function buildFriendTimeline(params: {
     groupId: string | null
     groupName: string | null
     currency: string
+    currencyCode?: string | null
     creationMethod?: CreationMethod | null
     bundleId?: string | null
   }>
@@ -123,8 +131,13 @@ export function buildFriendTimeline(params: {
   }
 
   // 2. EXPENSE entries (direct, non-reimbursement)
-  for (const { expense, currency } of directExpenses) {
-    const entry = buildExpenseEntry(expense, currency, currentUserId)
+  for (const { expense, currency, currencyCode } of directExpenses) {
+    const entry = buildExpenseEntry(
+      expense,
+      currency,
+      currencyCode,
+      currentUserId,
+    )
     if (entry) {
       sortable.push({ entry, createdAt: expense.createdAt })
     }
@@ -158,7 +171,25 @@ export function buildFriendTimeline(params: {
   return sortable.map((s) => s.entry)
 }
 
-// ─── Internal helpers ────────────────────────────────────────────────────────
+/** Resolve the display currency for a timeline entry. */
+export function getTimelineEntryCurrency(entry: {
+  currency: string
+  currencyCode?: string | null
+}) {
+  return getCurrencyFromGroup({
+    currency: entry.currency,
+    currencyCode: entry.currencyCode ?? null,
+  })
+}
+
+/** Short label for the currency bucket (ISO code or custom symbol). */
+export function getTimelineCurrencyLabel(entry: {
+  currency: string
+  currencyCode?: string | null
+}) {
+  const resolved = getTimelineEntryCurrency(entry)
+  return resolved.code || resolved.symbol
+}
 
 function buildGroupSummary(
   group: SharedGroupInput,
@@ -182,6 +213,7 @@ function buildGroupSummary(
       activityDate: new Date(0), // epoch fallback
       balanceAmount: 0,
       currency: group.currency,
+      currencyCode: group.currencyCode ?? null,
       isSettled: true,
     }
   }
@@ -203,6 +235,7 @@ function buildGroupSummary(
     activityDate,
     balanceAmount,
     currency: group.currency,
+    currencyCode: group.currencyCode,
     isSettled: balanceAmount === 0,
   }
 }
@@ -210,6 +243,7 @@ function buildGroupSummary(
 function buildExpenseEntry(
   expense: ExpenseRecord,
   currency: string,
+  currencyCode: string | null | undefined,
   currentUserId: string,
 ): TimelineExpense | null {
   // Calculate userShare: what the current user lent or borrowed
@@ -224,10 +258,12 @@ function buildExpenseEntry(
     expenseDate: expense.expenseDate,
     amount: expense.amount,
     currency,
+    currencyCode: currencyCode ?? null,
     paidById: expense.paidBy.id,
     paidByName: expense.paidBy.name ?? '',
     userShare,
     participantCount: expense.paidFor.length,
+    category: expense.category,
   }
 }
 
@@ -237,6 +273,7 @@ function buildPaymentEntry(
     groupId: string | null
     groupName: string | null
     currency: string
+    currencyCode?: string | null
     creationMethod?: CreationMethod | null
     bundleId?: string | null
   },
@@ -274,6 +311,7 @@ function buildPaymentEntry(
     expenseDate: expense.expenseDate,
     amount: expense.amount,
     currency: payment.currency,
+    currencyCode: payment.currencyCode,
     fromUserId,
     fromUserName,
     toUserId,

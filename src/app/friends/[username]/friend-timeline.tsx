@@ -1,25 +1,41 @@
 'use client'
 
+import { CategoryIcon } from '@/app/groups/[groupId]/expenses/category-icon'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
-import { getCurrency } from '@/lib/currency'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { getFriendExpenseDetailPath } from '@/lib/expense-detail-urls'
 import type { TimelineEntry, TimelinePayment } from '@/lib/friend-timeline'
+import {
+  getTimelineCurrencyLabel,
+  getTimelineEntryCurrency,
+} from '@/lib/friend-timeline'
+import { isConsolidatedPayment } from '@/lib/payments'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
+import { trpc } from '@/trpc/client'
 import {
   Banknote,
   ChevronDown,
   ChevronRight,
+  MoreVertical,
   Package,
-  Receipt,
+  Trash2,
   Users,
 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
+import { toast } from 'sonner'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -27,6 +43,7 @@ type FriendTimelineProps = {
   entries: TimelineEntry[]
   currentUserId: string
   friendUsername: string
+  friendName: string
 }
 
 /** A displayable row — either a single entry or a bundle of payments */
@@ -40,6 +57,7 @@ export function FriendTimeline({
   entries,
   currentUserId,
   friendUsername,
+  friendName,
 }: FriendTimelineProps) {
   const t = useTranslations('Friends.Timeline')
 
@@ -72,14 +90,18 @@ export function FriendTimeline({
         switch (entry.type) {
           case 'GROUP_SUMMARY':
             return (
-              <GroupSummaryRow key={`group-${entry.groupId}`} entry={entry} />
+              <GroupSummaryRow
+                key={`group-${entry.groupId}`}
+                entry={entry}
+                friendName={friendName}
+              />
             )
           case 'EXPENSE':
             return (
               <TimelineExpenseRow
                 key={`expense-${entry.expenseId}`}
                 entry={entry}
-                currentUserId={currentUserId}
+                friendUsername={friendUsername}
               />
             )
           case 'PAYMENT':
@@ -100,19 +122,26 @@ export function FriendTimeline({
 
 function GroupSummaryRow({
   entry,
+  friendName,
 }: {
   entry: TimelineEntry & { type: 'GROUP_SUMMARY' }
+  friendName: string
 }) {
   const router = useRouter()
   const locale = useLocale()
   const t = useTranslations('Friends.Timeline')
 
-  const currency = getCurrency(entry.currency)
+  const currency = getTimelineEntryCurrency(entry)
+  const currencyLabel = getTimelineCurrencyLabel(entry)
   const formattedBalance = formatCurrency(
     currency,
     Math.abs(entry.balanceAmount),
     locale,
   )
+  const balanceLabel =
+    entry.balanceAmount > 0
+      ? t('friendOwesYou', { name: friendName, amount: formattedBalance })
+      : t('youOweFriend', { name: friendName, amount: formattedBalance })
 
   return (
     <div
@@ -126,6 +155,7 @@ function GroupSummaryRow({
       <div className="flex-1 min-w-0">
         <div className="text-sm font-medium truncate">{entry.groupName}</div>
         <div className="text-xs text-muted-foreground">
+          {t('groupShared')} · {currencyLabel} ·{' '}
           {formatDate(entry.activityDate, locale, { dateStyle: 'medium' })}
         </div>
       </div>
@@ -136,14 +166,13 @@ function GroupSummaryRow({
         ) : (
           <span
             className={cn(
-              'text-sm font-medium tabular-nums',
+              'text-sm font-medium tabular-nums text-right',
               entry.balanceAmount > 0
                 ? 'text-green-600 dark:text-green-400'
                 : 'text-red-600 dark:text-red-400',
             )}
           >
-            {entry.balanceAmount > 0 ? '+' : '-'}
-            {formattedBalance}
+            {balanceLabel}
           </span>
         )}
         <ChevronRight className="w-4 h-4 text-muted-foreground" />
@@ -154,16 +183,16 @@ function GroupSummaryRow({
 
 function TimelineExpenseRow({
   entry,
-  currentUserId,
+  friendUsername,
 }: {
   entry: TimelineEntry & { type: 'EXPENSE' }
-  currentUserId: string
+  friendUsername: string
 }) {
   const router = useRouter()
   const locale = useLocale()
   const t = useTranslations('Friends.Timeline')
 
-  const currency = getCurrency(entry.currency)
+  const currency = getTimelineEntryCurrency(entry)
   const formattedShare = formatCurrency(
     currency,
     Math.abs(entry.userShare),
@@ -180,13 +209,16 @@ function TimelineExpenseRow({
 
   return (
     <div
-      className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-accent transition-colors"
+      className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-accent"
       onClick={() =>
-        router.push(`/groups/direct/expenses/${entry.expenseId}/edit`)
+        router.push(getFriendExpenseDetailPath(friendUsername, entry.expenseId))
       }
     >
       <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted shrink-0">
-        <Receipt className="w-4 h-4 text-muted-foreground" />
+        <CategoryIcon
+          category={entry.category}
+          className="w-4 h-4 text-muted-foreground"
+        />
       </div>
 
       <div className="flex-1 min-w-0">
@@ -209,7 +241,8 @@ function TimelineExpenseRow({
             {shareLabel}
           </span>
         )}
-        <ChevronRight className="w-4 h-4 text-muted-foreground" />
+
+        <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
       </div>
     </div>
   )
@@ -225,9 +258,32 @@ function PaymentTimelineRow({
   const router = useRouter()
   const locale = useLocale()
   const t = useTranslations('Friends.Timeline')
+  const utils = trpc.useUtils()
 
-  const currency = getCurrency(entry.currency)
+  const currency = getTimelineEntryCurrency(entry)
   const formattedAmount = formatCurrency(currency, entry.amount, locale)
+  const isLocked = isConsolidatedPayment(entry)
+
+  const deleteMutation = trpc.friends.deletePayment.useMutation({
+    onSuccess: () => {
+      utils.friends.getTimeline.invalidate()
+      utils.friends.listWithBalances.invalidate()
+      utils.friends.getBalanceDetail.invalidate()
+      utils.groups.expenses.invalidate()
+      utils.groups.balances.invalidate()
+      toast.success(t('deletePaymentSuccess'))
+    },
+    onError: () => {
+      toast.error(t('deletePaymentError'))
+    },
+  })
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (confirm(t('deletePaymentConfirm'))) {
+      deleteMutation.mutate({ expenseId: entry.expenseId })
+    }
+  }
 
   const label = t('paid', {
     payer: entry.fromUserName,
@@ -249,9 +305,36 @@ function PaymentTimelineRow({
       <div className="flex-1 min-w-0">
         <div className="text-sm truncate">{label}</div>
         <div className="text-xs text-muted-foreground">
+          {entry.groupName ? <span>{entry.groupName} · </span> : null}
           {formatDate(entry.expenseDate, locale, { dateStyle: 'medium' })}
         </div>
       </div>
+
+      {!isLocked ? (
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-muted-foreground"
+                onClick={(event) => event.stopPropagation()}
+              />
+            }
+          >
+            <MoreVertical className="h-4 w-4" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              className="text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400"
+              onClick={handleDelete}
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              <span>{t('deletePayment')}</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ) : null}
 
       <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
     </div>
@@ -276,7 +359,7 @@ function BundleRow({
   const t = useTranslations('Friends.SettleAll')
 
   // All payments in a bundle share the same currency
-  const currency = getCurrency(payments[0].currency)
+  const currency = getTimelineEntryCurrency(payments[0])
   const totalAmount = payments.reduce((sum, p) => sum + p.amount, 0)
   const formattedTotal = formatCurrency(currency, totalAmount, locale)
   const date = payments[0].expenseDate
@@ -332,7 +415,7 @@ function BundleSubRow({
   const router = useRouter()
   const locale = useLocale()
 
-  const currency = getCurrency(payment.currency)
+  const currency = getTimelineEntryCurrency(payment)
   const formattedAmount = formatCurrency(currency, payment.amount, locale)
 
   const label = payment.groupName ?? 'Direct'
