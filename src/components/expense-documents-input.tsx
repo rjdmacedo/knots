@@ -212,7 +212,7 @@ export function ExpenseDocumentsInput({
     <div>
       <FileInput onChange={handleFileChange} accept="image/jpeg,image/png" />
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 [&_*]:aspect-square">
+      <div className="grid w-full min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 *:min-h-24 sm:*:min-h-0 sm:*:aspect-square">
         {allDocuments.map((doc) => (
           <DocumentThumbnail
             key={doc.id}
@@ -230,15 +230,15 @@ export function ExpenseDocumentsInput({
           />
         ))}
 
-        <div>
+        <div className="min-h-24 w-full sm:aspect-square">
           <Button
-            variant="secondary"
+            variant="ghost"
             type="button"
             onClick={openFileDialog}
-            className="w-full h-full"
+            className="size-full rounded-md border-2 border-dashed border-border bg-transparent hover:bg-muted/50"
             disabled={uploading}
           >
-            <Plus className="w-8 h-8" />
+            <Plus className="size-8 text-muted-foreground" />
           </Button>
         </div>
       </div>
