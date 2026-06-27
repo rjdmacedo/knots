@@ -1,3 +1,12 @@
+## [1.43.2](https://github.com/rjdmacedo/knots/compare/v1.43.1...v1.43.2) (2026-06-27)
+
+
+### Bug Fixes
+
+* improve document upload grid and add button on mobile ([a209ba2](https://github.com/rjdmacedo/knots/commit/a209ba269afda0074a791e8003681213e33b02d6))
+* improve mobile expense form layout and collapsible sections ([cfd18e5](https://github.com/rjdmacedo/knots/commit/cfd18e5ce110e2f4441d13710026206ca9ab85ad))
+* use full drawer width in expense participant picker ([33be5bc](https://github.com/rjdmacedo/knots/commit/33be5bce8b1a4b477421c137c5869367507ea128))
+
 ## [1.43.1](https://github.com/rjdmacedo/knots/compare/v1.43.0...v1.43.1) (2026-06-27)
 
 
