@@ -89,7 +89,7 @@ enum SplitMode {
 
 model RecurringExpenseLink {
   id                    String  @id
-  groupId               String
+  groupId               String?
   currentFrameExpense   Expense @relation(fields: [currentFrameExpenseId], references: [id], onDelete: Cascade)
   currentFrameExpenseId String  @unique
 
