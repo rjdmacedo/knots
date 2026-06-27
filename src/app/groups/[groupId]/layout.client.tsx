@@ -2,9 +2,10 @@
 
 import { GroupHeader } from '@/app/groups/[groupId]/group-header'
 import { DetailPageLayout } from '@/components/detail-page-layout'
+import { isGroupExpenseDetailPath } from '@/lib/expense-detail-urls'
 import { trpc } from '@/trpc/client'
 import { TRPCClientError } from '@trpc/client'
-import { notFound } from 'next/navigation'
+import { notFound, usePathname } from 'next/navigation'
 import { PropsWithChildren } from 'react'
 import { CurrentGroupProvider } from './current-group-context'
 
@@ -34,7 +35,8 @@ export function GroupLayoutClient({
       ? { isLoading: true as const, groupId, group: undefined }
       : { isLoading: false as const, groupId, group: data.group }
 
-  const showHeader = true
+  const pathname = usePathname()
+  const showHeader = !isGroupExpenseDetailPath(pathname)
 
   return (
     <CurrentGroupProvider {...props}>

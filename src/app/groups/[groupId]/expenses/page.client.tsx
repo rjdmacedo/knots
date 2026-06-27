@@ -4,7 +4,6 @@ import { CreateFromReceiptButton } from '@/app/groups/[groupId]/expenses/create-
 import { ExpenseList } from '@/app/groups/[groupId]/expenses/expense-list'
 import ExportButton from '@/app/groups/[groupId]/export-button'
 import { ExpenseImport } from '@/components/expense-import'
-import { buttonVariants } from '@/components/ui/button'
 import {
   Card,
   CardAction,
@@ -13,15 +12,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
-import { Plus } from 'lucide-react'
 import { Metadata } from 'next'
 import { useTranslations } from 'next-intl'
-import Link from 'next/link'
 import { useCurrentGroup } from '../current-group-context'
 
 export const revalidate = 3600
@@ -48,19 +40,6 @@ export default function GroupExpensesPageClient({
             <ExportButton groupId={groupId} />
             <ExpenseImport groupId={groupId} />
             {enableReceiptExtract && <CreateFromReceiptButton />}
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Link
-                    href={`/groups/${groupId}/expenses/create`}
-                    className={buttonVariants({ size: 'icon' })}
-                  />
-                }
-              >
-                <Plus className="w-4 h-4" />
-              </TooltipTrigger>
-              <TooltipContent>{t('create')}</TooltipContent>
-            </Tooltip>
           </CardAction>
         </CardHeader>
 

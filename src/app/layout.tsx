@@ -1,11 +1,13 @@
 import { ApplePwaSplash } from '@/app/apple-pwa-splash'
 import { AppHeader } from '@/components/app-header'
+import { FloatingCreateExpense } from '@/components/floating-create-expense'
 import { Footer } from '@/components/footer'
 import { ProgressBar } from '@/components/progress-bar'
 import { ThemeProvider } from '@/components/theme-provider'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { auth } from '@/lib/auth/auth'
 import { env } from '@/lib/env'
+import { getRuntimeFeatureFlags, RuntimeFeatureFlags } from '@/lib/featureFlags'
 import { cn } from '@/lib/utils'
 import { TRPCProvider } from '@/trpc/client'
 import type { Metadata, Viewport } from 'next'
@@ -71,11 +73,13 @@ function Content({
   isAuthenticated,
   userName,
   userEmail,
+  runtimeFeatureFlags,
 }: {
   children: React.ReactNode
   isAuthenticated: boolean
   userName?: string | null
   userEmail?: string | null
+  runtimeFeatureFlags: RuntimeFeatureFlags
 }) {
   return (
     <TRPCProvider>
@@ -85,11 +89,18 @@ function Content({
           userName={userName}
           userEmail={userEmail}
         />
-        <div className="flex-1 overflow-y-auto py-16">
+        <div className="flex-1 overflow-y-auto py-16 relative">
+          <div
+            id="scroll-sentinel"
+            className="h-px w-full absolute top-0 left-0 pointer-events-none opacity-0"
+          />
           <main className="flex flex-col min-h-full py-4">{children}</main>
         </div>
         <Footer />
         <Toaster />
+        {isAuthenticated && (
+          <FloatingCreateExpense runtimeFeatureFlags={runtimeFeatureFlags} />
+        )}
       </TooltipProvider>
     </TRPCProvider>
   )
@@ -103,6 +114,7 @@ export default async function RootLayout({
   const locale = await getLocale()
   const messages = await getMessages()
   const session = await auth()
+  const runtimeFeatureFlags = await getRuntimeFeatureFlags()
 
   return (
     <html
@@ -126,6 +138,7 @@ export default async function RootLayout({
               isAuthenticated={!!session?.user?.id}
               userName={session?.user?.name}
               userEmail={session?.user?.email}
+              runtimeFeatureFlags={runtimeFeatureFlags}
             >
               {children}
             </Content>

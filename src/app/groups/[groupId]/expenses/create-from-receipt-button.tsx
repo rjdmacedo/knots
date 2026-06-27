@@ -28,6 +28,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { randomId } from '@/lib/api'
 import { useMediaQuery } from '@/lib/hooks'
 import {
   formatCurrency,
@@ -40,7 +41,6 @@ import { ChevronRight, FileQuestion, Loader2, Receipt } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { getImageData, usePresignedUpload } from 'next-s3-upload'
 import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 import { PropsWithChildren, ReactElement, ReactNode, useState } from 'react'
 import { toast } from 'sonner'
 import { useCurrentGroup } from '../current-group-context'
@@ -87,7 +87,6 @@ function ReceiptDialogContent() {
   const t = useTranslations('CreateFromReceipt')
   const [pending, setPending] = useState(false)
   const { uploadToS3, FileInput, openFileDialog } = usePresignedUpload()
-  const router = useRouter()
   const [receiptInfo, setReceiptInfo] = useState<
     | null
     | (ReceiptExtractedInfo & { url: string; width?: number; height?: number })
@@ -239,16 +238,33 @@ function ReceiptDialogContent() {
           disabled={pending || !receiptInfo}
           onClick={() => {
             if (!receiptInfo || !group) return
-            router.push(
-              `/groups/${group.id}/expenses/create?amount=${
-                receiptInfo.amount
-              }&categoryId=${receiptInfo.categoryId}&date=${
-                receiptInfo.date
-              }&title=${encodeURIComponent(
-                receiptInfo.title ?? '',
-              )}&imageUrl=${encodeURIComponent(receiptInfo.url)}&imageWidth=${
-                receiptInfo.width
-              }&imageHeight=${receiptInfo.height}`,
+            window.dispatchEvent(
+              new CustomEvent('create-group-expense', {
+                detail: {
+                  groupId: group.id,
+                  groupName: group.name,
+                  prefill: {
+                    title: receiptInfo.title ?? '',
+                    expenseDate: receiptInfo.date
+                      ? new Date(`${receiptInfo.date}T12:00:00.000Z`)
+                      : new Date(),
+                    amount: Number(receiptInfo.amount) || 0,
+                    category: receiptInfo.categoryId
+                      ? Number(receiptInfo.categoryId)
+                      : 0,
+                    documents: receiptInfo.url
+                      ? [
+                          {
+                            id: randomId(),
+                            url: receiptInfo.url,
+                            width: Number(receiptInfo.width),
+                            height: Number(receiptInfo.height),
+                          },
+                        ]
+                      : [],
+                  },
+                },
+              }),
             )
           }}
         >
@@ -317,9 +333,7 @@ function CreateFromReceiptDrawer({
   return (
     <Drawer>
       <Tooltip>
-        <TooltipTrigger
-          render={<DrawerTrigger asChild>{trigger}</DrawerTrigger>}
-        />
+        <TooltipTrigger render={<DrawerTrigger render={trigger} />} />
         <TooltipContent>{tooltipContent}</TooltipContent>
       </Tooltip>
       <DrawerContent>

@@ -1,13 +1,11 @@
 'use client'
 import { ExpenseCard } from '@/app/groups/[groupId]/expenses/expense-card'
 import { GroupedExpenseCards } from '@/app/groups/[groupId]/expenses/grouped-expense-cards'
-import { buttonVariants } from '@/components/ui/button'
 import { SearchBar } from '@/components/ui/search-bar'
 import { Skeleton } from '@/components/ui/skeleton'
-import { cn, getCurrencyFromGroup } from '@/lib/utils'
+import { getCurrencyFromGroup } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { useTranslations } from 'next-intl'
-import Link from 'next/link'
 import { forwardRef, useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { useSpinDelay } from 'spin-delay'
@@ -98,14 +96,8 @@ const ExpenseListForSearch = ({
 
   if (expenses.length === 0)
     return (
-      <p className="px-6 text-sm py-6">
-        {t('noExpenses')}{' '}
-        <Link
-          href={`/groups/${groupId}/expenses/create`}
-          className={cn(buttonVariants({ variant: 'link' }), '-m-4')}
-        >
-          {t('createFirst')}
-        </Link>
+      <p className="px-6 text-sm py-6 text-muted-foreground">
+        {t('noExpenses')}
       </p>
     )
 
