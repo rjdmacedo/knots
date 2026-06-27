@@ -70,11 +70,7 @@ type DetailPageTabsProps = {
 export function DetailPageTabs({ basePath, tabs }: DetailPageTabsProps) {
   const pathname = usePathname()
   const router = useRouter()
-  const escapedBasePath = basePath.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const value =
-    pathname.replace(new RegExp(`${escapedBasePath}/([^/]+).*`), '$1') ||
-    tabs[0]?.value ||
-    ''
+  const value = getActiveDetailTab(pathname, basePath, tabs)
 
   return (
     <Tabs
@@ -93,4 +89,23 @@ export function DetailPageTabs({ basePath, tabs }: DetailPageTabsProps) {
       </TabsList>
     </Tabs>
   )
+}
+
+function getActiveDetailTab(
+  pathname: string,
+  basePath: string,
+  tabs: DetailPageTab[],
+) {
+  const defaultTab = tabs[0]?.value ?? ''
+
+  if (pathname === basePath || pathname === `${basePath}/`) {
+    return defaultTab
+  }
+
+  if (!pathname.startsWith(`${basePath}/`)) {
+    return defaultTab
+  }
+
+  const segment = pathname.slice(basePath.length + 1).split('/')[0]
+  return tabs.some((tab) => tab.value === segment) ? segment : defaultTab
 }

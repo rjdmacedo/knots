@@ -6,19 +6,15 @@ type Props = {
 }
 
 export const metadata: Metadata = {
-  title: 'Payment details',
+  title: 'Expense details',
 }
 
-export default async function FriendPaymentDetailPage({ params }: Props) {
+export default async function DirectExpenseDetailPage({ params }: Props) {
   const { username, expenseId } = await params
 
   return (
     <div className="px-4 py-6">
-      <ExpenseDetail
-        scope="friend-payment"
-        username={username}
-        expenseId={expenseId}
-      />
+      <ExpenseDetail scope="direct" username={username} expenseId={expenseId} />
     </div>
   )
 }

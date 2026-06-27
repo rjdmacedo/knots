@@ -3,13 +3,13 @@ import { ActiveUserBalance } from '@/app/groups/[groupId]/expenses/active-user-b
 import { CategoryIcon } from '@/app/groups/[groupId]/expenses/category-icon'
 import { DocumentsCount } from '@/app/groups/[groupId]/expenses/documents-count'
 import { ExpenseNotes } from '@/app/groups/[groupId]/expenses/expense-notes'
-import { buttonVariants } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import { getGroupExpenses } from '@/lib/api'
 import { Currency } from '@/lib/currency'
+import { getGroupExpenseDetailPath } from '@/lib/expense-detail-urls'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
 import { ChevronRight } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Fragment } from 'react'
 
@@ -58,8 +58,8 @@ export function ExpenseCard({
   groupId,
   participantCount,
 }: Props) {
-  const router = useRouter()
   const locale = useLocale()
+  const router = useRouter()
 
   return (
     <div
@@ -69,7 +69,6 @@ export function ExpenseCard({
         expense.isReimbursement && 'italic',
       )}
       onClick={(e) => {
-        // Don't navigate if the click originated from an interactive element (button, link, etc.)
         const target = e.target as HTMLElement
         if (
           target.closest(
@@ -78,7 +77,7 @@ export function ExpenseCard({
         ) {
           return
         }
-        router.push(`/groups/${groupId}/expenses/${expense.id}/edit`)
+        router.push(getGroupExpenseDetailPath(groupId, expense.id))
       }}
     >
       <div className="flex flex-col items-center mr-2 gap-1">
@@ -115,15 +114,18 @@ export function ExpenseCard({
           {formatDate(expense.expenseDate, locale, { dateStyle: 'medium' })}
         </div>
       </div>
-      <Link
-        href={`/groups/${groupId}/expenses/${expense.id}/edit`}
-        className={cn(
-          buttonVariants({ variant: 'link', size: 'icon' }),
-          'self-center hidden sm:flex',
-        )}
+      <Button
+        type="button"
+        variant="link"
+        size="icon"
+        className="self-center hidden sm:flex"
+        onClick={(event) => {
+          event.stopPropagation()
+          router.push(getGroupExpenseDetailPath(groupId, expense.id))
+        }}
       >
         <ChevronRight className="w-4 h-4" />
-      </Link>
+      </Button>
     </div>
   )
 }

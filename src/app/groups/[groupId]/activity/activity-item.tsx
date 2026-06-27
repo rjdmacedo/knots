@@ -1,5 +1,6 @@
 'use client'
-import { buttonVariants } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { getGroupExpenseDetailPath } from '@/lib/expense-detail-urls'
 import {
   DateTimeStyle,
   cn,
@@ -9,6 +10,7 @@ import {
 import { AppRouterOutput } from '@/trpc/routers/_app'
 import { ActivityType } from '@prisma/client'
 import {
+  Banknote,
   ChevronRight,
   Pencil,
   PlusCircle,
@@ -39,10 +41,24 @@ type Props = {
   variant?: 'default' | 'card'
 }
 
+function isPaymentActivity(activity: Activity) {
+  return activity.expense?.isReimbursement === true
+}
+
+function openActivityExpense(
+  router: ReturnType<typeof useRouter>,
+  groupId: string,
+  expenseId: string | null,
+) {
+  if (!expenseId) return
+  router.push(getGroupExpenseDetailPath(groupId, expenseId))
+}
+
 function useSummary(activity: Activity, participantName?: string) {
   const t = useTranslations('Activity')
   const participant = participantName ?? t('someone')
-  const expense = activity.data ?? ''
+  const expense = activity.data?.trim() || t('reimbursement')
+  const isPayment = isPaymentActivity(activity)
 
   const tr = (key: string) =>
     t.rich(key, {
@@ -55,20 +71,30 @@ function useSummary(activity: Activity, participantName?: string) {
   if (activity.activityType == ActivityType.UPDATE_GROUP) {
     return <>{tr('settingsModified')}</>
   } else if (activity.activityType == ActivityType.CREATE_EXPENSE) {
-    return <>{tr('expenseCreated')}</>
+    return <>{tr(isPayment ? 'paymentRecorded' : 'expenseCreated')}</>
   } else if (activity.activityType == ActivityType.UPDATE_EXPENSE) {
-    return <>{tr('expenseUpdated')}</>
+    return <>{tr(isPayment ? 'paymentUpdated' : 'expenseUpdated')}</>
   } else if (activity.activityType == ActivityType.DELETE_EXPENSE) {
-    return <>{tr('expenseDeleted')}</>
+    return <>{tr(isPayment ? 'paymentDeleted' : 'expenseDeleted')}</>
   }
 }
 
-function ActivityTypeIcon({ activityType }: { activityType: ActivityType }) {
+function ActivityTypeIcon({
+  activityType,
+  isPayment,
+}: {
+  activityType: ActivityType
+  isPayment: boolean
+}) {
   const className = 'w-4 h-4 mt-0.5 text-muted-foreground'
 
   switch (activityType) {
     case ActivityType.CREATE_EXPENSE:
-      return <PlusCircle className={className} />
+      return isPayment ? (
+        <Banknote className={className} />
+      ) : (
+        <PlusCircle className={className} />
+      )
     case ActivityType.UPDATE_EXPENSE:
       return <Pencil className={className} />
     case ActivityType.DELETE_EXPENSE:
@@ -90,10 +116,11 @@ export function ActivityItem({
   showGroupName,
   variant = 'default',
 }: Props) {
-  const router = useRouter()
   const locale = useLocale()
+  const router = useRouter()
 
   const expenseExists = activity.expense !== undefined
+  const isPayment = isPaymentActivity(activity)
   const summary = useSummary(activity, participant?.name)
   const isRecent = dateStyle === undefined
   const timeFormatOptions = isRecent
@@ -110,15 +137,16 @@ export function ActivityItem({
           expenseExists && 'cursor-pointer hover:bg-accent',
         )}
         onClick={() => {
-          if (expenseExists) {
-            router.push(
-              `/groups/${groupId}/expenses/${activity.expenseId}/edit`,
-            )
+          if (expenseExists && activity.expenseId) {
+            openActivityExpense(router, groupId, activity.expenseId)
           }
         }}
       >
         <div className="flex flex-col items-center mr-2 gap-1">
-          <ActivityTypeIcon activityType={activity.activityType} />
+          <ActivityTypeIcon
+            activityType={activity.activityType}
+            isPayment={isPayment}
+          />
         </div>
         <div className="flex-1 min-w-0">
           <div className="mb-1">{summary}</div>
@@ -142,17 +170,22 @@ export function ActivityItem({
             </div>
           )}
         </div>
-        {expenseExists && (
-          <Link
-            href={`/groups/${groupId}/expenses/${activity.expenseId}/edit`}
+        {expenseExists && activity.expenseId && (
+          <Button
+            type="button"
+            variant="link"
+            size="icon"
             className={cn(
               buttonVariants({ size: 'icon', variant: 'link' }),
               'self-center hidden sm:flex',
             )}
-            onClick={(event) => event.stopPropagation()}
+            onClick={(event) => {
+              event.stopPropagation()
+              openActivityExpense(router, groupId, activity.expenseId)
+            }}
           >
             <ChevronRight className="w-4 h-4" />
-          </Link>
+          </Button>
         )}
       </div>
     )
@@ -165,8 +198,8 @@ export function ActivityItem({
         expenseExists && 'cursor-pointer',
       )}
       onClick={() => {
-        if (expenseExists) {
-          router.push(`/groups/${groupId}/expenses/${activity.expenseId}/edit`)
+        if (expenseExists && activity.expenseId) {
+          openActivityExpense(router, groupId, activity.expenseId)
         }
       }}
     >
@@ -202,16 +235,22 @@ export function ActivityItem({
           />
         )}
       </div>
-      {expenseExists && (
-        <Link
-          href={`/groups/${groupId}/expenses/${activity.expenseId}/edit`}
+      {expenseExists && activity.expenseId && (
+        <Button
+          type="button"
+          variant="link"
+          size="icon"
           className={cn(
             buttonVariants({ size: 'icon', variant: 'link' }),
             'self-center hidden sm:flex w-5 h-5',
           )}
+          onClick={(event) => {
+            event.stopPropagation()
+            openActivityExpense(router, groupId, activity.expenseId)
+          }}
         >
           <ChevronRight className="w-4 h-4" />
-        </Link>
+        </Button>
       )}
     </div>
   )
