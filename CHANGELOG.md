@@ -1,3 +1,10 @@
+## [1.43.1](https://github.com/rjdmacedo/knots/compare/v1.43.0...v1.43.1) (2026-06-27)
+
+
+### Bug Fixes
+
+* prevent group balance text from overlapping timeline rows ([2d69fc0](https://github.com/rjdmacedo/knots/commit/2d69fc03350eee1bb690c7951ed9ec53c683f345))
+
 # [1.43.0](https://github.com/rjdmacedo/knots/compare/v1.42.0...v1.43.0) (2026-06-27)
 
 
