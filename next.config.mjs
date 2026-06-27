@@ -44,6 +44,12 @@ if (process.env.S3_UPLOAD_ENDPOINT) {
   })
 }
 
+remotePatterns.push({
+  protocol: 'https',
+  hostname: 'flagcdn.com',
+  pathname: '/h24/**',
+})
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {

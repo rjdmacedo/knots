@@ -49,6 +49,45 @@
     "notInvolved": "You are not involved",
     "close": "Close"
   },
+  "ExpenseDetail": {
+    "backToExpenses": "Back to expenses",
+    "backToFriend": "Back to {name}",
+    "delete": "Delete",
+    "edit": "Edit",
+    "payment": "Payment",
+    "expense": "Expense",
+    "onDate": "On {date}",
+    "addedBy": "Added by {name} on {date}",
+    "addedByYou": "Added by you on {date}",
+    "lastUpdatedBy": "Last updated by {name} on {date}",
+    "lastUpdatedByYou": "Last updated by you on {date}",
+    "trendsTitle": "{contextName} spending trends :: {categoryName}",
+    "trendsSeeMore": "See more details",
+    "generalCategory": "General",
+    "editCategory": "Change category",
+    "categoryUpdateError": "Could not update category.",
+    "attachReceipt": "Attach receipt",
+    "receiptUploadSuccess": "Receipt attached.",
+    "paidAmount": "{name} paid {amount}",
+    "youPaidAmount": "You paid {amount}",
+    "paidYou": "{name} paid you {amount}",
+    "youPaidRecipient": "You paid {name} {amount}",
+    "payerPaidPayee": "{payer} paid {payee} {amount}",
+    "someone": "Someone",
+    "youOwe": "You owe {amount}",
+    "participantOwes": "{name} owes {amount}",
+    "yourShare": "Your share {amount}",
+    "participantShare": "{name}'s share {amount}",
+    "notes": "Notes",
+    "paymentDisclaimer": "This payment was recorded using \"Record a payment\". No money was transferred.",
+    "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+    "readOnlyNotice": "This payment cannot be edited or deleted individually because it is part of a balance settlement.",
+    "deleteConfirm": "Delete this expense?",
+    "deletePaymentConfirm": "Delete this payment?",
+    "deleteDescription": "This will adjust balances as if this expense never happened.",
+    "cancel": "Cancel",
+    "deleting": "Deleting…"
+  },
   "Groups": {
     "myGroups": "My groups",
     "create": "Create",
@@ -165,6 +204,7 @@
         "description": "Select who the income was received for."
       },
       "splitModeDescription": "Select how to split the income.",
+      "notesDescription": "Add optional details about this income.",
       "attachDescription": "See and attach receipts to the income."
     },
     "Expense": {
@@ -202,19 +242,25 @@
         "description": "Select who the expense was paid for."
       },
       "splitModeDescription": "Select how to split the expense.",
+      "notesDescription": "Add optional details about this expense.",
       "attachDescription": "See and attach receipts to the expense."
     },
     "amountField": {
-      "label": "Amount"
+      "label": "Amount",
+      "description": "Enter the total amount of the expense.",
+      "convertedDescription": "Enter the amount in the group's currency."
     },
     "conversionUnavailable": "To set a different currency per expense and convert amounts, select a non-custom currency for the group.",
     "originalAmountField": {
-      "label": "Amount to convert"
+      "label": "Amount to convert",
+      "description": "Enter the amount in the original currency."
     },
     "conversionRateField": {
       "useApi": "Use rates from Frankfurter",
       "useCustom": "Use custom rate",
-      "label": "Exchange rate"
+      "label": "Exchange rate",
+      "description": "The rate used to convert the original amount to the group currency.",
+      "collapsibleDescription": "Override the automatic Frankfurter rate"
     },
     "conversionRateState": {
       "loading": "Getting exchange rates…",
@@ -327,6 +373,8 @@
       "noOneOwesYou": "Nobody owes you in this group.",
       "youOweNoOne": "You don't owe anyone in this group.",
       "confirmSettle": "Record that you paid {amount} to {name}?",
+      "confirmSettleReceived": "Record that {name} paid you {amount}?",
+      "settleReceivedTooltip": "Record payment received",
       "youAreOwed": "{name} owes you {amount}",
       "youOwe": "You owe {name} {amount}",
       "allSettled": "You're all settled up in this group.",
@@ -472,6 +520,10 @@
     "expenseCreated": "Expense <em>{expense}</em> created by <strong>{participant}</strong>.",
     "expenseUpdated": "Expense <em>{expense}</em> updated by <strong>{participant}</strong>.",
     "expenseDeleted": "Expense <em>{expense}</em> deleted by <strong>{participant}</strong>.",
+    "paymentRecorded": "Payment recorded by <strong>{participant}</strong>.",
+    "paymentUpdated": "Payment updated by <strong>{participant}</strong>.",
+    "paymentDeleted": "Payment deleted by <strong>{participant}</strong>.",
+    "reimbursement": "Payment",
     "Groups": {
       "today": "Today",
       "yesterday": "Yesterday",
@@ -527,12 +579,15 @@
     "max50": "Enter at most 50 characters.",
     "duplicateParticipantName": "Another participant already has this name.",
     "titleRequired": "Please enter a title.",
+    "paymentCategoryNotAllowed": "Payment is not a valid category for expenses.",
     "invalidNumber": "Invalid number.",
     "amountRequired": "You must enter an amount.",
     "amountNotZero": "The amount must not be zero.",
     "amountTenMillion": "The amount must be lower than 10,000,000.",
     "ratePositive": "The rate must be strictly greater than zero.",
     "paidByRequired": "You must select a participant.",
+    "paidToRequired": "You must select who received the payment.",
+    "paidToDifferent": "The payer and recipient must be different people.",
     "paidForMin1": "The expense must be paid for at least one participant.",
     "noZeroShares": "All shares must be higher than 0.",
     "amountSum": "Sum of amounts must equal the expense amount.",
@@ -951,6 +1006,10 @@
       "friendOwesYou": "{name} owes you {amount}",
       "youOweFriend": "You owe {name} {amount}",
       "paid": "{payer} paid {payee} {amount}",
+      "deletePayment": "Delete",
+      "deletePaymentConfirm": "Are you sure you want to delete this payment?",
+      "deletePaymentSuccess": "Payment deleted successfully",
+      "deletePaymentError": "Failed to delete payment",
       "groups": {
         "upcoming": "Upcoming",
         "thisWeek": "This week",
@@ -967,6 +1026,7 @@
       "addedBy": "Added by {name} on {date}",
       "disclaimer": "This payment was recorded using \"Record a payment\". No money was transferred.",
       "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "readOnlyNotice": "This payment cannot be edited or deleted individually because it is part of a balance settlement.",
       "edit": "Edit",
       "delete": "Delete",
       "deleteConfirm": "Delete this payment?",
@@ -993,6 +1053,10 @@
       "cancel": "Cancel",
       "success": "Expense added.",
       "error": "Could not add expense."
+    },
+    "Settings": {
+      "currencyTitle": "Main currency",
+      "currencyDescription": "Used for direct expenses and payments with friends."
     },
     "SettleAll": {
       "button": "Settle all",
@@ -1108,5 +1172,59 @@
     "description": "Local app data was cleared. Your session will also be ended so you can start fresh from the homepage.",
     "recover": "Go to homepage",
     "recovering": "Redirecting…"
+  },
+  "PaymentForm": {
+    "dateLabel": "Payment date",
+    "dateDescription": "Enter the date the payment was made.",
+    "amountLabel": "Amount",
+    "amountDescription": "Enter the payment amount.",
+    "paidByLabel": "Paid by",
+    "paidByDescription": "Select who made the payment.",
+    "paidToLabel": "Paid to",
+    "paidToDescription": "Select who received the payment.",
+    "notesLabel": "Notes",
+    "notesPlaceholder": "Add notes (optional)",
+    "participantPlaceholder": "Select a participant",
+    "disclaimer": "This records a payment between people to settle balances. It is not a shared expense."
+  },
+  "FloatingCreateExpense": {
+    "addExpense": "Add expense",
+    "dialogTitle": "Add an expense",
+    "editDialogTitle": "Edit expense",
+    "createPaymentDialogTitle": "Record a payment",
+    "editPaymentDialogTitle": "Edit payment",
+    "withWho": "With you and:",
+    "searchPlaceholder": "Search friends or groups...",
+    "descriptionPlaceholder": "Enter a description",
+    "amountPlaceholder": "0.00",
+    "paidByLabel": "Paid by",
+    "you": "you",
+    "splitEqually": "split equally",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "successToast": "Expense created successfully.",
+    "updateSuccessToast": "Expense updated successfully.",
+    "paymentSuccessToast": "Payment recorded successfully.",
+    "paymentUpdateSuccessToast": "Payment updated successfully.",
+    "errorToast": "Could not create expense.",
+    "paymentErrorToast": "Could not record payment.",
+    "updateErrorToast": "Could not update expense.",
+    "paymentUpdateErrorToast": "Could not update payment.",
+    "lockedPaymentToast": "This payment is part of a balance settlement and cannot be edited.",
+    "noFriendOrGroupFound": "No friends or groups found.",
+    "groupsHeader": "Groups",
+    "friendsHeader": "Friends",
+    "selectGroupText": "Group: {name}",
+    "pickerTitle": "With who?",
+    "pickerDone": "Done",
+    "selectParticipants": "Select friends or group",
+    "selectParticipantsHint": "Select a group or friend to get started.",
+    "singleGroupAlertTitle": "One group only",
+    "singleGroupAlertDescription": "You can only select one group at a time. Remove the current group before choosing another.",
+    "singleGroupAlertOk": "OK",
+    "advancedOptions": "Advanced Options",
+    "splitDetails": "Split details",
+    "notesPlaceholder": "Add notes (optional)"
   }
 }

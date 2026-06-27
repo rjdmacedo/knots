@@ -49,6 +49,45 @@
     "notInvolved": "Não estás envolvido",
     "close": "Fechar"
   },
+  "ExpenseDetail": {
+    "backToExpenses": "Voltar às despesas",
+    "backToFriend": "Voltar a {name}",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "payment": "Pagamento",
+    "expense": "Despesa",
+    "onDate": "A {date}",
+    "addedBy": "Adicionado por {name} em {date}",
+    "addedByYou": "Adicionado por si em {date}",
+    "lastUpdatedBy": "Última atualização por {name} em {date}",
+    "lastUpdatedByYou": "Última atualização por si em {date}",
+    "trendsTitle": "Tendências de despesa de {contextName} :: {categoryName}",
+    "trendsSeeMore": "Ver mais detalhes",
+    "generalCategory": "Geral",
+    "editCategory": "Alterar categoria",
+    "categoryUpdateError": "Não foi possível atualizar a categoria.",
+    "attachReceipt": "Anexar recibo",
+    "receiptUploadSuccess": "Recibo anexado.",
+    "paidAmount": "{name} pagou {amount}",
+    "youPaidAmount": "Pagou {amount}",
+    "paidYou": "{name} pagou-lhe {amount}",
+    "youPaidRecipient": "Pagou {amount} a {name}",
+    "payerPaidPayee": "{payer} pagou {amount} a {payee}",
+    "someone": "Alguém",
+    "youOwe": "Deves {amount}",
+    "participantOwes": "{name} deve {amount}",
+    "yourShare": "A sua parte {amount}",
+    "participantShare": "Parte de {name}: {amount}",
+    "notes": "Notas",
+    "paymentDisclaimer": "Este pagamento foi adicionado utilizando a funcionalidade \"Registar um pagamento\". Não foi transferido dinheiro.",
+    "consolidationDisclaimer": "Este pagamento faz parte de uma liquidação total de saldos. O Knots decompôs em liquidações individuais por grupo.",
+    "readOnlyNotice": "Este pagamento não pode ser editado ou eliminado individualmente porque faz parte de uma liquidação de saldos.",
+    "deleteConfirm": "Eliminar esta despesa?",
+    "deletePaymentConfirm": "Eliminar este pagamento?",
+    "deleteDescription": "Isto ajustará os saldos como se esta despesa nunca tivesse acontecido.",
+    "cancel": "Cancelar",
+    "deleting": "A eliminar…"
+  },
   "Groups": {
     "myGroups": "Os meus grupos",
     "create": "Criar",
@@ -161,6 +200,7 @@
         "description": "Selecciona para quem foi recebida a receita."
       },
       "splitModeDescription": "Selecciona como dividir a receita.",
+      "notesDescription": "Adiciona detalhes opcionais sobre esta receita.",
       "attachDescription": "Vê e anexa recibos à receita.",
       "currencyField": {
         "label": "Moeda da receita",
@@ -190,6 +230,7 @@
         "description": "Selecciona para quem a despesa foi paga."
       },
       "splitModeDescription": "Selecciona como dividir a despesa.",
+      "notesDescription": "Adiciona detalhes opcionais sobre esta despesa.",
       "attachDescription": "Vê e anexa recibos à despesa.",
       "recurrenceRule": {
         "label": "Recorrência da despesa",
@@ -205,7 +246,9 @@
       }
     },
     "amountField": {
-      "label": "Valor"
+      "label": "Valor",
+      "description": "Introduz o valor total da despesa.",
+      "convertedDescription": "Introduz o valor na moeda do grupo."
     },
     "isReimbursementField": {
       "label": "Isto é um reembolso"
@@ -244,12 +287,15 @@
     "reimbursement": "Reembolso",
     "conversionUnavailable": "Para definir uma moeda diferente por despesa e converter valores, selecciona uma moeda não personalizada para o grupo.",
     "originalAmountField": {
-      "label": "Valor a converter"
+      "label": "Valor a converter",
+      "description": "Introduz o valor na moeda original."
     },
     "conversionRateField": {
       "useApi": "Usar taxas do Frankfurter",
       "useCustom": "Usar taxa personalizada",
-      "label": "Taxa de câmbio"
+      "label": "Taxa de câmbio",
+      "description": "Taxa usada para converter o valor original para a moeda do grupo.",
+      "collapsibleDescription": "Substituir a taxa automática do Frankfurter"
     },
     "conversionRateState": {
       "loading": "A obter taxas de câmbio…",
@@ -260,7 +306,7 @@
       "currencyNotFound": "Ups, o Frankfurter não tem a taxa para esta moeda nesta data.",
       "noDate": "Introduz a data da despesa para obter uma taxa de conversão.",
       "dateMismatch": "Taxas da data: {date}",
-      "refresh": "Actualizar",
+      "refresh": "Atualizar",
       "customRate": "A usar taxa personalizada"
     },
     "noLongerInGroup": "já não faz parte deste grupo"
@@ -327,6 +373,8 @@
       "noOneOwesYou": "Ninguém te deve neste grupo.",
       "youOweNoOne": "Não deves a ninguém neste grupo.",
       "confirmSettle": "Registar que pagaste {amount} a {name}?",
+      "confirmSettleReceived": "Registar que {name} te pagou {amount}?",
+      "settleReceivedTooltip": "Registar pagamento recebido",
       "youAreOwed": "{name} deve-te {amount}",
       "youOwe": "Deves {amount} a {name}",
       "allSettled": "Estás acertado neste grupo.",
@@ -472,6 +520,10 @@
     "expenseCreated": "Despesa <em>{expense}</em> criada por <strong>{participant}</strong>.",
     "expenseUpdated": "Despesa <em>{expense}</em> actualizada por <strong>{participant}</strong>.",
     "expenseDeleted": "Despesa <em>{expense}</em> apagada por <strong>{participant}</strong>.",
+    "paymentRecorded": "Pagamento registado por <strong>{participant}</strong>.",
+    "paymentUpdated": "Pagamento actualizado por <strong>{participant}</strong>.",
+    "paymentDeleted": "Pagamento apagado por <strong>{participant}</strong>.",
+    "reimbursement": "Pagamento",
     "Groups": {
       "today": "Hoje",
       "yesterday": "Ontem",
@@ -527,11 +579,14 @@
     "max50": "Introduz no máximo 50 caracteres.",
     "duplicateParticipantName": "Outro participante já tem este nome.",
     "titleRequired": "Por favor, introduz um título.",
+    "paymentCategoryNotAllowed": "Pagamento não é uma categoria válida para despesas.",
     "invalidNumber": "Número inválido.",
     "amountRequired": "Tens de introduzir um valor.",
     "amountNotZero": "O valor não pode ser zero.",
     "amountTenMillion": "O valor deve ser inferior a 10.000.000.",
     "paidByRequired": "Tens de seleccionar um participante.",
+    "paidToRequired": "Tens de seleccionar quem recebeu o pagamento.",
+    "paidToDifferent": "Quem pagou e quem recebeu têm de ser pessoas diferentes.",
     "paidForMin1": "A despesa deve ser paga para pelo menos um participante.",
     "noZeroShares": "Todas as partes têm de ser superiores a 0.",
     "amountSum": "A soma dos valores tem de ser igual ao valor da despesa.",
@@ -964,6 +1019,10 @@
       "friendOwesYou": "{name} deve-lhe {amount}",
       "youOweFriend": "Deve {amount} a {name}",
       "paid": "{payer} pagou {payee} {amount}",
+      "deletePayment": "Eliminar",
+      "deletePaymentConfirm": "Tem a certeza que deseja eliminar este pagamento?",
+      "deletePaymentSuccess": "Pagamento eliminado com sucesso",
+      "deletePaymentError": "Erro ao eliminar pagamento",
       "groups": {
         "upcoming": "Próximas",
         "thisWeek": "Esta semana",
@@ -980,6 +1039,7 @@
       "addedBy": "Adicionado por {name} em {date}",
       "disclaimer": "Este pagamento foi adicionado utilizando a funcionalidade \"Registar um pagamento\". Não foi transferido dinheiro.",
       "consolidationDisclaimer": "Este pagamento faz parte de uma liquidação total de saldos. O Knots decompôs em liquidações individuais por grupo.",
+      "readOnlyNotice": "Este pagamento não pode ser editado ou eliminado individualmente porque faz parte de uma liquidação de saldos.",
       "edit": "Editar",
       "delete": "Eliminar",
       "deleteConfirm": "Eliminar este pagamento?",
@@ -1006,6 +1066,10 @@
       "cancel": "Cancelar",
       "success": "Despesa adicionada.",
       "error": "Não foi possível adicionar a despesa."
+    },
+    "Settings": {
+      "currencyTitle": "Moeda principal",
+      "currencyDescription": "Usada para despesas e pagamentos directos com amigos."
     },
     "SettleAll": {
       "button": "Liquidar tudo",
@@ -1097,5 +1161,59 @@
     "description": "Os dados locais da app foram limpos. A sessão também será terminada para poderes recomeçar na página inicial.",
     "recover": "Ir para a página inicial",
     "recovering": "A redirecionar…"
+  },
+  "PaymentForm": {
+    "dateLabel": "Data do pagamento",
+    "dateDescription": "Introduz a data em que o pagamento foi feito.",
+    "amountLabel": "Valor",
+    "amountDescription": "Introduz o valor do pagamento.",
+    "paidByLabel": "Pago por",
+    "paidByDescription": "Selecciona quem fez o pagamento.",
+    "paidToLabel": "Pago a",
+    "paidToDescription": "Selecciona quem recebeu o pagamento.",
+    "notesLabel": "Notas",
+    "notesPlaceholder": "Adicionar notas (opcional)",
+    "participantPlaceholder": "Seleccionar participante",
+    "disclaimer": "Isto regista um pagamento entre pessoas para liquidar saldos. Não é uma despesa partilhada."
+  },
+  "FloatingCreateExpense": {
+    "addExpense": "Adicionar despesa",
+    "dialogTitle": "Adicionar uma despesa",
+    "editDialogTitle": "Editar despesa",
+    "createPaymentDialogTitle": "Registar pagamento",
+    "editPaymentDialogTitle": "Editar pagamento",
+    "withWho": "Com o utilizador e:",
+    "searchPlaceholder": "Procurar amigos ou grupos...",
+    "descriptionPlaceholder": "Insira a descrição",
+    "amountPlaceholder": "0,00",
+    "paidByLabel": "Pago por",
+    "you": "si",
+    "splitEqually": "dividido em partes iguais",
+    "save": "Guardar",
+    "saving": "A guardar...",
+    "cancel": "Cancelar",
+    "successToast": "Despesa criada com sucesso.",
+    "updateSuccessToast": "Despesa atualizada com sucesso.",
+    "paymentSuccessToast": "Pagamento registado com sucesso.",
+    "paymentUpdateSuccessToast": "Pagamento atualizado com sucesso.",
+    "errorToast": "Não foi possível criar a despesa.",
+    "paymentErrorToast": "Não foi possível registar o pagamento.",
+    "updateErrorToast": "Não foi possível atualizar a despesa.",
+    "paymentUpdateErrorToast": "Não foi possível atualizar o pagamento.",
+    "lockedPaymentToast": "Este pagamento faz parte de uma liquidação de saldos e não pode ser editado.",
+    "noFriendOrGroupFound": "Nenhum amigo ou grupo encontrado.",
+    "groupsHeader": "Grupos",
+    "friendsHeader": "Amigos",
+    "selectGroupText": "Grupo: {name}",
+    "pickerTitle": "Com quem?",
+    "pickerDone": "Concluído",
+    "selectParticipants": "Selecionar amigos ou grupo",
+    "selectParticipantsHint": "Selecione um grupo ou amigo para começar.",
+    "singleGroupAlertTitle": "Apenas um grupo",
+    "singleGroupAlertDescription": "Só pode selecionar um grupo de cada vez. Remova o grupo atual antes de escolher outro.",
+    "singleGroupAlertOk": "OK",
+    "advancedOptions": "Opções Avançadas",
+    "splitDetails": "Detalhes da divisão",
+    "notesPlaceholder": "Adicionar notas (opcional)"
   }
 }
