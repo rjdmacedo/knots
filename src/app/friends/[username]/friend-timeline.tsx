@@ -142,6 +142,8 @@ function GroupSummaryRow({
     entry.balanceAmount > 0
       ? t('friendOwesYou', { name: friendName, amount: formattedBalance })
       : t('youOweFriend', { name: friendName, amount: formattedBalance })
+  const amountLabel =
+    entry.balanceAmount > 0 ? `+${formattedBalance}` : formattedBalance
 
   return (
     <div
@@ -152,30 +154,31 @@ function GroupSummaryRow({
         <Users className="w-4 h-4 text-muted-foreground" />
       </div>
 
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <div className="text-sm font-medium truncate">{entry.groupName}</div>
-        <div className="text-xs text-muted-foreground">
+        <div className="text-xs text-muted-foreground truncate">
           {t('groupShared')} · {currencyLabel} ·{' '}
           {formatDate(entry.activityDate, locale, { dateStyle: 'medium' })}
         </div>
       </div>
 
-      <div className="flex items-center gap-2 shrink-0">
+      <div className="flex shrink-0 items-center gap-2 pl-1">
         {entry.isSettled ? (
           <Badge variant="secondary">{t('groupSettled')}</Badge>
         ) : (
           <span
             className={cn(
-              'text-sm font-medium tabular-nums text-right',
+              'text-sm font-medium tabular-nums whitespace-nowrap',
               entry.balanceAmount > 0
                 ? 'text-green-600 dark:text-green-400'
                 : 'text-red-600 dark:text-red-400',
             )}
+            aria-label={balanceLabel}
           >
-            {balanceLabel}
+            {amountLabel}
           </span>
         )}
-        <ChevronRight className="w-4 h-4 text-muted-foreground" />
+        <ChevronRight className="w-4 h-4 shrink-0 text-muted-foreground" />
       </div>
     </div>
   )
