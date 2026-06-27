@@ -1,11 +1,11 @@
+import type { ExpenseFormCreatePrefill } from '@/app/groups/[groupId]/expenses/expense-form'
 import { getGroup, getGroupExpenses } from '@/lib/api'
 import { getReimbursements, type Reimbursement } from '@/lib/balances'
+import { PAYMENT_CATEGORY_ID } from '@/lib/categories'
 import type { Currency } from '@/lib/currency'
 import type { ExpenseFormValues } from '@/lib/schemas'
-import { formatCurrency } from '@/lib/utils'
+import { amountAsDecimal, formatCurrency } from '@/lib/utils'
 import { RecurrenceRule } from '@prisma/client'
-
-const PAYMENT_CATEGORY_ID = 1
 
 export function findDebtBetween(
   reimbursements: Reimbursement[],
@@ -100,6 +100,26 @@ export function buildSettlementFormValues(
     documents: [],
     notes: '',
     recurrenceRule: RecurrenceRule.NONE,
+  }
+}
+
+/** Prefill for the floating expense form when recording a payment (amounts in major units). */
+export function buildPaymentCreatePrefill(
+  amountMinor: number,
+  paidByUserId: string,
+  paidForUserId: string,
+  currency: Currency,
+): ExpenseFormCreatePrefill {
+  const amount = amountAsDecimal(amountMinor, currency)
+
+  return {
+    expenseDate: new Date(),
+    amount,
+    category: PAYMENT_CATEGORY_ID,
+    paidBy: paidByUserId,
+    paidFor: [{ participant: paidForUserId, shares: amount }],
+    splitMode: 'BY_AMOUNT',
+    isReimbursement: true,
   }
 }
 

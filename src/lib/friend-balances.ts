@@ -2,12 +2,10 @@ import type { getGroupExpenses } from '@/lib/api'
 import { getBalances, getReimbursements, Reimbursement } from '@/lib/balances'
 import { Currency } from '@/lib/currency'
 import { getCurrencyFromGroup } from '@/lib/utils'
-import { GroupType } from '@prisma/client'
 
 export type GroupBalanceBreakdown = {
   groupId: string | null // null = direct ledger
   groupName: string | null // null for direct
-  groupType: GroupType | null // null for direct
   currency: Currency
   amount: number // minor units; positive = friend owes user
 }
@@ -15,7 +13,6 @@ export type GroupBalanceBreakdown = {
 export type FriendSettlement = {
   groupId: string | null
   groupName: string | null
-  groupType: GroupType | null
   currency: Currency
   from: string
   to: string
@@ -55,7 +52,6 @@ export function computeFriendBalance(
   sharedGroups: Array<{
     id: string
     name: string
-    type: GroupType
     currency: string
     currencyCode: string | null
     simplifyDebts: boolean
@@ -91,7 +87,6 @@ export function computeFriendBalance(
     const breakdown: GroupBalanceBreakdown = {
       groupId: group.id,
       groupName: group.name,
-      groupType: group.type,
       currency,
       amount,
     }
@@ -129,7 +124,6 @@ export function computeFriendBalance(
       const breakdown: GroupBalanceBreakdown = {
         groupId: null,
         groupName: null,
-        groupType: null,
         currency,
         amount,
       }
@@ -158,7 +152,6 @@ export function computeFriendSettlements(
   sharedGroups: Array<{
     id: string
     name: string
-    type: GroupType
     currency: string
     currencyCode: string | null
     simplifyDebts: boolean
@@ -191,7 +184,6 @@ export function computeFriendSettlements(
     settlements.push({
       groupId: group.id,
       groupName: group.name,
-      groupType: group.type,
       currency: getCurrencyFromGroup({
         currency: group.currency,
         currencyCode: group.currencyCode,
@@ -220,7 +212,6 @@ export function computeFriendSettlements(
         settlements.push({
           groupId: null,
           groupName: null,
-          groupType: null,
           currency: bucket.currency,
           from: debt.from,
           to: debt.to,

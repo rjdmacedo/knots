@@ -28,20 +28,25 @@ export const recordSettlementProcedure = protectedProcedure
     }),
   )
   .mutation(async ({ ctx, input }) => {
-    if (ctx.user.id !== input.fromUserId) {
+    const isPayer = ctx.user.id === input.fromUserId
+    const isPayee = ctx.user.id === input.toUserId
+
+    if (!isPayer && !isPayee) {
       throw new TRPCError({
         code: 'FORBIDDEN',
-        message: 'You can only record payments that you made.',
+        message: 'You can only record payments that you made or received.',
       })
     }
 
     // Direct settlement (no group) — create payment with groupId = null
     if (input.groupId === null) {
+      const otherUserId = isPayer ? input.toUserId : input.fromUserId
+
       // Verify that the other user is a connected friend
       const friend = await prisma.friend.findFirst({
         where: {
           userId: ctx.user.id,
-          friendUserId: input.toUserId,
+          friendUserId: otherUserId,
         },
         select: { id: true },
       })
@@ -157,7 +162,7 @@ export const recordSettlementProcedure = protectedProcedure
         (await isBlockedBy(input.toUserId, input.fromUserId)) ||
         (await isBlockedBy(input.fromUserId, input.toUserId))
 
-      if (payer && creditor && !isBlocked) {
+      if (payer && creditor && !isBlocked && isPayer) {
         const currency = getCurrencyFromGroup(group)
         const formattedAmount = new Intl.NumberFormat(undefined, {
           style: 'currency',

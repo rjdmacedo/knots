@@ -1,5 +1,4 @@
 import { prisma } from '@/lib/prisma'
-import { GroupType } from '@prisma/client'
 
 /**
  * Returns direct expenses (groupId = null) that involve both users.
@@ -60,7 +59,6 @@ export async function getSharedGroupsForUsers(
   Array<{
     id: string
     name: string
-    type: GroupType
     currency: string
     currencyCode: string | null
     simplifyDebts: boolean
@@ -78,7 +76,6 @@ export async function getSharedGroupsForUsers(
         select: {
           id: true,
           name: true,
-          type: true,
           currency: true,
           currencyCode: true,
           simplifyDebts: true,
@@ -95,7 +92,6 @@ export async function getSharedGroupsForUsers(
       group: {
         id: string
         name: string
-        type: GroupType
         currency: string
         currencyCode: string | null
         simplifyDebts: boolean
@@ -118,7 +114,6 @@ export async function getSharedGroupsForUsers(
   const sharedGroups: Array<{
     id: string
     name: string
-    type: GroupType
     currency: string
     currencyCode: string | null
     simplifyDebts: boolean

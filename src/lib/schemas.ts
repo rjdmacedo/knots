@@ -1,3 +1,4 @@
+import { isPaymentCategory } from '@/lib/categories'
 import { RecurrenceRule, SplitMode } from '@prisma/client'
 import * as z from 'zod'
 
@@ -27,7 +28,7 @@ const inputCoercedToNumber = z.union([
 export const expenseFormSchema = z
   .object({
     expenseDate: z.coerce.date(),
-    title: z.string({ required_error: 'titleRequired' }).min(2, 'min2'),
+    title: z.string().default(''),
     category: z.coerce.number().default(0),
     amount: z
       .union(
@@ -132,6 +133,22 @@ export const expenseFormSchema = z
       .default('NONE'),
   })
   .superRefine((expense, ctx) => {
+    if (!expense.isReimbursement && isPaymentCategory(expense.category)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'paymentCategoryNotAllowed',
+        path: ['category'],
+      })
+    }
+
+    if (!expense.isReimbursement && expense.title.trim().length < 2) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'min2',
+        path: ['title'],
+      })
+    }
+
     switch (expense.splitMode) {
       case 'EVENLY':
         break // noop
@@ -157,11 +174,7 @@ export const expenseFormSchema = z
       }
       case 'BY_PERCENTAGE': {
         const sum = expense.paidFor.reduce(
-          (sum, { shares }) =>
-            sum +
-            (typeof shares === 'string'
-              ? Math.round(Number(shares) * 100)
-              : Number(shares)),
+          (sum, { shares }) => sum + Math.round(Number(shares) * 100),
           0,
         )
         if (sum !== 10000) {
@@ -185,6 +198,12 @@ export const expenseFormSchema = z
       ...expense,
       paidFor: expense.paidFor.map((paidFor) => {
         const shares = paidFor.shares
+        if (expense.splitMode === 'BY_PERCENTAGE') {
+          return {
+            ...paidFor,
+            shares: Math.round(Number(shares) * 100),
+          }
+        }
         if (typeof shares === 'string' && expense.splitMode !== 'BY_AMOUNT') {
           // For splitting not by amount, preserve the previous behaviour of multiplying the share by 100
           return {
@@ -202,6 +221,45 @@ export const expenseFormSchema = z
   })
 
 export type ExpenseFormValues = z.infer<typeof expenseFormSchema>
+
+const paymentAmountSchema = z
+  .union(
+    [
+      z.number(),
+      z.string().transform((value, ctx) => {
+        const valueAsNumber = Number(value)
+        if (Number.isNaN(valueAsNumber))
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'invalidNumber',
+          })
+        return valueAsNumber
+      }),
+    ],
+    { required_error: 'amountRequired' },
+  )
+  .refine((amount) => amount > 0, 'amountNotZero')
+  .refine((amount) => amount <= 10_000_000_00, 'amountTenMillion')
+
+export const paymentFormSchema = z
+  .object({
+    expenseDate: z.coerce.date(),
+    amount: paymentAmountSchema,
+    paidBy: z.string({ required_error: 'paidByRequired' }),
+    paidTo: z.string({ required_error: 'paidToRequired' }),
+    notes: z.string().optional(),
+  })
+  .superRefine((payment, ctx) => {
+    if (payment.paidBy === payment.paidTo) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'paidToDifferent',
+        path: ['paidTo'],
+      })
+    }
+  })
+
+export type PaymentFormValues = z.infer<typeof paymentFormSchema>
 
 export type SplittingOptions = {
   // Used for saving default splitting options in localStorage

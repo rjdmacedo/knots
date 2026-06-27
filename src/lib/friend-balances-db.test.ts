@@ -55,7 +55,6 @@ describe('getSharedGroupsForUsers', () => {
           select: {
             id: true,
             name: true,
-            type: true,
             currency: true,
             currencyCode: true,
             simplifyDebts: true,

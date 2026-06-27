@@ -12,6 +12,31 @@ export function useMediaQuery(query: string): boolean {
   return useMediaQueryFoxact(query, false)
 }
 
+/** True while the main scroll container is near the top (scroll-sentinel visible). */
+export function useScrollAtTop(enabled = true) {
+  const [isAtTop, setIsAtTop] = useState(true)
+
+  useEffect(() => {
+    if (!enabled) return
+
+    const sentinel = document.getElementById('scroll-sentinel')
+    const scrollRoot = sentinel?.parentElement
+    if (!sentinel || !scrollRoot) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsAtTop(entry.isIntersecting)
+      },
+      { root: scrollRoot, threshold: 0 },
+    )
+
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [enabled])
+
+  return isAtTop
+}
+
 export function useBaseUrl() {
   const [baseUrl, setBaseUrl] = useState<string | null>(null)
   useEffect(() => {

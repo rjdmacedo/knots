@@ -3,7 +3,6 @@ import { getGroupExpenses as fetchGroupExpenses } from '@/lib/api'
 import { getSharedGroupsForUsers } from '@/lib/friend-balances-db'
 import { prisma } from '@/lib/prisma'
 import { getCurrencyFromGroup } from '@/lib/utils'
-import { GroupType } from '@prisma/client'
 
 export type GroupExpense = Awaited<ReturnType<typeof getGroupExpenses>>[number]
 
@@ -11,7 +10,6 @@ export type FriendExpenseItem = {
   expense: GroupExpense
   groupId: string
   groupName: string
-  groupType: GroupType
   memberCount: number
   currency: ReturnType<typeof getCurrencyFromGroup>
 }
@@ -73,7 +71,6 @@ export async function getFriendExpenses(
         expense,
         groupId: group.id,
         groupName: group.name,
-        groupType: group.type,
         memberCount,
         currency,
       })
@@ -97,7 +94,6 @@ export async function getFriendSharedExpenseRecords(
   Array<{
     expense: GroupExpense
     groupId: string
-    groupType: GroupType
     currency: ReturnType<typeof getCurrencyFromGroup>
   }>
 > {
@@ -105,7 +101,6 @@ export async function getFriendSharedExpenseRecords(
   return items.map((item) => ({
     expense: item.expense,
     groupId: item.groupId,
-    groupType: item.groupType,
     currency: item.currency,
   }))
 }

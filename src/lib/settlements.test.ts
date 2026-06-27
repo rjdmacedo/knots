@@ -1,5 +1,7 @@
 import { getBalances, getSuggestedReimbursements } from '@/lib/balances'
+import { getCurrency } from '@/lib/currency'
 import {
+  buildPaymentCreatePrefill,
   buildSettlementFormValues,
   findDebtBetween,
   findMatchingReimbursement,
@@ -158,5 +160,24 @@ describe('buildSettlementFormValues', () => {
     expect(getSuggestedReimbursements(balances)).toEqual([
       { from: 'ana', to: 'rafael', amount: 2500 },
     ])
+  })
+})
+
+describe('buildPaymentCreatePrefill', () => {
+  it('prefills payment fields with major-unit amounts for the expense form', () => {
+    const currency = getCurrency('EUR')
+    const prefill = buildPaymentCreatePrefill(
+      3333,
+      'friend-id',
+      'me-id',
+      currency,
+    )
+
+    expect(prefill.isReimbursement).toBe(true)
+    expect(prefill.paidBy).toBe('friend-id')
+    expect(prefill.paidFor).toEqual([{ participant: 'me-id', shares: 33.33 }])
+    expect(prefill.amount).toBe(33.33)
+    expect(prefill.splitMode).toBe('BY_AMOUNT')
+    expect(prefill.category).toBe(1)
   })
 })

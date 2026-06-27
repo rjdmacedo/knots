@@ -2,7 +2,7 @@ import { getGroupExpenses } from '@/lib/api'
 import { getSharedGroupsForUsers } from '@/lib/friend-balances-db'
 import { expenseInvolvesBothUsers } from '@/lib/friend-expenses'
 import { prisma } from '@/lib/prisma'
-import { ActivityType, GroupType } from '@prisma/client'
+import { ActivityType } from '@prisma/client'
 
 type ActivityWithChanges = {
   id: string
@@ -21,7 +21,6 @@ type ActivityWithChanges = {
 
 function shouldIncludeActivity(
   activity: ActivityWithChanges,
-  groupType: GroupType,
   expense: Awaited<ReturnType<typeof getGroupExpenses>>[number] | undefined,
   currentUserId: string,
   friendUserId: string,
@@ -56,9 +55,6 @@ export async function getFriendActivities(
   }
 
   const groupIds = sharedGroups.map((group) => group.id)
-  const groupTypeById = new Map(
-    sharedGroups.map((group) => [group.id, group.type]),
-  )
 
   const activities = await prisma.activity.findMany({
     where: { groupId: { in: groupIds } },
@@ -114,7 +110,6 @@ export async function getFriendActivities(
         name: group.name,
         currency: group.currency,
         currencyCode: group.currencyCode,
-        type: group.type,
         participants: group.memberships.map((membership) => ({
           id: membership.user.id,
           name: membership.user.name,
@@ -127,7 +122,6 @@ export async function getFriendActivities(
   const filtered = activities.filter((activity) =>
     shouldIncludeActivity(
       activity,
-      groupTypeById.get(activity.groupId) ?? GroupType.STANDARD,
       activity.expenseId ? expenseById.get(activity.expenseId) : undefined,
       currentUserId,
       friendUserId,
