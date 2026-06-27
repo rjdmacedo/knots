@@ -8,7 +8,6 @@
  * - ShareButton: PopoverTrigger wraps the button → click opens share popover with group URL
  * - PushNotificationToggle: PopoverTrigger wraps the button → click opens notification popover
  * - ExportButton: DropdownMenuTrigger wraps the button → click opens export dropdown with JSON/CSV
- * - Create Expense: Link component navigates to /expenses/create
  * - CreateFromReceiptButton: DialogTrigger/DrawerTrigger wraps the button → click opens dialog/drawer
  * - Edit button: Link component navigates to /edit
  * - Context menu: "Remove from recent groups" and "Archive" DropdownMenuItems with handlers
@@ -37,10 +36,6 @@ const PUSH_NOTIFICATION_TOGGLE_PATH = path.resolve(
 const EXPORT_BUTTON_PATH = path.resolve(
   __dirname,
   '../../groups/[groupId]/export-button.tsx',
-)
-const EXPENSES_PAGE_CLIENT_PATH = path.resolve(
-  __dirname,
-  '../../groups/[groupId]/expenses/page.client.tsx',
 )
 const CREATE_FROM_RECEIPT_PATH = path.resolve(
   __dirname,
@@ -142,22 +137,6 @@ function exportButtonPreservesClickBehavior(fileContent: string): {
 }
 
 /**
- * Verifies that the Create Expense button preserves its navigation behavior.
- * The button must be a Link that navigates to /expenses/create.
- */
-function createExpensePreservesClickBehavior(fileContent: string): {
-  hasLink: boolean
-  hasCreateRoute: boolean
-  hasPlusIcon: boolean
-} {
-  return {
-    hasLink: fileContent.includes('<Link'),
-    hasCreateRoute: fileContent.includes('/expenses/create'),
-    hasPlusIcon: fileContent.includes('<Plus'),
-  }
-}
-
-/**
  * Verifies that the CreateFromReceiptButton preserves its Dialog/Drawer click behavior.
  * The button must trigger a Dialog (desktop) or Drawer (mobile) with receipt scanning content.
  */
@@ -168,6 +147,7 @@ function createFromReceiptPreservesClickBehavior(fileContent: string): {
   hasDrawerTrigger: boolean
   hasReceiptContent: boolean
   hasFileUpload: boolean
+  opensCreateExpense: boolean
 } {
   return {
     hasDialog: fileContent.includes('<Dialog'),
@@ -180,6 +160,7 @@ function createFromReceiptPreservesClickBehavior(fileContent: string): {
     hasFileUpload:
       fileContent.includes('handleFileChange') ||
       fileContent.includes('openFileDialog'),
+    opensCreateExpense: fileContent.includes('create-group-expense'),
   }
 }
 
@@ -281,36 +262,30 @@ const PRESERVATION_TEST_CASES: PreservationTestCase[] = [
     requirement: '3.3',
   },
   {
-    name: 'CreateExpenseButton',
-    filePath: EXPENSES_PAGE_CLIENT_PATH,
-    description: 'Click navigates to expense creation page',
-    requirement: '3.4',
-  },
-  {
     name: 'CreateFromReceiptButton',
     filePath: CREATE_FROM_RECEIPT_PATH,
     description: 'Click opens receipt scanning dialog/drawer',
-    requirement: '3.5',
+    requirement: '3.4',
   },
   {
     name: 'EditButton',
     filePath: GROUP_INFORMATION_PATH,
     description: 'Click navigates to group edit page',
-    requirement: '3.6',
+    requirement: '3.5',
   },
   {
     name: 'GroupCardContextMenu',
     filePath: MY_GROUPS_PATH,
     description:
       'Notifications toggle, archive, leave, and delete perform their actions',
-    requirement: '3.7',
+    requirement: '3.6',
   },
   {
     name: 'ExpenseImport',
     filePath: EXPENSE_IMPORT_PATH,
     description:
       'Hovering displays shadcn Tooltip; click opens import dropdown',
-    requirement: '3.8',
+    requirement: '3.7',
   },
 ]
 
@@ -421,32 +396,6 @@ describe('UI Button Preservation Property Tests', () => {
     })
 
     /**
-     * Create Expense (+) button: Clicking SHALL CONTINUE TO navigate to the expense creation page.
-     *
-     * **Validates: Requirements 3.4**
-     */
-    it('Create Expense button click SHALL CONTINUE TO navigate to expense creation page', () => {
-      fc.assert(
-        fc.property(
-          arbButtonState,
-          arbInteractionSequence,
-          (state, sequence) => {
-            const fileContent = fs.readFileSync(
-              EXPENSES_PAGE_CLIENT_PATH,
-              'utf-8',
-            )
-            const result = createExpensePreservesClickBehavior(fileContent)
-
-            expect(result.hasLink).toBe(true)
-            expect(result.hasCreateRoute).toBe(true)
-            expect(result.hasPlusIcon).toBe(true)
-          },
-        ),
-        { numRuns: PBT_NUM_RUNS },
-      )
-    })
-
-    /**
      * CreateFromReceiptButton: Clicking SHALL CONTINUE TO open the receipt scanning dialog/drawer.
      *
      * **Validates: Requirements 3.5**
@@ -469,6 +418,7 @@ describe('UI Button Preservation Property Tests', () => {
             expect(result.hasDrawerTrigger).toBe(true)
             expect(result.hasReceiptContent).toBe(true)
             expect(result.hasFileUpload).toBe(true)
+            expect(result.opensCreateExpense).toBe(true)
           },
         ),
         { numRuns: PBT_NUM_RUNS },
@@ -601,12 +551,6 @@ describe('UI Button Preservation Property Tests', () => {
                 expect(r.hasDropdownMenu).toBe(true)
                 expect(r.hasDropdownMenuTrigger).toBe(true)
                 expect(r.hasDropdownMenuContent).toBe(true)
-                break
-              }
-              case 'CreateExpenseButton': {
-                const r = createExpensePreservesClickBehavior(fileContent)
-                expect(r.hasLink).toBe(true)
-                expect(r.hasCreateRoute).toBe(true)
                 break
               }
               case 'CreateFromReceiptButton': {

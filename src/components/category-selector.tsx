@@ -15,6 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { filterExpenseCategories } from '@/lib/categories'
 import { useMediaQuery } from '@/lib/hooks'
 import { Category } from '@prisma/client'
 import { useIsClient } from 'foxact/use-is-client'
@@ -46,20 +47,25 @@ export function CategorySelector({
     onValueChange(defaultValue)
   }, [defaultValue])
 
+  const selectableCategories = filterExpenseCategories(categories)
   const selectedCategory =
-    categories.find((category) => category.id === value) ?? categories[0]
+    categories.find((category) => category.id === value) ??
+    selectableCategories[0] ??
+    categories[0]
 
   // Render Drawer initially to match SSR, then switch after client hydration
   if (!isClient || !isDesktop) {
     return (
       <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerTrigger asChild>
-          <CategoryButton
-            category={selectedCategory}
-            open={open}
-            isLoading={isLoading}
-          />
-        </DrawerTrigger>
+        <DrawerTrigger
+          render={
+            <CategoryButton
+              category={selectedCategory}
+              open={open}
+              isLoading={isLoading}
+            />
+          }
+        />
         <DrawerContent className="p-0">
           <CategoryCommand
             categories={categories}
@@ -99,7 +105,7 @@ export function CategorySelector({
   )
 }
 
-function CategoryCommand({
+export function CategoryCommand({
   categories,
   onValueChange,
 }: {
@@ -107,7 +113,10 @@ function CategoryCommand({
   onValueChange: (categoryId: Category['id']) => void
 }) {
   const t = useTranslations('Categories')
-  const categoriesByGroup = categories.reduce<Record<string, Category[]>>(
+  const selectableCategories = filterExpenseCategories(categories)
+  const categoriesByGroup = selectableCategories.reduce<
+    Record<string, Category[]>
+  >(
     (acc, category) => ({
       ...acc,
       [category.grouping]: [...(acc[category.grouping] ?? []), category],
@@ -177,8 +186,16 @@ const CategoryButton = forwardRef<HTMLButtonElement, CategoryButtonProps>(
 )
 CategoryButton.displayName = 'CategoryButton'
 
-function CategoryLabel({ category }: { category: Category }) {
+function CategoryLabel({ category }: { category?: Category }) {
   const t = useTranslations('Categories')
+  if (!category) {
+    return (
+      <div className="flex items-center gap-3">
+        <CategoryIcon category={null} className="w-4 h-4 animate-pulse" />
+        <span className="text-muted-foreground">...</span>
+      </div>
+    )
+  }
   return (
     <div className="flex items-center gap-3">
       <CategoryIcon category={category} className="w-4 h-4" />

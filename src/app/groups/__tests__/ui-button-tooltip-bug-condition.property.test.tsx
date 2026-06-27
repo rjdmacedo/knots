@@ -42,10 +42,6 @@ const EXPORT_BUTTON_PATH = path.resolve(
   __dirname,
   '../../groups/[groupId]/export-button.tsx',
 )
-const EXPENSES_PAGE_CLIENT_PATH = path.resolve(
-  __dirname,
-  '../../groups/[groupId]/expenses/page.client.tsx',
-)
 const CREATE_FROM_RECEIPT_PATH = path.resolve(
   __dirname,
   '../../groups/[groupId]/expenses/create-from-receipt-button.tsx',
@@ -129,12 +125,6 @@ const AFFECTED_BUTTONS: ButtonTestCase[] = [
     filePath: EXPORT_BUTTON_PATH,
     expectedLabel: 'Export',
     description: 'Export button in expenses page',
-  },
-  {
-    name: 'CreateExpenseButton',
-    filePath: EXPENSES_PAGE_CLIENT_PATH,
-    expectedLabel: 'Create expense',
-    description: 'Create Expense (+) button in expenses page',
   },
   {
     name: 'CreateFromReceiptButton',

@@ -19,7 +19,7 @@ import { api } from '@/lib/api-client'
 import { ExpenseFormValues } from '@/lib/schemas'
 import { formatFileSize } from '@/lib/utils'
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden'
-import { Loader2, Plus, Trash, X } from 'lucide-react'
+import { Plus, Trash, X } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { getImageData, usePresignedUpload } from 'next-s3-upload'
 import Image from 'next/image'
@@ -238,11 +238,7 @@ export function ExpenseDocumentsInput({
             className="w-full h-full"
             disabled={uploading}
           >
-            {uploading ? (
-              <Loader2 className="w-8 h-8 animate-spin" />
-            ) : (
-              <Plus className="w-8 h-8" />
-            )}
+            <Plus className="w-8 h-8" />
           </Button>
         </div>
       </div>
@@ -258,10 +254,12 @@ export function DocumentThumbnail({
   document,
   documents,
   deleteDocument,
+  readOnly = false,
 }: {
   document: DocumentWithPending
   documents: DocumentWithPending[]
   deleteDocument: (document: DocumentWithPending) => void
+  readOnly?: boolean
 }) {
   const [open, setOpen] = useState(false)
   const [api, setApi] = useState<CarouselApi>()
@@ -302,19 +300,21 @@ export function DocumentThumbnail({
         </VisuallyHidden.Root>
         <div className="flex flex-col gap-4">
           <div className="flex justify-end">
-            <Button
-              variant="ghost"
-              className="text-destructive"
-              onClick={() => {
-                if (currentDocument !== null) {
-                  deleteDocument(documents[currentDocument])
-                }
-                setOpen(false)
-              }}
-            >
-              <Trash className="w-4 h-4 mr-2" />
-              Delete document
-            </Button>
+            {!readOnly ? (
+              <Button
+                variant="ghost"
+                className="text-destructive"
+                onClick={() => {
+                  if (currentDocument !== null) {
+                    deleteDocument(documents[currentDocument])
+                  }
+                  setOpen(false)
+                }}
+              >
+                <Trash className="w-4 h-4 mr-2" />
+                Delete document
+              </Button>
+            ) : null}
             <DialogClose render={<Button variant="ghost" />}>
               <X className="w-4 h-4 mr-2" /> Close
             </DialogClose>

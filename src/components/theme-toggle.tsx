@@ -1,6 +1,7 @@
 'use client'
 
 import { useTheme } from 'next-themes'
+import { useEffect, useState } from 'react'
 
 import {
   Select,
@@ -13,6 +14,14 @@ import { Monitor, Moon, Sun } from 'lucide-react'
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // next-themes resolves theme only on the client; keep SSR and first paint in sync.
+  const value = mounted ? (theme ?? 'system') : 'system'
 
   return (
     <Select
@@ -21,7 +30,7 @@ export function ThemeToggle() {
         { value: 'dark', label: 'Dark' },
         { value: 'system', label: 'System' },
       ]}
-      value={theme}
+      value={value}
       onValueChange={(val) => val && setTheme(val)}
     >
       <SelectTrigger className="w-full">

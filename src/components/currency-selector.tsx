@@ -14,15 +14,18 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer'
+import { InputGroupButton } from '@/components/ui/input-group'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { Currency } from '@/lib/currency'
+import { getCurrencyDisplaySymbol } from '@/lib/currency-input'
 import { useMediaQuery } from '@/lib/hooks'
 import { useIsClient } from 'foxact/use-is-client'
 import { useTranslations } from 'next-intl'
+import Image from 'next/image'
 import { forwardRef, useEffect, useState } from 'react'
 
 type Props = {
@@ -31,6 +34,7 @@ type Props = {
   /** Currency code to be selected by default. Overwriting this value will update current selection, too. */
   defaultValue: Currency['code']
   isLoading: boolean
+  variant?: 'default' | 'inline'
 }
 
 export function CurrencySelector({
@@ -38,11 +42,13 @@ export function CurrencySelector({
   onValueChange,
   defaultValue,
   isLoading,
+  variant = 'default',
 }: Props) {
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState<string>(defaultValue)
   const isClient = useIsClient()
   const isDesktop = useMediaQuery('(min-width: 768px)')
+  const isInline = variant === 'inline'
 
   // allow overwriting currently selected currency from outside
   useEffect(() => {
@@ -53,17 +59,21 @@ export function CurrencySelector({
     currencies.find((currency) => (currency.code ?? '') === value) ??
     currencies[0]
 
+  const TriggerButton = isInline ? CurrencyInlineButton : CurrencyButton
+
   // Render Drawer initially to match SSR, then switch after client hydration
   if (!isClient || !isDesktop) {
     return (
       <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerTrigger asChild>
-          <CurrencyButton
-            currency={selectedCurrency}
-            open={open}
-            isLoading={isLoading}
-          />
-        </DrawerTrigger>
+        <DrawerTrigger
+          render={
+            <TriggerButton
+              currency={selectedCurrency}
+              open={open}
+              isLoading={isLoading}
+            />
+          }
+        />
         <DrawerContent className="p-0">
           <DrawerTitle className="sr-only">Select Currency</DrawerTitle>
           <CurrencyCommand
@@ -83,7 +93,7 @@ export function CurrencySelector({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
         render={
-          <CurrencyButton
+          <TriggerButton
             currency={selectedCurrency}
             open={open}
             isLoading={isLoading}
@@ -194,13 +204,42 @@ const CurrencyButton = forwardRef<HTMLButtonElement, CurrencyButtonProps>(
 )
 CurrencyButton.displayName = 'CurrencyButton'
 
+const CurrencyInlineButton = forwardRef<
+  HTMLButtonElement,
+  Omit<CurrencyButtonProps, 'size'> & Omit<ButtonProps, 'size'>
+>(({ currency, open, isLoading, ...props }, ref) => {
+  return (
+    <InputGroupButton
+      ref={ref}
+      role="combobox"
+      aria-expanded={open}
+      className="gap-1 font-medium text-foreground tabular-nums"
+      {...props}
+    >
+      {getCurrencyDisplaySymbol(currency)}
+      {isLoading ? (
+        <Loader2 className="size-3.5 animate-spin opacity-50" />
+      ) : (
+        <ChevronDown className="size-3.5 opacity-50" />
+      )}
+    </InputGroupButton>
+  )
+})
+CurrencyInlineButton.displayName = 'CurrencyInlineButton'
+
 function CurrencyLabel({ currency }: { currency: Currency }) {
   const flagUrl = `https://flagcdn.com/h24/${
     currency?.code.length ? currency.code.slice(0, 2).toLowerCase() : 'un'
   }.png`
   return (
     <div className="flex items-center gap-3">
-      <img src={flagUrl} className="w-4" alt="" />
+      <Image
+        src={flagUrl}
+        alt=""
+        width={16}
+        height={12}
+        className="w-4 h-auto"
+      />
       {currency.name}
       {currency.code ? ` (${currency.code})` : ''}
     </div>

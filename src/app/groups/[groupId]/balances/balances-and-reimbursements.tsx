@@ -97,6 +97,7 @@ export default function BalancesAndReimbursements({ currentUserId }: Props) {
               participants={group!.participants}
               currency={getCurrencyFromGroup(group!)}
               groupId={groupId}
+              groupName={group!.name}
               currentUserId={resolvedUserId}
             />
           )}

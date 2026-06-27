@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/tooltip'
 import { Reimbursement } from '@/lib/balances'
 import { Currency } from '@/lib/currency'
+import { buildPaymentCreatePrefill } from '@/lib/settlements'
 import { formatCurrency } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { Banknote, Loader2, Mail } from 'lucide-react'
@@ -30,6 +31,7 @@ type Props = {
   participants: { id: string; name: string }[]
   currency: Currency
   groupId: string
+  groupName: string
   currentUserId?: string
 }
 
@@ -38,6 +40,7 @@ export function ReimbursementList({
   participants,
   currency,
   groupId,
+  groupName,
   currentUserId,
 }: Props) {
   const locale = useLocale()
@@ -59,6 +62,7 @@ export function ReimbursementList({
           currency={currency}
           locale={locale}
           groupId={groupId}
+          groupName={groupName}
           currentUserId={currentUserId}
           t={t}
         />
@@ -73,6 +77,7 @@ type ReimbursementRowProps = {
   currency: Currency
   locale: string
   groupId: string
+  groupName: string
   currentUserId?: string
   t: ReturnType<typeof useTranslations<'Balances.Reimbursements'>>
 }
@@ -83,13 +88,12 @@ function ReimbursementRow({
   currency,
   locale,
   groupId,
+  groupName,
   currentUserId,
   t,
 }: ReimbursementRowProps) {
   const tActions = useTranslations('Balances.Actions')
-  const utils = trpc.useUtils()
   const [requestConfirmOpen, setRequestConfirmOpen] = useState(false)
-  const [settleConfirmOpen, setSettleConfirmOpen] = useState(false)
 
   const { mutate: requestPayment, isPending: isRequesting } =
     trpc.groups.balances.requestPayment.useMutation({
@@ -102,23 +106,9 @@ function ReimbursementRow({
       },
     })
 
-  const { mutate: recordSettlement, isPending: isSettling } =
-    trpc.groups.balances.recordSettlement.useMutation({
-      onSuccess: () => {
-        utils.groups.balances.invalidate()
-        utils.groups.expenses.invalidate()
-        toast.success(tActions('settlementRecorded'))
-        setSettleConfirmOpen(false)
-      },
-      onError: () => {
-        toast.error(tActions('settlementFailed'))
-      },
-    })
-
   const isDebtor = currentUserId === reimbursement.from
   const isCreditor = currentUserId === reimbursement.to
   const debtorName = getParticipant(reimbursement.from)?.name ?? 'Unknown'
-  const creditorName = getParticipant(reimbursement.to)?.name ?? 'Unknown'
   const formattedAmount = formatCurrency(currency, reimbursement.amount, locale)
 
   const handleRequestConfirm = () => {
@@ -130,13 +120,21 @@ function ReimbursementRow({
     })
   }
 
-  const handleSettleConfirm = () => {
-    recordSettlement({
-      groupId,
-      fromUserId: reimbursement.from,
-      toUserId: reimbursement.to,
-      amount: reimbursement.amount,
-    })
+  const openSettlementExpense = () => {
+    window.dispatchEvent(
+      new CustomEvent('create-group-expense', {
+        detail: {
+          groupId,
+          groupName,
+          prefill: buildPaymentCreatePrefill(
+            reimbursement.amount,
+            reimbursement.from,
+            reimbursement.to,
+            currency,
+          ),
+        },
+      }),
+    )
   }
 
   return (
@@ -147,7 +145,7 @@ function ReimbursementRow({
       <div className="min-w-0">
         {t.rich('owes', {
           from: debtorName,
-          to: creditorName,
+          to: getParticipant(reimbursement.to)?.name ?? 'Unknown',
           strong: (chunks) => <strong>{chunks}</strong>,
         })}
       </div>
@@ -155,112 +153,96 @@ function ReimbursementRow({
       <div className="flex items-center gap-1.5 shrink-0">
         <span className="tabular-nums">{formattedAmount}</span>
         {isDebtor && (
-          <AlertDialog
-            open={settleConfirmOpen}
-            onOpenChange={setSettleConfirmOpen}
-          >
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    size="icon-sm"
-                    variant="outline"
-                    onClick={() => setSettleConfirmOpen(true)}
-                    disabled={isSettling}
-                    aria-label={tActions('settle')}
-                  />
-                }
-              >
-                {isSettling ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
-                  <Banknote className="size-4" />
-                )}
-              </TooltipTrigger>
-              <TooltipContent>{tActions('settle')}</TooltipContent>
-            </Tooltip>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>{tActions('settleTitle')}</AlertDialogTitle>
-                <AlertDialogDescription>
-                  {tActions('confirmSettle', {
-                    amount: formattedAmount,
-                    name: creditorName,
-                  })}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>{tActions('cancel')}</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleSettleConfirm}
-                  disabled={isSettling}
-                >
-                  {isSettling ? (
-                    <>
-                      <Loader2 className="size-4 animate-spin" />
-                      {tActions('recording')}
-                    </>
-                  ) : (
-                    tActions('recordPayment')
-                  )}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  size="icon-sm"
+                  variant="outline"
+                  onClick={openSettlementExpense}
+                  aria-label={tActions('settle')}
+                />
+              }
+            >
+              <Banknote className="size-4" />
+            </TooltipTrigger>
+            <TooltipContent>{tActions('settle')}</TooltipContent>
+          </Tooltip>
         )}
         {isCreditor && (
-          <AlertDialog
-            open={requestConfirmOpen}
-            onOpenChange={setRequestConfirmOpen}
-          >
+          <>
             <Tooltip>
               <TooltipTrigger
                 render={
                   <Button
                     size="icon-sm"
                     variant="outline"
-                    onClick={() => setRequestConfirmOpen(true)}
-                    disabled={isRequesting}
-                    aria-label={t('requestTooltip')}
+                    onClick={openSettlementExpense}
+                    aria-label={tActions('settleReceivedTooltip')}
                   />
                 }
               >
-                {isRequesting ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : (
-                  <Mail className="size-4" />
-                )}
+                <Banknote className="size-4" />
               </TooltipTrigger>
-              <TooltipContent>{t('requestTooltip')}</TooltipContent>
+              <TooltipContent>
+                {tActions('settleReceivedTooltip')}
+              </TooltipContent>
             </Tooltip>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>{t('requestConfirmTitle')}</AlertDialogTitle>
-                <AlertDialogDescription>
-                  {t('requestConfirmDescription', {
-                    name: debtorName,
-                    amount: formattedAmount,
-                  })}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>{tActions('cancel')}</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleRequestConfirm}
-                  disabled={isRequesting}
+            <AlertDialog
+              open={requestConfirmOpen}
+              onOpenChange={setRequestConfirmOpen}
+            >
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      size="icon-sm"
+                      variant="outline"
+                      onClick={() => setRequestConfirmOpen(true)}
+                      disabled={isRequesting}
+                      aria-label={t('requestTooltip')}
+                    />
+                  }
                 >
                   {isRequesting ? (
-                    <>
-                      <Loader2 className="size-4 animate-spin" />
-                      {tActions('sending')}
-                    </>
+                    <Loader2 className="size-4 animate-spin" />
                   ) : (
-                    tActions('sendRequest')
+                    <Mail className="size-4" />
                   )}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+                </TooltipTrigger>
+                <TooltipContent>{t('requestTooltip')}</TooltipContent>
+              </Tooltip>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    {t('requestConfirmTitle')}
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {t('requestConfirmDescription', {
+                      name: debtorName,
+                      amount: formattedAmount,
+                    })}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>{tActions('cancel')}</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleRequestConfirm}
+                    disabled={isRequesting}
+                  >
+                    {isRequesting ? (
+                      <>
+                        <Loader2 className="size-4 animate-spin" />
+                        {tActions('sending')}
+                      </>
+                    ) : (
+                      tActions('sendRequest')
+                    )}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </>
         )}
       </div>
     </div>
