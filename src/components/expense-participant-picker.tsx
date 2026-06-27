@@ -89,7 +89,7 @@ function ParticipantPickerCommand({
     <>
       <Command
         shouldFilter
-        className="overflow-hidden rounded-md border border-input bg-muted/20 p-0"
+        className="w-full min-w-0 overflow-hidden rounded-none border-x-0 border-y border-input bg-muted/20 p-0 sm:rounded-md sm:border-x"
       >
         <div className="flex flex-wrap items-center gap-1.5 p-2 focus-within:ring-1 focus-within:ring-ring focus-within:border-ring">
           {selectedGroup && (
@@ -135,8 +135,9 @@ function ParticipantPickerCommand({
                   key={g.id}
                   value={g.name}
                   onSelect={() => handleSelectGroup({ id: g.id, name: g.name })}
+                  className="py-2.5"
                 >
-                  {g.name}
+                  <span className="truncate">{g.name}</span>
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -148,10 +149,11 @@ function ParticipantPickerCommand({
                   key={f.id}
                   value={`${f.name} ${f.email}`}
                   onSelect={() => onSelectFriend(f)}
+                  className="items-start py-2.5"
                 >
-                  <div className="flex min-w-0 flex-col gap-0.5">
-                    <span className="font-medium">{f.name}</span>
-                    <span className="text-xs text-muted-foreground">
+                  <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <span className="truncate font-medium">{f.name}</span>
+                    <span className="truncate text-xs text-muted-foreground">
                       {f.email}
                     </span>
                   </div>
@@ -238,12 +240,12 @@ export function ExpenseParticipantPicker({
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent nested className="max-h-[85vh]">
-        <DrawerHeader className="text-left">
+      <DrawerContent nested className="max-h-[85vh] p-0">
+        <DrawerHeader className="mb-0 border-b px-6 pb-3 pt-4 text-left">
           <DrawerTitle>{t('pickerTitle')}</DrawerTitle>
         </DrawerHeader>
-        <div className="px-6">{command}</div>
-        <DrawerFooter>
+        {command}
+        <DrawerFooter className="px-6 pb-6">
           <Button type="button" onClick={() => onOpenChange(false)}>
             {t('pickerDone')}
           </Button>
