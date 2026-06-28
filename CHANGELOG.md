@@ -1,3 +1,10 @@
+# [1.46.0](https://github.com/rjdmacedo/knots/compare/v1.45.0...v1.46.0) (2026-06-28)
+
+
+### Features
+
+* enhance viewport handling for mobile forms ([2128170](https://github.com/rjdmacedo/knots/commit/212817087b9ed4aefc297356c4fd0d4bc15f4a76))
+
 # [1.45.0](https://github.com/rjdmacedo/knots/compare/v1.44.1...v1.45.0) (2026-06-28)
 
 
