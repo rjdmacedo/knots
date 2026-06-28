@@ -1,3 +1,15 @@
+# [1.45.0](https://github.com/rjdmacedo/knots/compare/v1.44.1...v1.45.0) (2026-06-28)
+
+
+### Bug Fixes
+
+* consolidate participant selection UI in expense picker ([8c8b378](https://github.com/rjdmacedo/knots/commit/8c8b378e602a0494cd9a8ddc9704da19238d77f0))
+
+
+### Features
+
+* add skills-lock.json for shadcn skill configuration ([75f310f](https://github.com/rjdmacedo/knots/commit/75f310f9f3e94573892fac8872962c745ac99626))
+
 ## [1.44.1](https://github.com/rjdmacedo/knots/compare/v1.44.0...v1.44.1) (2026-06-28)
 
 
