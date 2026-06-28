@@ -229,6 +229,12 @@ export function ExpenseParticipantTrigger({
   const t = useTranslations('FloatingCreateExpense')
 
   const hasSelection = !!selectedGroup || selectedFriends.length > 0
+  const summary = useMemo(() => {
+    const parts: string[] = []
+    if (selectedGroup) parts.push(selectedGroup.name)
+    parts.push(...selectedFriends.map((friend) => friend.name))
+    return parts.join(' · ')
+  }, [selectedGroup, selectedFriends])
 
   return (
     <Button
@@ -236,37 +242,25 @@ export function ExpenseParticipantTrigger({
       variant="outline"
       onClick={onClick}
       className={cn(
-        'h-9 w-full justify-between border-input font-normal shadow-xs',
+        'h-9 w-full justify-between gap-2 border-input font-normal shadow-xs',
         className,
       )}
     >
       {hasSelection ? (
-        <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-left">
+        <span className="flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden text-left">
           {selectedGroup ? (
-            <span className="flex min-w-0 max-w-full items-center gap-1.5">
-              <Users className="size-4 shrink-0 opacity-50" />
-              <span className="truncate">{selectedGroup.name}</span>
-            </span>
-          ) : null}
-          {selectedFriends.map((friend, index) => (
-            <span
-              key={friend.id}
-              className="flex min-w-0 max-w-full items-center gap-1.5"
-            >
-              {selectedGroup || index > 0 ? (
-                <span className="text-muted-foreground">·</span>
-              ) : null}
-              <User className="size-4 shrink-0 opacity-50" />
-              <span className="truncate">{friend.name}</span>
-            </span>
-          ))}
+            <Users className="size-4 shrink-0 opacity-50" />
+          ) : (
+            <User className="size-4 shrink-0 opacity-50" />
+          )}
+          <span className="truncate">{summary}</span>
         </span>
       ) : (
-        <span className="truncate text-left text-muted-foreground">
+        <span className="min-w-0 flex-1 truncate text-left text-muted-foreground">
           {t('selectParticipants')}
         </span>
       )}
-      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+      <ChevronsUpDown className="size-4 shrink-0 opacity-50" />
     </Button>
   )
 }
