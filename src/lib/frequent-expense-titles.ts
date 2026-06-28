@@ -11,10 +11,6 @@ type ExpenseTitleRecord = {
   categoryId: number
 }
 
-/**
- * Ranks expense titles by how often they appear (case-insensitive).
- * Uses the category from the first occurrence in the input order.
- */
 export function rankFrequentExpenseTitles(
   expenses: ExpenseTitleRecord[],
   limit = 10,
@@ -46,6 +42,14 @@ export function rankFrequentExpenseTitles(
     .map(({ title, categoryId }) => ({ title, categoryId }))
 }
 
+export function titleMatchesQuery(
+  title: string,
+  normalizedQuery: string,
+): boolean {
+  if (!normalizedQuery) return true
+  return normalizeTitle(title).includes(normalizedQuery)
+}
+
 const RECENT_EXPENSES_SCAN_LIMIT = 500
 
 export async function getFrequentExpenseTitlesForUser(
@@ -66,4 +70,92 @@ export async function getFrequentExpenseTitlesForUser(
   })
 
   return rankFrequentExpenseTitles(expenses, limit)
+}
+
+export async function getFrequentExpenseTitlesForGroup(
+  groupId: string,
+  limit = 10,
+): Promise<FrequentExpenseTitle[]> {
+  const expenses = await prisma.expense.findMany({
+    where: {
+      groupId,
+      isReimbursement: false,
+    },
+    select: {
+      title: true,
+      categoryId: true,
+    },
+    orderBy: [{ expenseDate: 'desc' }, { createdAt: 'desc' }],
+    take: RECENT_EXPENSES_SCAN_LIMIT,
+  })
+
+  return rankFrequentExpenseTitles(expenses, limit)
+}
+
+export async function searchExpenseTitleSuggestions(
+  groupId: string,
+  normalizedQuery: string,
+  limit = 10,
+): Promise<FrequentExpenseTitle[]> {
+  const [mappings, expenses] = await Promise.all([
+    prisma.expenseCategoryMapping.findMany({
+      where: {
+        groupId,
+        normalizedTitle: {
+          contains: normalizedQuery,
+        },
+      },
+      select: {
+        normalizedTitle: true,
+        categoryId: true,
+      },
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      take: limit,
+    }),
+    prisma.expense.findMany({
+      where: {
+        groupId,
+        isReimbursement: false,
+        title: {
+          contains: normalizedQuery,
+          mode: 'insensitive',
+        },
+      },
+      select: {
+        title: true,
+        categoryId: true,
+      },
+      orderBy: [{ expenseDate: 'desc' }, { createdAt: 'desc' }],
+      take: RECENT_EXPENSES_SCAN_LIMIT,
+    }),
+  ])
+
+  const seen = new Set<string>()
+  const results: FrequentExpenseTitle[] = []
+
+  for (const mapping of mappings) {
+    if (seen.has(mapping.normalizedTitle)) continue
+    seen.add(mapping.normalizedTitle)
+    results.push({
+      title: mapping.normalizedTitle,
+      categoryId: mapping.categoryId,
+    })
+    if (results.length >= limit) return results
+  }
+
+  const matchingExpenses = expenses.filter((expense) =>
+    titleMatchesQuery(expense.title, normalizedQuery),
+  )
+
+  for (const suggestion of rankFrequentExpenseTitles(matchingExpenses, limit)) {
+    const normalizedTitle = normalizeTitle(suggestion.title)
+    if (seen.has(normalizedTitle)) continue
+    seen.add(normalizedTitle)
+    results.push(suggestion)
+    if (results.length >= limit) break
+  }
+
+  return results
 }

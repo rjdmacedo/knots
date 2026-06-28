@@ -1,5 +1,7 @@
-import { getFrequentExpenseTitlesForUser } from '@/lib/frequent-expense-titles'
-import { prisma } from '@/lib/prisma'
+import {
+  getFrequentExpenseTitlesForGroup,
+  searchExpenseTitleSuggestions,
+} from '@/lib/frequent-expense-titles'
 import { groupMemberProcedure } from '@/trpc/init'
 import { z } from 'zod'
 
@@ -10,35 +12,18 @@ export const suggestExpenseTitlesProcedure = groupMemberProcedure
       query: z.string(),
     }),
   )
-  .query(async ({ ctx, input }) => {
+  .query(async ({ input }) => {
     const normalizedQuery = input.query.toLowerCase().trim()
 
     if (normalizedQuery.length === 0) {
-      const suggestions = await getFrequentExpenseTitlesForUser(ctx.user.id)
+      const suggestions = await getFrequentExpenseTitlesForGroup(input.groupId)
       return { suggestions }
     }
 
-    const mappings = await prisma.expenseCategoryMapping.findMany({
-      where: {
-        groupId: input.groupId,
-        normalizedTitle: {
-          startsWith: normalizedQuery,
-        },
-      },
-      select: {
-        normalizedTitle: true,
-        categoryId: true,
-      },
-      orderBy: {
-        updatedAt: 'desc',
-      },
-      take: 10,
-    })
+    const suggestions = await searchExpenseTitleSuggestions(
+      input.groupId,
+      normalizedQuery,
+    )
 
-    return {
-      suggestions: mappings.map((m) => ({
-        title: m.normalizedTitle,
-        categoryId: m.categoryId,
-      })),
-    }
+    return { suggestions }
   })

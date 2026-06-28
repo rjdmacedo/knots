@@ -1,17 +1,25 @@
 'use client'
 
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command'
 import { Input } from '@/components/ui/input'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from '@/components/ui/input-group'
 import { cn } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { keepPreviousData } from '@tanstack/react-query'
-import { useEffect, useRef, useState } from 'react'
+import { Loader2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type ComponentProps,
+  type KeyboardEvent,
+} from 'react'
 
 export interface ExpenseTitleSuggestion {
   title: string
@@ -28,6 +36,22 @@ interface ExpenseTitleInputProps {
   className?: string
 }
 
+const DIRECT_GROUP_ID = 'direct'
+const SUGGESTIONS_LIMIT = 10
+const QUERY_DEBOUNCE_MS = 250
+
+type InputPassthroughProps = Omit<
+  ComponentProps<'input'>,
+  | 'value'
+  | 'onChange'
+  | 'onBlur'
+  | 'onFocus'
+  | 'onKeyDown'
+  | 'placeholder'
+  | 'className'
+  | 'ref'
+>
+
 export function ExpenseTitleInput({
   groupId,
   value,
@@ -36,121 +60,272 @@ export function ExpenseTitleInput({
   onSuggestionSelected,
   placeholder,
   className,
-}: ExpenseTitleInputProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const containerRef = useRef<HTMLDivElement>(null)
+  ...inputProps
+}: ExpenseTitleInputProps & InputPassthroughProps) {
+  if (groupId === DIRECT_GROUP_ID) {
+    return (
+      <Input
+        {...inputProps}
+        className={cn('text-base', className)}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        onBlur={onBlur}
+        placeholder={placeholder}
+        autoComplete="off"
+      />
+    )
+  }
+
+  return (
+    <ExpenseTitleSuggestionsInput
+      key={groupId}
+      groupId={groupId}
+      initialValue={value}
+      onChange={onChange}
+      onBlur={onBlur}
+      onSuggestionSelected={onSuggestionSelected}
+      placeholder={placeholder}
+      className={className}
+      inputProps={inputProps}
+    />
+  )
+}
+
+function ExpenseTitleSuggestionsInput({
+  groupId,
+  initialValue,
+  onChange,
+  onBlur,
+  onSuggestionSelected,
+  placeholder,
+  className,
+  inputProps,
+}: Omit<ExpenseTitleInputProps, 'value'> & {
+  initialValue: string
+  inputProps: InputPassthroughProps
+}) {
+  const t = useTranslations('ExpenseTitleInput')
+  const fallbackId = useId()
+  const listboxId = `${inputProps.id ?? fallbackId}-listbox`
+  const [focused, setFocused] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [highlightedIndex, setHighlightedIndex] = useState(-1)
+  const [inputText, setInputText] = useState(initialValue)
   const isSelectingRef = useRef(false)
 
-  const debouncedQuery = useDebouncedValue(value, 300)
+  const query = normalizeTitle(inputText)
+  const debouncedQuery = useDebouncedValue(query, QUERY_DEBOUNCE_MS)
+  const isQueryPending = debouncedQuery !== query
 
-  const { data } = trpc.groups.expenses.suggestTitles.useQuery(
+  const { data, isFetching } = trpc.groups.expenses.suggestTitles.useQuery(
     { groupId, query: debouncedQuery },
     {
-      enabled: isOpen,
+      enabled: focused,
       placeholderData: keepPreviousData,
     },
   )
 
-  const normalizedValue = value.toLowerCase().trim()
-  const suggestions = data?.suggestions ?? []
-  // Filter out exact matches and narrow by what the user has typed so far,
-  // even while the debounced query is still catching up.
-  const filteredSuggestions = suggestions.filter((s) => {
-    if (s.title === normalizedValue) return false
-    if (normalizedValue && !s.title.startsWith(normalizedValue)) return false
-    return true
-  })
+  const isLoadingSuggestions = focused && (isQueryPending || isFetching)
 
-  const showSuggestions = isOpen && filteredSuggestions.length > 0
+  const nextSuggestions = useMemo(() => {
+    return (data?.suggestions ?? []).slice(0, SUGGESTIONS_LIMIT)
+  }, [data?.suggestions])
+
+  const stableSuggestionsRef = useRef<ExpenseTitleSuggestion[]>([])
+
+  if (!isLoadingSuggestions) {
+    stableSuggestionsRef.current = nextSuggestions
+  }
+
+  const suggestions = isLoadingSuggestions
+    ? stableSuggestionsRef.current
+    : nextSuggestions
+
+  const showSuggestions = open && focused && suggestions.length > 0
+
+  useEffect(() => {
+    if (!showSuggestions) {
+      setHighlightedIndex(-1)
+      return
+    }
+
+    setHighlightedIndex((current) => {
+      if (current >= 0 && current < suggestions.length) return current
+      return 0
+    })
+  }, [showSuggestions, suggestions])
+
+  const handleInputChange = (next: string) => {
+    setInputText(next)
+    onChange(next)
+    setOpen(true)
+  }
 
   const selectSuggestion = (suggestion: ExpenseTitleSuggestion) => {
     isSelectingRef.current = true
-    // Capitalize the first letter for display
     const displayTitle =
       suggestion.title.charAt(0).toUpperCase() + suggestion.title.slice(1)
+    setInputText(displayTitle)
     onChange(displayTitle)
     onSuggestionSelected(suggestion)
-    setIsOpen(false)
-    setTimeout(() => {
+    setOpen(false)
+    setHighlightedIndex(-1)
+    requestAnimationFrame(() => {
       isSelectingRef.current = false
-    }, 0)
+    })
   }
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    // Don't trigger blur if clicking a suggestion inside the container
-    if (
-      containerRef.current?.contains(e.relatedTarget as Node) ||
-      isSelectingRef.current
-    ) {
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (!showSuggestions) {
+      if (event.key === 'ArrowDown' && suggestions.length > 0) {
+        event.preventDefault()
+        setOpen(true)
+        setHighlightedIndex(0)
+      }
       return
     }
-    setIsOpen(false)
-    onBlur()
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault()
+        setHighlightedIndex((current) =>
+          current < suggestions.length - 1 ? current + 1 : 0,
+        )
+        break
+      case 'ArrowUp':
+        event.preventDefault()
+        setHighlightedIndex((current) =>
+          current > 0 ? current - 1 : suggestions.length - 1,
+        )
+        break
+      case 'Enter':
+        if (highlightedIndex >= 0 && suggestions[highlightedIndex]) {
+          event.preventDefault()
+          selectSuggestion(suggestions[highlightedIndex])
+        }
+        break
+      case 'Escape':
+        event.preventDefault()
+        setOpen(false)
+        setHighlightedIndex(-1)
+        break
+    }
   }
 
   return (
-    <div ref={containerRef} className="relative">
-      <Input
-        type="text"
-        value={value}
-        onChange={(e) => {
-          onChange(e.target.value)
-          setIsOpen(true)
-        }}
-        onFocus={() => {
-          setIsOpen(true)
-        }}
-        onBlur={handleBlur}
-        placeholder={placeholder}
-        className={cn(className)}
-        role="combobox"
-        aria-expanded={showSuggestions}
-        aria-controls="expense-title-suggestions"
-        autoComplete="off"
-      />
-      {showSuggestions && (
-        <div className="absolute z-50 mt-1 w-full">
-          <Command className="rounded-md border border-input shadow-md">
-            <CommandList id="expense-title-suggestions">
-              <CommandEmpty>No suggestions found.</CommandEmpty>
-              <CommandGroup>
-                {filteredSuggestions.map((suggestion) => (
-                  <CommandItem
-                    key={suggestion.title}
-                    value={suggestion.title}
-                    onSelect={() => selectSuggestion(suggestion)}
-                    className="capitalize"
-                  >
-                    <HighlightMatch text={suggestion.title} query={value} />
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </div>
-      )}
+    <div className="relative w-full">
+      <InputGroup className="w-full">
+        <InputGroupInput
+          {...inputProps}
+          className={cn('text-base', className)}
+          value={inputText}
+          onChange={(event) => {
+            handleInputChange(event.target.value)
+          }}
+          onKeyDown={handleKeyDown}
+          onFocus={() => {
+            setFocused(true)
+            setOpen(true)
+          }}
+          onBlur={() => {
+            setFocused(false)
+            setOpen(false)
+            if (!isSelectingRef.current) {
+              onBlur()
+            }
+          }}
+          placeholder={placeholder}
+          autoComplete="off"
+          aria-busy={isLoadingSuggestions}
+          aria-expanded={showSuggestions}
+          aria-autocomplete="list"
+          aria-controls={showSuggestions ? listboxId : undefined}
+          aria-activedescendant={
+            showSuggestions && highlightedIndex >= 0
+              ? `${listboxId}-option-${highlightedIndex}`
+              : undefined
+          }
+          role="combobox"
+        />
+        {isLoadingSuggestions ? (
+          <InputGroupAddon align="inline-end" className="pointer-events-none">
+            <Loader2 className="size-4 shrink-0 animate-spin text-muted-foreground opacity-50" />
+          </InputGroupAddon>
+        ) : null}
+      </InputGroup>
+      {showSuggestions ? (
+        <ul
+          id={listboxId}
+          role="listbox"
+          className="absolute z-100 mt-1 max-h-72 w-full overflow-y-auto overscroll-contain rounded-md bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10"
+        >
+          {suggestions.map((suggestion, index) => (
+            <li key={suggestion.title} role="presentation">
+              <button
+                id={`${listboxId}-option-${index}`}
+                type="button"
+                role="option"
+                aria-selected={index === highlightedIndex}
+                className={cn(
+                  'flex w-full min-w-0 cursor-default rounded-sm px-2 py-1.5 text-start text-sm outline-hidden select-none',
+                  index === highlightedIndex
+                    ? 'bg-accent text-accent-foreground'
+                    : 'hover:bg-accent hover:text-accent-foreground',
+                )}
+                onMouseDown={(event) => {
+                  event.preventDefault()
+                }}
+                onMouseEnter={() => {
+                  setHighlightedIndex(index)
+                }}
+                onClick={() => {
+                  selectSuggestion(suggestion)
+                }}
+              >
+                <span className="truncate">
+                  <HighlightMatch text={suggestion.title} query={query} />
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {!showSuggestions && open && focused && suggestions.length === 0 ? (
+        <p className="sr-only">{t('noSuggestions')}</p>
+      ) : null}
     </div>
   )
 }
 
-/** Highlights the matching prefix in the suggestion text */
+function normalizeTitle(title: string): string {
+  return title.toLowerCase().trim().replace(/\s+/g, ' ')
+}
+
+function formatTitleForDisplay(title: string): string {
+  if (!title) return title
+  return title.charAt(0).toUpperCase() + title.slice(1)
+}
+
 function HighlightMatch({ text, query }: { text: string; query: string }) {
-  const normalizedQuery = query.toLowerCase().trim()
-  if (!normalizedQuery || !text.toLowerCase().startsWith(normalizedQuery)) {
-    return <span>{text}</span>
+  const displayText = formatTitleForDisplay(text)
+  const normalizedText = normalizeTitle(text)
+  const index = query ? normalizedText.indexOf(query) : -1
+
+  if (index === -1) {
+    return <span>{displayText}</span>
   }
 
   return (
     <span>
+      {displayText.slice(0, index)}
       <span className="font-medium">
-        {text.slice(0, normalizedQuery.length)}
+        {displayText.slice(index, index + query.length)}
       </span>
-      {text.slice(normalizedQuery.length)}
+      {displayText.slice(index + query.length)}
     </span>
   )
 }
 
-/** Simple debounce hook */
 function useDebouncedValue(value: string, delay: number) {
   const [debounced, setDebounced] = useState(value)
 
