@@ -29,7 +29,11 @@ import { getCurrency } from '@/lib/currency'
 import { parseExpenseCreateContext } from '@/lib/expense-create-context'
 import { RuntimeFeatureFlags } from '@/lib/featureFlags'
 import { FriendListItem } from '@/lib/friends'
-import { useMediaQuery, useScrollAtTop } from '@/lib/hooks'
+import {
+  useLockViewportWhileOpen,
+  useMediaQuery,
+  useScrollAtTop,
+} from '@/lib/hooks'
 import { invalidateActivityQueries } from '@/lib/invalidate-activity-queries'
 import { isConsolidatedPayment } from '@/lib/payments'
 import { ExpenseFormValues } from '@/lib/schemas'
@@ -112,6 +116,7 @@ export function FloatingCreateExpense({
   const [open, setOpen] = useState(false)
   const isAtTop = useScrollAtTop(!open)
   const [pickerOpen, setPickerOpen] = useState(false)
+  useLockViewportWhileOpen(open || pickerOpen)
 
   // Edit States
   const [editingExpense, setEditingExpense] = useState<any>(null)
@@ -660,7 +665,7 @@ export function FloatingCreateExpense({
   ) : null
 
   const renderContent = () => (
-    <div className="flex min-h-0 min-w-0 flex-1 flex-col [&_[data-slot=button]:focus-visible]:ring-inset">
+    <div className="flex min-h-0 min-w-0 flex-1 touch-pan-y flex-col overflow-x-hidden overscroll-x-none [&_[data-slot=button]:focus-visible]:ring-inset">
       {virtualGroup ? (
         isPaymentMode ? (
           <PaymentForm
@@ -692,7 +697,7 @@ export function FloatingCreateExpense({
           />
         )
       ) : !editingExpenseId ? (
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pt-3">
+        <div className="min-h-0 flex-1 touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none overscroll-contain pt-3">
           {participantScrollHeader}
           <Empty className="py-8">
             <EmptyHeader>
@@ -742,9 +747,9 @@ export function FloatingCreateExpense({
     : t(isPaymentMode ? 'createPaymentDialogTitle' : 'dialogTitle')
 
   const renderShell = (header: React.ReactNode) => (
-    <div className="flex max-h-[inherit] min-h-0 min-w-0 flex-1 flex-col">
+    <div className="flex max-h-[inherit] min-h-0 min-w-0 flex-1 touch-pan-y flex-col overflow-x-hidden overscroll-x-none">
       {header}
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col p-1.5">
+      <div className="flex min-h-0 min-w-0 flex-1 touch-pan-y flex-col overflow-x-hidden overscroll-x-none p-1.5">
         {renderContent()}
       </div>
     </div>
@@ -767,7 +772,7 @@ export function FloatingCreateExpense({
           if (!val) resetForm()
         }}
       >
-        <DialogContent className="flex w-full min-w-0 max-h-[90dvh] flex-col gap-0 overflow-x-hidden p-6 sm:max-w-2xl">
+        <DialogContent className="flex max-h-[90dvh] w-full min-w-0 max-w-[calc(100%-2rem)] touch-pan-y flex-col gap-0 overflow-x-hidden overscroll-x-none p-6 sm:max-w-2xl">
           {renderShell(
             <DialogHeader className="shrink-0 border-b pb-3">
               <DialogTitle className="text-lg font-bold text-foreground">

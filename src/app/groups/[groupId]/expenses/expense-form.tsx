@@ -1030,7 +1030,7 @@ export function ExpenseForm({
           id="expense-form"
           onSubmit={form.handleSubmit(submit)}
           className={cn(
-            'min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain scrollbar-none',
+            'min-h-0 min-w-0 flex-1 touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none overscroll-contain scrollbar-none',
             '[&_[data-slot=button]:focus-visible]:ring-inset [&_[data-slot=checkbox]:focus-visible]:ring-inset [&_[data-slot=input]:focus-visible]:ring-inset [&_[data-slot=input-group]:has([data-slot=input-group-control]:focus-visible)]:ring-inset',
           )}
         >

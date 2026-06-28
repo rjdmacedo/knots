@@ -38,6 +38,48 @@ export function useScrollAtTop(enabled = true) {
   return isAtTop
 }
 
+/** Locks horizontal pan and pinch-zoom while a full-screen mobile form is open. */
+export function useLockViewportWhileOpen(open: boolean) {
+  useEffect(() => {
+    if (!open) return
+
+    const html = document.documentElement
+    const body = document.body
+    const viewportMeta = document.querySelector('meta[name="viewport"]')
+
+    const previousViewport = viewportMeta?.getAttribute('content') ?? ''
+    const previousHtmlOverflowX = html.style.overflowX
+    const previousBodyOverflowX = body.style.overflowX
+    const previousHtmlTouchAction = html.style.touchAction
+    const previousBodyTouchAction = body.style.touchAction
+    const previousHtmlOverscrollX = html.style.overscrollBehaviorX
+    const previousBodyOverscrollX = body.style.overscrollBehaviorX
+
+    viewportMeta?.setAttribute(
+      'content',
+      'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
+    )
+    html.style.overflowX = 'hidden'
+    body.style.overflowX = 'hidden'
+    html.style.touchAction = 'pan-y'
+    body.style.touchAction = 'pan-y'
+    html.style.overscrollBehaviorX = 'none'
+    body.style.overscrollBehaviorX = 'none'
+
+    return () => {
+      if (previousViewport) {
+        viewportMeta?.setAttribute('content', previousViewport)
+      }
+      html.style.overflowX = previousHtmlOverflowX
+      body.style.overflowX = previousBodyOverflowX
+      html.style.touchAction = previousHtmlTouchAction
+      body.style.touchAction = previousBodyTouchAction
+      html.style.overscrollBehaviorX = previousHtmlOverscrollX
+      body.style.overscrollBehaviorX = previousBodyOverscrollX
+    }
+  }, [open])
+}
+
 export function useBaseUrl() {
   const [baseUrl, setBaseUrl] = useState<string | null>(null)
   useEffect(() => {
