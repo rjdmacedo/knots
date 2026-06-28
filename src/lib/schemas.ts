@@ -2,6 +2,36 @@ import { isPaymentCategory } from '@/lib/categories'
 import { RecurrenceRule, SplitMode } from '@prisma/client'
 import * as z from 'zod'
 
+/** Display percentages (33.33) or basis points (3333) → basis points. */
+export function toPercentageBasisPoints(shares: number | string): number {
+  const value = Number(shares)
+  if (Number.isNaN(value)) return 0
+  if (value > 100) return Math.round(value)
+  return Math.round(value * 100)
+}
+
+/** Major-unit amounts (110.67) or minor units (11067) → minor units. */
+export function toAmountMinorUnitsForValidation(
+  value: number | string,
+  decimalDigits = 2,
+): number {
+  const amount = Number(value)
+  if (Number.isNaN(amount)) return 0
+
+  const factor = 10 ** decimalDigits
+  const raw = String(value)
+  if (raw.includes('.') || raw.includes(',')) {
+    return Math.round(amount * factor)
+  }
+
+  // Uneven splits are submitted as integer minor units (e.g. 11067).
+  if (Number.isInteger(amount) && Math.abs(amount) >= factor * 10) {
+    return Math.round(amount)
+  }
+
+  return Math.round(amount * factor)
+}
+
 export const groupFormSchema = z.object({
   name: z.string().min(2, 'min2').max(50, 'max50'),
   information: z.string().optional(),
@@ -155,15 +185,12 @@ export const expenseFormSchema = z
       case 'BY_SHARES':
         break // noop
       case 'BY_AMOUNT': {
-        const sum = expense.paidFor.reduce(
-          (sum, { shares }) => sum + Number(shares),
+        const sumMinor = expense.paidFor.reduce(
+          (sum, { shares }) => sum + toAmountMinorUnitsForValidation(shares),
           0,
         )
-        if (sum !== expense.amount) {
-          const detail =
-            sum < expense.amount
-              ? `${((expense.amount - sum) / 100).toFixed(2)} missing`
-              : `${((sum - expense.amount) / 100).toFixed(2)} surplus`
+        const amountMinor = toAmountMinorUnitsForValidation(expense.amount)
+        if (sumMinor !== amountMinor) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'amountSum',
@@ -174,7 +201,7 @@ export const expenseFormSchema = z
       }
       case 'BY_PERCENTAGE': {
         const sum = expense.paidFor.reduce(
-          (sum, { shares }) => sum + Math.round(Number(shares) * 100),
+          (sum, { shares }) => sum + toPercentageBasisPoints(shares),
           0,
         )
         if (sum !== 10000) {
@@ -201,7 +228,7 @@ export const expenseFormSchema = z
         if (expense.splitMode === 'BY_PERCENTAGE') {
           return {
             ...paidFor,
-            shares: Math.round(Number(shares) * 100),
+            shares: toPercentageBasisPoints(shares),
           }
         }
         if (typeof shares === 'string' && expense.splitMode !== 'BY_AMOUNT') {
