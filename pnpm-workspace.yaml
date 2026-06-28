@@ -20,5 +20,8 @@ ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
 
+minimumReleaseAgeExclude:
+  - eslint@10.6.0
+
 onlyBuiltDependencies:
   - bcrypt

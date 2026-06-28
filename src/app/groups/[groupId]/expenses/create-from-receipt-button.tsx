@@ -333,7 +333,9 @@ function CreateFromReceiptDrawer({
   return (
     <Drawer>
       <Tooltip>
-        <TooltipTrigger render={<DrawerTrigger render={trigger} />} />
+        <TooltipTrigger
+          render={<DrawerTrigger asChild>{trigger}</DrawerTrigger>}
+        />
         <TooltipContent>{tooltipContent}</TooltipContent>
       </Tooltip>
       <DrawerContent>

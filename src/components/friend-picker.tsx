@@ -148,7 +148,7 @@ export function FriendPicker({
   if (!isClient || !isDesktop) {
     return (
       <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerTrigger render={trigger} />
+        <DrawerTrigger asChild>{trigger}</DrawerTrigger>
         <DrawerContent className="p-0">
           <DrawerTitle className="sr-only">{t('pickerTitle')}</DrawerTitle>
           {command}

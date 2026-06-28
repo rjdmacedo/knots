@@ -96,13 +96,11 @@ export function ExpenseNotes({ notes, title }: Props) {
             {notes}
           </div>
           <DrawerFooter>
-            <DrawerClose
-              render={
-                <Button variant="outline" onClick={(e) => e.stopPropagation()}>
-                  {t('close')}
-                </Button>
-              }
-            />
+            <DrawerClose asChild>
+              <Button variant="outline" onClick={(e) => e.stopPropagation()}>
+                {t('close')}
+              </Button>
+            </DrawerClose>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
