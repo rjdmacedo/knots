@@ -80,6 +80,7 @@ export function ExpenseDetailTrends({
         <Button
           variant="secondary"
           className="w-full"
+          nativeButton={false}
           render={<Link href={statsHref} />}
         >
           <BarChart3 className="size-4" data-icon="inline-start" />
