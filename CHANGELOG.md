@@ -1,3 +1,10 @@
+## [1.44.1](https://github.com/rjdmacedo/knots/compare/v1.44.0...v1.44.1) (2026-06-28)
+
+
+### Bug Fixes
+
+* set nativeButton false on expense trends link button ([cc48995](https://github.com/rjdmacedo/knots/commit/cc489950777b3a736a2e2bf4f115e06edf9d8684))
+
 # [1.44.0](https://github.com/rjdmacedo/knots/compare/v1.43.2...v1.44.0) (2026-06-28)
 
 
