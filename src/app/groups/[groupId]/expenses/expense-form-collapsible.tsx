@@ -12,32 +12,41 @@ import { ReactNode, useState } from 'react'
 
 type ExpenseFormCollapsibleProps = {
   title: ReactNode
-  description?: ReactNode
-  defaultOpen?: boolean
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
   children: ReactNode
   className?: string
+  description?: ReactNode
+  defaultOpen?: boolean
 }
 
+/**
+ * A collapsible component for wrapping an expense form with a title and description.
+ * Allows toggling visibility of the content and accepts child components.
+ *
+ * @param {Object} props - The property object.
+ * @param props.title - The title of the collapsible section, displayed in the trigger button.
+ * @param props.children - The content to be displayed inside the collapsible when expanded.
+ * @param props.className - Additional CSS class names for styling the collapsible container.
+ * @param props.description - An optional description for the collapsible content.
+ * @param props.defaultOpen=false - Determines whether the collapsible is open by default.
+ * @return Returns a collapsible UI component containing the provided title, description, and children.
+ */
 export function ExpenseFormCollapsible({
   title,
-  description,
-  defaultOpen = false,
-  open: openProp,
-  onOpenChange,
   children,
   className,
+  description,
+  defaultOpen = false,
 }: ExpenseFormCollapsibleProps) {
-  const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen)
-  const open = openProp ?? uncontrolledOpen
-  const setOpen = onOpenChange ?? setUncontrolledOpen
+  const [open, setOpen] = useState(defaultOpen)
 
   return (
     <Collapsible
       open={open}
       onOpenChange={setOpen}
-      className={cn('rounded-md data-open:bg-muted', className)}
+      className={cn(
+        'rounded-md border border-border data-open:bg-background',
+        className,
+      )}
     >
       <CollapsibleTrigger
         render={<Button type="button" variant="ghost" className="w-full" />}

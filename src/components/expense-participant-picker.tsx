@@ -1,22 +1,6 @@
 'use client'
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command'
 import {
   Dialog,
   DialogContent,
@@ -24,24 +8,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import {
-  Drawer,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from '@/components/ui/drawer'
+import { Tag, TagInput } from '@/components/ui/tag-input'
 import { FriendListItem } from '@/lib/friends'
 import { cn } from '@/lib/utils'
-import { Command as CommandPrimitive } from 'cmdk'
-import { ChevronsUpDown } from 'lucide-react'
+import { ChevronsUpDown, User, Users } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
+
+type ParticipantValue =
+  | { kind: 'group'; group: { id: string; name: string } }
+  | { kind: 'friend'; friend: FriendListItem }
 
 type ExpenseParticipantPickerProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  isDesktop: boolean
   userGroups: { id: string; name: string }[]
   friends: FriendListItem[]
   selectedGroup: { id: string; name: string } | null
@@ -52,9 +32,11 @@ type ExpenseParticipantPickerProps = {
   onRemoveFriend: (friendId: string) => void
 }
 
-function ParticipantPickerCommand({
+function ParticipantTagInput({
   userGroups,
+  availableGroups,
   availableFriends,
+  groupsLocked,
   selectedGroup,
   selectedFriends,
   onSelectGroup,
@@ -63,7 +45,9 @@ function ParticipantPickerCommand({
   onRemoveFriend,
 }: {
   userGroups: { id: string; name: string }[]
+  availableGroups: { id: string; name: string }[]
   availableFriends: FriendListItem[]
+  groupsLocked: boolean
   selectedGroup: { id: string; name: string } | null
   selectedFriends: FriendListItem[]
   onSelectGroup: (group: { id: string; name: string }) => void
@@ -72,122 +56,112 @@ function ParticipantPickerCommand({
   onRemoveFriend: (friendId: string) => void
 }) {
   const t = useTranslations('FloatingCreateExpense')
-  const [singleGroupAlertOpen, setSingleGroupAlertOpen] = useState(false)
 
-  const handleSelectGroup = (group: { id: string; name: string }) => {
-    if (selectedGroup && selectedGroup.id !== group.id) {
-      setSingleGroupAlertOpen(true)
-      return
+  const tags = useMemo<Tag<ParticipantValue>[]>(() => {
+    const result: Tag<ParticipantValue>[] = []
+    if (selectedGroup) {
+      result.push({
+        label: selectedGroup.name,
+        value: { kind: 'group', group: selectedGroup },
+      })
     }
-    if (selectedGroup?.id === group.id) {
-      return
+    for (const friend of selectedFriends) {
+      result.push({
+        label: friend.name,
+        value: { kind: 'friend', friend },
+      })
     }
-    onSelectGroup(group)
-  }
+    return result
+  }, [selectedGroup, selectedFriends])
+
+  const suggestionGroups = useMemo(() => {
+    const groups = []
+    if (userGroups.length > 0) {
+      groups.push({
+        heading: t('groupsHeader'),
+        tags: availableGroups.map((group) => ({
+          label: group.name,
+          value: { kind: 'group' as const, group },
+        })),
+        isDisabled: () => groupsLocked,
+      })
+    }
+    if (availableFriends.length > 0) {
+      groups.push({
+        heading: t('friendsHeader'),
+        tags: availableFriends.map((friend) => ({
+          label: friend.name,
+          value: { kind: 'friend' as const, friend },
+        })),
+      })
+    }
+    return groups
+  }, [availableFriends, availableGroups, groupsLocked, t, userGroups.length])
 
   return (
-    <>
-      <Command
-        shouldFilter
-        className="w-full min-w-0 overflow-hidden rounded-none border-x-0 border-y border-input bg-muted/20 p-0 sm:rounded-md sm:border-x"
-      >
-        <div className="flex flex-wrap items-center gap-1.5 p-2 focus-within:ring-1 focus-within:ring-ring focus-within:border-ring">
-          {selectedGroup && (
-            <Button
-              type="button"
-              size="xs"
-              variant="outline"
-              onClick={onRemoveGroup}
-              className="border-primary/30 bg-primary/5 text-primary hover:bg-primary/10 hover:text-primary"
-            >
-              {t('selectGroupText', { name: selectedGroup.name })}
-              <span className="text-primary/70">×</span>
-            </Button>
-          )}
-          {selectedFriends.map((f) => (
-            <Button
-              key={f.id}
-              type="button"
-              size="xs"
-              variant="secondary"
-              onClick={() => onRemoveFriend(f.id)}
-              className="border-border"
-            >
-              {f.name}
-              <span className="text-muted-foreground">×</span>
-            </Button>
-          ))}
-          <CommandPrimitive.Input
-            placeholder={
-              selectedFriends.length === 0 && !selectedGroup
-                ? t('searchPlaceholder')
-                : ''
-            }
-            className="min-w-[120px] flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-          />
-        </div>
-        <CommandList className="max-h-64 border-t border-border">
-          <CommandEmpty>{t('noFriendOrGroupFound')}</CommandEmpty>
-          {userGroups.length > 0 && (
-            <CommandGroup heading={t('groupsHeader')}>
-              {userGroups.map((g) => (
-                <CommandItem
-                  key={g.id}
-                  value={g.name}
-                  onSelect={() => handleSelectGroup({ id: g.id, name: g.name })}
-                  className="py-2.5"
-                >
-                  <span className="truncate">{g.name}</span>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          )}
-          {availableFriends.length > 0 && (
-            <CommandGroup heading={t('friendsHeader')}>
-              {availableFriends.map((f) => (
-                <CommandItem
-                  key={f.id}
-                  value={`${f.name} ${f.email}`}
-                  onSelect={() => onSelectFriend(f)}
-                  className="items-start py-2.5"
-                >
-                  <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                    <span className="truncate font-medium">{f.name}</span>
-                    <span className="truncate text-xs text-muted-foreground">
-                      {f.email}
-                    </span>
-                  </div>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          )}
-        </CommandList>
-      </Command>
-
-      <AlertDialog
-        open={singleGroupAlertOpen}
-        onOpenChange={setSingleGroupAlertOpen}
-      >
-        <AlertDialogContent nested>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t('singleGroupAlertTitle')}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t('singleGroupAlertDescription')}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction>{t('singleGroupAlertOk')}</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+    <TagInput
+      tags={tags}
+      setTags={() => {}}
+      suggestionGroups={suggestionGroups}
+      alwaysShowSuggestions
+      placeholder={t('searchPlaceholder')}
+      emptyMessage={t('noFriendOrGroupFound')}
+      getTagSearchValue={(tag) => {
+        if (tag.value.kind === 'friend') {
+          return `${tag.value.friend.name} ${tag.value.friend.email}`
+        }
+        return tag.value.group.name
+      }}
+      onSelectTag={(tag) => {
+        if (tag.value.kind === 'group') {
+          onSelectGroup(tag.value.group)
+        } else {
+          onSelectFriend(tag.value.friend)
+        }
+      }}
+      onRemoveTag={(tag) => {
+        if (tag.value.kind === 'group') {
+          onRemoveGroup()
+        } else {
+          onRemoveFriend(tag.value.friend.id)
+        }
+      }}
+      onClearTags={() => {
+        if (selectedGroup) {
+          onRemoveGroup()
+        }
+        for (const friend of selectedFriends) {
+          onRemoveFriend(friend.id)
+        }
+      }}
+      getPillIcon={(tag) =>
+        tag.value.kind === 'group' ? (
+          <Users className="size-4" />
+        ) : (
+          <User className="size-4" />
+        )
+      }
+      AllTagsLabel={({ value }) => {
+        if (value.kind === 'friend') {
+          return (
+            <div className="flex w-full min-w-0 items-center justify-between gap-4">
+              <span className="truncate font-medium">{value.friend.name}</span>
+              <span className="truncate text-sm text-muted-foreground">
+                {value.friend.email}
+              </span>
+            </div>
+          )
+        }
+        return <span className="truncate font-medium">{value.group.name}</span>
+      }}
+      className="px-4 py-3"
+    />
   )
 }
 
 export function ExpenseParticipantPicker({
   open,
   onOpenChange,
-  isDesktop,
   userGroups,
   friends,
   selectedGroup,
@@ -204,10 +178,17 @@ export function ExpenseParticipantPicker({
     return friends.filter((f) => !selectedIds.has(f.id))
   }, [friends, selectedFriends])
 
-  const command = (
-    <ParticipantPickerCommand
+  const availableGroups = useMemo(() => {
+    if (!selectedGroup) return userGroups
+    return userGroups.filter((g) => g.id !== selectedGroup.id)
+  }, [userGroups, selectedGroup])
+
+  const tagInput = (
+    <ParticipantTagInput
       userGroups={userGroups}
+      availableGroups={availableGroups}
       availableFriends={availableFriends}
+      groupsLocked={!!selectedGroup}
       selectedGroup={selectedGroup}
       selectedFriends={selectedFriends}
       onSelectGroup={onSelectGroup}
@@ -217,41 +198,20 @@ export function ExpenseParticipantPicker({
     />
   )
 
-  if (isDesktop) {
-    return (
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent
-          nested
-          className="flex max-h-[85dvh] flex-col overflow-hidden sm:max-w-md"
-        >
-          <DialogHeader>
-            <DialogTitle>{t('pickerTitle')}</DialogTitle>
-          </DialogHeader>
-          {command}
-          <DialogFooter>
-            <Button type="button" onClick={() => onOpenChange(false)}>
-              {t('pickerDone')}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    )
-  }
-
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent nested className="max-h-[85vh] p-0">
-        <DrawerHeader className="mb-0 border-b px-6 pb-3 pt-4 text-left">
-          <DrawerTitle>{t('pickerTitle')}</DrawerTitle>
-        </DrawerHeader>
-        {command}
-        <DrawerFooter className="px-6 pb-6">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="flex max-h-[85dvh] flex-col gap-0 overflow-x-hidden p-0 sm:max-w-md">
+        <DialogHeader className="border-b px-6 py-4">
+          <DialogTitle>{t('pickerTitle')}</DialogTitle>
+        </DialogHeader>
+        {tagInput}
+        <DialogFooter className="border-t px-6 py-4">
           <Button type="button" onClick={() => onOpenChange(false)}>
             {t('pickerDone')}
           </Button>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -270,36 +230,42 @@ export function ExpenseParticipantTrigger({
 
   const hasSelection = !!selectedGroup || selectedFriends.length > 0
 
-  const summary = useMemo(() => {
-    if (!hasSelection) return t('selectParticipants')
-    const parts: string[] = []
-    if (selectedGroup) {
-      parts.push(t('selectGroupText', { name: selectedGroup.name }))
-    }
-    if (selectedFriends.length > 0) {
-      parts.push(selectedFriends.map((f) => f.name).join(', '))
-    }
-    return parts.join(' · ')
-  }, [hasSelection, selectedGroup, selectedFriends, t])
-
   return (
     <Button
       type="button"
       variant="outline"
       onClick={onClick}
       className={cn(
-        'h-auto min-h-9 w-full justify-between py-2 font-normal',
+        'h-9 w-full justify-between border-input font-normal shadow-xs',
         className,
       )}
     >
-      <span
-        className={cn(
-          'truncate text-left',
-          !hasSelection && 'text-muted-foreground',
-        )}
-      >
-        {summary}
-      </span>
+      {hasSelection ? (
+        <span className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-left">
+          {selectedGroup ? (
+            <span className="flex min-w-0 max-w-full items-center gap-1.5">
+              <Users className="size-4 shrink-0 opacity-50" />
+              <span className="truncate">{selectedGroup.name}</span>
+            </span>
+          ) : null}
+          {selectedFriends.map((friend, index) => (
+            <span
+              key={friend.id}
+              className="flex min-w-0 max-w-full items-center gap-1.5"
+            >
+              {selectedGroup || index > 0 ? (
+                <span className="text-muted-foreground">·</span>
+              ) : null}
+              <User className="size-4 shrink-0 opacity-50" />
+              <span className="truncate">{friend.name}</span>
+            </span>
+          ))}
+        </span>
+      ) : (
+        <span className="truncate text-left text-muted-foreground">
+          {t('selectParticipants')}
+        </span>
+      )}
       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
     </Button>
   )

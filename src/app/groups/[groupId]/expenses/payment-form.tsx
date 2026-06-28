@@ -49,7 +49,7 @@ import { RecurrenceRule } from '@prisma/client'
 import { Save } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { createPortal } from 'react-dom'
+import type { ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
 
 type Group = NonNullable<AppRouterOutput['groups']['get']['group']>
@@ -62,8 +62,7 @@ type Props = {
   onSubmit: (value: ExpenseFormValues) => Promise<void>
   onDelete?: () => Promise<void>
   onCancel?: () => void
-  embedded?: boolean
-  footerPortal?: HTMLElement | null
+  scrollHeader?: ReactNode
 }
 
 function isValidDateString(value: string): boolean {
@@ -84,13 +83,6 @@ function getDefaultPaidBy(
     group.participants.some(({ id }) => id === currentUserId)
   ) {
     return currentUserId
-  }
-
-  if (typeof window !== 'undefined' && group.id !== 'direct') {
-    const activeUser = localStorage.getItem(`${group.id}-activeUser`)
-    if (activeUser && activeUser !== 'None') {
-      return activeUser
-    }
   }
 
   return undefined
@@ -124,8 +116,7 @@ export function PaymentForm({
   onSubmit,
   onDelete,
   onCancel,
-  embedded = false,
-  footerPortal,
+  scrollHeader,
 }: Props) {
   const t = useTranslations('PaymentForm')
   const tExpense = useTranslations('ExpenseForm')
@@ -203,16 +194,7 @@ export function PaymentForm({
   }
 
   const formFooter = (
-    <DialogFooter
-      className={cn(
-        'border-t bg-popover shrink-0',
-        embedded
-          ? footerPortal
-            ? 'flex flex-col-reverse gap-2 border-t-0 bg-transparent pt-0 sm:flex-row sm:justify-end'
-            : 'px-0 pt-4 pb-0'
-          : 'p-6',
-      )}
-    >
+    <DialogFooter className="flex shrink-0 flex-col-reverse gap-2 border-t bg-popover px-0 pt-4 pb-0 sm:flex-row sm:justify-end">
       <SubmitButton
         form="payment-form"
         loadingContent={tExpense(isCreate ? 'creating' : 'saving')}
@@ -238,164 +220,168 @@ export function PaymentForm({
 
   return (
     <Form {...form}>
-      <form
-        id="payment-form"
-        onSubmit={form.handleSubmit(submit)}
-        className="flex min-w-0 flex-col flex-1 min-h-0 overflow-hidden"
-      >
-        <div
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col @container">
+        <form
+          id="payment-form"
+          onSubmit={form.handleSubmit(submit)}
           className={cn(
-            'min-w-0 flex-1 space-y-4',
-            embedded ? 'py-2' : 'px-6 py-4',
+            'min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain scrollbar-none',
+            '[&_[data-slot=button]:focus-visible]:ring-inset [&_[data-slot=checkbox]:focus-visible]:ring-inset [&_[data-slot=input]:focus-visible]:ring-inset [&_[data-slot=input-group]:has([data-slot=input-group-control]:focus-visible)]:ring-inset',
           )}
         >
-          <FormField
-            control={form.control}
-            name="expenseDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t('dateLabel')}</FormLabel>
-                <FormControl>
-                  <Input
-                    className="date-base"
-                    type="date"
-                    value={formatDate(field.value)}
-                    onChange={(event) => {
-                      const value = event.target.value
-                      if (!value) {
-                        field.onChange(null)
-                      } else if (isValidDateString(value)) {
-                        field.onChange(new Date(value))
-                      }
-                    }}
-                  />
-                </FormControl>
-                <FormDescription>{t('dateDescription')}</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="min-w-0 py-2">
+            {scrollHeader}
+            <div className={cn('space-y-4', scrollHeader && 'border-t pt-4')}>
+              <FormField
+                control={form.control}
+                name="expenseDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('dateLabel')}</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="date-base"
+                        type="date"
+                        value={formatDate(field.value)}
+                        onChange={(event) => {
+                          const value = event.target.value
+                          if (!value) {
+                            field.onChange(null)
+                          } else if (isValidDateString(value)) {
+                            field.onChange(new Date(value))
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormDescription>{t('dateDescription')}</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={form.control}
-            name="amount"
-            render={({ field: { onChange, onBlur, ref, name, value } }) => (
-              <FormItem>
-                <FormLabel>{t('amountLabel')}</FormLabel>
-                <FormControl>
-                  <InputGroup>
-                    <InputGroupAddon align="inline-start">
-                      <InputGroupText className="tabular-nums">
-                        {getCurrencyDisplaySymbol(groupCurrency)}
-                      </InputGroupText>
-                    </InputGroupAddon>
-                    <CurrencyAmountInput
-                      ref={ref}
-                      name={name}
-                      onBlur={onBlur}
-                      currency={groupCurrency}
-                      locale={locale}
-                      value={value}
-                      onValueChange={onChange}
-                    />
-                  </InputGroup>
-                </FormControl>
-                <FormDescription>{t('amountDescription')}</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              <FormField
+                control={form.control}
+                name="amount"
+                render={({ field: { onChange, onBlur, ref, name, value } }) => (
+                  <FormItem>
+                    <FormLabel>{t('amountLabel')}</FormLabel>
+                    <FormControl>
+                      <InputGroup>
+                        <InputGroupAddon align="inline-start">
+                          <InputGroupText className="tabular-nums">
+                            {getCurrencyDisplaySymbol(groupCurrency)}
+                          </InputGroupText>
+                        </InputGroupAddon>
+                        <CurrencyAmountInput
+                          ref={ref}
+                          name={name}
+                          onBlur={onBlur}
+                          currency={groupCurrency}
+                          locale={locale}
+                          value={value}
+                          onValueChange={onChange}
+                        />
+                      </InputGroup>
+                    </FormControl>
+                    <FormDescription>{t('amountDescription')}</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={form.control}
-            name="paidBy"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t('paidByLabel')}</FormLabel>
-                <Select
-                  items={group.participants.map(({ id, name }) => ({
-                    value: id,
-                    label: name,
-                  }))}
-                  onValueChange={field.onChange}
-                  value={field.value}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder={t('participantPlaceholder')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {group.participants.map(({ id, name }) => (
-                      <SelectItem key={id} value={id}>
-                        {name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormDescription>{t('paidByDescription')}</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              <FormField
+                control={form.control}
+                name="paidBy"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('paidByLabel')}</FormLabel>
+                    <Select
+                      items={group.participants.map(({ id, name }) => ({
+                        value: id,
+                        label: name,
+                      }))}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue
+                          placeholder={t('participantPlaceholder')}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {group.participants.map(({ id, name }) => (
+                          <SelectItem key={id} value={id}>
+                            {name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>{t('paidByDescription')}</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={form.control}
-            name="paidTo"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t('paidToLabel')}</FormLabel>
-                <Select
-                  items={group.participants.map(({ id, name }) => ({
-                    value: id,
-                    label: name,
-                  }))}
-                  onValueChange={field.onChange}
-                  value={field.value}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder={t('participantPlaceholder')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {group.participants.map(({ id, name }) => (
-                      <SelectItem key={id} value={id}>
-                        {name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormDescription>{t('paidToDescription')}</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              <FormField
+                control={form.control}
+                name="paidTo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('paidToLabel')}</FormLabel>
+                    <Select
+                      items={group.participants.map(({ id, name }) => ({
+                        value: id,
+                        label: name,
+                      }))}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue
+                          placeholder={t('participantPlaceholder')}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {group.participants.map(({ id, name }) => (
+                          <SelectItem key={id} value={id}>
+                            {name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>{t('paidToDescription')}</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={form.control}
-            name="notes"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{t('notesLabel')}</FormLabel>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    rows={2}
-                    className="text-base"
-                    placeholder={t('notesPlaceholder')}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+              <FormField
+                control={form.control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('notesLabel')}</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        rows={2}
+                        className="text-base"
+                        placeholder={t('notesPlaceholder')}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-          <p className="rounded-xl bg-muted/50 p-3 text-xs text-muted-foreground">
-            {t('disclaimer')}
-          </p>
-        </div>
-
-        {footerPortal
-          ? footerPortal && createPortal(formFooter, footerPortal)
-          : formFooter}
-      </form>
+              <p className="rounded-xl bg-muted/50 p-3 text-xs text-muted-foreground">
+                {t('disclaimer')}
+              </p>
+            </div>
+          </div>
+        </form>
+        {formFooter}
+      </div>
     </Form>
   )
 }

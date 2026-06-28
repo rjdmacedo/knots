@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import { AnimatePresence, motion } from 'motion/react'
-import type { ReactNode } from 'react'
+import { type ReactNode } from 'react'
 
 const collapseTransition = {
   duration: 0.28,

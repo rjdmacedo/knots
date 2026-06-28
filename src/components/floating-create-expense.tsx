@@ -6,11 +6,6 @@ import {
 } from '@/app/groups/[groupId]/expenses/expense-form'
 import { PaymentForm } from '@/app/groups/[groupId]/expenses/payment-form'
 import {
-  AnimatedCollapse,
-  AnimatedLayout,
-  layoutTransition,
-} from '@/components/animated-collapse'
-import {
   ExpenseParticipantPicker,
   ExpenseParticipantTrigger,
 } from '@/components/expense-participant-picker'
@@ -22,11 +17,12 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-} from '@/components/ui/drawer'
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+} from '@/components/ui/empty'
 import { Label } from '@/components/ui/label'
 import { Locale } from '@/i18n'
 import { getCurrency } from '@/lib/currency'
@@ -37,11 +33,10 @@ import { useMediaQuery, useScrollAtTop } from '@/lib/hooks'
 import { invalidateActivityQueries } from '@/lib/invalidate-activity-queries'
 import { isConsolidatedPayment } from '@/lib/payments'
 import { ExpenseFormValues } from '@/lib/schemas'
-import { cn } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { useIsClient } from 'foxact/use-is-client'
-import { Plus } from 'lucide-react'
-import { LayoutGroup, motion } from 'motion/react'
+import { Plus, Users } from 'lucide-react'
+import { motion } from 'motion/react'
 import { useLocale, useTranslations } from 'next-intl'
 import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -115,24 +110,23 @@ export function FloatingCreateExpense({
   const utils = trpc.useUtils()
 
   const [open, setOpen] = useState(false)
-  const [pickerOpen, setPickerOpen] = useState(false)
   const isAtTop = useScrollAtTop(!open)
-  const [footerPortal, setFooterPortal] = useState<HTMLElement | null>(null)
+  const [pickerOpen, setPickerOpen] = useState(false)
 
   // Edit States
-  const [editingExpenseId, setEditingExpenseId] = useState<string | null>(null)
-  const [editingGroupId, setEditingGroupId] = useState<string | null>(null)
   const [editingExpense, setEditingExpense] = useState<any>(null)
+  const [editingGroupId, setEditingGroupId] = useState<string | null>(null)
+  const [editingExpenseId, setEditingExpenseId] = useState<string | null>(null)
 
   // Creation / Selection States
   const [selectedGroup, setSelectedGroup] = useState<{
     id: string
     name: string
   } | null>(null)
+  const [formInstanceKey, setFormInstanceKey] = useState(0)
   const [selectedFriends, setSelectedFriends] = useState<FriendListItem[]>([])
   const [createPrefill, setCreatePrefill] =
     useState<ExpenseFormCreatePrefill | null>(null)
-  const [formInstanceKey, setFormInstanceKey] = useState(0)
 
   // Queries
   const { data: friends = [] } = trpc.friends.list.useQuery(undefined, {
@@ -652,79 +646,80 @@ export function FloatingCreateExpense({
     }
   }
 
-  const renderContent = () => {
-    return (
-      <AnimatedLayout className="flex min-w-0 flex-col gap-4 pt-3">
-        {!editingExpenseId && (
-          <div className="flex flex-col gap-2">
-            <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              {t('withWho')}
-            </Label>
-            <ExpenseParticipantTrigger
-              selectedGroup={selectedGroup}
-              selectedFriends={selectedFriends}
-              onClick={() => setPickerOpen(true)}
-            />
-          </div>
-        )}
+  const participantScrollHeader = !editingExpenseId ? (
+    <div className="flex flex-col gap-2 pt-3">
+      <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+        {t('withWho')}
+      </Label>
+      <ExpenseParticipantTrigger
+        selectedGroup={selectedGroup}
+        selectedFriends={selectedFriends}
+        onClick={() => setPickerOpen(true)}
+      />
+    </div>
+  ) : null
 
-        <AnimatedCollapse open={!!virtualGroup} className="border-t pt-4">
-          {virtualGroup ? (
-            isPaymentMode ? (
-              <PaymentForm
-                key={`payment-${virtualGroup.id}-${editingExpenseId || 'new'}-${formInstanceKey}`}
-                group={virtualGroup as any}
-                expense={editingExpense || undefined}
-                createPrefill={createPrefill ?? undefined}
-                currentUserId={profile?.id}
-                onSubmit={handleSubmit}
-                onDelete={editingExpenseId ? handleDelete : undefined}
-                onCancel={resetForm}
-                embedded
-                footerPortal={footerPortal}
-              />
-            ) : (
-              <ExpenseForm
-                key={`${virtualGroup.id}-${editingExpenseId || 'new'}-${formInstanceKey}`}
-                group={virtualGroup as any}
-                categories={categories}
-                expense={editingExpense || undefined}
-                createPrefill={createPrefill ?? undefined}
-                currentUserId={profile?.id}
-                preferredCurrency={profile?.preferredCurrency}
-                onSubmit={handleSubmit}
-                onDelete={editingExpenseId ? handleDelete : undefined}
-                onCancel={resetForm}
-                runtimeFeatureFlags={runtimeFeatureFlags}
-                isDesktop={isDesktop}
-                embedded
-                footerPortal={footerPortal}
-              />
-            )
-          ) : null}
-        </AnimatedCollapse>
-
-        <AnimatedCollapse open={!virtualGroup && !editingExpenseId}>
-          <div className="flex flex-col items-center gap-3 py-8 text-center text-sm text-muted-foreground">
-            <p>{t('selectParticipantsHint')}</p>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => setPickerOpen(true)}
-            >
-              {t('selectParticipants')}
-            </Button>
-          </div>
-        </AnimatedCollapse>
-      </AnimatedLayout>
-    )
-  }
+  const renderContent = () => (
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col [&_[data-slot=button]:focus-visible]:ring-inset">
+      {virtualGroup ? (
+        isPaymentMode ? (
+          <PaymentForm
+            key={`payment-${virtualGroup.id}-${editingExpenseId || 'new'}-${formInstanceKey}`}
+            group={virtualGroup as any}
+            expense={editingExpense || undefined}
+            createPrefill={createPrefill ?? undefined}
+            currentUserId={profile?.id}
+            onSubmit={handleSubmit}
+            onDelete={editingExpenseId ? handleDelete : undefined}
+            onCancel={resetForm}
+            scrollHeader={participantScrollHeader}
+          />
+        ) : (
+          <ExpenseForm
+            key={`${virtualGroup.id}-${editingExpenseId || 'new'}-${formInstanceKey}`}
+            group={virtualGroup as any}
+            categories={categories}
+            expense={editingExpense || undefined}
+            createPrefill={createPrefill ?? undefined}
+            currentUserId={profile?.id}
+            preferredCurrency={profile?.preferredCurrency}
+            onSubmit={handleSubmit}
+            onDelete={editingExpenseId ? handleDelete : undefined}
+            onCancel={resetForm}
+            runtimeFeatureFlags={runtimeFeatureFlags}
+            isDesktop={isDesktop}
+            scrollHeader={participantScrollHeader}
+          />
+        )
+      ) : !editingExpenseId ? (
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pt-3">
+          {participantScrollHeader}
+          <Empty className="py-8">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <Users />
+              </EmptyMedia>
+              <EmptyDescription>{t('selectParticipantsHint')}</EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => setPickerOpen(true)}
+              >
+                {t('selectParticipants')}
+              </Button>
+            </EmptyContent>
+          </Empty>
+        </div>
+      ) : null}
+    </div>
+  )
 
   const renderParticipantPicker = () => (
     <ExpenseParticipantPicker
       open={pickerOpen}
       onOpenChange={setPickerOpen}
-      isDesktop={isDesktop}
       userGroups={userGroups}
       friends={friends}
       selectedGroup={selectedGroup}
@@ -742,113 +737,46 @@ export function FloatingCreateExpense({
     />
   )
 
+  const dialogTitle = editingExpenseId
+    ? t(isPaymentMode ? 'editPaymentDialogTitle' : 'editDialogTitle')
+    : t(isPaymentMode ? 'createPaymentDialogTitle' : 'dialogTitle')
+
   const renderShell = (header: React.ReactNode) => (
-    <LayoutGroup id="floating-create-expense">
-      <motion.div
-        layout
-        className="flex max-h-[inherit] min-h-0 min-w-0 flex-1 flex-col"
-        transition={layoutTransition}
-      >
-        {header}
-        <motion.div
-          layout
-          className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto scrollbar-none"
-          transition={layoutTransition}
-        >
-          {renderContent()}
-        </motion.div>
-        {(virtualGroup || editingExpenseId) && (
-          <div
-            ref={setFooterPortal}
-            className={cn('shrink-0 border-t pt-4', !isDesktop && 'mt-auto')}
-          />
-        )}
-      </motion.div>
-    </LayoutGroup>
+    <div className="flex max-h-[inherit] min-h-0 min-w-0 flex-1 flex-col">
+      {header}
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col p-1.5">
+        {renderContent()}
+      </div>
+    </div>
   )
 
   if (!isClient) return null
 
-  if (isDesktop) {
-    return (
-      <>
-        {/* Floating Action Button */}
-        <FloatingActionButton
-          isAtTop={isAtTop}
-          label={t('addExpense')}
-          onClick={openForCreate}
-        />
-
-        {/* Expense Creator Dialog */}
-        <Dialog
-          open={open}
-          onOpenChange={(val) => {
-            setOpen(val)
-            if (!val) resetForm()
-          }}
-        >
-          <DialogContent className="flex w-full min-w-0 max-h-[90dvh] flex-col gap-0 overflow-x-hidden overflow-hidden p-6 sm:max-w-2xl">
-            {renderShell(
-              <DialogHeader className="shrink-0 border-b pb-3">
-                <DialogTitle className="text-lg font-bold text-foreground">
-                  {editingExpenseId
-                    ? t(
-                        isPaymentMode
-                          ? 'editPaymentDialogTitle'
-                          : 'editDialogTitle',
-                      )
-                    : t(
-                        isPaymentMode
-                          ? 'createPaymentDialogTitle'
-                          : 'dialogTitle',
-                      )}
-                </DialogTitle>
-              </DialogHeader>,
-            )}
-          </DialogContent>
-        </Dialog>
-        {renderParticipantPicker()}
-      </>
-    )
-  }
-
   return (
     <>
-      {/* Floating Action Button */}
       <FloatingActionButton
         isAtTop={isAtTop}
         label={t('addExpense')}
         onClick={openForCreate}
       />
 
-      {/* Expense Creator Drawer */}
-      <Drawer
+      <Dialog
         open={open}
         onOpenChange={(val) => {
           setOpen(val)
           if (!val) resetForm()
         }}
       >
-        <DrawerContent className="flex max-h-[85vh] min-w-0 flex-col gap-0 overflow-x-hidden overflow-hidden p-6">
+        <DialogContent className="flex w-full min-w-0 max-h-[90dvh] flex-col gap-0 overflow-x-hidden p-6 sm:max-w-2xl">
           {renderShell(
-            <DrawerHeader className="shrink-0 border-b pb-3 text-left">
-              <DrawerTitle className="text-lg font-bold text-foreground">
-                {editingExpenseId
-                  ? t(
-                      isPaymentMode
-                        ? 'editPaymentDialogTitle'
-                        : 'editDialogTitle',
-                    )
-                  : t(
-                      isPaymentMode
-                        ? 'createPaymentDialogTitle'
-                        : 'dialogTitle',
-                    )}
-              </DrawerTitle>
-            </DrawerHeader>,
+            <DialogHeader className="shrink-0 border-b pb-3">
+              <DialogTitle className="text-lg font-bold text-foreground">
+                {dialogTitle}
+              </DialogTitle>
+            </DialogHeader>,
           )}
-        </DrawerContent>
-      </Drawer>
+        </DialogContent>
+      </Dialog>
       {renderParticipantPicker()}
     </>
   )

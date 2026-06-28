@@ -1,3 +1,14 @@
+import {
+  Attachment,
+  AttachmentAction,
+  AttachmentActions,
+  AttachmentContent,
+  AttachmentDescription,
+  AttachmentGroup,
+  AttachmentMedia,
+  AttachmentTitle,
+  AttachmentTrigger,
+} from '@/components/ui/attachment'
 import { Button } from '@/components/ui/button'
 import {
   Carousel,
@@ -7,23 +18,17 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel'
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
+import { Locale } from '@/i18n'
 import { randomId } from '@/lib/api'
 import { api } from '@/lib/api-client'
 import { ExpenseFormValues } from '@/lib/schemas'
-import { formatFileSize } from '@/lib/utils'
-import * as VisuallyHidden from '@radix-ui/react-visually-hidden'
-import { Plus, Trash, X } from 'lucide-react'
+import { cn, formatFileSize } from '@/lib/utils'
+import { Plus, Trash, XIcon } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { getImageData, usePresignedUpload } from 'next-s3-upload'
 import Image from 'next/image'
 import { useCallback, useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { toast } from 'sonner'
 
 type PendingDocument = {
@@ -43,6 +48,33 @@ type Props = {
 
 const MAX_FILE_SIZE = 5 * 1024 ** 2
 
+function getFileNameFromUrl(url: string): string {
+  try {
+    const pathname = new URL(url).pathname
+    const name = pathname.split('/').pop()
+    return name ? decodeURIComponent(name) : 'receipt.jpg'
+  } catch {
+    return 'receipt.jpg'
+  }
+}
+
+function getFileExtension(name: string): string {
+  const ext = name.split('.').pop()?.toUpperCase()
+  return ext && ext.length <= 5 ? ext : 'JPG'
+}
+
+function getDocumentMeta(
+  fileName: string,
+  locale: Locale,
+  fileSize?: number,
+): string {
+  const ext = getFileExtension(fileName)
+  if (fileSize != null) {
+    return `${ext} · ${formatFileSize(fileSize, locale)}`
+  }
+  return ext
+}
+
 export function ExpenseDocumentsInput({
   documents,
   updateDocuments,
@@ -53,10 +85,9 @@ export function ExpenseDocumentsInput({
   const t = useTranslations('ExpenseDocumentsInput')
   const [uploading, setUploading] = useState(false)
   const [pendingFiles, setPendingFiles] = useState<PendingDocument[]>([])
-  const [documentsToDelete, setDocumentsToDelete] = useState<string[]>([]) // URLs of documents to delete from S3
-  const { FileInput, openFileDialog, uploadToS3 } = usePresignedUpload() // use presigned uploads to additionally support providers other than AWS
+  const [documentsToDelete, setDocumentsToDelete] = useState<string[]>([])
+  const { FileInput, openFileDialog, uploadToS3 } = usePresignedUpload()
 
-  // Cleanup object URLs on unmount
   useEffect(() => {
     return () => {
       pendingFiles.forEach((pending) => {
@@ -81,7 +112,6 @@ export function ExpenseDocumentsInput({
           width: pending.width,
           height: pending.height,
         })
-        // Cleanup preview URL
         URL.revokeObjectURL(pending.previewUrl)
       } catch (err) {
         console.error(err)
@@ -93,10 +123,8 @@ export function ExpenseDocumentsInput({
       toast.error(t('ErrorToast.title'), {
         description: t('ErrorToast.description'),
       })
-      // Keep failed uploads in pending
       setPendingFiles(errors)
     } else {
-      // All uploaded successfully
       setPendingFiles([])
     }
 
@@ -131,10 +159,8 @@ export function ExpenseDocumentsInput({
       toast.error(t('ErrorToast.title'), {
         description: t('ErrorToast.description'),
       })
-      // Keep failed deletions
       setDocumentsToDelete(errors)
     } else {
-      // All deleted successfully
       setDocumentsToDelete([])
     }
 
@@ -143,7 +169,6 @@ export function ExpenseDocumentsInput({
     }
   }, [documentsToDelete, t])
 
-  // Expose upload and delete functions to parent
   useEffect(() => {
     if (onUploadPending) {
       onUploadPending(uploadPendingFiles)
@@ -197,14 +222,20 @@ export function ExpenseDocumentsInput({
     }
   }
 
-  const allDocuments = [
-    ...documents.map((doc) => ({ ...doc, isPending: false })),
+  const allDocuments: ExpenseDocumentItem[] = [
+    ...documents.map((doc) => ({
+      ...doc,
+      isPending: false,
+      fileName: getFileNameFromUrl(doc.url),
+    })),
     ...pendingFiles.map((pending) => ({
       id: pending.id,
       url: pending.previewUrl,
       width: pending.width,
       height: pending.height,
       isPending: true,
+      fileName: pending.file.name,
+      fileSize: pending.file.size,
     })),
   ]
 
@@ -212,17 +243,18 @@ export function ExpenseDocumentsInput({
     <div>
       <FileInput onChange={handleFileChange} accept="image/jpeg,image/png" />
 
-      <div className="grid w-full min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 *:min-h-24 sm:*:min-h-0 sm:*:aspect-square">
+      <AttachmentGroup className="w-full">
         {allDocuments.map((doc) => (
           <DocumentThumbnail
             key={doc.id}
             document={doc}
             documents={allDocuments}
-            deleteDocument={async (document) => {
+            locale={locale as Locale}
+            uploading={uploading}
+            deleteDocument={(document) => {
               if (document.isPending) {
                 deletePendingDocument(document.id)
               } else {
-                // Mark for deletion instead of deleting immediately
                 setDocumentsToDelete([...documentsToDelete, document.url])
                 updateDocuments(documents.filter((d) => d.id !== document.id))
               }
@@ -230,24 +262,37 @@ export function ExpenseDocumentsInput({
           />
         ))}
 
-        <div className="min-h-24 w-full sm:aspect-square">
-          <Button
-            variant="ghost"
+        <Attachment
+          state="idle"
+          orientation="vertical"
+          className={cn(
+            'shrink-0',
+            uploading && 'pointer-events-none opacity-50',
+          )}
+        >
+          <AttachmentMedia className="mx-auto w-10 shrink-0 [&_svg]:size-6">
+            <Plus className="text-muted-foreground" />
+          </AttachmentMedia>
+          <AttachmentContent>
+            <AttachmentTitle>{t('addImage')}</AttachmentTitle>
+          </AttachmentContent>
+          <AttachmentTrigger
             type="button"
             onClick={openFileDialog}
-            className="size-full rounded-md border-2 border-dashed border-border bg-transparent hover:bg-muted/50"
             disabled={uploading}
-          >
-            <Plus className="size-8 text-muted-foreground" />
-          </Button>
-        </div>
-      </div>
+            aria-label={t('addImage')}
+            className="focus-visible:ring-inset"
+          />
+        </Attachment>
+      </AttachmentGroup>
     </div>
   )
 }
 
-type DocumentWithPending = ExpenseFormValues['documents'][number] & {
+type ExpenseDocumentItem = ExpenseFormValues['documents'][number] & {
   isPending?: boolean
+  fileName?: string
+  fileSize?: number
 }
 
 export function DocumentThumbnail({
@@ -255,15 +300,26 @@ export function DocumentThumbnail({
   documents,
   deleteDocument,
   readOnly = false,
+  uploading = false,
+  locale,
 }: {
-  document: DocumentWithPending
-  documents: DocumentWithPending[]
-  deleteDocument: (document: DocumentWithPending) => void
+  document: ExpenseDocumentItem
+  documents: ExpenseDocumentItem[]
+  deleteDocument: (document: ExpenseDocumentItem) => void
   readOnly?: boolean
+  uploading?: boolean
+  locale?: Locale
 }) {
+  const t = useTranslations('ExpenseDocumentsInput')
+  const defaultLocale = useLocale() as Locale
+  const resolvedLocale = locale ?? defaultLocale
   const [open, setOpen] = useState(false)
   const [api, setApi] = useState<CarouselApi>()
   const [currentDocument, setCurrentDocument] = useState<number | null>(null)
+
+  const fileName = document.fileName ?? getFileNameFromUrl(document.url)
+  const meta = getDocumentMeta(fileName, resolvedLocale, document.fileSize)
+  const attachmentState = document.isPending && uploading ? 'uploading' : 'done'
 
   useEffect(() => {
     if (!api) return
@@ -276,76 +332,123 @@ export function DocumentThumbnail({
     })
   }, [api])
 
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger
-        render={
-          <Button
-            variant="secondary"
-            className="w-full h-full border overflow-hidden rounded shadow-inner"
-          />
-        }
-      >
-        <Image
-          width={300}
-          height={300}
-          className="object-contain"
-          src={document.url}
-          alt=""
-        />
-      </DialogTrigger>
-      <DialogContent className="p-4 w-screen max-w-[100vw] h-dvh max-h-dvh sm:max-w-[calc(100vw-32px)] sm:max-h-[calc(100dvh-32px)] [&>*:last-child]:hidden">
-        <VisuallyHidden.Root>
-          <DialogTitle>Document viewer</DialogTitle>
-        </VisuallyHidden.Root>
-        <div className="flex flex-col gap-4">
-          <div className="flex justify-end">
-            {!readOnly ? (
-              <Button
-                variant="ghost"
-                className="text-destructive"
-                onClick={() => {
-                  if (currentDocument !== null) {
-                    deleteDocument(documents[currentDocument])
-                  }
-                  setOpen(false)
-                }}
-              >
-                <Trash className="w-4 h-4 mr-2" />
-                Delete document
-              </Button>
-            ) : null}
-            <DialogClose render={<Button variant="ghost" />}>
-              <X className="w-4 h-4 mr-2" /> Close
-            </DialogClose>
-          </div>
+  useEffect(() => {
+    if (!open) return
 
-          <Carousel
-            opts={{
-              startIndex: documents.indexOf(document),
-              loop: true,
-              align: 'center',
-            }}
-            setApi={setApi}
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      event.preventDefault()
+      event.stopPropagation()
+      setOpen(false)
+    }
+
+    globalThis.document.addEventListener('keydown', onKeyDown, true)
+    return () =>
+      globalThis.document.removeEventListener('keydown', onKeyDown, true)
+  }, [open])
+
+  return (
+    <>
+      <Attachment
+        state={attachmentState}
+        orientation="vertical"
+        className="shrink-0"
+      >
+        <AttachmentMedia variant="image">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={document.url} alt="" />
+        </AttachmentMedia>
+        <AttachmentContent>
+          <AttachmentTitle>{fileName}</AttachmentTitle>
+          <AttachmentDescription>
+            {attachmentState === 'uploading' ? t('uploadingDocument') : meta}
+          </AttachmentDescription>
+        </AttachmentContent>
+        {!readOnly ? (
+          <AttachmentActions>
+            <AttachmentAction
+              aria-label={t('removeDocument', { name: fileName })}
+              onClick={(event) => {
+                event.preventDefault()
+                event.stopPropagation()
+                deleteDocument(document)
+              }}
+            >
+              <XIcon />
+            </AttachmentAction>
+          </AttachmentActions>
+        ) : null}
+        <AttachmentTrigger
+          type="button"
+          aria-label={t('previewDocument', { name: fileName })}
+          className="focus-visible:ring-inset"
+          onClick={() => setOpen(true)}
+        />
+      </Attachment>
+      {open &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={t('previewDocument', { name: fileName })}
+            className="fixed inset-0 z-[100] flex flex-col gap-4 bg-popover p-4 text-popover-foreground"
+            onPointerDown={(event) => event.stopPropagation()}
+            onClick={(event) => event.stopPropagation()}
           >
-            <CarouselContent>
-              {documents.map((document, index) => (
-                <CarouselItem key={index}>
-                  <Image
-                    className="object-contain w-[calc(100vw-32px)] h-[calc(100dvh-32px-40px-16px-48px)] sm:w-[calc(100vw-32px-32px)] sm:h-[calc(100dvh-32px-40px-16px-32px-48px)]"
-                    src={document.url}
-                    width={document.width}
-                    height={document.height}
-                    alt=""
-                  />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="left-0 top-auto -bottom-16" />
-            <CarouselNext className="right-0 top-auto -bottom-16" />
-          </Carousel>
-        </div>
-      </DialogContent>
-    </Dialog>
+            <div className="flex justify-end">
+              {!readOnly ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="text-destructive"
+                  onClick={() => {
+                    if (currentDocument !== null) {
+                      deleteDocument(documents[currentDocument])
+                    }
+                    setOpen(false)
+                  }}
+                >
+                  <Trash className="w-4 h-4 mr-2" />
+                  Delete document
+                </Button>
+              ) : null}
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setOpen(false)}
+              >
+                <XIcon className="w-4 h-4 mr-2" /> Close
+              </Button>
+            </div>
+
+            <Carousel
+              opts={{
+                startIndex: documents.indexOf(document),
+                loop: true,
+                align: 'center',
+              }}
+              setApi={setApi}
+            >
+              <CarouselContent>
+                {documents.map((document, index) => (
+                  <CarouselItem key={index}>
+                    <Image
+                      className="object-contain w-[calc(100vw-32px)] h-[calc(100dvh-32px-40px-16px-48px)] sm:w-[calc(100vw-32px-32px)] sm:h-[calc(100dvh-32px-40px-16px-32px-48px)]"
+                      src={document.url}
+                      width={document.width}
+                      height={document.height}
+                      alt=""
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-0 top-auto -bottom-16" />
+              <CarouselNext className="right-0 top-auto -bottom-16" />
+            </Carousel>
+          </div>,
+          globalThis.document.body,
+        )}
+    </>
   )
 }

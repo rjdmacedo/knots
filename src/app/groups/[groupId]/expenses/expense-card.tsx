@@ -95,7 +95,7 @@ export function ExpenseCard({
           <Participants expense={expense} participantCount={participantCount} />
         </div>
         <div className="text-xs text-muted-foreground">
-          <ActiveUserBalance {...{ groupId, currency, expense }} />
+          <ActiveUserBalance currency={currency} expense={expense} />
         </div>
       </div>
       <div className="flex flex-col justify-between items-end">

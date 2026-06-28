@@ -1,26 +1,39 @@
-import { ChevronDown, Loader2 } from 'lucide-react'
-
 import { CategoryIcon } from '@/app/groups/[groupId]/expenses/category-icon'
-import { Button, ButtonProps } from '@/components/ui/button'
+import {
+  Combobox,
+  ComboboxCollection,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxLabel,
+  ComboboxList,
+  ComboboxSeparator,
+} from '@/components/ui/combobox'
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
+  CommandList,
 } from '@/components/ui/command'
-import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer'
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { filterExpenseCategories } from '@/lib/categories'
 import { useMediaQuery } from '@/lib/hooks'
 import { Category } from '@prisma/client'
 import { useIsClient } from 'foxact/use-is-client'
 import { useTranslations } from 'next-intl'
-import { forwardRef, useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 type Props = {
   categories: Category[]
@@ -30,89 +43,12 @@ type Props = {
   isLoading: boolean
 }
 
-export function CategorySelector({
-  categories,
-  onValueChange,
-  defaultValue,
-  isLoading,
-}: Props) {
-  const [open, setOpen] = useState(false)
-  const [value, setValue] = useState<number>(defaultValue)
-  const isClient = useIsClient()
-  const isDesktop = useMediaQuery('(min-width: 768px)')
-
-  // allow overwriting currently selected category from outside
-  useEffect(() => {
-    setValue(defaultValue)
-    onValueChange(defaultValue)
-  }, [defaultValue])
-
-  const selectableCategories = filterExpenseCategories(categories)
-  const selectedCategory =
-    categories.find((category) => category.id === value) ??
-    selectableCategories[0] ??
-    categories[0]
-
-  // Render Drawer initially to match SSR, then switch after client hydration
-  if (!isClient || !isDesktop) {
-    return (
-      <Drawer open={open} onOpenChange={setOpen}>
-        <DrawerTrigger
-          render={
-            <CategoryButton
-              category={selectedCategory}
-              open={open}
-              isLoading={isLoading}
-            />
-          }
-        />
-        <DrawerContent className="p-0">
-          <CategoryCommand
-            categories={categories}
-            onValueChange={(id) => {
-              setValue(id)
-              onValueChange(id)
-              setOpen(false)
-            }}
-          />
-        </DrawerContent>
-      </Drawer>
-    )
-  }
-
-  return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger
-        render={
-          <CategoryButton
-            category={selectedCategory}
-            open={open}
-            isLoading={isLoading}
-          />
-        }
-      />
-      <PopoverContent className="p-0" align="start">
-        <CategoryCommand
-          categories={categories}
-          onValueChange={(id) => {
-            setValue(id)
-            onValueChange(id)
-            setOpen(false)
-          }}
-        />
-      </PopoverContent>
-    </Popover>
-  )
+type CategoryGroup = {
+  value: string
+  items: Category[]
 }
 
-export function CategoryCommand({
-  categories,
-  onValueChange,
-}: {
-  categories: Category[]
-  onValueChange: (categoryId: Category['id']) => void
-}) {
-  const t = useTranslations('Categories')
+function getCategoryGroups(categories: Category[]): CategoryGroup[] {
   const selectableCategories = filterExpenseCategories(categories)
   const categoriesByGroup = selectableCategories.reduce<
     Record<string, Category[]>
@@ -124,67 +60,226 @@ export function CategoryCommand({
     {},
   )
 
+  return Object.entries(categoriesByGroup).map(([group, items]) => ({
+    value: group,
+    items,
+  }))
+}
+
+function getSelectedCategory(categories: Category[], value: Category['id']) {
+  const selectableCategories = filterExpenseCategories(categories)
   return (
-    <Command>
-      <CommandInput placeholder={t('search')} className="text-base" />
-      <CommandEmpty>{t('noCategory')}</CommandEmpty>
-      <div className="w-full max-h-[300px] overflow-y-auto">
-        {Object.entries(categoriesByGroup).map(
-          ([group, groupCategories], index) => (
-            <CommandGroup key={index} heading={t(`${group}.heading`)}>
-              {groupCategories.map((category) => (
-                <CommandItem
-                  key={category.id}
-                  value={`${category.id} ${t(
-                    `${category.grouping}.heading`,
-                  )} ${t(`${category.grouping}.${category.name}`)}`}
-                  onSelect={(currentValue) => {
-                    const id = Number(currentValue.split(' ')[0])
-                    onValueChange(id)
-                  }}
-                >
-                  <CategoryLabel category={category} />
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          ),
-        )}
-      </div>
-    </Command>
+    categories.find((category) => category.id === value) ??
+    selectableCategories[0] ??
+    categories[0]
   )
 }
 
-type CategoryButtonProps = {
-  category: Category
-  open: boolean
-  isLoading: boolean
+function isCategory(value: unknown): value is Category {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'id' in value &&
+    'grouping' in value &&
+    'name' in value
+  )
 }
-const CategoryButton = forwardRef<HTMLButtonElement, CategoryButtonProps>(
-  (
-    { category, open, isLoading, ...props }: ButtonProps & CategoryButtonProps,
-    ref,
-  ) => {
-    const iconClassName = 'ml-2 h-4 w-4 shrink-0 opacity-50'
+
+export function CategorySelector({
+  categories,
+  onValueChange,
+  defaultValue,
+  isLoading,
+}: Props) {
+  const [value, setValue] = useState<number>(defaultValue)
+  const isClient = useIsClient()
+  const isDesktop = useMediaQuery('(min-width: 768px)')
+
+  // allow overwriting currently selected category from outside
+  useEffect(() => {
+    setValue(defaultValue)
+    onValueChange(defaultValue)
+  }, [defaultValue])
+
+  if (!isClient || !isDesktop) {
     return (
-      <Button
-        variant="outline"
-        role="combobox"
-        aria-expanded={open}
-        className="flex w-full justify-between"
-        ref={ref}
-        {...props}
-      >
-        <CategoryLabel category={category} />
-        {isLoading ? (
-          <Loader2 className={`animate-spin ${iconClassName}`} />
-        ) : (
-          <ChevronDown className={iconClassName} />
-        )}
-      </Button>
+      <CategorySelect
+        categories={categories}
+        value={value}
+        onValueChange={(id) => {
+          setValue(id)
+          onValueChange(id)
+        }}
+        isLoading={isLoading}
+      />
     )
-  },
-)
-CategoryButton.displayName = 'CategoryButton'
+  }
+
+  return (
+    <CategoryCombobox
+      categories={categories}
+      value={value}
+      onValueChange={(id) => {
+        setValue(id)
+        onValueChange(id)
+      }}
+      isLoading={isLoading}
+    />
+  )
+}
+
+function CategoryCombobox({
+  categories,
+  value,
+  onValueChange,
+  isLoading,
+}: {
+  categories: Category[]
+  value: Category['id']
+  onValueChange: (categoryId: Category['id']) => void
+  isLoading: boolean
+}) {
+  const t = useTranslations('Categories')
+  const categoryGroups = useMemo(
+    () => getCategoryGroups(categories),
+    [categories],
+  )
+  const selectedCategory = getSelectedCategory(categories, value)
+
+  return (
+    <Combobox
+      items={categoryGroups}
+      value={selectedCategory}
+      onValueChange={(category) => {
+        if (isCategory(category)) {
+          onValueChange(category.id)
+        }
+      }}
+      itemToStringLabel={(item) => {
+        if (isCategory(item)) {
+          return t(`${item.grouping}.${item.name}`)
+        }
+        return ''
+      }}
+      isItemEqualToValue={(a, b) => a.id === b.id}
+      disabled={isLoading}
+      autoHighlight
+    >
+      <ComboboxInput
+        className="w-full [&_[data-slot=input-group-control]]:focus-visible:ring-inset"
+        showTrigger
+        showClear={false}
+        placeholder={t('search')}
+      />
+      <ComboboxContent side="bottom" align="start">
+        <ComboboxEmpty>{t('noCategory')}</ComboboxEmpty>
+        <ComboboxList>
+          {(group, index) => (
+            <ComboboxGroup key={group.value} items={group.items}>
+              <ComboboxLabel>{t(`${group.value}.heading`)}</ComboboxLabel>
+              <ComboboxCollection>
+                {(category) => (
+                  <ComboboxItem key={category.id} value={category}>
+                    <CategoryLabel category={category} />
+                  </ComboboxItem>
+                )}
+              </ComboboxCollection>
+              {index < categoryGroups.length - 1 ? <ComboboxSeparator /> : null}
+            </ComboboxGroup>
+          )}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
+  )
+}
+
+function CategorySelect({
+  categories,
+  value,
+  onValueChange,
+  isLoading,
+}: {
+  categories: Category[]
+  value: Category['id']
+  onValueChange: (categoryId: Category['id']) => void
+  isLoading: boolean
+}) {
+  const t = useTranslations('Categories')
+  const categoryGroups = useMemo(
+    () => getCategoryGroups(categories),
+    [categories],
+  )
+  const selectedCategory = getSelectedCategory(categories, value)
+
+  return (
+    <Select
+      value={value}
+      onValueChange={(categoryId) => {
+        if (categoryId != null) onValueChange(categoryId)
+      }}
+      disabled={isLoading}
+    >
+      <SelectTrigger className="w-full focus-visible:ring-inset">
+        <SelectValue>
+          <CategoryLabel category={selectedCategory} />
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        {categoryGroups.map((group) => (
+          <SelectGroup key={group.value}>
+            <SelectLabel>{t(`${group.value}.heading`)}</SelectLabel>
+            {group.items.map((category) => (
+              <SelectItem key={category.id} value={category.id}>
+                <CategoryLabel category={category} />
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        ))}
+      </SelectContent>
+    </Select>
+  )
+}
+
+export function CategoryCommand({
+  categories,
+  onValueChange,
+}: {
+  categories: Category[]
+  onValueChange: (categoryId: Category['id']) => void
+}) {
+  const t = useTranslations('Categories')
+  const categoryGroups = useMemo(
+    () => getCategoryGroups(categories),
+    [categories],
+  )
+
+  return (
+    <Command>
+      <CommandInput autoFocus placeholder={t('search')} className="text-base" />
+      <CommandList className="max-h-[300px]">
+        <CommandEmpty>{t('noCategory')}</CommandEmpty>
+        {categoryGroups.map((group) => (
+          <CommandGroup key={group.value} heading={t(`${group.value}.heading`)}>
+            {group.items.map((category) => (
+              <CommandItem
+                key={category.id}
+                value={`${category.id} ${t(
+                  `${category.grouping}.heading`,
+                )} ${t(`${category.grouping}.${category.name}`)}`}
+                onSelect={(currentValue) => {
+                  const id = Number(currentValue.split(' ')[0])
+                  onValueChange(id)
+                }}
+              >
+                <CategoryLabel category={category} />
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        ))}
+      </CommandList>
+    </Command>
+  )
+}
 
 function CategoryLabel({ category }: { category?: Category }) {
   const t = useTranslations('Categories')
