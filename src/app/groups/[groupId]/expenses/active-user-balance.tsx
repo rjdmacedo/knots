@@ -2,26 +2,29 @@
 import { Money } from '@/components/money'
 import { getBalances } from '@/lib/balances'
 import { Currency } from '@/lib/currency'
-import { useActiveUser } from '@/lib/hooks'
+import { useGroupParticipantId } from '@/lib/hooks'
+import { has } from 'lodash-es'
 import { useTranslations } from 'next-intl'
+import { useCurrentGroup } from '../current-group-context'
 
 type Props = {
-  groupId: string
   currency: Currency
   expense: Parameters<typeof getBalances>[0][number]
 }
 
-export function ActiveUserBalance({ groupId, currency, expense }: Props) {
+export function ActiveUserBalance({ currency, expense }: Props) {
   const t = useTranslations('ExpenseCard')
-  const activeUserId = useActiveUser(groupId)
-  if (activeUserId === null || activeUserId === '' || activeUserId === 'None') {
+  const { group } = useCurrentGroup()
+  const participantId = useGroupParticipantId(group?.participants)
+
+  if (!participantId) {
     return null
   }
 
   const balances = getBalances([expense])
   let fmtBalance = <>{t('notInvolved')}</>
-  if (Object.hasOwn(balances, activeUserId)) {
-    const balance = balances[activeUserId]
+  if (has(balances, participantId)) {
+    const balance = balances[participantId]
     let balanceDetail = <></>
     if (balance.paid > 0 && balance.paidFor > 0) {
       balanceDetail = (

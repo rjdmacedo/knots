@@ -145,40 +145,57 @@ function GroupSummaryRow({
   const amountLabel =
     entry.balanceAmount > 0 ? `+${formattedBalance}` : formattedBalance
 
+  const subtitle = (
+    <>
+      {t('groupShared')} · {currencyLabel} ·{' '}
+      {formatDate(entry.activityDate, locale, { dateStyle: 'medium' })}
+    </>
+  )
+
+  const amountNode = entry.isSettled ? (
+    <Badge variant="secondary">{t('groupSettled')}</Badge>
+  ) : (
+    <span
+      className={cn(
+        'text-sm font-medium tabular-nums whitespace-nowrap',
+        entry.balanceAmount > 0
+          ? 'text-green-600 dark:text-green-400'
+          : 'text-red-600 dark:text-red-400',
+      )}
+      aria-label={balanceLabel}
+    >
+      {amountLabel}
+    </span>
+  )
+
   return (
     <div
-      className="flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-accent transition-colors"
+      className="grid cursor-pointer grid-cols-[auto_1fr_auto] grid-rows-[auto_auto_auto] gap-x-3 gap-y-0.5 px-4 py-3 transition-colors hover:bg-accent sm:grid-rows-[auto_auto]"
       onClick={() => router.push(`/groups/${entry.groupId}`)}
     >
-      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-muted shrink-0">
-        <Users className="w-4 h-4 text-muted-foreground" />
-      </div>
-
-      <div className="min-w-0 flex-1">
-        <div className="text-sm font-medium truncate">{entry.groupName}</div>
-        <div className="text-xs text-muted-foreground truncate">
-          {t('groupShared')} · {currencyLabel} ·{' '}
-          {formatDate(entry.activityDate, locale, { dateStyle: 'medium' })}
+      <div className="row-span-3 flex items-center self-center sm:row-span-2">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted">
+          <Users className="h-4 w-4 text-muted-foreground" />
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-2 pl-1">
-        {entry.isSettled ? (
-          <Badge variant="secondary">{t('groupSettled')}</Badge>
-        ) : (
-          <span
-            className={cn(
-              'text-sm font-medium tabular-nums whitespace-nowrap',
-              entry.balanceAmount > 0
-                ? 'text-green-600 dark:text-green-400'
-                : 'text-red-600 dark:text-red-400',
-            )}
-            aria-label={balanceLabel}
-          >
-            {amountLabel}
-          </span>
-        )}
-        <ChevronRight className="w-4 h-4 shrink-0 text-muted-foreground" />
+      <div className="min-w-0 truncate text-sm font-medium">
+        {entry.groupName}
+      </div>
+
+      <ChevronRight className="h-4 w-4 shrink-0 self-center text-muted-foreground sm:hidden" />
+
+      <div className="hidden items-center gap-2 self-center sm:col-start-3 sm:row-span-2 sm:flex">
+        {amountNode}
+        <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+      </div>
+
+      <div className="col-span-2 col-start-2 min-w-0 text-xs text-muted-foreground sm:col-span-1 sm:truncate">
+        {subtitle}
+      </div>
+
+      <div className="col-span-2 col-start-2 flex items-center justify-end sm:hidden">
+        {amountNode}
       </div>
     </div>
   )

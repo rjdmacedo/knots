@@ -1,3 +1,4 @@
+import { trpc } from '@/trpc/client'
 import dayjs from 'dayjs'
 import { useMediaQuery as useMediaQueryFoxact } from 'foxact/use-media-query'
 import { useEffect, useState } from 'react'
@@ -45,20 +46,17 @@ export function useBaseUrl() {
   return baseUrl
 }
 
-/**
- * @returns The active user, or `null` until it is fetched from local storage
- */
-export function useActiveUser(groupId?: string) {
-  const [activeUser, setActiveUser] = useState<string | null>(null)
+/** Returns the logged-in user's participant ID when they belong to the group. */
+export function useGroupParticipantId(
+  participants?: { id: string }[],
+): string | undefined {
+  const { data: profile } = trpc.profile.getProfile.useQuery()
 
-  useEffect(() => {
-    if (groupId) {
-      const activeUser = localStorage.getItem(`${groupId}-activeUser`)
-      if (activeUser) setActiveUser(activeUser)
-    }
-  }, [groupId])
+  if (!profile?.id || !participants?.length) return undefined
 
-  return activeUser
+  return participants.some((participant) => participant.id === profile.id)
+    ? profile.id
+    : undefined
 }
 
 interface FrankfurterAPIResponse {

@@ -1,5 +1,6 @@
 'use client'
 import { ActivityItem } from '@/app/groups/[groupId]/activity/activity-item'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   ACTIVITY_DATE_GROUP_ORDER,
@@ -44,8 +45,11 @@ export function ActivityList() {
 
   const {
     data: activitiesData,
-    isLoading: activitiesAreLoading,
+    isLoading,
+    isError,
+    refetch,
     fetchNextPage,
+    isFetchingNextPage,
   } = trpc.groups.activities.list.useInfiniteQuery(
     { groupId, limit: PAGE_SIZE },
     { getNextPageParam: ({ nextCursor }) => nextCursor },
@@ -55,8 +59,8 @@ export function ActivityList() {
   const activities = activitiesData?.pages.flatMap((page) => page.activities)
   const hasMore = activitiesData?.pages.at(-1)?.hasMore ?? false
 
-  const isLoading = useSpinDelay(
-    activitiesAreLoading || !activities || !group,
+  const isInitialLoading = useSpinDelay(
+    (isLoading && !activitiesData) || !group,
     {
       delay: 200,
       minDuration: 300,
@@ -64,12 +68,25 @@ export function ActivityList() {
   )
 
   useEffect(() => {
-    if (inView && hasMore && !isLoading) fetchNextPage()
-  }, [fetchNextPage, hasMore, inView, isLoading])
+    if (inView && hasMore && !isInitialLoading && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }, [fetchNextPage, hasMore, inView, isInitialLoading, isFetchingNextPage])
 
-  if (isLoading) return <ActivitiesLoading />
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center gap-4 py-6">
+        <p className="text-sm text-muted-foreground">{t('error')}</p>
+        <Button variant="outline" onClick={() => refetch()}>
+          {t('retry')}
+        </Button>
+      </div>
+    )
+  }
 
-  if (!activities || !group) return <ActivitiesLoading />
+  if (isInitialLoading) return <ActivitiesLoading />
+
+  if (!activities || !group) return null
 
   const groupedActivitiesByDate = groupActivitiesByDate(activities)
 

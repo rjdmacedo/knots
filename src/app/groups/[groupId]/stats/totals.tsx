@@ -3,17 +3,14 @@ import { TotalsGroupSpending } from '@/app/groups/[groupId]/stats/totals-group-s
 import { TotalsYourShare } from '@/app/groups/[groupId]/stats/totals-your-share'
 import { TotalsYourSpendings } from '@/app/groups/[groupId]/stats/totals-your-spending'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useActiveUser } from '@/lib/hooks'
+import { useGroupParticipantId } from '@/lib/hooks'
 import { getCurrencyFromGroup } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { useCurrentGroup } from '../current-group-context'
 
 export function Totals() {
   const { groupId, group } = useCurrentGroup()
-  const activeUser = useActiveUser(groupId)
-
-  const participantId =
-    activeUser && activeUser !== 'None' ? activeUser : undefined
+  const participantId = useGroupParticipantId(group?.participants)
   const { data } = trpc.groups.stats.get.useQuery({ groupId, participantId })
 
   if (!data || !group)

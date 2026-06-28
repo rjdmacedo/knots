@@ -20,6 +20,9 @@
     "create": "Create expense",
     "createFirst": "Create the first one",
     "noExpenses": "Your group doesn’t contain any expense yet.",
+    "noSearchResults": "No expenses match your search.",
+    "loadError": "Could not load expenses.",
+    "retry": "Retry",
     "export": "Export",
     "exportJson": "Export to JSON",
     "exportCsv": "Export to CSV",
@@ -303,7 +306,7 @@
       "yes": "Yes",
       "cancel": "Cancel"
     },
-    "attachDocuments": "Attach documents",
+    "attachDocuments": "Attach images",
     "create": "Create",
     "creating": "Creating…",
     "save": "Save",
@@ -311,7 +314,15 @@
     "cancel": "Cancel",
     "reimbursement": "Reimbursement"
   },
+  "ExpenseTitleInput": {
+    "noSuggestions": "No suggestions found."
+  },
   "ExpenseDocumentsInput": {
+    "addImage": "Add image",
+    "addDocumentHint": "PNG or JPG · up to 5 MB",
+    "previewDocument": "Preview {name}",
+    "removeDocument": "Remove {name}",
+    "uploadingDocument": "Uploading…",
     "TooBigToast": {
       "title": "The file is too big",
       "description": "The maximum file size you can upload is {maxSize}. Yours is {size}."
@@ -515,6 +526,8 @@
     "globalListDescription": "Recent changes across all your groups.",
     "globalNoActivity": "There is not yet any activity in your groups.",
     "noActivity": "There is not yet any activity in your group.",
+    "error": "Could not load activity.",
+    "retry": "Retry",
     "someone": "Someone",
     "settingsModified": "Group settings were modified by <strong>{participant}</strong>.",
     "expenseCreated": "Expense <em>{expense}</em> created by <strong>{participant}</strong>.",

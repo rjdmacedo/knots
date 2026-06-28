@@ -1,10 +1,12 @@
 'use client'
 import { ExpenseCard } from '@/app/groups/[groupId]/expenses/expense-card'
 import { GroupedExpenseCards } from '@/app/groups/[groupId]/expenses/grouped-expense-cards'
+import { Button } from '@/components/ui/button'
 import { SearchBar } from '@/components/ui/search-bar'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getCurrencyFromGroup } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
+import { keepPreviousData } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import { forwardRef, useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
@@ -18,105 +20,88 @@ export function ExpenseList() {
   const { groupId, group } = useCurrentGroup()
   const [searchText, setSearchText] = useState('')
   const [debouncedSearchText] = useDebounce(searchText, 300)
-
-  const participants = group?.participants
-
-  useEffect(() => {
-    if (!participants) return
-
-    const activeUser = localStorage.getItem('newGroup-activeUser')
-    const newUser = localStorage.getItem(`${groupId}-newUser`)
-    if (activeUser || newUser) {
-      localStorage.removeItem('newGroup-activeUser')
-      localStorage.removeItem(`${groupId}-newUser`)
-      if (activeUser === 'None') {
-        localStorage.setItem(`${groupId}-activeUser`, 'None')
-      } else {
-        const userId = participants.find(
-          (p) => p.name === (activeUser || newUser),
-        )?.id
-        if (userId) {
-          localStorage.setItem(`${groupId}-activeUser`, userId)
-        }
-      }
-    }
-  }, [groupId, participants])
-
-  return (
-    <>
-      <div className="mb-2 sm:mb-3">
-        <SearchBar onValueChange={(value) => setSearchText(value)} />
-      </div>
-      <ExpenseListForSearch
-        groupId={groupId}
-        searchText={debouncedSearchText}
-      />
-    </>
-  )
-}
-
-const ExpenseListForSearch = ({
-  groupId,
-  searchText,
-}: {
-  groupId: string
-  searchText: string
-}) => {
-  const { group } = useCurrentGroup()
-
   const t = useTranslations('Expenses')
   const { ref: loadingRef, inView } = useInView()
 
   const {
     data,
-    isLoading: expensesAreLoading,
+    isLoading,
+    isError,
+    refetch,
     fetchNextPage,
     isFetchingNextPage,
   } = trpc.groups.expenses.list.useInfiniteQuery(
-    { groupId, limit: PAGE_SIZE, filter: searchText },
+    { groupId, limit: PAGE_SIZE, filter: debouncedSearchText },
     {
       getNextPageParam: ({ nextCursor }) => nextCursor,
+      placeholderData: keepPreviousData,
     },
   )
+
   const expenses = data?.pages.flatMap((page) => page.expenses)
   const hasMore = data?.pages.at(-1)?.hasMore ?? false
 
-  const isLoading = useSpinDelay(expensesAreLoading || !expenses || !group, {
+  const isInitialLoading = useSpinDelay((isLoading && !data) || !group, {
     delay: 200,
     minDuration: 300,
   })
 
   useEffect(() => {
-    if (inView && hasMore && !isLoading && !isFetchingNextPage) fetchNextPage()
-  }, [fetchNextPage, hasMore, inView, isLoading, isFetchingNextPage])
+    if (inView && hasMore && !isInitialLoading && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }, [fetchNextPage, hasMore, inView, isInitialLoading, isFetchingNextPage])
 
-  if (isLoading) return <ExpensesLoading />
+  const listContent = (() => {
+    if (isError) {
+      return (
+        <div className="flex flex-col items-center gap-4 px-6 py-6">
+          <p className="text-sm text-muted-foreground">{t('loadError')}</p>
+          <Button variant="outline" onClick={() => refetch()}>
+            {t('retry')}
+          </Button>
+        </div>
+      )
+    }
 
-  if (!expenses || !group) return <ExpensesLoading />
+    if (isInitialLoading) return <ExpensesLoading />
 
-  if (expenses.length === 0)
+    if (!expenses || !group) return null
+
+    if (expenses.length === 0) {
+      return (
+        <p className="px-6 py-6 text-sm text-muted-foreground">
+          {debouncedSearchText ? t('noSearchResults') : t('noExpenses')}
+        </p>
+      )
+    }
+
     return (
-      <p className="px-6 text-sm py-6 text-muted-foreground">
-        {t('noExpenses')}
-      </p>
+      <>
+        <GroupedExpenseCards
+          items={expenses}
+          getDate={(expense) => expense.expenseDate}
+          getKey={(expense) => expense.id}
+          renderCard={(expense) => (
+            <ExpenseCard
+              expense={expense}
+              currency={getCurrencyFromGroup(group)}
+              groupId={groupId}
+              participantCount={group.participants.length}
+            />
+          )}
+        />
+        {hasMore && <ExpensesLoading ref={loadingRef} />}
+      </>
     )
+  })()
 
   return (
     <>
-      <GroupedExpenseCards
-        items={expenses}
-        getDate={(expense) => expense.expenseDate}
-        getKey={(expense) => expense.id}
-        renderCard={(expense) => (
-          <ExpenseCard
-            expense={expense}
-            currency={getCurrencyFromGroup(group)}
-            groupId={groupId}
-            participantCount={group.participants.length}
-          />
-        )}
-      />
-      {hasMore && <ExpensesLoading ref={loadingRef} />}
+      <div className="mb-2 sm:mb-3">
+        <SearchBar onValueChange={setSearchText} />
+      </div>
+      {listContent}
     </>
   )
 }

@@ -20,7 +20,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useActiveUser } from '@/lib/hooks'
+import { useGroupParticipantId } from '@/lib/hooks'
 import { getCurrencyFromGroup } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { useTranslations } from 'next-intl'
@@ -29,10 +29,7 @@ import { useCurrentGroup } from '../current-group-context'
 export function TotalsPageClient() {
   const t = useTranslations('Stats')
   const { groupId, group } = useCurrentGroup()
-  const activeUser = useActiveUser(groupId)
-
-  const participantId =
-    activeUser && activeUser !== 'None' ? activeUser : undefined
+  const participantId = useGroupParticipantId(group?.participants)
 
   const { data, isLoading, isError, refetch } = trpc.groups.stats.get.useQuery({
     groupId,

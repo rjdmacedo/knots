@@ -20,6 +20,9 @@
     "create": "Criar despesa",
     "createFirst": "Cria a primeira",
     "noExpenses": "O teu grupo ainda não contém nenhuma despesa.",
+    "noSearchResults": "Nenhuma despesa corresponde à tua pesquisa.",
+    "loadError": "Não foi possível carregar as despesas.",
+    "retry": "Tentar novamente",
     "exportJson": "Exportar para JSON",
     "exportCsv": "Exportar para CSV",
     "searchPlaceholder": "Procurar uma despesa…",
@@ -278,7 +281,7 @@
       "yes": "Sim",
       "cancel": "Cancelar"
     },
-    "attachDocuments": "Anexar documentos",
+    "attachDocuments": "Anexar imagens",
     "create": "Criar",
     "creating": "A criar…",
     "save": "Guardar",
@@ -311,7 +314,15 @@
     },
     "noLongerInGroup": "já não faz parte deste grupo"
   },
+  "ExpenseTitleInput": {
+    "noSuggestions": "Nenhuma sugestão encontrada."
+  },
   "ExpenseDocumentsInput": {
+    "addImage": "Adicionar imagem",
+    "addDocumentHint": "PNG ou JPG · até 5 MB",
+    "previewDocument": "Pré-visualizar {name}",
+    "removeDocument": "Remover {name}",
+    "uploadingDocument": "A enviar…",
     "TooBigToast": {
       "title": "O ficheiro é demasiado grande",
       "description": "O tamanho máximo de ficheiro que podes enviar é {maxSize}. O teu tem {size}."
@@ -515,6 +526,8 @@
     "globalListDescription": "Alterações recentes em todos os seus grupos.",
     "globalNoActivity": "Ainda não há actividade nos seus grupos.",
     "noActivity": "Ainda não há actividade no grupo.",
+    "error": "Não foi possível carregar a actividade.",
+    "retry": "Tentar novamente",
     "someone": "Alguém",
     "settingsModified": "As definições do grupo foram alteradas por <strong>{participant}</strong>.",
     "expenseCreated": "Despesa <em>{expense}</em> criada por <strong>{participant}</strong>.",
@@ -584,8 +597,8 @@
     "amountRequired": "Tens de introduzir um valor.",
     "amountNotZero": "O valor não pode ser zero.",
     "amountTenMillion": "O valor deve ser inferior a 10.000.000.",
-    "paidByRequired": "Tens de seleccionar um participante.",
-    "paidToRequired": "Tens de seleccionar quem recebeu o pagamento.",
+    "paidByRequired": "Tens de selecionar um participante.",
+    "paidToRequired": "Tens de selecionar quem recebeu o pagamento.",
     "paidToDifferent": "Quem pagou e quem recebeu têm de ser pessoas diferentes.",
     "paidForMin1": "A despesa deve ser paga para pelo menos um participante.",
     "noZeroShares": "Todas as partes têm de ser superiores a 0.",
