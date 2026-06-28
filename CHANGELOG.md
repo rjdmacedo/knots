@@ -1,3 +1,17 @@
+# [1.44.0](https://github.com/rjdmacedo/knots/compare/v1.43.2...v1.44.0) (2026-06-28)
+
+
+### Bug Fixes
+
+* improve expense split balancing, validation, and row layout ([fe55a02](https://github.com/rjdmacedo/knots/commit/fe55a0274ee4933b403fd3eb54ae5430a9b13c84))
+
+
+### Features
+
+* improve expense list and activity loading states ([7f35a1d](https://github.com/rjdmacedo/knots/commit/7f35a1da201dad7736661c40f206de525d5e0a95))
+* improve expense title suggestions with controlled input ([f935cb7](https://github.com/rjdmacedo/knots/commit/f935cb7c514adb3d05f1b5e72d02c7fc11573f24))
+* overhaul expense creation form and selectors ([65669c8](https://github.com/rjdmacedo/knots/commit/65669c898e02a1f8e0114165b0c008a4ce6da35c))
+
 ## [1.43.2](https://github.com/rjdmacedo/knots/compare/v1.43.1...v1.43.2) (2026-06-27)
 
 
