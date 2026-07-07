@@ -5,7 +5,12 @@ import { formatCategoryForAIPrompt } from '@/lib/utils'
 import OpenAI from 'openai'
 import { ChatCompletionCreateParamsNonStreaming } from 'openai/resources/index.mjs'
 
-const openai = new OpenAI({ apiKey: env.OPENAI_API_KEY })
+const getOpenAI = () => {
+  if (!env.OPENAI_API_KEY) {
+    throw new Error('OpenAI API key is not configured')
+  }
+  return new OpenAI({ apiKey: env.OPENAI_API_KEY })
+}
 
 /** Limit of characters to be evaluated. May help avoiding abuse when using AI. */
 const limit = 40 // ~10 tokens
@@ -16,6 +21,10 @@ const limit = 40 // ~10 tokens
  */
 export async function extractCategoryFromTitle(description: string) {
   'use server'
+  if (!env.OPENAI_API_KEY) {
+    return { categoryId: 0 }
+  }
+
   const categories = await getCategories()
 
   const body: ChatCompletionCreateParamsNonStreaming = {
@@ -43,7 +52,7 @@ export async function extractCategoryFromTitle(description: string) {
     ],
   }
   try {
-    const completion = await openai.chat.completions.create(body)
+    const completion = await getOpenAI().chat.completions.create(body)
     const messageContent = completion.choices.at(0)?.message.content
     // ensure the returned id actually exists
     const category = categories.find((category) => {
