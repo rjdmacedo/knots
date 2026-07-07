@@ -1,3 +1,10 @@
+## [1.46.1](https://github.com/rjdmacedo/knots/compare/v1.46.0...v1.46.1) (2026-07-07)
+
+
+### Bug Fixes
+
+* lazy-init OpenAI client to avoid SSR crash without API key ([40600b6](https://github.com/rjdmacedo/knots/commit/40600b6d3784613868287c491942f17ac6f25793))
+
 # [1.46.0](https://github.com/rjdmacedo/knots/compare/v1.45.0...v1.46.0) (2026-06-28)
 
 
