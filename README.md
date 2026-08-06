@@ -124,6 +124,39 @@ NEXT_PUBLIC_ENABLE_CATEGORY_EXTRACT=true
 OPENAI_API_KEY=XXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
+### Custom OpenAI-compatible endpoint (BYO endpoint)
+
+Both AI features (receipt scanning and category extraction) support any OpenAI-compatible API endpoint. This lets you use providers like **Ollama**, **LM Studio**, or **OpenRouter** instead of the official OpenAI API.
+
+Two optional environment variables control this:
+
+| Variable          | Description                            | Default when omitted                                                          |
+| ----------------- | -------------------------------------- | ----------------------------------------------------------------------------- |
+| `OPENAI_BASE_URL` | Base URL of your OpenAI-compatible API | Requests go to the official OpenAI API (`https://api.openai.com/v1`)          |
+| `OPENAI_MODEL`    | Model identifier for chat completions  | Receipt scanning uses `gpt-4-turbo`; category extraction uses `gpt-3.5-turbo` |
+
+Example configuration using Ollama as the provider:
+
+```.env
+# AI feature flags (enable one or both)
+NEXT_PUBLIC_ENABLE_RECEIPT_EXTRACT=true
+NEXT_PUBLIC_ENABLE_CATEGORY_EXTRACT=true
+
+# Point to your local Ollama instance
+OPENAI_BASE_URL=http://localhost:11434/v1
+OPENAI_MODEL=llava
+
+# Required even for keyless providers — use a dummy value
+OPENAI_API_KEY=ollama
+```
+
+> **Important notes:**
+>
+> - `OPENAI_API_KEY` must still be set when AI features are enabled, even with providers that don't require a real key (Ollama, LM Studio). Use a dummy value like `ollama` or `not-needed`.
+> - `OPENAI_MODEL` applies to **both** receipt scanning and category extraction. Receipt scanning requires a **vision-capable model** since it processes images. If you have receipt scanning enabled, choose a multimodal model (e.g. `llava`, `gpt-4-turbo`).
+> - When `OPENAI_BASE_URL` is omitted, requests go to the official OpenAI API as before.
+> - When `OPENAI_MODEL` is omitted, each feature uses its own built-in default (`gpt-4-turbo` for receipts, `gpt-3.5-turbo` for categories).
+
 ## License
 
 MIT, see [LICENSE](./LICENSE).

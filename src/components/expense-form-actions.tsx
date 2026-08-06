@@ -1,16 +1,9 @@
 'use server'
+import { getAIClient, getAIModel } from '@/lib/ai-client'
 import { getCategories } from '@/lib/api'
 import { env } from '@/lib/env'
 import { formatCategoryForAIPrompt } from '@/lib/utils'
-import OpenAI from 'openai'
 import { ChatCompletionCreateParamsNonStreaming } from 'openai/resources/index.mjs'
-
-const getOpenAI = () => {
-  if (!env.OPENAI_API_KEY) {
-    throw new Error('OpenAI API key is not configured')
-  }
-  return new OpenAI({ apiKey: env.OPENAI_API_KEY })
-}
 
 /** Limit of characters to be evaluated. May help avoiding abuse when using AI. */
 const limit = 40 // ~10 tokens
@@ -28,7 +21,7 @@ export async function extractCategoryFromTitle(description: string) {
   const categories = await getCategories()
 
   const body: ChatCompletionCreateParamsNonStreaming = {
-    model: 'gpt-3.5-turbo',
+    model: getAIModel('categoryExtract'),
     temperature: 0.1, // try to be highly deterministic so that each distinct title may lead to the same category every time
     max_tokens: 1, // category ids are unlikely to go beyond ~4 digits so limit possible abuse
     messages: [
@@ -52,7 +45,7 @@ export async function extractCategoryFromTitle(description: string) {
     ],
   }
   try {
-    const completion = await getOpenAI().chat.completions.create(body)
+    const completion = await getAIClient().chat.completions.create(body)
     const messageContent = completion.choices.at(0)?.message.content
     // ensure the returned id actually exists
     const category = categories.find((category) => {
