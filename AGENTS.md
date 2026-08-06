@@ -6,9 +6,11 @@ Knots is a single Next.js 16 (App Router, React 19) app — a Splitwise alternat
 
 The environment (Node, pnpm, PostgreSQL, dependencies) is already installed by the startup update script (`pnpm install`). The notes below cover only non-obvious caveats.
 
-### Node version
+### Node version (v24 LTS only)
 
-- The repo pins Node `24.17.0` (`.nvmrc`), installed via `nvm`. The VM also has an `/exec-daemon/node` (v22) shim that appears earlier in `PATH`, so a durable `PATH` prepend was added to `~/.bashrc` to make Node 24 win in interactive shells. Verify with `node --version` → should print `v24.17.0`. If a non-interactive context resolves to v22, run `nvm use 24.17.0` first.
+- The repo pins Node `24.17.0` (`.nvmrc`), installed via `nvm` (nvm holds only this version). Verify with `node --version` → `v24.17.0`.
+- Gotcha: the VM injects an `/exec-daemon/node` (v22) shim into `PATH`. It sits behind `/usr/local/cargo/bin`, which is the first `PATH` entry, so Node 24 is pinned by symlinking the toolchain there ahead of the shim: `/usr/local/cargo/bin/{node,npm,npx,corepack,pnpm,pnpx}` → `~/.nvm/versions/node/v24.17.0/bin/*`. This makes v24 win in every shell (interactive, login, and non-interactive `bash -c` such as the startup update script), not only those that source `~/.bashrc`. A `~/.bashrc` PATH prepend is also present as a redundant fallback.
+- Do NOT delete `/exec-daemon/node` — it is Cursor runtime infrastructure (root-owned) and the daemon calls it by absolute path, so shadowing it in `PATH` is safe. These symlinks persist in the VM snapshot; if Node 24 ever stops resolving, recreate them.
 
 ### PostgreSQL (must be started manually each session)
 
