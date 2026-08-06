@@ -1,24 +1,15 @@
 'use server'
+import { getAIClient, getAIModel } from '@/lib/ai-client'
 import { getCategories } from '@/lib/api'
-import { env } from '@/lib/env'
 import { formatCategoryForAIPrompt } from '@/lib/utils'
-import OpenAI from 'openai'
 import { ChatCompletionCreateParamsNonStreaming } from 'openai/resources/index.mjs'
-
-// Only initialize OpenAI if API key is available
-const getOpenAI = () => {
-  if (!env.OPENAI_API_KEY) {
-    throw new Error('OpenAI API key is not configured')
-  }
-  return new OpenAI({ apiKey: env.OPENAI_API_KEY })
-}
 
 export async function extractExpenseInformationFromImage(imageUrl: string) {
   'use server'
   const categories = await getCategories()
 
   const body: ChatCompletionCreateParamsNonStreaming = {
-    model: 'gpt-4-turbo',
+    model: getAIModel('receiptExtract'),
     messages: [
       {
         role: 'user',
@@ -43,7 +34,7 @@ export async function extractExpenseInformationFromImage(imageUrl: string) {
       },
     ],
   }
-  const openai = getOpenAI()
+  const openai = getAIClient()
   const completion = await openai.chat.completions.create(body)
 
   const [amountString, categoryId, date, title] = completion.choices

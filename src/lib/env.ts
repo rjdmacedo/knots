@@ -32,6 +32,22 @@ const envSchema = z
       z.boolean().default(false),
     ),
     OPENAI_API_KEY: z.string().optional(),
+    OPENAI_BASE_URL: z.preprocess(
+      (val) => (typeof val === 'string' && val.trim() === '' ? undefined : val),
+      z
+        .string()
+        .url()
+        .refine(
+          (url) => url.startsWith('http://') || url.startsWith('https://'),
+          { message: 'OPENAI_BASE_URL must use http or https scheme' },
+        )
+        .optional(),
+    ),
+    OPENAI_MODEL: z.preprocess((val) => {
+      if (typeof val !== 'string') return val
+      const trimmed = val.trim()
+      return trimmed === '' ? undefined : trimmed
+    }, z.string().max(128, 'OPENAI_MODEL must be at most 128 characters').optional()),
     NEXT_PUBLIC_APP_VERSION: z.string().optional().default('dev'),
     NEXT_PUBLIC_VAPID_PUBLIC_KEY: z
       .string()
