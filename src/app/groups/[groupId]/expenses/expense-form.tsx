@@ -503,10 +503,11 @@ export function ExpenseForm({
 }) {
   const t = useTranslations('ExpenseForm')
   const tDocuments = useTranslations('ExpenseDocumentsInput')
+  const tDuplicate = useTranslations('DuplicateExpense')
   const locale = useLocale() as Locale
+  const router = useRouter()
   const isCreate = expense === undefined
   const searchParams = useSearchParams()
-  const router = useRouter()
   const isMobileLayout = !isDesktop
   const fieldsGridClass = isMobileLayout
     ? 'grid min-w-0 grid-cols-1 items-start gap-4'
@@ -551,7 +552,13 @@ export function ExpenseForm({
           expenseDate: expense.expenseDate ?? new Date(),
           amount: amountAsDecimal(expense.amount, groupCurrency),
           originalCurrency: expense.originalCurrency ?? group.currencyCode,
-          originalAmount: expense.originalAmount ?? undefined,
+          originalAmount:
+            expense.originalAmount != null && expense.originalCurrency
+              ? amountAsDecimal(
+                  expense.originalAmount,
+                  getCurrency(expense.originalCurrency, locale),
+                )
+              : undefined,
           conversionRate: expense.conversionRate?.toNumber(),
           category: expense.categoryId,
           paidBy: expense.paidById,
@@ -726,43 +733,19 @@ export function ExpenseForm({
   >([])
   const [pendingSubmitData, setPendingSubmitData] =
     useState<ExpenseFormValues | null>(null)
-
-  // Form persistence for navigating to duplicate expense detail
-  const {
-    save: saveFormData,
-    restore: restoreFormData,
-    clear: clearFormData,
-  } = useFormPersistence<ExpenseFormValues>({
+  const { save, restore, clear } = useFormPersistence<ExpenseFormValues>({
     key: `knots:duplicate-form:group-${group.id}:${expense?.id || 'new'}`,
   })
 
-  // Restore persisted form data on mount (after navigating back from expense detail)
   useEffect(() => {
-    const restored = restoreFormData()
-    if (restored) {
-      form.reset(restored)
-      clearFormData()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  // Handle click on a matched expense in the duplicate dialog
-  const handleMatchClick = useCallback(
-    (matchId: string) => {
-      const currentValues = form.getValues()
-      const saved = saveFormData(currentValues)
-      if (!saved) {
-        toast.error('Unable to preserve form data. Navigation is unavailable.')
-        return
-      }
-      setDuplicateMatches([])
-      setPendingSubmitData(null)
-      // Reset form to current values so isDirty becomes false and PreventNavigation allows navigation
-      form.reset(currentValues)
-      router.push(getGroupExpenseDetailPath(group.id, matchId))
-    },
-    [form, saveFormData, router, group.id],
-  )
+    const restored = restore()
+    if (!restored) return
+    form.reset({
+      ...restored,
+      expenseDate: new Date(restored.expenseDate),
+    })
+    clear()
+  }, [restore, clear, form])
 
   const submit = async (values: ExpenseFormValues) => {
     // Upload pending documents before submitting
@@ -808,13 +791,26 @@ export function ExpenseForm({
           ? amountAsMinorUnits(shares, groupCurrency)
           : values.splitMode === 'BY_PERCENTAGE'
             ? toPercentageBasisPoints(shares)
-            : shares,
+            : values.splitMode === 'EVENLY'
+              ? 1
+              : shares,
     }))
 
     // Currency should be blank if the same as group currency
     if (!conversionRequired) {
       delete values.originalAmount
       delete values.originalCurrency
+      delete values.conversionRate
+    } else {
+      // Convert originalAmount to minor units using the original currency's decimal digits
+      values.originalAmount = amountAsMinorUnits(
+        Number(values.originalAmount),
+        originalCurrency,
+      )
+      // Only send conversionRate when user has toggled custom rate mode (fallback signal)
+      if (!usingCustomConversionRate) {
+        delete values.conversionRate
+      }
     }
 
     // Submit the form first
@@ -845,6 +841,23 @@ export function ExpenseForm({
     setDuplicateMatches([])
     setPendingSubmitData(null)
   }
+
+  const handleMatchClick = useCallback(
+    (matchId: string) => {
+      const success = save(form.getValues())
+      if (!success) {
+        toast.error(tDuplicate('persistError'))
+        return
+      }
+
+      setDuplicateMatches([])
+      setPendingSubmitData(null)
+      // Clear dirty state so PreventNavigation does not block navigation
+      form.reset(form.getValues())
+      router.push(getGroupExpenseDetailPath(group.id, matchId))
+    },
+    [save, form, tDuplicate, router, group.id],
+  )
 
   const [isIncome, setIsIncome] = useState(Number(form.getValues().amount) < 0)
   const [manuallyEditedParticipants, setManuallyEditedParticipants] = useState<

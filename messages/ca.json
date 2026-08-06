@@ -24,6 +24,12 @@
     "exportJson": "Exportar a JSON",
     "exportCsv": "Exportar a CSV",
     "searchPlaceholder": "Cerca una despesa.",
+    "conversionRatePreview": "Previsualització — la taxa final es determina en desar",
+    "conversionOriginal": "Original: {amount} {currency}",
+    "conversionRate": "Taxa: 1 {from} = {rate} {to}",
+    "conversionConverted": "Convertit: {amount} {currency}",
+    "conversionRateUnavailable": "Tipus de canvi no disponible. Si us plau, introduïu una taxa manual.",
+    "manualRateRequired": "Si us plau, introduïu un tipus de canvi manual per continuar.",
     "ActiveUserModal": {
       "title": "Qui ets?",
       "description": "Duige'ns quin participant ets, perquè puguem personalitzar com es mostra la informació.",
@@ -1092,6 +1098,7 @@
     "description": "La despesa que estàs desant coincideix amb una despesa existent. Vols continuar?",
     "cancel": "Cancel·lar",
     "confirm": "Confirmar",
+    "persistError": "No s'han pogut desar les dades del formulari. La navegació no està disponible.",
     "indicators": {
       "similar-title": "Títol similar",
       "same-amount": "Mateix import",

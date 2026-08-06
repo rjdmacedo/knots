@@ -56,7 +56,7 @@ import { Save } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -131,7 +131,9 @@ export function PaymentForm({
 }: Props) {
   const t = useTranslations('PaymentForm')
   const tExpense = useTranslations('ExpenseForm')
+  const tDuplicate = useTranslations('DuplicateExpense')
   const locale = useLocale() as Locale
+  const router = useRouter()
   const isCreate = expense === undefined
   const groupCurrency = getCurrencyFromGroup(group)
   const defaultPaidBy =
@@ -147,8 +149,6 @@ export function PaymentForm({
   >([])
   const [pendingSubmitData, setPendingSubmitData] =
     useState<ExpenseFormValues | null>(null)
-
-  const router = useRouter()
   const { save, restore, clear } = useFormPersistence<PaymentFormValues>({
     key: `knots:duplicate-form:payment-${group.id}:${expense?.id || 'new'}`,
   })
@@ -198,34 +198,6 @@ export function PaymentForm({
           },
   })
 
-  // Restore persisted form data on mount (after navigating back from a duplicate expense detail)
-  useEffect(() => {
-    const restored = restore()
-    if (restored) {
-      // Ensure the date is a proper Date object after deserialization
-      if (restored.expenseDate) {
-        restored.expenseDate = new Date(restored.expenseDate)
-      }
-      form.reset(restored)
-      clear()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const handleMatchClick = (matchId: string) => {
-    const currentValues = form.getValues()
-    const saved = save(currentValues)
-    if (!saved) {
-      toast.error('Unable to preserve form data. Navigation is unavailable.')
-      return
-    }
-    setDuplicateMatches([])
-    setPendingSubmitData(null)
-    // Reset form to current values so isDirty becomes false and PreventNavigation allows navigation
-    form.reset(currentValues)
-    router.push(getGroupExpenseDetailPath(group.id, matchId))
-  }
-
   const submit = async (values: PaymentFormValues) => {
     const amountMinor = amountAsMinorUnits(values.amount, groupCurrency)
     const expenseValues: ExpenseFormValues = {
@@ -261,6 +233,16 @@ export function PaymentForm({
     await onSubmit(expenseValues)
   }
 
+  useEffect(() => {
+    const restored = restore()
+    if (!restored) return
+    form.reset({
+      ...restored,
+      expenseDate: new Date(restored.expenseDate),
+    })
+    clear()
+  }, [restore, clear, form])
+
   const handleDuplicateConfirm = async () => {
     if (pendingSubmitData) {
       setDuplicateMatches([])
@@ -274,6 +256,23 @@ export function PaymentForm({
     setDuplicateMatches([])
     setPendingSubmitData(null)
   }
+
+  const handleMatchClick = useCallback(
+    (matchId: string) => {
+      const success = save(form.getValues())
+      if (!success) {
+        toast.error(tDuplicate('persistError'))
+        return
+      }
+
+      setDuplicateMatches([])
+      setPendingSubmitData(null)
+      // Clear dirty state so PreventNavigation does not block navigation
+      form.reset(form.getValues())
+      router.push(getGroupExpenseDetailPath(group.id, matchId))
+    },
+    [save, form, tDuplicate, router, group.id],
+  )
 
   const formFooter = (
     <DialogFooter className="flex shrink-0 flex-col-reverse gap-2 border-t bg-popover px-0 pt-4 pb-0 sm:flex-row sm:justify-end">

@@ -36,7 +36,6 @@ const defaultProps = {
   newExpense: defaultNewExpense,
   onConfirm: jest.fn(),
   onCancel: jest.fn(),
-  onMatchClick: jest.fn(),
   currency: usdCurrency,
   locale: 'en-US' as const,
 }
@@ -240,25 +239,6 @@ describe('DuplicateExpenseDialog', () => {
     expect(screen.queryByText('Similar title')).not.toBeInTheDocument()
     expect(screen.queryByText('Same amount')).not.toBeInTheDocument()
     expect(screen.queryByText('Close in date')).not.toBeInTheDocument()
-  })
-
-  /**
-   * Validates: Requirements 8.1, 8.2
-   */
-  it('clicking a match item calls onMatchClick with the match id', () => {
-    const onMatchClick = jest.fn()
-
-    render(
-      <DuplicateExpenseDialog {...defaultProps} onMatchClick={onMatchClick} />,
-    )
-
-    const matchButton = screen.getByRole('button', {
-      name: /Dinner at Restaurant/,
-    })
-    fireEvent.click(matchButton)
-
-    expect(onMatchClick).toHaveBeenCalledTimes(1)
-    expect(onMatchClick).toHaveBeenCalledWith('exp-1')
   })
 
   it('does not render dialog content when open is false', () => {

@@ -24,6 +24,12 @@
     "exportJson": "Esporta file JSON",
     "exportCsv": "Esporta file CSV",
     "searchPlaceholder": "Cerca una spesa…",
+    "conversionRatePreview": "Anteprima — il tasso finale viene determinato al salvataggio",
+    "conversionOriginal": "Originale: {amount} {currency}",
+    "conversionRate": "Tasso: 1 {from} = {rate} {to}",
+    "conversionConverted": "Convertito: {amount} {currency}",
+    "conversionRateUnavailable": "Tasso di cambio non disponibile. Inserisci un tasso manuale.",
+    "manualRateRequired": "Inserisci un tasso di cambio manuale per continuare.",
     "ActiveUserModal": {
       "title": "Chi sei?",
       "description": "Dicci quale partecipante sei per consentirci di personalizzare la modalità di visualizzazione delle informazioni.",
@@ -1092,6 +1098,7 @@
     "description": "La spesa che stai salvando corrisponde a una spesa esistente. Vuoi continuare?",
     "cancel": "Annulla",
     "confirm": "Conferma",
+    "persistError": "Impossibile salvare i dati del modulo. La navigazione non è disponibile.",
     "indicators": {
       "similar-title": "Titolo simile",
       "same-amount": "Stesso importo",

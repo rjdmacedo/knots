@@ -29,13 +29,21 @@ export function buildCopyExpensePrefill(
     splitMode: expense.splitMode,
     isReimbursement: expense.isReimbursement,
     notes: expense.notes ?? '',
-    paidFor: expense.paidFor.map(({ userId, shares }) => ({
-      participant: userId,
-      shares:
+    paidFor: expense.paidFor.map(({ userId, shares }) => {
+      // Mirror expense-form edit defaults: EVENLY uses unit shares in the form;
+      // DB may store 0 after Int truncation of fractional values.
+      if (expense.splitMode === 'EVENLY') {
+        return { participant: userId, shares: 1 }
+      }
+      const shareValue =
         expense.splitMode === 'BY_AMOUNT'
           ? amountAsDecimal(shares, currency)
-          : shares / 100,
-    })),
+          : shares / 100
+      return {
+        participant: userId,
+        shares: shareValue <= 0 ? 1 : shareValue,
+      }
+    }),
     // Explicitly excluded: documents, recurrenceRule
   }
 }

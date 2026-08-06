@@ -24,6 +24,12 @@
     "exportJson": "匯出為 JSON",
     "exportCsv": "匯出為 CSV",
     "searchPlaceholder": "搜尋消費紀錄……",
+    "conversionRatePreview": "預覽 — 最終匯率在儲存時確定",
+    "conversionOriginal": "原始金額：{amount} {currency}",
+    "conversionRate": "匯率：1 {from} = {rate} {to}",
+    "conversionConverted": "換算後：{amount} {currency}",
+    "conversionRateUnavailable": "匯率不可用。請手動輸入匯率。",
+    "manualRateRequired": "請輸入手動匯率以繼續。",
     "ActiveUserModal": {
       "title": "你是誰？",
       "description": "告訴我們您在群組中的身份，以調整我們顯示資訊的方式。",
@@ -1089,6 +1095,7 @@
     "description": "你正在儲存的支出與現有支出相符。要繼續嗎？",
     "cancel": "取消",
     "confirm": "確認",
+    "persistError": "無法儲存表單資料。導覽無法使用。",
     "indicators": {
       "similar-title": "相似標題",
       "same-amount": "相同金額",

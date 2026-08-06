@@ -31,7 +31,8 @@ requests, activity log, granular push notifications, categories + auto-assign, s
 Splitwise/Knots import, CSV/JSON export, BYO OpenAI-compatible endpoint
 (`OPENAI_BASE_URL` / `OPENAI_MODEL` via `src/lib/ai-client.ts`), arithmetic
 expressions in amount fields (`src/lib/math-expression.ts`), copy expense
-(prefill create form from an existing expense).
+(prefill create form from an existing expense), server-authoritative currency
+conversion (Frankfurter FX on create/update via `src/lib/currency-conversion.ts`).
 
 ## Inspiration source
 
@@ -42,11 +43,10 @@ feature notes the upstream issue for demand signal. Import the _ideas_, not the 
 
 ## Suggested order
 
-1. `server-authoritative-currency-conversion`
-2. `multi-payer-expenses`
-3. `itemized-expenses`
-4. `account-overview-homepage`
-5. `profile-avatars`
+1. `multi-payer-expenses`
+2. `itemized-expenses`
+3. `account-overview-homepage`
+4. `profile-avatars`
 
 ---
 
@@ -70,22 +70,15 @@ Shipped. Spec: `.kiro/specs/copy-expense/`. Copy action on expense detail and
 list cards opens the create form pre-filled with source data (today's date;
 documents and recurrence excluded).
 
-## 1. `server-authoritative-currency-conversion` — Automatic FX rates
+### `server-authoritative-currency-conversion` — Automatic FX rates
 
-- **Size:** Medium. **Upstream:** spliit #513/#425 and #514/#515.
-- **Summary:** When an expense currency differs from the group currency, fetch the
-  rate server-side (Frankfurter API) and store `originalAmount`/`originalCurrency`/
-  `conversionRate` correctly (fix any cents/units mismatch). Balances use the converted amount.
-- **Touch points:** `prisma/schema.prisma` (fields already exist: `originalAmount`,
-  `originalCurrency`, `conversionRate`), conversion util in `src/lib/` (+ tests),
-  create/update expense in `src/lib/api.ts` and the tRPC expenses router, expense form UI,
-  CSV/JSON export routes (`.../expenses/export/*`).
-- **Requirement seeds:**
-  - WHEN an expense is saved in a currency other than the group currency, THE server SHALL resolve the conversion rate and persist original amount, original currency, and rate.
-  - THE stored `originalAmount` SHALL use the same integer-cents convention as `amount`.
-  - IF the FX provider is unavailable, THEN THE system SHALL let the user enter a manual rate and SHALL not block saving.
+Shipped. Spec: `.kiro/specs/server-authoritative-currency-conversion/`. When an
+expense currency differs from the group currency, the server fetches the rate
+(Frankfurter API), persists `originalAmount` / `originalCurrency` / `conversionRate`,
+and stores the converted group amount. Client rates are preview/fallback only;
+detail view and CSV export show the conversion.
 
-## 2. `multi-payer-expenses` — One expense paid by several members
+## 1. `multi-payer-expenses` — One expense paid by several members
 
 - **Size:** Large. **Upstream:** spliit #14 (top-demand).
 - **Summary:** Support an expense funded by multiple payers, each with an amount/share,
@@ -100,7 +93,7 @@ userId, amount|shares}`; migrate existing single-payer rows), balance math in
   - THE balance calculation SHALL credit each payer by their contributed amount.
   - WHEN migrating existing data, THE migration SHALL convert every current `paidById` into a single-payer row with the full amount (no balance change).
 
-## 3. `itemized-expenses` — Split by line items (with tax & tip)
+## 2. `itemized-expenses` — Split by line items (with tax & tip)
 
 - **Size:** Large. **Upstream:** spliit #395.
 - **Summary:** Optionally break an expense into line items, assign each item to
@@ -114,7 +107,7 @@ userId, amount|shares}`; migrate existing single-payer rows), balance math in
   - THE system SHALL distribute tax and tip proportionally to each participant's item subtotal.
   - THE sum of per-person shares SHALL exactly equal the expense total (no lost cents).
 
-## 4. `account-overview-homepage` — Cross-group balance roll-up
+## 3. `account-overview-homepage` — Cross-group balance roll-up
 
 - **Size:** Medium. **Upstream:** spliit #509.
 - **Summary:** A logged-in landing page summarising the user's net position across all
@@ -127,7 +120,7 @@ userId, amount|shares}`; migrate existing single-payer rows), balance math in
   - THE overview SHALL list top balances with links to each group/friend.
   - THE aggregation SHALL run server-side via a single tRPC procedure.
 
-## 5. `profile-avatars` — Account profile photos
+## 4. `profile-avatars` — Account profile photos
 
 - **Size:** Medium.
 - **Summary:** Let users upload an avatar shown across account, group member lists, and

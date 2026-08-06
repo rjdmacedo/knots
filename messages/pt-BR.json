@@ -24,6 +24,12 @@
     "exportJson": "Exportar para JSON",
     "exportCsv": "Exportar para CSV",
     "searchPlaceholder": "Pesquisar por uma despesa…",
+    "conversionRatePreview": "Prévia — taxa final determinada ao salvar",
+    "conversionOriginal": "Original: {amount} {currency}",
+    "conversionRate": "Taxa: 1 {from} = {rate} {to}",
+    "conversionConverted": "Convertido: {amount} {currency}",
+    "conversionRateUnavailable": "Taxa de câmbio indisponível. Por favor, informe uma taxa manual.",
+    "manualRateRequired": "Por favor, insira uma taxa de câmbio manual para continuar.",
     "ActiveUserModal": {
       "title": "Quem é você?",
       "description": "Informe qual participante você é para personalizarmos a exibição das informações.",
@@ -1094,6 +1100,7 @@
     "description": "A despesa que você está salvando corresponde a uma despesa existente. Deseja continuar?",
     "cancel": "Cancelar",
     "confirm": "Confirmar",
+    "persistError": "Não foi possível salvar os dados do formulário. Navegação indisponível.",
     "indicators": {
       "similar-title": "Título semelhante",
       "same-amount": "Mesmo valor",

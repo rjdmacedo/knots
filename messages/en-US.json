@@ -27,6 +27,12 @@
     "exportJson": "Export to JSON",
     "exportCsv": "Export to CSV",
     "searchPlaceholder": "Search for an expense…",
+    "conversionRatePreview": "Preview — final rate determined at save time",
+    "conversionOriginal": "Original: {amount} {currency}",
+    "conversionRate": "Rate: 1 {from} = {rate} {to}",
+    "conversionConverted": "Converted: {amount} {currency}",
+    "conversionRateUnavailable": "Exchange rate unavailable. Please provide a manual rate.",
+    "manualRateRequired": "Please enter a manual exchange rate to continue.",
     "ActiveUserModal": {
       "title": "Who are you?",
       "description": "Tell us which participant you are to let us customize how the information is displayed.",
@@ -1248,6 +1254,7 @@
     "description": "The expense you are saving matches an existing expense. Do you want to continue?",
     "cancel": "Cancel",
     "confirm": "Confirm",
+    "persistError": "Could not save form data. Navigation is unavailable.",
     "indicators": {
       "similar-title": "Similar title",
       "same-amount": "Same amount",

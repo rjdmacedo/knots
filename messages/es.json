@@ -24,6 +24,12 @@
     "exportJson": "Exportar a JSON",
     "exportCsv": "Exportar a CSV",
     "searchPlaceholder": "Busca un gasto…",
+    "conversionRatePreview": "Vista previa — la tasa final se determina al guardar",
+    "conversionOriginal": "Original: {amount} {currency}",
+    "conversionRate": "Tasa: 1 {from} = {rate} {to}",
+    "conversionConverted": "Convertido: {amount} {currency}",
+    "conversionRateUnavailable": "Tipo de cambio no disponible. Por favor, proporcione una tasa manual.",
+    "manualRateRequired": "Por favor, introduzca un tipo de cambio manual para continuar.",
     "ActiveUserModal": {
       "title": "¿Quién es usted?",
       "description": "Dinos qué participante eres para que podamos personalizar cómo se muestra la información.",
@@ -1092,6 +1098,7 @@
     "description": "El gasto que estás guardando coincide con un gasto existente. ¿Quieres continuar?",
     "cancel": "Cancelar",
     "confirm": "Confirmar",
+    "persistError": "No se pudieron guardar los datos del formulario. La navegación no está disponible.",
     "indicators": {
       "similar-title": "Título similar",
       "same-amount": "Mismo importe",

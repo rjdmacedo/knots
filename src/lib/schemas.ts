@@ -101,14 +101,14 @@ export const expenseFormSchema = z
           .refine((amount) => amount != 0, 'amountNotZero')
           .refine((amount) => amount <= 10_000_000_00, 'amountTenMillion'),
       ])
-      .optional(),
+      .nullish(),
     originalCurrency: z.union([z.string().length(3).nullish(), z.literal('')]),
     conversionRate: z
       .union([
         z.literal('').transform(() => undefined),
         inputCoercedToNumber.refine((amount) => amount > 0, 'ratePositive'),
       ])
-      .optional(),
+      .nullish(),
     paidBy: z.string({ required_error: 'paidByRequired' }),
     paidFor: z
       .array(

@@ -24,6 +24,12 @@
     "exportJson": "Exporteren naar JSON",
     "exportCsv": "Exporteren naar CSV",
     "searchPlaceholder": "Zoek naar een uitgave…",
+    "conversionRatePreview": "Voorbeeld — definitieve koers wordt bepaald bij opslaan",
+    "conversionOriginal": "Origineel: {amount} {currency}",
+    "conversionRate": "Koers: 1 {from} = {rate} {to}",
+    "conversionConverted": "Omgerekend: {amount} {currency}",
+    "conversionRateUnavailable": "Wisselkoers niet beschikbaar. Voer een handmatige koers in.",
+    "manualRateRequired": "Voer een handmatige wisselkoers in om door te gaan.",
     "ActiveUserModal": {
       "title": "Wie ben jij?",
       "description": "Zeg ons welke deelnemer je bent zodat wij persoonlijke informatie kunnen aantonen.",
@@ -1089,6 +1095,7 @@
     "description": "De uitgave die je opslaat komt overeen met een bestaande uitgave. Wil je doorgaan?",
     "cancel": "Annuleren",
     "confirm": "Bevestigen",
+    "persistError": "Kon formuliergegevens niet opslaan. Navigatie is niet beschikbaar.",
     "indicators": {
       "similar-title": "Vergelijkbare titel",
       "same-amount": "Zelfde bedrag",

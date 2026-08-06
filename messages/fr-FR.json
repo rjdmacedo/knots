@@ -24,6 +24,12 @@
     "exportJson": "Exporter en JSON",
     "exportCsv": "Exporter en CSV",
     "searchPlaceholder": "Rechercher une dépense…",
+    "conversionRatePreview": "Aperçu — taux final déterminé lors de la sauvegarde",
+    "conversionOriginal": "Original : {amount} {currency}",
+    "conversionRate": "Taux : 1 {from} = {rate} {to}",
+    "conversionConverted": "Converti : {amount} {currency}",
+    "conversionRateUnavailable": "Taux de change indisponible. Veuillez fournir un taux manuel.",
+    "manualRateRequired": "Veuillez entrer un taux de change manuel pour continuer.",
     "ActiveUserModal": {
       "title": "Qui êtes-vous ?",
       "description": "Dites-nous quel participant vous êtes pour personnaliser l'affichage des informations.",
@@ -1092,6 +1098,7 @@
     "description": "La dépense que vous enregistrez correspond à une dépense existante. Voulez-vous continuer ?",
     "cancel": "Annuler",
     "confirm": "Confirmer",
+    "persistError": "Impossible d'enregistrer les données du formulaire. La navigation est indisponible.",
     "indicators": {
       "similar-title": "Titre similaire",
       "same-amount": "Même montant",

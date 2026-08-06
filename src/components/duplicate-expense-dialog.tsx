@@ -31,7 +31,7 @@ type DuplicateExpenseDialogProps = {
   }
   onConfirm: () => void
   onCancel: () => void
-  onMatchClick: (matchId: string) => void
+  onMatchClick?: (matchId: string) => void
   currency: Currency
   locale: Locale
 }
@@ -74,11 +74,9 @@ export function DuplicateExpenseDialog({
               'text-orange-600 dark:text-orange-400 font-medium'
 
             return (
-              <button
+              <div
                 key={match.id}
-                type="button"
-                className="w-full rounded-md border text-left text-sm hover:bg-muted/50 transition-colors cursor-pointer overflow-hidden"
-                onClick={() => onMatchClick(match.id)}
+                className="w-full rounded-md border text-sm overflow-hidden"
               >
                 {/* Comparison table */}
                 <table className="w-full text-sm">
@@ -149,7 +147,6 @@ export function DuplicateExpenseDialog({
                   </tbody>
                 </table>
 
-                {/* Similarity badges */}
                 {indicators.length > 0 && (
                   <div className="flex flex-wrap gap-1 px-3 py-2 border-t">
                     {indicators.map((indicator) => (
@@ -159,7 +156,7 @@ export function DuplicateExpenseDialog({
                     ))}
                   </div>
                 )}
-              </button>
+              </div>
             )
           })}
         </div>
