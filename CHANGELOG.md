@@ -1,3 +1,10 @@
+# [1.47.0](https://github.com/rjdmacedo/knots/compare/v1.46.1...v1.47.0) (2026-08-06)
+
+
+### Features
+
+* detect duplicate expenses and fix expense date timezone shifts ([829e19f](https://github.com/rjdmacedo/knots/commit/829e19f0d36c6e84765086652e8cc1ffc7f3da84))
+
 ## [1.46.1](https://github.com/rjdmacedo/knots/compare/v1.46.0...v1.46.1) (2026-07-07)
 
 
