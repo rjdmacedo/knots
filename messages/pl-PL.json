@@ -24,6 +24,12 @@
     "exportJson": "Eksportuj jako JSON",
     "exportCsv": "Eksportuj jako CSV",
     "searchPlaceholder": "Szukaj wydatku…",
+    "conversionRatePreview": "Podgląd — ostateczny kurs zostanie ustalony przy zapisie",
+    "conversionOriginal": "Oryginał: {amount} {currency}",
+    "conversionRate": "Kurs: 1 {from} = {rate} {to}",
+    "conversionConverted": "Po przeliczeniu: {amount} {currency}",
+    "conversionRateUnavailable": "Kurs wymiany niedostępny. Podaj kurs ręcznie.",
+    "manualRateRequired": "Podaj ręczny kurs wymiany, aby kontynuować.",
     "ActiveUserModal": {
       "title": "Kim jesteś?",
       "description": "Podaj, którym uczestnikiem jesteś aby pozwolić nam określić jakie informacje mają być wyświetlane.",
@@ -1089,6 +1095,7 @@
     "description": "Wydatek, który zapisujesz, odpowiada istniejącemu wydatkowi. Czy chcesz kontynuować?",
     "cancel": "Anuluj",
     "confirm": "Potwierdź",
+    "persistError": "Nie udało się zapisać danych formularza. Nawigacja jest niedostępna.",
     "indicators": {
       "similar-title": "Podobny tytuł",
       "same-amount": "Ta sama kwota",

@@ -188,7 +188,7 @@ describe('Feature: copy-expense, Property 2: Copy prefill correctly converts mon
     )
   })
 
-  it('paidFor shares are converted per split mode (BY_AMOUNT uses decimal, others divide by 100)', () => {
+  it('paidFor shares are converted per split mode', () => {
     fc.assert(
       fc.property(arbCopyableExpense, arbCurrency, (expense, currency) => {
         const result = buildCopyExpensePrefill(expense, currency)
@@ -199,12 +199,14 @@ describe('Feature: copy-expense, Property 2: Copy prefill correctly converts mon
           const sourceShares = expense.paidFor[i].shares
           const resultShares = result.paidFor![i].shares
 
-          if (expense.splitMode === 'BY_AMOUNT') {
-            const expected = sourceShares / 10 ** currency.decimal_digits
-            expect(resultShares).toBeCloseTo(expected, 10)
+          if (expense.splitMode === 'EVENLY') {
+            expect(resultShares).toBe(1)
+          } else if (expense.splitMode === 'BY_AMOUNT') {
+            const converted = sourceShares / 10 ** currency.decimal_digits
+            expect(resultShares).toBe(converted <= 0 ? 1 : converted)
           } else {
-            const expected = sourceShares / 100
-            expect(resultShares).toBeCloseTo(expected, 10)
+            const converted = sourceShares / 100
+            expect(resultShares).toBe(converted <= 0 ? 1 : converted)
           }
         }
       }),

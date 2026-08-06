@@ -24,6 +24,12 @@
     "exportJson": "JSONにエクスポート",
     "exportCsv": "CSVにエクスポート",
     "searchPlaceholder": "支出を検索...",
+    "conversionRatePreview": "プレビュー — 最終レートは保存時に決定されます",
+    "conversionOriginal": "元の金額: {amount} {currency}",
+    "conversionRate": "レート: 1 {from} = {rate} {to}",
+    "conversionConverted": "換算後: {amount} {currency}",
+    "conversionRateUnavailable": "為替レートを取得できません。手動でレートを入力してください。",
+    "manualRateRequired": "続行するには手動で為替レートを入力してください。",
     "ActiveUserModal": {
       "title": "あなたは誰ですか？",
       "description": "情報の表示方法をカスタマイズするために、あなたがどの参加者かを教えてください。",
@@ -1089,6 +1095,7 @@
     "description": "保存しようとしている支出は既存の支出と一致します。続行しますか？",
     "cancel": "キャンセル",
     "confirm": "確認",
+    "persistError": "フォームデータを保存できませんでした。ナビゲーションは利用できません。",
     "indicators": {
       "similar-title": "類似のタイトル",
       "same-amount": "同じ金額",

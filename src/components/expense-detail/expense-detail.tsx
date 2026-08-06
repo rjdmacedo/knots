@@ -391,6 +391,9 @@ export type ExpenseDetailContentProps = {
     documents: Array<{ id: string; url: string; width: number; height: number }>
     creationMethod?: string | null
     bundleId?: string | null
+    originalAmount?: number | null
+    originalCurrency?: string | null
+    conversionRate?: { toNumber(): number } | null
   }
   currency: Currency
   categories: Category[]
@@ -446,11 +449,21 @@ export function ExpenseDetailContent({
   isLocked,
 }: ExpenseDetailContentProps) {
   const t = useTranslations('ExpenseDetail')
+  const tExpenses = useTranslations('Expenses')
   const locale = useLocale()
   const documentsEnabled =
     process.env.NEXT_PUBLIC_ENABLE_EXPENSE_DOCUMENTS === 'true'
 
   const formattedAmount = formatCurrency(currency, expense.amount, locale)
+
+  const hasConversion = expense.originalCurrency != null
+  const originalCurrencyObj = hasConversion
+    ? getCurrency(expense.originalCurrency)
+    : null
+  const formattedOriginalAmount =
+    hasConversion && originalCurrencyObj && expense.originalAmount != null
+      ? formatCurrency(originalCurrencyObj, expense.originalAmount, locale)
+      : null
   const addedOnDate = formatDate(addedAt ?? expense.createdAt, locale, {
     dateStyle: 'long',
   })
@@ -654,6 +667,34 @@ export function ExpenseDetailContent({
           </div>
         </CardContent>
       </Card>
+
+      {hasConversion && formattedOriginalAmount ? (
+        <Card>
+          <CardContent className="flex flex-col gap-1 pt-6">
+            <p className="text-sm text-muted-foreground">
+              {tExpenses('conversionOriginal', {
+                amount: formattedOriginalAmount,
+                currency: expense.originalCurrency!,
+              })}
+            </p>
+            {expense.conversionRate != null ? (
+              <p className="text-sm text-muted-foreground">
+                {tExpenses('conversionRate', {
+                  from: expense.originalCurrency!,
+                  rate: expense.conversionRate.toNumber(),
+                  to: currency.code,
+                })}
+              </p>
+            ) : null}
+            <p className="text-sm text-muted-foreground">
+              {tExpenses('conversionConverted', {
+                amount: formattedAmount,
+                currency: currency.code,
+              })}
+            </p>
+          </CardContent>
+        </Card>
+      ) : null}
 
       {!expense.isReimbursement ? (
         <Card>

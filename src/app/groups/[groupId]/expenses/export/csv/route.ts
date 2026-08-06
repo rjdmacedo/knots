@@ -1,4 +1,4 @@
-import { getCurrency } from '@/lib/currency'
+import { getDecimalDigits } from '@/lib/currency-conversion'
 import { prisma } from '@/lib/prisma'
 import { formatAmountAsDecimal, getCurrencyFromGroup } from '@/lib/utils'
 import { Parser } from '@json2csv/plainjs'
@@ -114,16 +114,17 @@ export async function GET(
     categoryName: expense.category?.name || '',
     currency: group.currencyCode ?? group.currency,
     amount: formatAmountAsDecimal(expense.amount, currency),
-    originalAmount: expense.originalAmount
-      ? formatAmountAsDecimal(
-          expense.originalAmount,
-          getCurrency(expense.originalCurrency),
-        )
-      : null,
-    originalCurrency: expense.originalCurrency,
+    originalAmount:
+      expense.originalAmount != null && expense.originalCurrency
+        ? (
+            expense.originalAmount /
+            Math.pow(10, getDecimalDigits(expense.originalCurrency))
+          ).toFixed(getDecimalDigits(expense.originalCurrency))
+        : '',
+    originalCurrency: expense.originalCurrency ?? '',
     conversionRate: expense.conversionRate
       ? expense.conversionRate.toString()
-      : null,
+      : '',
     isReimbursement: expense.isReimbursement ? 'Yes' : 'No',
     splitMode: splitModeLabel[expense.splitMode],
     ...Object.fromEntries(

@@ -24,6 +24,12 @@
     "exportJson": "Експортувати у JSON",
     "exportCsv": "Експортувати у CSV",
     "searchPlaceholder": "Пошук витрат...",
+    "conversionRatePreview": "Попередній перегляд — остаточний курс визначається при збереженні",
+    "conversionOriginal": "Оригінал: {amount} {currency}",
+    "conversionRate": "Курс: 1 {from} = {rate} {to}",
+    "conversionConverted": "Конвертовано: {amount} {currency}",
+    "conversionRateUnavailable": "Курс обміну недоступний. Будь ласка, введіть курс вручну.",
+    "manualRateRequired": "Будь ласка, введіть курс обміну вручну, щоб продовжити.",
     "ActiveUserModal": {
       "title": "Хто ви?",
       "description": "Скажіть нам, хто ви серед учасників, щоб ми могли налаштувати відображення інформації під вас",
@@ -1089,6 +1095,7 @@
     "description": "Витрата, яку ви зберігаєте, збігається з наявною витратою. Продовжити?",
     "cancel": "Скасувати",
     "confirm": "Підтвердити",
+    "persistError": "Не вдалося зберегти дані форми. Навігація недоступна.",
     "indicators": {
       "similar-title": "Схожа назва",
       "same-amount": "Та сама сума",

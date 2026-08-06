@@ -24,6 +24,12 @@
     "exportJson": "Salvează în JSON",
     "exportCsv": "Salvează în CSV",
     "searchPlaceholder": "Caută o cheltuială…",
+    "conversionRatePreview": "Previzualizare — rata finală este determinată la salvare",
+    "conversionOriginal": "Original: {amount} {currency}",
+    "conversionRate": "Curs: 1 {from} = {rate} {to}",
+    "conversionConverted": "Convertit: {amount} {currency}",
+    "conversionRateUnavailable": "Cursul de schimb nu este disponibil. Vă rugăm să introduceți un curs manual.",
+    "manualRateRequired": "Vă rugăm să introduceți un curs de schimb manual pentru a continua.",
     "ActiveUserModal": {
       "title": "Cum te numești?",
       "description": "Spune-ne cine ești ca să putem îți afișăm informațiile relevante.",
@@ -1089,6 +1095,7 @@
     "description": "Cheltuiala pe care o salvezi corespunde unei cheltuieli existente. Vrei să continui?",
     "cancel": "Anulează",
     "confirm": "Confirmă",
+    "persistError": "Nu s-au putut salva datele formularului. Navigarea nu este disponibilă.",
     "indicators": {
       "similar-title": "Titlu similar",
       "same-amount": "Aceeași sumă",

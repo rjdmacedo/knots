@@ -112,6 +112,7 @@ export function ExpenseConversionRateField({
   className,
 }: ExpenseConversionRateFieldProps) {
   const t = useTranslations('ExpenseForm')
+  const tExpenses = useTranslations('Expenses')
   const ratePrefix = (
     <>
       {getCurrencyDisplaySymbol(originalCurrency)} 1 ={' '}
@@ -232,7 +233,13 @@ export function ExpenseConversionRateField({
           <FormItem className={cn('min-w-0', className)}>
             {labelRow}
             <FormControl>
-              {rateInputGroup(true, { onChange, onBlur, ref, name, value })}
+              {rateInputGroup(true, {
+                onChange,
+                onBlur,
+                ref,
+                name,
+                value: value ?? undefined,
+              })}
             </FormControl>
             <FormDescription>
               {t('conversionRateField.collapsibleDescription')}
@@ -251,6 +258,11 @@ export function ExpenseConversionRateField({
       <FormDescription>{t('conversionRateField.description')}</FormDescription>
       {(isLoading || exchangeError || onRefresh || !exchangeRate) && (
         <FormDescription>{automaticRateDescription}</FormDescription>
+      )}
+      {!isLoading && !exchangeError && exchangeRate != null && (
+        <p className="text-xs text-muted-foreground/70">
+          {tExpenses('conversionRatePreview')}
+        </p>
       )}
     </FormItem>
   )

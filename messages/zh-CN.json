@@ -24,6 +24,12 @@
     "exportJson": "导出到JSON",
     "exportCsv": "导出到CSV",
     "searchPlaceholder": "查找消费……",
+    "conversionRatePreview": "预览 — 最终汇率在保存时确定",
+    "conversionOriginal": "原始金额：{amount} {currency}",
+    "conversionRate": "汇率：1 {from} = {rate} {to}",
+    "conversionConverted": "换算后：{amount} {currency}",
+    "conversionRateUnavailable": "汇率不可用。请手动输入汇率。",
+    "manualRateRequired": "请输入手动汇率以继续。",
     "ActiveUserModal": {
       "title": "你是哪位？",
       "description": "告诉我们你在群组中的身份，以便定制你的信息呈现方式。",
@@ -1089,6 +1095,7 @@
     "description": "你正在保存的支出与现有支出匹配。是否继续？",
     "cancel": "取消",
     "confirm": "确认",
+    "persistError": "无法保存表单数据。导航不可用。",
     "indicators": {
       "similar-title": "相似标题",
       "same-amount": "相同金额",

@@ -24,6 +24,12 @@
     "exportJson": "JSON olarak dışa aktar",
     "exportCsv": "CSV olarak dışa aktar",
     "searchPlaceholder": "Bir masraf arayın…",
+    "conversionRatePreview": "Önizleme — nihai kur kayıt sırasında belirlenir",
+    "conversionOriginal": "Orijinal: {amount} {currency}",
+    "conversionRate": "Kur: 1 {from} = {rate} {to}",
+    "conversionConverted": "Dönüştürülmüş: {amount} {currency}",
+    "conversionRateUnavailable": "Döviz kuru mevcut değil. Lütfen manuel bir kur girin.",
+    "manualRateRequired": "Devam etmek için lütfen manuel bir döviz kuru girin.",
     "ActiveUserModal": {
       "title": "Kimsiniz?",
       "description": "Bilgilerin nasıl görüntüleneceğini özelleştirebilmemiz için hangi katılımcı olduğunuzu belirtin.",
@@ -1089,6 +1095,7 @@
     "description": "Kaydettiğiniz harcama mevcut bir harcamayla eşleşiyor. Devam etmek istiyor musunuz?",
     "cancel": "İptal",
     "confirm": "Onayla",
+    "persistError": "Form verileri kaydedilemedi. Gezinme kullanılamıyor.",
     "indicators": {
       "similar-title": "Benzer başlık",
       "same-amount": "Aynı tutar",

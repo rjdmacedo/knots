@@ -24,6 +24,12 @@
     "exportJson": "Vie JSON-tiedostoon",
     "exportCsv": "Vie CSV-tiedostoon",
     "searchPlaceholder": "Etsi kulua…",
+    "conversionRatePreview": "Esikatselu — lopullinen kurssi määritetään tallennuksen yhteydessä",
+    "conversionOriginal": "Alkuperäinen: {amount} {currency}",
+    "conversionRate": "Kurssi: 1 {from} = {rate} {to}",
+    "conversionConverted": "Muunnettu: {amount} {currency}",
+    "conversionRateUnavailable": "Valuuttakurssi ei ole saatavilla. Anna kurssi manuaalisesti.",
+    "manualRateRequired": "Anna manuaalinen valuuttakurssi jatkaaksesi.",
     "ActiveUserModal": {
       "title": "Kuka olet?",
       "description": "Valitse kuka osallistujista olet, jotta tiedot näkyvät oikein.",
@@ -1092,6 +1098,7 @@
     "description": "Tallentamasi kulu vastaa olemassa olevaa kulua. Haluatko jatkaa?",
     "cancel": "Peruuta",
     "confirm": "Vahvista",
+    "persistError": "Lomakkeen tietoja ei voitu tallentaa. Navigointi ei ole käytettävissä.",
     "indicators": {
       "similar-title": "Samankaltainen otsikko",
       "same-amount": "Sama summa",

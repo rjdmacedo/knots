@@ -24,6 +24,12 @@
     "exportJson": "Exportovat do JSON",
     "exportCsv": "Exportovat do CSV",
     "searchPlaceholder": "Hledat výdaj…",
+    "conversionRatePreview": "Náhled — konečný kurz se určí při uložení",
+    "conversionOriginal": "Původní: {amount} {currency}",
+    "conversionRate": "Kurz: 1 {from} = {rate} {to}",
+    "conversionConverted": "Převedeno: {amount} {currency}",
+    "conversionRateUnavailable": "Směnný kurz není k dispozici. Zadejte prosím manuální kurz.",
+    "manualRateRequired": "Zadejte prosím manuální směnný kurz pro pokračování.",
     "ActiveUserModal": {
       "title": "Kdo jste?",
       "description": "Řekněte nám, který účastník jste, abychom mohli přizpůsobit zobrazení informací.",
@@ -1092,6 +1098,7 @@
     "description": "Výdaj, který ukládáte, odpovídá existujícímu výdaji. Chcete pokračovat?",
     "cancel": "Zrušit",
     "confirm": "Potvrdit",
+    "persistError": "Nepodařilo se uložit data formuláře. Navigace není dostupná.",
     "indicators": {
       "similar-title": "Podobný název",
       "same-amount": "Stejná částka",

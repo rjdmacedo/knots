@@ -24,6 +24,12 @@
     "exportJson": "Als JSON exportieren",
     "exportCsv": "Als CSV exportieren",
     "searchPlaceholder": "Suche nach einer Ausgabe…",
+    "conversionRatePreview": "Vorschau — endgültiger Kurs wird beim Speichern bestimmt",
+    "conversionOriginal": "Original: {amount} {currency}",
+    "conversionRate": "Kurs: 1 {from} = {rate} {to}",
+    "conversionConverted": "Umgerechnet: {amount} {currency}",
+    "conversionRateUnavailable": "Wechselkurs nicht verfügbar. Bitte geben Sie einen manuellen Kurs ein.",
+    "manualRateRequired": "Bitte geben Sie einen manuellen Wechselkurs ein, um fortzufahren.",
     "ActiveUserModal": {
       "title": "Wer bist du?",
       "description": "Sag uns, welcher Teilnehmer du bist, um die angezeigten Informationen auf dich anzupassen.",
@@ -1092,6 +1098,7 @@
     "description": "Die Ausgabe, die du speicherst, stimmt mit einer vorhandenen Ausgabe überein. Möchtest du fortfahren?",
     "cancel": "Abbrechen",
     "confirm": "Bestätigen",
+    "persistError": "Formulardaten konnten nicht gespeichert werden. Navigation ist nicht verfügbar.",
     "indicators": {
       "similar-title": "Ähnlicher Titel",
       "same-amount": "Gleicher Betrag",

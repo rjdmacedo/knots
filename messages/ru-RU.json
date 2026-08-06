@@ -24,6 +24,12 @@
     "exportJson": "Экспортировать в JSON",
     "exportCsv": "Экспортировать в CSV",
     "searchPlaceholder": "Поиск расходов…",
+    "conversionRatePreview": "Предварительный просмотр — окончательный курс определяется при сохранении",
+    "conversionOriginal": "Оригинал: {amount} {currency}",
+    "conversionRate": "Курс: 1 {from} = {rate} {to}",
+    "conversionConverted": "Конвертировано: {amount} {currency}",
+    "conversionRateUnavailable": "Курс обмена недоступен. Пожалуйста, введите курс вручную.",
+    "manualRateRequired": "Пожалуйста, введите курс обмена вручную, чтобы продолжить.",
     "ActiveUserModal": {
       "title": "Кто вы?",
       "description": "Скажите нам, кто вы из этого списка, чтобы мы могли подстроить интерфейс под вас.",
@@ -1089,6 +1095,7 @@
     "description": "Расход, который вы сохраняете, совпадает с существующим расходом. Продолжить?",
     "cancel": "Отмена",
     "confirm": "Подтвердить",
+    "persistError": "Не удалось сохранить данные формы. Навигация недоступна.",
     "indicators": {
       "similar-title": "Похожий заголовок",
       "same-amount": "Та же сумма",
