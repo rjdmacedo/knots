@@ -594,6 +594,7 @@
     "titleRequired": "Por favor, introduz um título.",
     "paymentCategoryNotAllowed": "Pagamento não é uma categoria válida para despesas.",
     "invalidNumber": "Número inválido.",
+    "invalidExpression": "Expressão inválida. Use números e operadores +, -, *, /.",
     "amountRequired": "Tens de introduzir um valor.",
     "amountNotZero": "O valor não pode ser zero.",
     "amountTenMillion": "O valor deve ser inferior a 10.000.000.",
@@ -1241,5 +1242,8 @@
       "close-in-date": "Datas próximas",
       "same-category": "Mesma categoria"
     }
+  },
+  "CurrencyAmountInput": {
+    "expressionHint": "ou 10+5"
   }
 }

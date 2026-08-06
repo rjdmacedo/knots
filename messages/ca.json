@@ -526,6 +526,7 @@
     "duplicateParticipantName": "Una altra participant ja té el mateix nom",
     "titleRequired": "Si us plau, afegeix un títol",
     "invalidNumber": "Número invàlid",
+    "invalidExpression": "Expressió no vàlida. Usa nombres i els operadors +, -, *, /.",
     "amountRequired": "Cal introduïr un import",
     "amountNotZero": "L'import no por ser zero.",
     "amountTenMillion": "L'import ha de ser inferior a 10.000.000.",
@@ -1097,5 +1098,8 @@
       "close-in-date": "Dates properes",
       "same-category": "Mateixa categoria"
     }
+  },
+  "CurrencyAmountInput": {
+    "expressionHint": "o 10+5"
   }
 }

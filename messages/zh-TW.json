@@ -526,6 +526,7 @@
     "duplicateParticipantName": "此名稱已被使用",
     "titleRequired": "請輸入標題。",
     "invalidNumber": "數值無效。",
+    "invalidExpression": "無效的運算式。請使用數字和 +、-、*、/ 運算子。",
     "amountRequired": "必須輸入一個金額。",
     "amountNotZero": "金額不可為 0。",
     "amountTenMillion": "金額需小於 10,000,000。",
@@ -1094,5 +1095,8 @@
       "close-in-date": "日期接近",
       "same-category": "相同類別"
     }
+  },
+  "CurrencyAmountInput": {
+    "expressionHint": "或 10+5"
   }
 }

@@ -594,6 +594,7 @@
     "titleRequired": "Please enter a title.",
     "paymentCategoryNotAllowed": "Payment is not a valid category for expenses.",
     "invalidNumber": "Invalid number.",
+    "invalidExpression": "Invalid expression. Use numbers and +, -, *, / operators.",
     "amountRequired": "You must enter an amount.",
     "amountNotZero": "The amount must not be zero.",
     "amountTenMillion": "The amount must be lower than 10,000,000.",
@@ -1252,5 +1253,8 @@
       "close-in-date": "Close in date",
       "same-category": "Same category"
     }
+  },
+  "CurrencyAmountInput": {
+    "expressionHint": "or 10+5"
   }
 }

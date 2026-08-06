@@ -526,6 +526,7 @@
     "duplicateParticipantName": "Başka bir katılımcı zaten bu ada sahip.",
     "titleRequired": "Lütfen bir başlık girin.",
     "invalidNumber": "Geçersiz numara.",
+    "invalidExpression": "Geçersiz ifade. Sayılar ve +, -, *, / operatörlerini kullanın.",
     "amountRequired": "Bir tutar girmelisiniz.",
     "amountNotZero": "Tutar sıfır olamaz.",
     "amountTenMillion": "Tutar 10.000.000'dan düşük olmalı.",
@@ -1094,5 +1095,8 @@
       "close-in-date": "Yakın tarihler",
       "same-category": "Aynı kategori"
     }
+  },
+  "CurrencyAmountInput": {
+    "expressionHint": "veya 10+5"
   }
 }

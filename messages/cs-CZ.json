@@ -526,6 +526,7 @@
     "duplicateParticipantName": "Jiný účastník už toto jméno má.",
     "titleRequired": "Zadejte prosím název.",
     "invalidNumber": "Neplatné číslo.",
+    "invalidExpression": "Neplatný výraz. Použijte čísla a operátory +, -, *, /.",
     "amountRequired": "Musíte zadat částku.",
     "amountNotZero": "Částka nesmí být nula.",
     "amountTenMillion": "Částka musí být nižší než 10 000 000.",
@@ -1097,5 +1098,8 @@
       "close-in-date": "Blízké datum",
       "same-category": "Stejná kategorie"
     }
+  },
+  "CurrencyAmountInput": {
+    "expressionHint": "nebo 10+5"
   }
 }

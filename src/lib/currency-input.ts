@@ -58,3 +58,10 @@ export function getCurrencyDisplaySymbol(currency: Currency): string {
 export function formatObtainedExchangeRate(rate: number): string {
   return rate.toFixed(2)
 }
+
+/**
+ * Allow characters valid in arithmetic expressions:
+ * digits, decimal separators (. ,), operators (+ - * /), parentheses, whitespace.
+ */
+export const enforceExpressionPattern = (value: string): string =>
+  value.replace(/[^\d.,+\-*/() ]/g, '')

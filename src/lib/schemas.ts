@@ -1,4 +1,5 @@
 import { isPaymentCategory } from '@/lib/categories'
+import { evaluate, isExpression } from '@/lib/math-expression'
 import { RecurrenceRule, SplitMode } from '@prisma/client'
 import * as z from 'zod'
 
@@ -32,6 +33,33 @@ export function toAmountMinorUnitsForValidation(
   return Math.round(amount * factor)
 }
 
+/** Evaluate expression strings or parse plain numbers for amount fields. */
+function expressionToNumber(value: string, ctx: z.RefinementCtx): number {
+  // Fast path: plain number (no operators)
+  if (!isExpression(value)) {
+    const num = Number(value)
+    if (Number.isNaN(num)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'invalidNumber',
+      })
+      return 0
+    }
+    return num
+  }
+
+  // Expression path
+  const result = evaluate(value)
+  if (!result.ok) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'invalidExpression',
+    })
+    return 0
+  }
+  return result.value
+}
+
 export const groupFormSchema = z.object({
   name: z.string().min(2, 'min2').max(50, 'max50'),
   information: z.string().optional(),
@@ -61,21 +89,9 @@ export const expenseFormSchema = z
     title: z.string().default(''),
     category: z.coerce.number().default(0),
     amount: z
-      .union(
-        [
-          z.number(),
-          z.string().transform((value, ctx) => {
-            const valueAsNumber = Number(value)
-            if (Number.isNaN(valueAsNumber))
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: 'invalidNumber',
-              })
-            return valueAsNumber
-          }),
-        ],
-        { required_error: 'amountRequired' },
-      )
+      .union([z.number(), z.string().transform(expressionToNumber)], {
+        required_error: 'amountRequired',
+      })
       .refine((amount) => amount != 0, 'amountNotZero')
       .refine((amount) => amount <= 10_000_000_00, 'amountTenMillion'),
     originalAmount: z
@@ -250,21 +266,9 @@ export const expenseFormSchema = z
 export type ExpenseFormValues = z.infer<typeof expenseFormSchema>
 
 const paymentAmountSchema = z
-  .union(
-    [
-      z.number(),
-      z.string().transform((value, ctx) => {
-        const valueAsNumber = Number(value)
-        if (Number.isNaN(valueAsNumber))
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'invalidNumber',
-          })
-        return valueAsNumber
-      }),
-    ],
-    { required_error: 'amountRequired' },
-  )
+  .union([z.number(), z.string().transform(expressionToNumber)], {
+    required_error: 'amountRequired',
+  })
   .refine((amount) => amount > 0, 'amountNotZero')
   .refine((amount) => amount <= 10_000_000_00, 'amountTenMillion')
 

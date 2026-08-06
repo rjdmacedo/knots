@@ -526,6 +526,7 @@
     "duplicateParticipantName": "Un alt membru are deja acest nume.",
     "titleRequired": "Vă rugăm să introduceți un titlu.",
     "invalidNumber": "Număr invalid.",
+    "invalidExpression": "Expresie invalidă. Folosiți numere și operatorii +, -, *, /.",
     "amountRequired": "Trebuie să introduceți o sumă.",
     "amountNotZero": "Suma nu trebuie să fie zero.",
     "amountTenMillion": "Suma trebuie să fie mai mică de 10,000,000.",
@@ -1094,5 +1095,8 @@
       "close-in-date": "Date apropiate",
       "same-category": "Aceeași categorie"
     }
+  },
+  "CurrencyAmountInput": {
+    "expressionHint": "sau 10+5"
   }
 }

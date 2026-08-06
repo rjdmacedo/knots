@@ -526,6 +526,7 @@
     "duplicateParticipantName": "別の参加者がすでにこの名前を使用しています。",
     "titleRequired": "タイトルを入力してください。",
     "invalidNumber": "無効な数字です。",
+    "invalidExpression": "無効な式です。数字と +, -, *, / 演算子を使用してください。",
     "amountRequired": "金額を入力する必要があります。",
     "amountNotZero": "金額はゼロであってはなりません。",
     "amountTenMillion": "金額は10,000,000未満である必要があります。",
@@ -1094,5 +1095,8 @@
       "close-in-date": "近い日付",
       "same-category": "同じカテゴリ"
     }
+  },
+  "CurrencyAmountInput": {
+    "expressionHint": "または 10+5"
   }
 }
