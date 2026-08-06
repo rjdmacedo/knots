@@ -30,7 +30,8 @@ friends & direct expenses, balances with debt simplification + settlements + pay
 requests, activity log, granular push notifications, categories + auto-assign, stats,
 Splitwise/Knots import, CSV/JSON export, BYO OpenAI-compatible endpoint
 (`OPENAI_BASE_URL` / `OPENAI_MODEL` via `src/lib/ai-client.ts`), arithmetic
-expressions in amount fields (`src/lib/math-expression.ts`).
+expressions in amount fields (`src/lib/math-expression.ts`), copy expense
+(prefill create form from an existing expense).
 
 ## Inspiration source
 
@@ -41,12 +42,11 @@ feature notes the upstream issue for demand signal. Import the _ideas_, not the 
 
 ## Suggested order
 
-1. `copy-expense`
-2. `server-authoritative-currency-conversion`
-3. `multi-payer-expenses`
-4. `itemized-expenses`
-5. `account-overview-homepage`
-6. `profile-avatars`
+1. `server-authoritative-currency-conversion`
+2. `multi-payer-expenses`
+3. `itemized-expenses`
+4. `account-overview-homepage`
+5. `profile-avatars`
 
 ---
 
@@ -64,19 +64,13 @@ Shipped. Spec: `.kiro/specs/expense-amount-math-expressions/`. Users can type
 arithmetic expressions (e.g. `12+4.50`, `100/3`, `(50+25)*2`) in the amount
 input; evaluated on blur/submit via a pure recursive-descent parser.
 
-## 1. `copy-expense` — Duplicate an existing expense
+### `copy-expense` — Duplicate an existing expense
 
-- **Size:** Small. **Upstream:** spliit #527.
-- **Summary:** A "Copy" action on an expense pre-fills the create form with the same
-  values but today's date, so recurring-ish purchases are one click.
-- **Touch points:** expense detail/list actions under `src/app/groups/[groupId]/expenses/`,
-  the create-expense entry (`src/components/floating-create-expense.tsx`), form prefill.
-- **Requirement seeds:**
-  - WHEN the user chooses Copy on an expense, THE create form SHALL open pre-filled with title, amount, category, payer, split, and paid-for.
-  - THE copied expense date SHALL default to today.
-  - THE copy action SHALL create a new independent expense on save (no link to the original).
+Shipped. Spec: `.kiro/specs/copy-expense/`. Copy action on expense detail and
+list cards opens the create form pre-filled with source data (today's date;
+documents and recurrence excluded).
 
-## 2. `server-authoritative-currency-conversion` — Automatic FX rates
+## 1. `server-authoritative-currency-conversion` — Automatic FX rates
 
 - **Size:** Medium. **Upstream:** spliit #513/#425 and #514/#515.
 - **Summary:** When an expense currency differs from the group currency, fetch the
@@ -91,7 +85,7 @@ input; evaluated on blur/submit via a pure recursive-descent parser.
   - THE stored `originalAmount` SHALL use the same integer-cents convention as `amount`.
   - IF the FX provider is unavailable, THEN THE system SHALL let the user enter a manual rate and SHALL not block saving.
 
-## 3. `multi-payer-expenses` — One expense paid by several members
+## 2. `multi-payer-expenses` — One expense paid by several members
 
 - **Size:** Large. **Upstream:** spliit #14 (top-demand).
 - **Summary:** Support an expense funded by multiple payers, each with an amount/share,
@@ -106,7 +100,7 @@ userId, amount|shares}`; migrate existing single-payer rows), balance math in
   - THE balance calculation SHALL credit each payer by their contributed amount.
   - WHEN migrating existing data, THE migration SHALL convert every current `paidById` into a single-payer row with the full amount (no balance change).
 
-## 4. `itemized-expenses` — Split by line items (with tax & tip)
+## 3. `itemized-expenses` — Split by line items (with tax & tip)
 
 - **Size:** Large. **Upstream:** spliit #395.
 - **Summary:** Optionally break an expense into line items, assign each item to
@@ -120,7 +114,7 @@ userId, amount|shares}`; migrate existing single-payer rows), balance math in
   - THE system SHALL distribute tax and tip proportionally to each participant's item subtotal.
   - THE sum of per-person shares SHALL exactly equal the expense total (no lost cents).
 
-## 5. `account-overview-homepage` — Cross-group balance roll-up
+## 4. `account-overview-homepage` — Cross-group balance roll-up
 
 - **Size:** Medium. **Upstream:** spliit #509.
 - **Summary:** A logged-in landing page summarising the user's net position across all
@@ -133,7 +127,7 @@ userId, amount|shares}`; migrate existing single-payer rows), balance math in
   - THE overview SHALL list top balances with links to each group/friend.
   - THE aggregation SHALL run server-side via a single tRPC procedure.
 
-## 6. `profile-avatars` — Account profile photos
+## 5. `profile-avatars` — Account profile photos
 
 - **Size:** Medium.
 - **Summary:** Let users upload an avatar shown across account, group member lists, and

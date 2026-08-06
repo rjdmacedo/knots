@@ -55,6 +55,9 @@ function makeExpense(
     recurrenceRule: null,
     notes: null,
     category: null,
+    categoryId: 0,
+    creationMethod: null,
+    bundleId: null,
     _count: { documents: 0 },
     paidBy: overrides.paidBy ?? { id: CURRENT_USER_ID, name: 'Current User' },
     paidFor: overrides.paidFor ?? [

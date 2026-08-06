@@ -181,7 +181,7 @@ export function PaymentForm({
                 defaultPaidBy,
                 group.participants,
               ) ?? '',
-            notes: '',
+            notes: createPrefill.notes ?? '',
           }
         : {
             expenseDate: new Date(),
