@@ -1,3 +1,10 @@
+# [1.49.0](https://github.com/rjdmacedo/knots/compare/v1.48.0...v1.49.0) (2026-08-06)
+
+
+### Features
+
+* allow arithmetic expressions in expense amount fields ([f764a19](https://github.com/rjdmacedo/knots/commit/f764a19a7ce2861f81e21667b7e4c58fc37569ce))
+
 # [1.48.0](https://github.com/rjdmacedo/knots/compare/v1.47.0...v1.48.0) (2026-08-06)
 
 
