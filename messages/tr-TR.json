@@ -918,7 +918,8 @@
       "saving": "Kaydediliyor…",
       "cancel": "İptal",
       "success": "Harcama eklendi.",
-      "error": "Harcama eklenemedi."
+      "error": "Harcama eklenemedi.",
+      "persistError": "Form verileri kaydedilemedi. Gezinme kullanılamıyor."
     },
     "SettleAll": {
       "button": "Tümünü kapat",
@@ -1081,5 +1082,17 @@
     "deleteConfirmDescription": "Bu işlem “{name}” grubunu ve tüm giderlerini, bakiyelerini ve geçmişini herkes için kalıcı olarak siler. Bu işlem geri alınamaz.",
     "cancel": "İptal",
     "deleteConfirmAction": "Kalıcı olarak sil"
+  },
+  "DuplicateExpense": {
+    "title": "Olası yinelenen harcama tespit edildi",
+    "description": "Kaydettiğiniz harcama mevcut bir harcamayla eşleşiyor. Devam etmek istiyor musunuz?",
+    "cancel": "İptal",
+    "confirm": "Onayla",
+    "indicators": {
+      "similar-title": "Benzer başlık",
+      "same-amount": "Aynı tutar",
+      "close-in-date": "Yakın tarihler",
+      "same-category": "Aynı kategori"
+    }
   }
 }

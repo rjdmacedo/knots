@@ -918,7 +918,8 @@
       "saving": "保存中…",
       "cancel": "取消",
       "success": "支出已添加。",
-      "error": "无法添加支出。"
+      "error": "无法添加支出。",
+      "persistError": "无法保存表单数据。导航不可用。"
     },
     "SettleAll": {
       "button": "全部结清",
@@ -1081,5 +1082,17 @@
     "deleteConfirmDescription": "这将为所有成员永久删除“{name}”及其所有支出、余额和历史记录。此操作无法撤销。",
     "cancel": "取消",
     "deleteConfirmAction": "永久删除"
+  },
+  "DuplicateExpense": {
+    "title": "检测到可能的重复支出",
+    "description": "你正在保存的支出与现有支出匹配。是否继续？",
+    "cancel": "取消",
+    "confirm": "确认",
+    "indicators": {
+      "similar-title": "相似标题",
+      "same-amount": "相同金额",
+      "close-in-date": "日期接近",
+      "same-category": "相同类别"
+    }
   }
 }

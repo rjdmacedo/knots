@@ -8,12 +8,16 @@ import {
 } from '@/components/currency-selector'
 import { DatePicker } from '@/components/date-picker'
 import { DeletePopup } from '@/components/delete-popup'
+import { DuplicateExpenseDialog } from '@/components/duplicate-expense-dialog'
 import { ExpenseDocumentsInput } from '@/components/expense-documents-input'
 import { extractCategoryFromTitle } from '@/components/expense-form-actions'
 import {
   ExpenseTitleInput,
   ExpenseTitleSuggestion,
 } from '@/components/expense-title-input'
+import { useDuplicateCheck } from '@/components/hooks/use-duplicate-check'
+import { useFormPersistence } from '@/components/hooks/use-form-persistence'
+import { PreventNavigation } from '@/components/prevent-navigation'
 import { SubmitButton } from '@/components/submit-button'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -48,6 +52,8 @@ import {
   enforceCurrencyPattern,
   getCurrencyDisplaySymbol,
 } from '@/lib/currency-input'
+import type { DuplicateCheckResult } from '@/lib/duplicate-expense-detection'
+import { getGroupExpenseDetailPath } from '@/lib/expense-detail-urls'
 import { RuntimeFeatureFlags } from '@/lib/featureFlags'
 import { useCurrencyRate, useGroupParticipantId } from '@/lib/hooks'
 import {
@@ -71,9 +77,10 @@ import { RecurrenceRule } from '@prisma/client'
 import { ChevronRight, Save } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 /**
  * Distributes 100% equally among a given number of participants and ensures the sum of percentages is exactly 100%.
@@ -498,6 +505,7 @@ export function ExpenseForm({
   const locale = useLocale() as Locale
   const isCreate = expense === undefined
   const searchParams = useSearchParams()
+  const router = useRouter()
   const isMobileLayout = !isDesktop
   const fieldsGridClass = isMobileLayout
     ? 'grid min-w-0 grid-cols-1 items-start gap-4'
@@ -708,6 +716,53 @@ export function ExpenseForm({
   const uploadPendingDocumentsRef = useRef<(() => Promise<void>) | null>(null)
   const deletePendingDocumentsRef = useRef<(() => Promise<void>) | null>(null)
 
+  // Duplicate expense detection
+  const { checkForDuplicates, isChecking } = useDuplicateCheck({
+    context: { type: 'group', groupId: group.id },
+  })
+  const [duplicateMatches, setDuplicateMatches] = useState<
+    DuplicateCheckResult['matches']
+  >([])
+  const [pendingSubmitData, setPendingSubmitData] =
+    useState<ExpenseFormValues | null>(null)
+
+  // Form persistence for navigating to duplicate expense detail
+  const {
+    save: saveFormData,
+    restore: restoreFormData,
+    clear: clearFormData,
+  } = useFormPersistence<ExpenseFormValues>({
+    key: `knots:duplicate-form:group-${group.id}:${expense?.id || 'new'}`,
+  })
+
+  // Restore persisted form data on mount (after navigating back from expense detail)
+  useEffect(() => {
+    const restored = restoreFormData()
+    if (restored) {
+      form.reset(restored)
+      clearFormData()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Handle click on a matched expense in the duplicate dialog
+  const handleMatchClick = useCallback(
+    (matchId: string) => {
+      const currentValues = form.getValues()
+      const saved = saveFormData(currentValues)
+      if (!saved) {
+        toast.error('Unable to preserve form data. Navigation is unavailable.')
+        return
+      }
+      setDuplicateMatches([])
+      setPendingSubmitData(null)
+      // Reset form to current values so isDirty becomes false and PreventNavigation allows navigation
+      form.reset(currentValues)
+      router.push(getGroupExpenseDetailPath(group.id, matchId))
+    },
+    [form, saveFormData, router, group.id],
+  )
+
   const submit = async (values: ExpenseFormValues) => {
     // Upload pending documents before submitting
     if (uploadPendingDocumentsRef.current) {
@@ -721,6 +776,26 @@ export function ExpenseForm({
       }
     }
 
+    // Check for duplicates before proceeding
+    const result = await checkForDuplicates({
+      title: values.title,
+      amount: amountAsMinorUnits(Number(values.amount), groupCurrency),
+      expenseDate: values.expenseDate,
+      categoryId: values.category,
+      excludeExpenseId: expense?.id,
+    })
+
+    if (result.hasDuplicates) {
+      // Store form values and show dialog instead of submitting
+      setDuplicateMatches(result.matches)
+      setPendingSubmitData(values)
+      return
+    }
+
+    await proceedWithSubmit(values)
+  }
+
+  const proceedWithSubmit = async (values: ExpenseFormValues) => {
     await persistDefaultSplittingOptions(group.id, values)
 
     // Store monetary amounts in minor units (cents)
@@ -754,6 +829,20 @@ export function ExpenseForm({
         console.error('Failed to delete documents from S3:', err)
       }
     }
+  }
+
+  const handleDuplicateConfirm = async () => {
+    if (pendingSubmitData) {
+      setDuplicateMatches([])
+      const data = pendingSubmitData
+      setPendingSubmitData(null)
+      await proceedWithSubmit(data)
+    }
+  }
+
+  const handleDuplicateCancel = () => {
+    setDuplicateMatches([])
+    setPendingSubmitData(null)
   }
 
   const [isIncome, setIsIncome] = useState(Number(form.getValues().amount) < 0)
@@ -1001,6 +1090,7 @@ export function ExpenseForm({
       <SubmitButton
         form="expense-form"
         loadingContent={t(isCreate ? 'creating' : 'saving')}
+        isLoading={isChecking}
       >
         <Save className="w-4 h-4 mr-2" />
         {t(isCreate ? 'create' : 'save')}
@@ -2159,6 +2249,34 @@ export function ExpenseForm({
         </form>
         {formFooter}
       </div>
+
+      <DuplicateExpenseDialog
+        open={duplicateMatches.length > 0}
+        matches={duplicateMatches}
+        newExpense={{
+          title: pendingSubmitData?.title ?? '',
+          amount: amountAsMinorUnits(
+            Number(pendingSubmitData?.amount ?? 0),
+            groupCurrency,
+          ),
+          expenseDate: pendingSubmitData?.expenseDate ?? new Date(),
+          categoryId: pendingSubmitData?.category,
+        }}
+        onConfirm={handleDuplicateConfirm}
+        onCancel={handleDuplicateCancel}
+        onMatchClick={handleMatchClick}
+        currency={groupCurrency}
+        locale={locale}
+      />
+
+      <PreventNavigation
+        isDirty={form.formState.isDirty}
+        resetData={form.reset}
+        title="Unsaved Changes"
+        description="You have unsaved changes. If you leave, your data will be lost."
+        cancelLabel="Stay"
+        confirmLabel="Leave"
+      />
     </Form>
   )
 }

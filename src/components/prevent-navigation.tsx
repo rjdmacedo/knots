@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from 'react'
 
 type PreventNavigationProps = {
   backHref?: string
+  cancelLabel?: string
+  confirmLabel?: string
   description?: string
   isDirty: boolean
   resetData: () => void | Promise<void>
@@ -15,6 +17,8 @@ type PreventNavigationProps = {
 export function PreventNavigation({
   isDirty,
   backHref = '/',
+  cancelLabel,
+  confirmLabel,
   resetData,
   title,
   description,
@@ -124,6 +128,8 @@ export function PreventNavigation({
         description ||
         'You have unsaved changes. If you leave now, they will be lost. Are you sure you want to leave?'
       }
+      cancelLabel={cancelLabel}
+      confirmLabel={confirmLabel}
     />
   )
 }

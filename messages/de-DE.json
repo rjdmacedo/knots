@@ -921,7 +921,8 @@
       "saving": "Speichern…",
       "cancel": "Abbrechen",
       "success": "Ausgabe hinzugefügt.",
-      "error": "Ausgabe konnte nicht hinzugefügt werden."
+      "error": "Ausgabe konnte nicht hinzugefügt werden.",
+      "persistError": "Formulardaten konnten nicht gespeichert werden. Navigation ist nicht verfügbar."
     },
     "SettleAll": {
       "button": "Alles ausgleichen",
@@ -1084,5 +1085,17 @@
     "deleteConfirmDescription": "Dadurch werden „{name}“ sowie alle Ausgaben, Salden und der Verlauf für alle Mitglieder dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden.",
     "cancel": "Abbrechen",
     "deleteConfirmAction": "Dauerhaft löschen"
+  },
+  "DuplicateExpense": {
+    "title": "Möglicher Duplikat erkannt",
+    "description": "Die Ausgabe, die du speicherst, stimmt mit einer vorhandenen Ausgabe überein. Möchtest du fortfahren?",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "indicators": {
+      "similar-title": "Ähnlicher Titel",
+      "same-amount": "Gleicher Betrag",
+      "close-in-date": "Nahes Datum",
+      "same-category": "Gleiche Kategorie"
+    }
   }
 }

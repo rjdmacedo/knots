@@ -3,6 +3,10 @@
 import type { ExpenseFormCreatePrefill } from '@/app/groups/[groupId]/expenses/expense-form'
 import { CurrencyAmountInput } from '@/components/currency-amount-input'
 import { DeletePopup } from '@/components/delete-popup'
+import { DuplicateExpenseDialog } from '@/components/duplicate-expense-dialog'
+import { useDuplicateCheck } from '@/components/hooks/use-duplicate-check'
+import { useFormPersistence } from '@/components/hooks/use-form-persistence'
+import { PreventNavigation } from '@/components/prevent-navigation'
 import { SubmitButton } from '@/components/submit-button'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { DialogFooter } from '@/components/ui/dialog'
@@ -32,6 +36,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { Locale } from '@/i18n'
 import { PAYMENT_CATEGORY_ID } from '@/lib/categories'
 import { getCurrencyDisplaySymbol } from '@/lib/currency-input'
+import type { DuplicateCheckResult } from '@/lib/duplicate-expense-detection'
+import { getGroupExpenseDetailPath } from '@/lib/expense-detail-urls'
 import {
   ExpenseFormValues,
   PaymentFormValues,
@@ -49,8 +55,10 @@ import { RecurrenceRule } from '@prisma/client'
 import { Save } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
-import type { ReactNode } from 'react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState, type ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 type Group = NonNullable<AppRouterOutput['groups']['get']['group']>
 
@@ -71,7 +79,10 @@ function isValidDateString(value: string): boolean {
 
 function formatDate(date?: Date) {
   if (!date || Number.isNaN(date as any)) date = new Date()
-  return date.toISOString().substring(0, 10)
+  const y = date.getUTCFullYear()
+  const m = String(date.getUTCMonth() + 1).padStart(2, '0')
+  const d = String(date.getUTCDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
 }
 
 function getDefaultPaidBy(
@@ -128,6 +139,20 @@ export function PaymentForm({
     createPrefill?.paidBy ??
     getDefaultPaidBy(group, currentUserId)
 
+  const { checkForDuplicates, isChecking } = useDuplicateCheck({
+    context: { type: 'group', groupId: group.id },
+  })
+  const [duplicateMatches, setDuplicateMatches] = useState<
+    DuplicateCheckResult['matches']
+  >([])
+  const [pendingSubmitData, setPendingSubmitData] =
+    useState<ExpenseFormValues | null>(null)
+
+  const router = useRouter()
+  const { save, restore, clear } = useFormPersistence<PaymentFormValues>({
+    key: `knots:duplicate-form:payment-${group.id}:${expense?.id || 'new'}`,
+  })
+
   const form = useForm<PaymentFormValues>({
     resolver: zodResolver(paymentFormSchema),
     defaultValues: expense
@@ -173,6 +198,34 @@ export function PaymentForm({
           },
   })
 
+  // Restore persisted form data on mount (after navigating back from a duplicate expense detail)
+  useEffect(() => {
+    const restored = restore()
+    if (restored) {
+      // Ensure the date is a proper Date object after deserialization
+      if (restored.expenseDate) {
+        restored.expenseDate = new Date(restored.expenseDate)
+      }
+      form.reset(restored)
+      clear()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const handleMatchClick = (matchId: string) => {
+    const currentValues = form.getValues()
+    const saved = save(currentValues)
+    if (!saved) {
+      toast.error('Unable to preserve form data. Navigation is unavailable.')
+      return
+    }
+    setDuplicateMatches([])
+    setPendingSubmitData(null)
+    // Reset form to current values so isDirty becomes false and PreventNavigation allows navigation
+    form.reset(currentValues)
+    router.push(getGroupExpenseDetailPath(group.id, matchId))
+  }
+
   const submit = async (values: PaymentFormValues) => {
     const amountMinor = amountAsMinorUnits(values.amount, groupCurrency)
     const expenseValues: ExpenseFormValues = {
@@ -190,7 +243,36 @@ export function PaymentForm({
       recurrenceRule: RecurrenceRule.NONE,
     }
 
+    // Check for duplicates before submitting
+    const result = await checkForDuplicates({
+      title: expenseValues.title,
+      amount: amountMinor,
+      expenseDate: values.expenseDate,
+      categoryId: PAYMENT_CATEGORY_ID,
+      excludeExpenseId: expense?.id,
+    })
+
+    if (result.hasDuplicates) {
+      setDuplicateMatches(result.matches)
+      setPendingSubmitData(expenseValues)
+      return
+    }
+
     await onSubmit(expenseValues)
+  }
+
+  const handleDuplicateConfirm = async () => {
+    if (pendingSubmitData) {
+      setDuplicateMatches([])
+      const data = pendingSubmitData
+      setPendingSubmitData(null)
+      await onSubmit(data)
+    }
+  }
+
+  const handleDuplicateCancel = () => {
+    setDuplicateMatches([])
+    setPendingSubmitData(null)
   }
 
   const formFooter = (
@@ -198,6 +280,7 @@ export function PaymentForm({
       <SubmitButton
         form="payment-form"
         loadingContent={tExpense(isCreate ? 'creating' : 'saving')}
+        isLoading={isChecking}
       >
         <Save className="w-4 h-4 mr-2" />
         {tExpense(isCreate ? 'create' : 'save')}
@@ -248,7 +331,14 @@ export function PaymentForm({
                           if (!value) {
                             field.onChange(null)
                           } else if (isValidDateString(value)) {
-                            field.onChange(new Date(value))
+                            const [year, month, day] = value
+                              .split('-')
+                              .map(Number)
+                            field.onChange(
+                              new Date(
+                                Date.UTC(year, month - 1, day, 12, 0, 0),
+                              ),
+                            )
                           }
                         }}
                       />
@@ -382,6 +472,30 @@ export function PaymentForm({
         </form>
         {formFooter}
       </div>
+
+      <DuplicateExpenseDialog
+        open={duplicateMatches.length > 0}
+        matches={duplicateMatches}
+        newExpense={{
+          title: '',
+          amount: amountAsMinorUnits(form.getValues('amount'), groupCurrency),
+          expenseDate: form.getValues('expenseDate') ?? new Date(),
+        }}
+        onConfirm={handleDuplicateConfirm}
+        onCancel={handleDuplicateCancel}
+        onMatchClick={handleMatchClick}
+        currency={groupCurrency}
+        locale={locale}
+      />
+
+      <PreventNavigation
+        isDirty={form.formState.isDirty}
+        resetData={form.reset}
+        title="Unsaved Changes"
+        description="You have unsaved changes. If you leave, your data will be lost."
+        cancelLabel="Stay"
+        confirmLabel="Leave"
+      />
     </Form>
   )
 }

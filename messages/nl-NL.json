@@ -918,7 +918,8 @@
       "saving": "Opslaan…",
       "cancel": "Annuleren",
       "success": "Uitgave toegevoegd.",
-      "error": "Kon uitgave niet toevoegen."
+      "error": "Kon uitgave niet toevoegen.",
+      "persistError": "Kon formuliergegevens niet opslaan. Navigatie is niet beschikbaar."
     },
     "SettleAll": {
       "button": "Alles verrekenen",
@@ -1081,5 +1082,17 @@
     "deleteConfirmDescription": "Dit verwijdert “{name}” permanent, inclusief alle uitgaven, saldi en geschiedenis voor alle leden. Dit kan niet ongedaan worden gemaakt.",
     "cancel": "Annuleren",
     "deleteConfirmAction": "Permanent verwijderen"
+  },
+  "DuplicateExpense": {
+    "title": "Mogelijk duplicaat gedetecteerd",
+    "description": "De uitgave die je opslaat komt overeen met een bestaande uitgave. Wil je doorgaan?",
+    "cancel": "Annuleren",
+    "confirm": "Bevestigen",
+    "indicators": {
+      "similar-title": "Vergelijkbare titel",
+      "same-amount": "Zelfde bedrag",
+      "close-in-date": "Dichtbijgelegen data",
+      "same-category": "Zelfde categorie"
+    }
   }
 }

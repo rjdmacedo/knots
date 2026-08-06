@@ -918,7 +918,8 @@
       "saving": "Se salvează…",
       "cancel": "Anulează",
       "success": "Cheltuială adăugată.",
-      "error": "Nu s-a putut adăuga cheltuiala."
+      "error": "Nu s-a putut adăuga cheltuiala.",
+      "persistError": "Nu s-au putut salva datele formularului. Navigarea nu este disponibilă."
     },
     "SettleAll": {
       "button": "Achită tot",
@@ -1081,5 +1082,17 @@
     "deleteConfirmDescription": "Aceasta va șterge definitiv „{name}” și toate cheltuielile, soldurile și istoricul său pentru toți membrii. Acțiunea nu poate fi anulată.",
     "cancel": "Anulează",
     "deleteConfirmAction": "Șterge definitiv"
+  },
+  "DuplicateExpense": {
+    "title": "Posibil duplicat detectat",
+    "description": "Cheltuiala pe care o salvezi corespunde unei cheltuieli existente. Vrei să continui?",
+    "cancel": "Anulează",
+    "confirm": "Confirmă",
+    "indicators": {
+      "similar-title": "Titlu similar",
+      "same-amount": "Aceeași sumă",
+      "close-in-date": "Date apropiate",
+      "same-category": "Aceeași categorie"
+    }
   }
 }

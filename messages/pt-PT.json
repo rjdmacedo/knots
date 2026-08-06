@@ -1078,7 +1078,8 @@
       "saving": "A guardar…",
       "cancel": "Cancelar",
       "success": "Despesa adicionada.",
-      "error": "Não foi possível adicionar a despesa."
+      "error": "Não foi possível adicionar a despesa.",
+      "persistError": "Não foi possível guardar os dados do formulário. Navegação indisponível."
     },
     "Settings": {
       "currencyTitle": "Moeda principal",
@@ -1228,5 +1229,17 @@
     "advancedOptions": "Opções Avançadas",
     "splitDetails": "Detalhes da divisão",
     "notesPlaceholder": "Adicionar notas (opcional)"
+  },
+  "DuplicateExpense": {
+    "title": "Possível duplicado detetado",
+    "description": "A despesa que estás a guardar corresponde a uma despesa existente. Queres continuar?",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "indicators": {
+      "similar-title": "Título semelhante",
+      "same-amount": "Mesmo valor",
+      "close-in-date": "Datas próximas",
+      "same-category": "Mesma categoria"
+    }
   }
 }

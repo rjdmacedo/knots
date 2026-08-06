@@ -921,7 +921,8 @@
       "saving": "Ukládání…",
       "cancel": "Zrušit",
       "success": "Výdaj přidán.",
-      "error": "Nepodařilo se přidat výdaj."
+      "error": "Nepodařilo se přidat výdaj.",
+      "persistError": "Nepodařilo se uložit data formuláře. Navigace není dostupná."
     },
     "SettleAll": {
       "button": "Vyrovnat vše",
@@ -1084,5 +1085,17 @@
     "deleteConfirmDescription": "Tím trvale smažete „{name}“ a všechny její výdaje, zůstatky a historii pro všechny členy. Tuto akci nelze vrátit zpět.",
     "cancel": "Zrušit",
     "deleteConfirmAction": "Smazat trvale"
+  },
+  "DuplicateExpense": {
+    "title": "Zjištěn možný duplicitní výdaj",
+    "description": "Výdaj, který ukládáte, odpovídá existujícímu výdaji. Chcete pokračovat?",
+    "cancel": "Zrušit",
+    "confirm": "Potvrdit",
+    "indicators": {
+      "similar-title": "Podobný název",
+      "same-amount": "Stejná částka",
+      "close-in-date": "Blízké datum",
+      "same-category": "Stejná kategorie"
+    }
   }
 }

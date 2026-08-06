@@ -921,7 +921,8 @@
       "saving": "Enregistrement…",
       "cancel": "Annuler",
       "success": "Dépense ajoutée.",
-      "error": "Impossible d'ajouter la dépense."
+      "error": "Impossible d'ajouter la dépense.",
+      "persistError": "Impossible d'enregistrer les données du formulaire. La navigation est indisponible."
     },
     "SettleAll": {
       "button": "Tout régler",
@@ -1084,5 +1085,17 @@
     "deleteConfirmDescription": "Cela supprimera définitivement « {name} » ainsi que toutes ses dépenses, soldes et son historique pour tous les membres. Cette action est irréversible.",
     "cancel": "Annuler",
     "deleteConfirmAction": "Supprimer définitivement"
+  },
+  "DuplicateExpense": {
+    "title": "Doublon potentiel détecté",
+    "description": "La dépense que vous enregistrez correspond à une dépense existante. Voulez-vous continuer ?",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "indicators": {
+      "similar-title": "Titre similaire",
+      "same-amount": "Même montant",
+      "close-in-date": "Dates proches",
+      "same-category": "Même catégorie"
+    }
   }
 }

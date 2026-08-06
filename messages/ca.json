@@ -921,7 +921,8 @@
       "saving": "Desant…",
       "cancel": "Cancel·lar",
       "success": "Despesa afegida.",
-      "error": "No s'ha pogut afegir la despesa."
+      "error": "No s'ha pogut afegir la despesa.",
+      "persistError": "No s'han pogut desar les dades del formulari. La navegació no està disponible."
     },
     "SettleAll": {
       "button": "Liquidar tot",
@@ -1084,5 +1085,17 @@
     "deleteConfirmDescription": "Això suprimirà definitivament “{name}” i totes les seves despeses, saldos i historial per a tots els membres. No es pot desfer.",
     "cancel": "Cancel·la",
     "deleteConfirmAction": "Suprimeix definitivament"
+  },
+  "DuplicateExpense": {
+    "title": "Possible duplicat detectat",
+    "description": "La despesa que estàs desant coincideix amb una despesa existent. Vols continuar?",
+    "cancel": "Cancel·lar",
+    "confirm": "Confirmar",
+    "indicators": {
+      "similar-title": "Títol similar",
+      "same-amount": "Mateix import",
+      "close-in-date": "Dates properes",
+      "same-category": "Mateixa categoria"
+    }
   }
 }

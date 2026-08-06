@@ -918,7 +918,8 @@
       "saving": "Zapisywanie…",
       "cancel": "Anuluj",
       "success": "Wydatek dodany.",
-      "error": "Nie udało się dodać wydatku."
+      "error": "Nie udało się dodać wydatku.",
+      "persistError": "Nie udało się zapisać danych formularza. Nawigacja jest niedostępna."
     },
     "SettleAll": {
       "button": "Rozlicz wszystko",
@@ -1081,5 +1082,17 @@
     "deleteConfirmDescription": "Spowoduje to trwałe usunięcie „{name}” oraz wszystkich jej wydatków, sald i historii dla wszystkich członków. Tej operacji nie można cofnąć.",
     "cancel": "Anuluj",
     "deleteConfirmAction": "Usuń trwale"
+  },
+  "DuplicateExpense": {
+    "title": "Wykryto możliwe duplikaty",
+    "description": "Wydatek, który zapisujesz, odpowiada istniejącemu wydatkowi. Czy chcesz kontynuować?",
+    "cancel": "Anuluj",
+    "confirm": "Potwierdź",
+    "indicators": {
+      "similar-title": "Podobny tytuł",
+      "same-amount": "Ta sama kwota",
+      "close-in-date": "Bliskie daty",
+      "same-category": "Ta sama kategoria"
+    }
   }
 }

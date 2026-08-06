@@ -921,7 +921,8 @@
       "saving": "Salvataggio…",
       "cancel": "Annulla",
       "success": "Spesa aggiunta.",
-      "error": "Impossibile aggiungere la spesa."
+      "error": "Impossibile aggiungere la spesa.",
+      "persistError": "Impossibile salvare i dati del modulo. La navigazione non è disponibile."
     },
     "SettleAll": {
       "button": "Salda tutto",
@@ -1084,5 +1085,17 @@
     "deleteConfirmDescription": "Questa azione eliminerà definitivamente “{name}” e tutte le sue spese, i saldi e la cronologia per tutti i membri. Non può essere annullata.",
     "cancel": "Annulla",
     "deleteConfirmAction": "Elimina definitivamente"
+  },
+  "DuplicateExpense": {
+    "title": "Possibile duplicato rilevato",
+    "description": "La spesa che stai salvando corrisponde a una spesa esistente. Vuoi continuare?",
+    "cancel": "Annulla",
+    "confirm": "Conferma",
+    "indicators": {
+      "similar-title": "Titolo simile",
+      "same-amount": "Stesso importo",
+      "close-in-date": "Date vicine",
+      "same-category": "Stessa categoria"
+    }
   }
 }

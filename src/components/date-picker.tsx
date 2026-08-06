@@ -7,6 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { toNoonUTC } from '@/lib/date-normalization'
 import { cn } from '@/lib/utils'
 import { enUS, pt } from 'date-fns/locale'
 import { CalendarIcon } from 'lucide-react'
@@ -82,8 +83,9 @@ export function DatePicker({
         <Calendar
           mode="single"
           selected={value ?? undefined}
+          defaultMonth={value ?? undefined}
           onSelect={(date) => {
-            onChange?.(date ?? null)
+            onChange?.(date ? toNoonUTC(date) : null)
             setOpen(false)
             onBlur?.()
           }}

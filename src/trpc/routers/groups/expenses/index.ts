@@ -1,5 +1,6 @@
 import { createTRPCRouter } from '@/trpc/init'
 import { addGroupExpenseDocumentsProcedure } from '@/trpc/routers/groups/expenses/add-documents.procedure'
+import { checkDuplicateExpenseProcedure } from '@/trpc/routers/groups/expenses/check-duplicate.procedure'
 import { createGroupExpenseProcedure } from '@/trpc/routers/groups/expenses/create.procedure'
 import { deleteGroupExpenseProcedure } from '@/trpc/routers/groups/expenses/delete.procedure'
 import { getGroupExpenseProcedure } from '@/trpc/routers/groups/expenses/get.procedure'
@@ -27,4 +28,5 @@ export const groupExpensesRouter = createTRPCRouter({
   importKnots: importKnotsProcedure,
   lookupCategory: lookupCategoryMappingProcedure,
   suggestTitles: suggestExpenseTitlesProcedure,
+  checkDuplicate: checkDuplicateExpenseProcedure,
 })

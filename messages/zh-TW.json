@@ -918,7 +918,8 @@
       "saving": "儲存中…",
       "cancel": "取消",
       "success": "支出已新增。",
-      "error": "無法新增支出。"
+      "error": "無法新增支出。",
+      "persistError": "無法儲存表單資料。導覽無法使用。"
     },
     "SettleAll": {
       "button": "全部結清",
@@ -1081,5 +1082,17 @@
     "deleteConfirmDescription": "這會為所有成員永久刪除「{name}」及其所有支出、餘額和歷史紀錄。此操作無法復原。",
     "cancel": "取消",
     "deleteConfirmAction": "永久刪除"
+  },
+  "DuplicateExpense": {
+    "title": "偵測到可能的重複支出",
+    "description": "你正在儲存的支出與現有支出相符。要繼續嗎？",
+    "cancel": "取消",
+    "confirm": "確認",
+    "indicators": {
+      "similar-title": "相似標題",
+      "same-amount": "相同金額",
+      "close-in-date": "日期接近",
+      "same-category": "相同類別"
+    }
   }
 }

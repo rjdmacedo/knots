@@ -37,6 +37,7 @@ import { notifyOnActivity } from '@/lib/push/notify-on-activity'
 import { expenseFormSchema } from '@/lib/schemas'
 import { amountAsMinorUnits } from '@/lib/utils'
 import { createTRPCRouter, protectedProcedure } from '@/trpc/init'
+import { checkDirectDuplicateProcedure } from '@/trpc/routers/friends/check-direct-duplicate.procedure'
 import { ActivityType, RecurrenceRule } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
@@ -1920,4 +1921,6 @@ export const friendsRouter = createTRPCRouter({
 
       return { expenseId: expense.id, categoryId: input.categoryId }
     }),
+
+  checkDirectDuplicate: checkDirectDuplicateProcedure,
 })

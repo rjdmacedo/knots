@@ -918,7 +918,8 @@
       "saving": "Salvando…",
       "cancel": "Cancelar",
       "success": "Despesa adicionada.",
-      "error": "Não foi possível adicionar a despesa."
+      "error": "Não foi possível adicionar a despesa.",
+      "persistError": "Não foi possível salvar os dados do formulário. Navegação indisponível."
     },
     "SettleAll": {
       "button": "Acertar tudo",
@@ -1086,5 +1087,17 @@
     "deleteConfirmDescription": "Isso excluirá permanentemente “{name}” e todas as suas despesas, saldos e histórico para todos os membros. Esta ação não pode ser desfeita.",
     "cancel": "Cancelar",
     "deleteConfirmAction": "Excluir permanentemente"
+  },
+  "DuplicateExpense": {
+    "title": "Possível duplicata detectada",
+    "description": "A despesa que você está salvando corresponde a uma despesa existente. Deseja continuar?",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "indicators": {
+      "similar-title": "Título semelhante",
+      "same-amount": "Mesmo valor",
+      "close-in-date": "Datas próximas",
+      "same-category": "Mesma categoria"
+    }
   }
 }

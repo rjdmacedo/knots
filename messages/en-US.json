@@ -1065,7 +1065,8 @@
       "saving": "Saving…",
       "cancel": "Cancel",
       "success": "Expense added.",
-      "error": "Could not add expense."
+      "error": "Could not add expense.",
+      "persistError": "Could not save form data. Navigation is unavailable."
     },
     "Settings": {
       "currencyTitle": "Main currency",
@@ -1239,5 +1240,17 @@
     "advancedOptions": "Advanced Options",
     "splitDetails": "Split details",
     "notesPlaceholder": "Add notes (optional)"
+  },
+  "DuplicateExpense": {
+    "title": "Potential duplicate detected",
+    "description": "The expense you are saving matches an existing expense. Do you want to continue?",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "indicators": {
+      "similar-title": "Similar title",
+      "same-amount": "Same amount",
+      "close-in-date": "Close in date",
+      "same-category": "Same category"
+    }
   }
 }

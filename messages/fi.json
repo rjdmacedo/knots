@@ -921,7 +921,8 @@
       "saving": "Tallennetaan…",
       "cancel": "Peruuta",
       "success": "Kulu lisätty.",
-      "error": "Kulua ei voitu lisätä."
+      "error": "Kulua ei voitu lisätä.",
+      "persistError": "Lomakkeen tietoja ei voitu tallentaa. Navigointi ei ole käytettävissä."
     },
     "SettleAll": {
       "button": "Tasaa kaikki",
@@ -1084,5 +1085,17 @@
     "deleteConfirmDescription": "Tämä poistaa pysyvästi ryhmän “{name}” sekä kaikki sen kulut, saldot ja historian kaikilta jäseniltä. Tätä ei voi kumota.",
     "cancel": "Peruuta",
     "deleteConfirmAction": "Poista pysyvästi"
+  },
+  "DuplicateExpense": {
+    "title": "Mahdollinen kaksoiskappale havaittu",
+    "description": "Tallentamasi kulu vastaa olemassa olevaa kulua. Haluatko jatkaa?",
+    "cancel": "Peruuta",
+    "confirm": "Vahvista",
+    "indicators": {
+      "similar-title": "Samankaltainen otsikko",
+      "same-amount": "Sama summa",
+      "close-in-date": "Läheiset päivämäärät",
+      "same-category": "Sama kategoria"
+    }
   }
 }

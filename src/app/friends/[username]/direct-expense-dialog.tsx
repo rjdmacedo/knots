@@ -1,6 +1,10 @@
 'use client'
 
+import { DuplicateExpenseDialog } from '@/components/duplicate-expense-dialog'
 import { ExpenseDocumentsInput } from '@/components/expense-documents-input'
+import { useDuplicateCheck } from '@/components/hooks/use-duplicate-check'
+import { useFormPersistence } from '@/components/hooks/use-form-persistence'
+import { PreventNavigation } from '@/components/prevent-navigation'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -17,10 +21,13 @@ import { Textarea } from '@/components/ui/textarea'
 import { Locale } from '@/i18n'
 import { handleAltEnterKeyDown } from '@/lib/alt-enter-submit'
 import { getCurrency } from '@/lib/currency'
+import type { DuplicateCheckResult } from '@/lib/duplicate-expense-detection'
+import { getFriendExpenseDetailPath } from '@/lib/expense-detail-urls'
 import { amountAsMinorUnits } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { Loader2 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -31,6 +38,7 @@ type Props = {
   friendName: string
   friendUserId: string
   currentUserId: string
+  username: string
 }
 
 export function DirectExpenseDialog({
@@ -40,15 +48,26 @@ export function DirectExpenseDialog({
   friendName,
   friendUserId,
   currentUserId,
+  username,
 }: Props) {
   const t = useTranslations('Friends.DirectExpense')
   const locale = useLocale() as Locale
   const utils = trpc.useUtils()
+  const router = useRouter()
 
   // Get user's preferred currency
   const { data: profile } = trpc.profile.getProfile.useQuery()
   const currencyCode = profile?.preferredCurrency || 'EUR'
   const currency = getCurrency(currencyCode, locale)
+
+  // Form persistence for duplicate expense navigation
+  const { save, restore, clear } = useFormPersistence<{
+    title: string
+    amount: string
+    paidByMe: boolean
+    expenseDate: string
+    notes: string
+  }>({ key: `knots:duplicate-form:friend-${friendId}:new` })
 
   // Form state
   const [title, setTitle] = useState('')
@@ -60,9 +79,59 @@ export function DirectExpenseDialog({
     { id: string; url: string; width: number; height: number }[]
   >([])
 
+  // Duplicate check
+  const { checkForDuplicates, isChecking } = useDuplicateCheck({
+    context: { type: 'friend', friendId },
+  })
+
+  // Determine if form is dirty (any field modified from defaults)
+  const isDirty =
+    title.trim().length > 0 ||
+    amount.length > 0 ||
+    paidByMe === false ||
+    notes.trim().length > 0 ||
+    documents.length > 0
+
+  // Reset all form fields to defaults
+  const resetData = useCallback(() => {
+    setTitle('')
+    setAmount('')
+    setPaidByMe(true)
+    setExpenseDate(new Date())
+    setNotes('')
+    setDocuments([])
+  }, [])
+  const [duplicateMatches, setDuplicateMatches] = useState<
+    DuplicateCheckResult['matches']
+  >([])
+  const [pendingSubmitData, setPendingSubmitData] = useState<{
+    friendId: string
+    title: string
+    amount: number
+    currency: string
+    paidById: string
+    expenseDate: Date
+    notes?: string
+  } | null>(null)
+
   // Pending upload/delete refs
   const uploadPendingRef = useRef<(() => Promise<void>) | null>(null)
   const deletePendingRef = useRef<(() => Promise<void>) | null>(null)
+
+  // Restore form data from persistence on dialog open
+  useEffect(() => {
+    if (open) {
+      const restored = restore()
+      if (restored) {
+        setTitle(restored.title)
+        setAmount(restored.amount)
+        setPaidByMe(restored.paidByMe)
+        setExpenseDate(new Date(restored.expenseDate))
+        setNotes(restored.notes)
+        clear()
+      }
+    }
+  }, [open, restore, clear])
 
   // Reset form when dialog closes
   useEffect(() => {
@@ -92,7 +161,10 @@ export function DirectExpenseDialog({
 
   const parsedAmount = parseAmountValue(amount, currency.decimal_digits)
   const canSubmit =
-    title.trim().length > 0 && parsedAmount !== null && !isPending
+    title.trim().length > 0 &&
+    parsedAmount !== null &&
+    !isPending &&
+    !isChecking
 
   const handleSubmit = useCallback(async () => {
     if (!canSubmit || parsedAmount === null) return
@@ -107,15 +179,31 @@ export function DirectExpenseDialog({
       }
     }
 
-    createDirectExpense({
+    const minorAmount = amountAsMinorUnits(parsedAmount, currency)
+    const submitData = {
       friendId,
       title: title.trim(),
-      amount: amountAsMinorUnits(parsedAmount, currency),
+      amount: minorAmount,
       currency: currency.code,
       paidById: paidByMe ? currentUserId : friendUserId,
       expenseDate,
       notes: notes.trim() || undefined,
+    }
+
+    // Check for duplicates before submitting
+    const result = await checkForDuplicates({
+      title: submitData.title,
+      amount: minorAmount,
+      expenseDate,
     })
+
+    if (result.hasDuplicates) {
+      setDuplicateMatches(result.matches)
+      setPendingSubmitData(submitData)
+      return
+    }
+
+    createDirectExpense(submitData)
   }, [
     canSubmit,
     parsedAmount,
@@ -128,158 +216,235 @@ export function DirectExpenseDialog({
     expenseDate,
     notes,
     createDirectExpense,
+    checkForDuplicates,
   ])
 
+  const handleDuplicateConfirm = useCallback(() => {
+    if (pendingSubmitData) {
+      createDirectExpense(pendingSubmitData)
+    }
+    setDuplicateMatches([])
+    setPendingSubmitData(null)
+  }, [pendingSubmitData, createDirectExpense])
+
+  const handleDuplicateCancel = useCallback(() => {
+    setDuplicateMatches([])
+    setPendingSubmitData(null)
+  }, [])
+
+  const handleMatchClick = useCallback(
+    (matchId: string) => {
+      const success = save({
+        title,
+        amount,
+        paidByMe,
+        expenseDate: expenseDate.toISOString(),
+        notes,
+      })
+
+      if (!success) {
+        toast.error(t('persistError'))
+        return
+      }
+
+      setDuplicateMatches([])
+      setPendingSubmitData(null)
+      // Reset form state so PreventNavigation doesn't block navigation
+      resetData()
+      onOpenChange(false)
+      router.push(getFriendExpenseDetailPath(username, matchId))
+    },
+    [
+      save,
+      title,
+      amount,
+      paidByMe,
+      expenseDate,
+      notes,
+      t,
+      resetData,
+      onOpenChange,
+      router,
+      username,
+    ],
+  )
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        onKeyDown={(event) =>
-          handleAltEnterKeyDown(event, handleSubmit, !canSubmit)
-        }
-      >
-        <DialogHeader>
-          <DialogTitle>{t('title')}</DialogTitle>
-          <DialogDescription>
-            {t('description', { name: friendName })}
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      <PreventNavigation
+        isDirty={isDirty && open}
+        resetData={resetData}
+        cancelLabel="Stay"
+        confirmLabel="Leave"
+      />
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent
+          onKeyDown={(event) =>
+            handleAltEnterKeyDown(event, handleSubmit, !canSubmit)
+          }
+        >
+          <DialogHeader>
+            <DialogTitle>{t('title')}</DialogTitle>
+            <DialogDescription>
+              {t('description', { name: friendName })}
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="flex flex-col gap-4">
-          {/* Description / Title */}
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="direct-expense-title">
-              {t('descriptionLabel')}
-            </Label>
-            <Input
-              id="direct-expense-title"
-              type="text"
-              className="text-base"
-              placeholder={t('descriptionPlaceholder')}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              autoFocus
-            />
-          </div>
-
-          {/* Amount */}
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="direct-expense-amount">{t('amountLabel')}</Label>
-            <div className="flex items-baseline gap-2">
-              <span className="text-sm text-muted-foreground">
-                {currency.code}
-              </span>
+          <div className="flex flex-col gap-4">
+            {/* Description / Title */}
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="direct-expense-title">
+                {t('descriptionLabel')}
+              </Label>
               <Input
-                id="direct-expense-amount"
+                id="direct-expense-title"
                 type="text"
-                inputMode="decimal"
-                className="max-w-[160px]"
-                value={amount}
+                className="text-base"
+                placeholder={t('descriptionPlaceholder')}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                autoFocus
+              />
+            </div>
+
+            {/* Amount */}
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="direct-expense-amount">{t('amountLabel')}</Label>
+              <div className="flex items-baseline gap-2">
+                <span className="text-sm text-muted-foreground">
+                  {currency.code}
+                </span>
+                <Input
+                  id="direct-expense-amount"
+                  type="text"
+                  inputMode="decimal"
+                  className="max-w-[160px]"
+                  value={amount}
+                  onChange={(e) => {
+                    const value = e.target.value
+                      .replace(/[.,]/, '#')
+                      .replace(/[.,]/g, '')
+                      .replace(/#/, '.')
+                      .replace(/[^-\d.]/g, '')
+                    setAmount(value)
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Paid by toggle */}
+            <div className="flex flex-col gap-2">
+              <Label>{t('paidByLabel')}</Label>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={paidByMe ? 'default' : 'outline'}
+                  onClick={() => setPaidByMe(true)}
+                >
+                  {t('paidByYou')}
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={!paidByMe ? 'default' : 'outline'}
+                  onClick={() => setPaidByMe(false)}
+                >
+                  {friendName}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {t('splitEqually', {
+                  payer: paidByMe ? t('paidByYou') : friendName,
+                })}
+              </p>
+            </div>
+
+            {/* Date */}
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="direct-expense-date">{t('dateLabel')}</Label>
+              <Input
+                id="direct-expense-date"
+                className="date-base"
+                type="date"
+                value={formatDateForInput(expenseDate)}
                 onChange={(e) => {
                   const value = e.target.value
-                    .replace(/[.,]/, '#')
-                    .replace(/[.,]/g, '')
-                    .replace(/#/, '.')
-                    .replace(/[^-\d.]/g, '')
-                  setAmount(value)
+                  if (value) {
+                    const date = new Date(value)
+                    if (!isNaN(date.getTime())) {
+                      setExpenseDate(date)
+                    }
+                  }
                 }}
+              />
+            </div>
+
+            {/* Attach image/PDF */}
+            <div className="flex flex-col gap-2">
+              <Label>{t('attachLabel')}</Label>
+              <ExpenseDocumentsInput
+                documents={documents}
+                updateDocuments={setDocuments}
+                onUploadPending={(fn) => {
+                  uploadPendingRef.current = fn
+                }}
+                onDeletePending={(fn) => {
+                  deletePendingRef.current = fn
+                }}
+              />
+            </div>
+
+            {/* Notes */}
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="direct-expense-notes">{t('notesLabel')}</Label>
+              <Textarea
+                id="direct-expense-notes"
+                className="text-base"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder={t('notesPlaceholder')}
+                rows={2}
               />
             </div>
           </div>
 
-          {/* Paid by toggle */}
-          <div className="flex flex-col gap-2">
-            <Label>{t('paidByLabel')}</Label>
-            <div className="flex gap-2">
-              <Button
-                type="button"
-                size="sm"
-                variant={paidByMe ? 'default' : 'outline'}
-                onClick={() => setPaidByMe(true)}
-              >
-                {t('paidByYou')}
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                variant={!paidByMe ? 'default' : 'outline'}
-                onClick={() => setPaidByMe(false)}
-              >
-                {friendName}
-              </Button>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {t('splitEqually', {
-                payer: paidByMe ? t('paidByYou') : friendName,
-              })}
-            </p>
-          </div>
+          <DialogFooter className="flex flex-col gap-2">
+            <Button onClick={handleSubmit} disabled={!canSubmit}>
+              {isPending || isChecking ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  {t('saving')}
+                </>
+              ) : (
+                t('save')
+              )}
+            </Button>
+            <DialogClose render={<Button variant="secondary" />}>
+              {t('cancel')}
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
-          {/* Date */}
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="direct-expense-date">{t('dateLabel')}</Label>
-            <Input
-              id="direct-expense-date"
-              className="date-base"
-              type="date"
-              value={formatDateForInput(expenseDate)}
-              onChange={(e) => {
-                const value = e.target.value
-                if (value) {
-                  const date = new Date(value)
-                  if (!isNaN(date.getTime())) {
-                    setExpenseDate(date)
-                  }
-                }
-              }}
-            />
-          </div>
-
-          {/* Attach image/PDF */}
-          <div className="flex flex-col gap-2">
-            <Label>{t('attachLabel')}</Label>
-            <ExpenseDocumentsInput
-              documents={documents}
-              updateDocuments={setDocuments}
-              onUploadPending={(fn) => {
-                uploadPendingRef.current = fn
-              }}
-              onDeletePending={(fn) => {
-                deletePendingRef.current = fn
-              }}
-            />
-          </div>
-
-          {/* Notes */}
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="direct-expense-notes">{t('notesLabel')}</Label>
-            <Textarea
-              id="direct-expense-notes"
-              className="text-base"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder={t('notesPlaceholder')}
-              rows={2}
-            />
-          </div>
-        </div>
-
-        <DialogFooter className="flex flex-col gap-2">
-          <Button onClick={handleSubmit} disabled={!canSubmit}>
-            {isPending ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                {t('saving')}
-              </>
-            ) : (
-              t('save')
-            )}
-          </Button>
-          <DialogClose render={<Button variant="secondary" />}>
-            {t('cancel')}
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      <DuplicateExpenseDialog
+        open={duplicateMatches.length > 0}
+        matches={duplicateMatches}
+        newExpense={{
+          title: title.trim(),
+          amount:
+            parsedAmount !== null
+              ? amountAsMinorUnits(parsedAmount, currency)
+              : 0,
+          expenseDate,
+        }}
+        onConfirm={handleDuplicateConfirm}
+        onCancel={handleDuplicateCancel}
+        onMatchClick={handleMatchClick}
+        currency={currency}
+        locale={locale}
+      />
+    </>
   )
 }
 

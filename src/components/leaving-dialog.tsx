@@ -16,6 +16,8 @@ type LeavingDialogProps = {
   // --- optional
   title?: string
   description?: string
+  cancelLabel?: string
+  confirmLabel?: string
 }
 
 export const LeavingDialog = ({
@@ -24,6 +26,8 @@ export const LeavingDialog = ({
   onConfirm,
   title,
   description,
+  cancelLabel = 'No',
+  confirmLabel = 'Yes',
 }: LeavingDialogProps) => {
   return (
     <AlertDialog open={isOpen}>
@@ -36,8 +40,12 @@ export const LeavingDialog = ({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => onCancel()}>No</AlertDialogCancel>
-          <AlertDialogAction onClick={() => onConfirm()}>Yes</AlertDialogAction>
+          <AlertDialogCancel onClick={() => onCancel()}>
+            {cancelLabel}
+          </AlertDialogCancel>
+          <AlertDialogAction onClick={() => onConfirm()}>
+            {confirmLabel}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -921,7 +921,8 @@
       "saving": "Guardando…",
       "cancel": "Cancelar",
       "success": "Gasto añadido.",
-      "error": "No se pudo añadir el gasto."
+      "error": "No se pudo añadir el gasto.",
+      "persistError": "No se pudieron guardar los datos del formulario. La navegación no está disponible."
     },
     "SettleAll": {
       "button": "Liquidar todo",
@@ -1084,5 +1085,17 @@
     "deleteConfirmDescription": "Esto eliminará permanentemente “{name}” y todos sus gastos, saldos e historial para todos los miembros. No se puede deshacer.",
     "cancel": "Cancelar",
     "deleteConfirmAction": "Eliminar permanentemente"
+  },
+  "DuplicateExpense": {
+    "title": "Posible duplicado detectado",
+    "description": "El gasto que estás guardando coincide con un gasto existente. ¿Quieres continuar?",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "indicators": {
+      "similar-title": "Título similar",
+      "same-amount": "Mismo importe",
+      "close-in-date": "Fechas cercanas",
+      "same-category": "Misma categoría"
+    }
   }
 }

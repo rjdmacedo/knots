@@ -918,7 +918,8 @@
       "saving": "保存中…",
       "cancel": "キャンセル",
       "success": "支出を追加しました。",
-      "error": "支出を追加できませんでした。"
+      "error": "支出を追加できませんでした。",
+      "persistError": "フォームデータを保存できませんでした。ナビゲーションは利用できません。"
     },
     "SettleAll": {
       "button": "すべて精算",
@@ -1081,5 +1082,17 @@
     "deleteConfirmDescription": "“{name}”と、そのすべての支出、残高、履歴が全メンバーに対して完全に削除されます。この操作は元に戻せません。",
     "cancel": "キャンセル",
     "deleteConfirmAction": "完全に削除"
+  },
+  "DuplicateExpense": {
+    "title": "重複の可能性がある支出を検出",
+    "description": "保存しようとしている支出は既存の支出と一致します。続行しますか？",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "indicators": {
+      "similar-title": "類似のタイトル",
+      "same-amount": "同じ金額",
+      "close-in-date": "近い日付",
+      "same-category": "同じカテゴリ"
+    }
   }
 }
