@@ -526,6 +526,7 @@
     "duplicateParticipantName": "Otro participante ya tiene este nombre",
     "titleRequired": "Por favor, introduzca un título",
     "invalidNumber": "Número inválido",
+    "invalidExpression": "Expresión inválida. Usa números y los operadores +, -, *, /.",
     "amountRequired": "Debe introducir un importe",
     "amountNotZero": "El importe no debe ser cero.",
     "amountTenMillion": "El importe debe ser inferior a 10.000.000.",
@@ -1097,5 +1098,8 @@
       "close-in-date": "Fechas cercanas",
       "same-category": "Misma categoría"
     }
+  },
+  "CurrencyAmountInput": {
+    "expressionHint": "o 10+5"
   }
 }

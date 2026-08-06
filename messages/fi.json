@@ -526,6 +526,7 @@
     "duplicateParticipantName": "Tämä nimi on jo toisella osallistujalla.",
     "titleRequired": "Otsikko puuttuu.",
     "invalidNumber": "Epäkelpo numero.",
+    "invalidExpression": "Virheellinen lauseke. Käytä numeroita ja operaattoreita +, -, *, /.",
     "amountRequired": "Summa puuttuu.",
     "amountNotZero": "Summa ei voi olla nolla.",
     "amountTenMillion": "Summan pitää olla pienempi kuin 10 000 000.",
@@ -1097,5 +1098,8 @@
       "close-in-date": "Läheiset päivämäärät",
       "same-category": "Sama kategoria"
     }
+  },
+  "CurrencyAmountInput": {
+    "expressionHint": "tai 10+5"
   }
 }

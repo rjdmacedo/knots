@@ -28,7 +28,9 @@ invitations, expenses with 4 split modes + reimbursements + notes + S3 documents
 recurring expenses (materialized on-read in `src/lib/api.ts`), duplicate detection,
 friends & direct expenses, balances with debt simplification + settlements + payment
 requests, activity log, granular push notifications, categories + auto-assign, stats,
-Splitwise/Knots import, CSV/JSON export.
+Splitwise/Knots import, CSV/JSON export, BYO OpenAI-compatible endpoint
+(`OPENAI_BASE_URL` / `OPENAI_MODEL` via `src/lib/ai-client.ts`), arithmetic
+expressions in amount fields (`src/lib/math-expression.ts`).
 
 ## Inspiration source
 
@@ -39,45 +41,30 @@ feature notes the upstream issue for demand signal. Import the _ideas_, not the 
 
 ## Suggested order
 
-1. `byo-openai-endpoint`
-2. `expense-amount-math-expressions`
-3. `copy-expense`
-4. `server-authoritative-currency-conversion`
-5. `multi-payer-expenses`
-6. `itemized-expenses`
-7. `account-overview-homepage`
-8. `profile-avatars`
+1. `copy-expense`
+2. `server-authoritative-currency-conversion`
+3. `multi-payer-expenses`
+4. `itemized-expenses`
+5. `account-overview-homepage`
+6. `profile-avatars`
 
 ---
 
-## 1. `byo-openai-endpoint` — Bring-your-own OpenAI-compatible endpoint
+## Done
 
-- **Size:** Small. **Upstream:** spliit #309/#378/#379.
-- **Summary:** Make the AI client (receipt scan + category deduction) point at any
-  OpenAI-compatible endpoint (Ollama, LM Studio, OpenRouter) via config instead of
-  hardcoding OpenAI.
-- **Touch points:** `src/lib/env.ts` (add optional `OPENAI_BASE_URL`, `OPENAI_MODEL`),
-  the OpenAI client init (search for `new OpenAI(` / the lazy-init client), receipt/
-  category extraction call sites, `.env.example`, README "Opt-in features" section.
-- **Requirement seeds:**
-  - WHEN `OPENAI_BASE_URL` is set, THE AI client SHALL send requests to that base URL.
-  - WHEN `OPENAI_MODEL` is set, THE AI client SHALL use that model; otherwise a sane default.
-  - WHEN neither AI feature flag is enabled, THE system SHALL not require any AI env var (keep current behaviour).
+### `byo-openai-endpoint` — Bring-your-own OpenAI-compatible endpoint
 
-## 2. `expense-amount-math-expressions` — Math in the amount field
+Shipped. Spec: `.kiro/specs/byo-openai-endpoint/`. Self-hosters can set
+`OPENAI_BASE_URL` and `OPENAI_MODEL` to route receipt/category AI to any
+OpenAI-compatible provider (Ollama, LM Studio, OpenRouter).
 
-- **Size:** Small. **Upstream:** spliit #184.
-- **Summary:** Allow arithmetic in the amount input (e.g. `12+4.50`, `100/3`) that
-  evaluates to the final amount on blur/submit.
-- **Touch points:** amount input in `src/app/groups/[groupId]/expenses/expense-form.tsx`
-  (and `payment-form.tsx`), a new pure parser util in `src/lib/` (with property tests),
-  amount validation in `src/lib/schemas.ts`.
-- **Requirement seeds:**
-  - WHEN the user enters a valid arithmetic expression, THE amount field SHALL evaluate it to a currency value on blur.
-  - IF the expression is invalid, THEN THE field SHALL show a validation error and block submit.
-  - THE evaluator SHALL support `+ - * /`, parentheses, and locale decimal separators (`.` and `,`).
+### `expense-amount-math-expressions` — Math in the amount field
 
-## 3. `copy-expense` — Duplicate an existing expense
+Shipped. Spec: `.kiro/specs/expense-amount-math-expressions/`. Users can type
+arithmetic expressions (e.g. `12+4.50`, `100/3`, `(50+25)*2`) in the amount
+input; evaluated on blur/submit via a pure recursive-descent parser.
+
+## 1. `copy-expense` — Duplicate an existing expense
 
 - **Size:** Small. **Upstream:** spliit #527.
 - **Summary:** A "Copy" action on an expense pre-fills the create form with the same
@@ -89,7 +76,7 @@ feature notes the upstream issue for demand signal. Import the _ideas_, not the 
   - THE copied expense date SHALL default to today.
   - THE copy action SHALL create a new independent expense on save (no link to the original).
 
-## 4. `server-authoritative-currency-conversion` — Automatic FX rates
+## 2. `server-authoritative-currency-conversion` — Automatic FX rates
 
 - **Size:** Medium. **Upstream:** spliit #513/#425 and #514/#515.
 - **Summary:** When an expense currency differs from the group currency, fetch the
@@ -104,7 +91,7 @@ feature notes the upstream issue for demand signal. Import the _ideas_, not the 
   - THE stored `originalAmount` SHALL use the same integer-cents convention as `amount`.
   - IF the FX provider is unavailable, THEN THE system SHALL let the user enter a manual rate and SHALL not block saving.
 
-## 5. `multi-payer-expenses` — One expense paid by several members
+## 3. `multi-payer-expenses` — One expense paid by several members
 
 - **Size:** Large. **Upstream:** spliit #14 (top-demand).
 - **Summary:** Support an expense funded by multiple payers, each with an amount/share,
@@ -119,7 +106,7 @@ userId, amount|shares}`; migrate existing single-payer rows), balance math in
   - THE balance calculation SHALL credit each payer by their contributed amount.
   - WHEN migrating existing data, THE migration SHALL convert every current `paidById` into a single-payer row with the full amount (no balance change).
 
-## 6. `itemized-expenses` — Split by line items (with tax & tip)
+## 4. `itemized-expenses` — Split by line items (with tax & tip)
 
 - **Size:** Large. **Upstream:** spliit #395.
 - **Summary:** Optionally break an expense into line items, assign each item to
@@ -133,7 +120,7 @@ userId, amount|shares}`; migrate existing single-payer rows), balance math in
   - THE system SHALL distribute tax and tip proportionally to each participant's item subtotal.
   - THE sum of per-person shares SHALL exactly equal the expense total (no lost cents).
 
-## 7. `account-overview-homepage` — Cross-group balance roll-up
+## 5. `account-overview-homepage` — Cross-group balance roll-up
 
 - **Size:** Medium. **Upstream:** spliit #509.
 - **Summary:** A logged-in landing page summarising the user's net position across all
@@ -146,7 +133,7 @@ userId, amount|shares}`; migrate existing single-payer rows), balance math in
   - THE overview SHALL list top balances with links to each group/friend.
   - THE aggregation SHALL run server-side via a single tRPC procedure.
 
-## 8. `profile-avatars` — Account profile photos
+## 6. `profile-avatars` — Account profile photos
 
 - **Size:** Medium.
 - **Summary:** Let users upload an avatar shown across account, group member lists, and

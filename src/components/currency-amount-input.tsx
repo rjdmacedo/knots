@@ -4,11 +4,14 @@ import { InputGroupInput } from '@/components/ui/input-group'
 import { Currency } from '@/lib/currency'
 import {
   enforceCurrencyPattern,
+  enforceExpressionPattern,
   formatCurrencyInputValue,
   getCurrencyInputPlaceholder,
   valueToCurrencyDraft,
 } from '@/lib/currency-input'
+import { evaluate, isExpression } from '@/lib/math-expression'
 import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 import { ComponentProps, forwardRef, useState } from 'react'
 
 type CurrencyAmountInputProps = Omit<
@@ -39,10 +42,13 @@ export const CurrencyAmountInput = forwardRef<
 ) {
   const [isFocused, setIsFocused] = useState(false)
   const [draft, setDraft] = useState('')
+  const t = useTranslations('CurrencyAmountInput')
 
   const displayValue = isFocused
     ? draft
     : formatCurrencyInputValue(value, locale, currency.decimal_digits)
+
+  const placeholder = `${getCurrencyInputPlaceholder(locale, currency.decimal_digits)} ${t('expressionHint')}`
 
   return (
     <InputGroupInput
@@ -50,8 +56,8 @@ export const CurrencyAmountInput = forwardRef<
       ref={ref}
       className={cn('text-base tabular-nums', className)}
       type="text"
-      inputMode="decimal"
-      placeholder={getCurrencyInputPlaceholder(locale, currency.decimal_digits)}
+      inputMode="text"
+      placeholder={placeholder}
       value={displayValue}
       onFocus={(event) => {
         setIsFocused(true)
@@ -62,11 +68,27 @@ export const CurrencyAmountInput = forwardRef<
       }}
       onBlur={(event) => {
         setIsFocused(false)
+
+        if (isExpression(draft)) {
+          const result = evaluate(draft)
+          if (result.ok) {
+            onValueChange(String(result.value))
+          } else {
+            // Propagate raw draft for schema validation to catch
+            onValueChange(draft)
+          }
+        }
+
         setDraft('')
         onBlur?.(event)
       }}
       onChange={(event) => {
-        const normalized = enforceCurrencyPattern(event.target.value)
+        const raw = event.target.value
+        // If input contains operator characters, use expression-aware filtering
+        const normalized =
+          /[+*/()]/.test(raw) || (raw.includes('-') && !raw.startsWith('-'))
+            ? enforceExpressionPattern(raw)
+            : enforceCurrencyPattern(raw)
         setDraft(normalized)
         onValueChange(normalized)
       }}

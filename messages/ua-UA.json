@@ -526,6 +526,7 @@
     "duplicateParticipantName": "Інший учасник уже має це ім'я",
     "titleRequired": "Будь ласка, введіть назву",
     "invalidNumber": "Невірний номер",
+    "invalidExpression": "Невірний вираз. Використовуйте числа та оператори +, -, *, /.",
     "amountRequired": "Необхідно ввести суму",
     "amountNotZero": "Сума не повинна дорівнювати нулю",
     "amountTenMillion": "Сума повинна бути меншою за 10,000,000",
@@ -1094,5 +1095,8 @@
       "close-in-date": "Близькі дати",
       "same-category": "Та сама категорія"
     }
+  },
+  "CurrencyAmountInput": {
+    "expressionHint": "або 10+5"
   }
 }

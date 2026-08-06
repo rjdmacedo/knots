@@ -526,6 +526,7 @@
     "duplicateParticipantName": "Der Name ist bereits an ein anderes Gruppenmitglied vergeben.",
     "titleRequired": "Bitte gib einen Titel an.",
     "invalidNumber": "Zahl nicht valide.",
+    "invalidExpression": "Ungültiger Ausdruck. Verwende Zahlen und +, -, *, / Operatoren.",
     "amountRequired": "Du musst einen Betrag angeben.",
     "amountNotZero": "Der Betrag darf nicht 0 sein.",
     "amountTenMillion": "Der Betrag muss kleiner als 10.000.000 sein.",
@@ -1097,5 +1098,8 @@
       "close-in-date": "Nahes Datum",
       "same-category": "Gleiche Kategorie"
     }
+  },
+  "CurrencyAmountInput": {
+    "expressionHint": "oder 10+5"
   }
 }
