@@ -201,17 +201,67 @@ export function FloatingCreateExpense({
       setOpen(true)
     }
 
+    const handleCreateDirectExpense = async (e: Event) => {
+      const customEvent = e as CustomEvent<{
+        friendId: string
+        prefill?: ExpenseFormCreatePrefill
+      }>
+      const { friendId, prefill } = customEvent.detail
+
+      setEditingExpenseId(null)
+      setEditingGroupId(null)
+      setEditingExpense(null)
+      setSelectedGroup(null)
+      setCreatePrefill(prefill ?? null)
+      setFormInstanceKey((key) => key + 1)
+      setPickerOpen(false)
+
+      // Resolve the friend from the cached list or fetch by ID
+      const cachedFriend = friends.find((f) => f.id === friendId)
+      if (cachedFriend) {
+        setSelectedFriends([cachedFriend])
+      } else {
+        try {
+          const friend = await utils.friends.getFriend.fetch({ friendId })
+          setSelectedFriends([
+            {
+              id: friend.id,
+              email: friend.email,
+              name: friend.name,
+              friendUserId: friend.friendUserId,
+              friendUsername: null,
+              hasAccount: friend.isConnected,
+              status: friend.isConnected ? 'connected' : 'pending',
+            },
+          ])
+        } catch {
+          // Friend not found — open without selection (user can pick manually)
+          setSelectedFriends([])
+        }
+      }
+
+      setOpen(true)
+    }
+
     window.addEventListener(
       'create-group-expense',
       handleCreateGroupExpense as EventListener,
+    )
+    window.addEventListener(
+      'create-direct-expense',
+      handleCreateDirectExpense as EventListener,
     )
     return () => {
       window.removeEventListener(
         'create-group-expense',
         handleCreateGroupExpense as EventListener,
       )
+      window.removeEventListener(
+        'create-direct-expense',
+        handleCreateDirectExpense as EventListener,
+      )
     }
-  }, [])
+  }, [friends, utils])
 
   // Derive unique participants list for virtual group
   const participants = useMemo(() => {

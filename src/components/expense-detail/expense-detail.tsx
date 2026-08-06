@@ -18,6 +18,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getCurrency, type Currency } from '@/lib/currency'
+import { buildCopyExpensePrefill } from '@/lib/expense-copy'
 import {
   buildExpenseSplitLines,
   formatSplitAmount,
@@ -27,6 +28,8 @@ import {
 } from '@/lib/expense-detail-splits'
 import type { TrendMonth } from '@/lib/expense-detail-trends'
 import {
+  openCopyDirectExpense,
+  openCopyGroupExpense,
   openEditDirectExpense,
   openEditGroupExpense,
 } from '@/lib/expense-dialog-events'
@@ -35,7 +38,7 @@ import { isConsolidatedPayment } from '@/lib/payments'
 import { formatCurrency, formatDate, getCurrencyFromGroup } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import type { Category, SplitMode } from '@prisma/client'
-import { Camera, Loader2, Pencil, Trash2 } from 'lucide-react'
+import { Camera, Copy, Loader2, Pencil, Trash2 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -240,6 +243,14 @@ function GroupExpenseDetailLoader({
       isDeleting={isDeleting}
       onEdit={() => openEditGroupExpense(groupId, expenseId)}
       onDelete={() => deleteExpense({ groupId, expenseId })}
+      onCopy={
+        !isLocked
+          ? () => {
+              const prefill = buildCopyExpensePrefill(expense, currency)
+              openCopyGroupExpense(groupId, group.name, prefill)
+            }
+          : undefined
+      }
       addedBy={expenseData.addedBy}
       addedAt={expenseData.addedAt}
       lastUpdatedBy={expenseData.lastUpdatedBy}
@@ -340,6 +351,14 @@ function DirectExpenseDetailLoader({
       canDelete={!isLocked}
       isDeleting={isDeleting}
       onEdit={() => openEditDirectExpense(expenseId)}
+      onCopy={
+        !isLocked
+          ? () => {
+              const prefill = buildCopyExpensePrefill(expense, currency)
+              openCopyDirectExpense(friend.id, prefill)
+            }
+          : undefined
+      }
       onDelete={() =>
         expense.isReimbursement
           ? deletePayment({ expenseId })
@@ -352,7 +371,7 @@ function DirectExpenseDetailLoader({
   )
 }
 
-type ExpenseDetailContentProps = {
+export type ExpenseDetailContentProps = {
   expense: {
     id: string
     title: string
@@ -392,6 +411,7 @@ type ExpenseDetailContentProps = {
   isDeleting: boolean
   onEdit: () => void
   onDelete: () => void
+  onCopy?: () => void
   addedBy?: { id: string; name: string } | null
   addedAt?: Date
   lastUpdatedBy?: { id: string; name: string } | null
@@ -399,7 +419,7 @@ type ExpenseDetailContentProps = {
   isLocked: boolean
 }
 
-function ExpenseDetailContent({
+export function ExpenseDetailContent({
   expense,
   currency,
   categories,
@@ -418,6 +438,7 @@ function ExpenseDetailContent({
   isDeleting,
   onEdit,
   onDelete,
+  onCopy,
   addedBy,
   addedAt,
   lastUpdatedBy,
@@ -542,6 +563,16 @@ function ExpenseDetailContent({
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
+          ) : null}
+          {!isLocked && onCopy ? (
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label={t('copy')}
+              onClick={onCopy}
+            >
+              <Copy />
+            </Button>
           ) : null}
           {canEdit ? (
             <Button

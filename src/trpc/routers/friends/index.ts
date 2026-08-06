@@ -494,6 +494,7 @@ export const friendsRouter = createTRPCRouter({
         select: {
           amount: true,
           category: true,
+          categoryId: true,
           createdAt: true,
           expenseDate: true,
           id: true,

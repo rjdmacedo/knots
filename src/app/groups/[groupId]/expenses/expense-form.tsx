@@ -454,6 +454,7 @@ export type ExpenseFormCreatePrefill = {
   paidBy?: string
   paidFor?: ExpenseFormValues['paidFor']
   splitMode?: ExpenseFormValues['splitMode']
+  notes?: string
 }
 
 /**
@@ -623,7 +624,7 @@ export function ExpenseForm({
                 createPrefill.splitMode ?? defaultSplittingOptions.splitMode,
               saveDefaultSplittingOptions: false,
               documents: createPrefill.documents ?? [],
-              notes: '',
+              notes: createPrefill.notes ?? '',
               recurrenceRule: RecurrenceRule.NONE,
             }
           : {

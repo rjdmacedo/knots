@@ -55,6 +55,7 @@
   "ExpenseDetail": {
     "backToExpenses": "Voltar às despesas",
     "backToFriend": "Voltar a {name}",
+    "copy": "Copiar",
     "delete": "Eliminar",
     "edit": "Editar",
     "payment": "Pagamento",

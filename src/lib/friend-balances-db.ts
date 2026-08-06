@@ -13,7 +13,10 @@ export async function getDirectExpensesBetweenUsers(
     select: {
       amount: true,
       category: true,
+      categoryId: true,
       createdAt: true,
+      creationMethod: true,
+      bundleId: true,
       expenseDate: true,
       id: true,
       isReimbursement: true,

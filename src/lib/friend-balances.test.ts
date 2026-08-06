@@ -115,6 +115,9 @@ describe('computeFriendBalance', () => {
         recurrenceRule: null,
         notes: null,
         category: null,
+        categoryId: 0,
+        creationMethod: null,
+        bundleId: null,
         _count: { documents: 0 },
         paidBy: { id: currentUserId, name: 'Current User' },
         paidFor: [
@@ -170,6 +173,9 @@ describe('computeFriendBalance', () => {
         recurrenceRule: null,
         notes: null,
         category: null,
+        categoryId: 0,
+        creationMethod: null,
+        bundleId: null,
         _count: { documents: 0 },
         paidBy: { id: currentUserId, name: 'Current User' },
         paidFor: [
@@ -248,6 +254,9 @@ describe('computeFriendBalance', () => {
         recurrenceRule: null,
         notes: null,
         category: null,
+        categoryId: 0,
+        creationMethod: null,
+        bundleId: null,
         _count: { documents: 0 },
         paidBy: { id: currentUserId, name: 'Current User' },
         paidFor: [
@@ -298,6 +307,9 @@ describe('computeFriendBalance', () => {
           recurrenceRule: null,
           notes: null,
           category: null,
+          categoryId: 0,
+          creationMethod: null,
+          bundleId: null,
           _count: { documents: 0 },
           paidBy: { id: currentUserId, name: 'Current User' },
           paidFor: [
@@ -341,6 +353,9 @@ describe('computeFriendBalance', () => {
           recurrenceRule: null,
           notes: null,
           category: null,
+          categoryId: 0,
+          creationMethod: null,
+          bundleId: null,
           _count: { documents: 0 },
           paidBy: { id: currentUserId, name: 'Current User' },
           paidFor: [
@@ -359,6 +374,9 @@ describe('computeFriendBalance', () => {
           recurrenceRule: null,
           notes: null,
           category: null,
+          categoryId: 0,
+          creationMethod: null,
+          bundleId: null,
           _count: { documents: 0 },
           paidBy: { id: friendUserId, name: 'Friend' },
           paidFor: [
@@ -398,6 +416,9 @@ describe('computeFriendBalance', () => {
           recurrenceRule: null,
           notes: null,
           category: null,
+          categoryId: 0,
+          creationMethod: null,
+          bundleId: null,
           _count: { documents: 0 },
           paidBy: { id: currentUserId, name: 'Current User' },
           paidFor: [
@@ -416,6 +437,9 @@ describe('computeFriendBalance', () => {
           recurrenceRule: null,
           notes: null,
           category: null,
+          categoryId: 0,
+          creationMethod: null,
+          bundleId: null,
           _count: { documents: 0 },
           paidBy: { id: friendUserId, name: 'Friend' },
           paidFor: [
@@ -459,6 +483,9 @@ describe('computeFriendBalance', () => {
           recurrenceRule: null,
           notes: null,
           category: null,
+          categoryId: 0,
+          creationMethod: null,
+          bundleId: null,
           _count: { documents: 0 },
           paidBy: { id: currentUserId, name: 'Current User' },
           paidFor: [
@@ -480,6 +507,9 @@ describe('computeFriendBalance', () => {
           recurrenceRule: null,
           notes: null,
           category: null,
+          categoryId: 0,
+          creationMethod: null,
+          bundleId: null,
           _count: { documents: 0 },
           paidBy: { id: friendUserId, name: 'Friend' },
           paidFor: [
@@ -550,6 +580,9 @@ describe('computeFriendBalance', () => {
           recurrenceRule: null,
           notes: null,
           category: null,
+          categoryId: 0,
+          creationMethod: null,
+          bundleId: null,
           _count: { documents: 0 },
           paidBy: { id: currentUserId, name: 'Current User' },
           paidFor: [
@@ -571,6 +604,9 @@ describe('computeFriendBalance', () => {
           recurrenceRule: null,
           notes: null,
           category: null,
+          categoryId: 0,
+          creationMethod: null,
+          bundleId: null,
           _count: { documents: 0 },
           paidBy: { id: currentUserId, name: 'Current User' },
           paidFor: [
