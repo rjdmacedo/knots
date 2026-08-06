@@ -1,3 +1,10 @@
+# [1.48.0](https://github.com/rjdmacedo/knots/compare/v1.47.0...v1.48.0) (2026-08-06)
+
+
+### Features
+
+* add BYO OpenAI endpoint support (OPENAI_BASE_URL, OPENAI_MODEL) ([a049eb5](https://github.com/rjdmacedo/knots/commit/a049eb517493762070662167a250cb7141cfe080))
+
 # [1.47.0](https://github.com/rjdmacedo/knots/compare/v1.46.1...v1.47.0) (2026-08-06)
 
 
