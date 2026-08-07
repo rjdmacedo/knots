@@ -382,6 +382,11 @@ export type ExpenseDetailContentProps = {
     notes: string | null
     category: Category | null
     paidBy: { id: string; name: string | null; email?: string | null }
+    payers?: Array<{
+      userId: string
+      amount: number
+      user: { id: string; name: string | null }
+    }>
     paidFor: Array<{
       userId: string
       shares: number
@@ -699,17 +704,48 @@ export function ExpenseDetailContent({
       {!expense.isReimbursement ? (
         <Card>
           <CardContent className="flex flex-col gap-4 pt-6">
-            <div className="flex items-center gap-3">
-              <ParticipantAvatar name={expense.paidBy.name} size="lg" />
-              <p className="text-base">
-                {profileId === expense.paidBy.id
-                  ? t('youPaidAmount', { amount: formattedAmount })
-                  : t('paidAmount', {
-                      name: expense.paidBy.name ?? t('someone'),
-                      amount: formattedAmount,
-                    })}
-              </p>
-            </div>
+            {expense.payers && expense.payers.length > 1 ? (
+              <div className="flex flex-col gap-3">
+                {expense.payers.map((payer, index) => {
+                  const payerAmount = formatCurrency(
+                    currency,
+                    payer.amount,
+                    locale,
+                  )
+                  const isCurrentUser = profileId === payer.userId
+                  return (
+                    <div key={payer.userId} className="flex items-center gap-3">
+                      <ParticipantAvatar
+                        name={payer.user.name}
+                        size={index === 0 ? 'lg' : 'md'}
+                      />
+                      <p className={index === 0 ? 'text-base' : 'text-sm'}>
+                        {isCurrentUser
+                          ? t('youPaidAmountMultiple', {
+                              amount: payerAmount,
+                            })
+                          : t('paidAmountMultiple', {
+                              name: payer.user.name ?? t('someone'),
+                              amount: payerAmount,
+                            })}
+                      </p>
+                    </div>
+                  )
+                })}
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <ParticipantAvatar name={expense.paidBy.name} size="lg" />
+                <p className="text-base">
+                  {profileId === expense.paidBy.id
+                    ? t('youPaidAmount', { amount: formattedAmount })
+                    : t('paidAmount', {
+                        name: expense.paidBy.name ?? t('someone'),
+                        amount: formattedAmount,
+                      })}
+                </p>
+              </div>
+            )}
 
             {splitLines.length > 0 ? (
               <>

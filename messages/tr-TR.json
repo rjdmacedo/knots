@@ -45,6 +45,32 @@
       "earlierThisYear": "Bu yılın başlarında",
       "lastYear": "Geçen yıl",
       "older": "Daha eski"
+    },
+    "paidBy": {
+      "addPayer": "Ödeyen ekle",
+      "removePayer": "Ödeyeni kaldır",
+      "splitEvenly": "Eşit böl",
+      "total": "Toplam",
+      "mismatch": "Tutar uyuşmazlığı",
+      "overpayment": "{amount} fazla ödeme",
+      "underpayment": "{amount} eksik ödeme",
+      "reimbursementSingleOnly": "Geri ödemeler yalnızca bir ödeyeni destekler",
+      "amountPositive": "Tutar pozitif olmalıdır",
+      "singleSection": "Single",
+      "multipleSection": "Multiple payers",
+      "singleTitle": "Single payer",
+      "singleDescription": "One person covers the full expense",
+      "evenlyTitle": "Evenly",
+      "evenlyDescription": "Each pays an equal share",
+      "bySharesTitle": "By shares",
+      "bySharesDescription": "Each pays a weighted share",
+      "byPercentageTitle": "By percentage",
+      "byPercentageDescription": "Each pays a percentage",
+      "byAmountTitle": "By amount",
+      "byAmountDescription": "Each pays a fixed amount",
+      "selectPayers": "Select who paid",
+      "shareLabel": "Shares",
+      "percentageLabel": "Percent"
     }
   },
   "ExpenseCard": {
@@ -53,7 +79,10 @@
     "receivedBy": "<strong>{paidBy}</strong> tarafından alındı, <paidFor></paidFor> için",
     "yourBalance": "Bakiyeniz:",
     "notInvolved": "You are not involved",
-    "close": "Kapat"
+    "close": "Kapat",
+    "paidByMultiple": "<strong>{paidBy}</strong> tarafından ödendi, <paidFor></paidFor> için",
+    "multiPayerLabel": "{first}, {second}",
+    "multiPayerLabelOverflow": "{first} +{count}"
   },
   "Groups": {
     "myGroups": "Gruplarım",
@@ -193,7 +222,7 @@
       "paidByField": {
         "label": "Ödeyen",
         "placeholder": "Select a participant",
-        "description": "Masrafı ödeyen katılımcıyı seçin."
+        "description": "Select who provided the money and how much each payer contributed."
       },
       "recurrenceRule": {
         "label": "Expense Recurrence",
@@ -541,7 +570,11 @@
     "paidForMin1": "Masraf en az bir katılımcı için ödenmiş olmalıdır.",
     "noZeroShares": "Tüm paylar 0'dan büyük olmalıdır.",
     "amountSum": "Tutarların toplamı masraf tutarına eşit olmalıdır.",
-    "percentageSum": "Yüzdelerin toplamı 100 olmalıdır."
+    "percentageSum": "Yüzdelerin toplamı 100 olmalıdır.",
+    "paidByAmountPositive": "Each payer's amount must be greater than zero.",
+    "paidByAmountSum": "Payer amounts must sum to the expense total.",
+    "paidByDuplicateParticipants": "Each payer can only appear once.",
+    "reimbursementSinglePayer": "Reimbursements support only a single payer."
   },
   "Categories": {
     "search": "Kategori ara...",

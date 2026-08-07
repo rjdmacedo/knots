@@ -92,7 +92,7 @@ export function buildSettlementFormValues(
     title,
     category: PAYMENT_CATEGORY_ID,
     amount: amountMinor,
-    paidBy: fromUserId,
+    paidBy: [{ participant: fromUserId, amount: amountMinor }],
     paidFor: [{ participant: toUserId, shares: amountMinor }],
     splitMode: 'BY_AMOUNT',
     saveDefaultSplittingOptions: false,

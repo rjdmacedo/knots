@@ -25,6 +25,7 @@ export async function GET(
           originalCurrency: true,
           conversionRate: true,
           paidById: true,
+          payers: { select: { userId: true, amount: true } },
           paidFor: { select: { userId: true, shares: true } },
           isReimbursement: true,
           splitMode: true,
@@ -41,8 +42,23 @@ export async function GET(
     return NextResponse.json({ error: 'Invalid group ID' }, { status: 404 })
 
   // Map to backward-compatible export shape
+  const expenses = group.expenses.map((expense) => {
+    const paidBy =
+      expense.payers.length > 0
+        ? expense.payers.map((p) => ({ userId: p.userId, amount: p.amount }))
+        : [{ userId: expense.paidById, amount: expense.amount }]
+
+    const { payers, ...rest } = expense
+    return {
+      ...rest,
+      paidById: paidBy[0].userId,
+      paidBy,
+    }
+  })
+
   const exportData = {
     ...group,
+    expenses,
     participants: group.memberships.map((m) => ({
       id: m.user.id,
       name: m.user.name,

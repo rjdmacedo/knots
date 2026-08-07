@@ -322,6 +322,7 @@ describe('Enhanced Stats Dashboard — Property-Based Tests', () => {
               isReimbursement: false,
               paidBy: { id: ids[0], name: 'Test' },
               paidFor: [{ user: { id: ids[0], name: 'Test' }, shares: 1 }],
+              payers: [],
               splitMode: 'EVENLY' as const,
               title: 'Test expense',
               recurrenceRule: null,

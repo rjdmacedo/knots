@@ -77,6 +77,9 @@ export const recordSettlementProcedure = protectedProcedure
               shares: 1,
             },
           },
+          payers: {
+            create: [{ userId: input.fromUserId, amount: input.amount }],
+          },
         },
       })
 

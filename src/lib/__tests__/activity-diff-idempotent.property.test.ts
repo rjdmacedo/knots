@@ -28,13 +28,20 @@ function toFormValues(expense: {
   notes?: string | null
   recurrenceRule?: string | null
   paidFor: Array<{ userId: string }>
+  payers?: Array<{ userId: string; amount: number }>
 }) {
   return {
     title: expense.title,
     amount: expense.amount,
     expenseDate: expense.expenseDate,
     category: expense.categoryId,
-    paidBy: expense.paidById,
+    paidBy:
+      expense.payers && expense.payers.length > 0
+        ? expense.payers.map((p) => ({
+            participant: p.userId,
+            amount: p.amount,
+          }))
+        : [{ participant: expense.paidById, amount: expense.amount }],
     splitMode: expense.splitMode,
     isReimbursement: expense.isReimbursement,
     notes: expense.notes ?? null,

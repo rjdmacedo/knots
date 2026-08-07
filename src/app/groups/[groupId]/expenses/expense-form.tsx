@@ -17,9 +17,17 @@ import {
 } from '@/components/expense-title-input'
 import { useDuplicateCheck } from '@/components/hooks/use-duplicate-check'
 import { useFormPersistence } from '@/components/hooks/use-form-persistence'
+import { PayerSelector, type PayerEntry } from '@/components/payer-selector'
 import { PreventNavigation } from '@/components/prevent-navigation'
 import { SubmitButton } from '@/components/submit-button'
 import { Button, buttonVariants } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DialogFooter } from '@/components/ui/dialog'
 import {
@@ -451,7 +459,7 @@ export type ExpenseFormCreatePrefill = {
   category?: number
   documents?: ExpenseFormValues['documents']
   isReimbursement?: boolean
-  paidBy?: string
+  paidBy?: string | Array<{ participant: string; amount: number }>
   paidFor?: ExpenseFormValues['paidFor']
   splitMode?: ExpenseFormValues['splitMode']
   notes?: string
@@ -487,6 +495,7 @@ export function ExpenseForm({
   runtimeFeatureFlags,
   isDesktop = false,
   scrollHeader,
+  singlePayerOnly = false,
 }: {
   group: NonNullable<AppRouterOutput['groups']['get']['group']>
   expense?: AppRouterOutput['groups']['expenses']['get']['expense']
@@ -500,6 +509,7 @@ export function ExpenseForm({
   runtimeFeatureFlags: RuntimeFeatureFlags
   isDesktop?: boolean
   scrollHeader?: ReactNode
+  singlePayerOnly?: boolean
 }) {
   const t = useTranslations('ExpenseForm')
   const tDocuments = useTranslations('ExpenseDocumentsInput')
@@ -522,14 +532,15 @@ export function ExpenseForm({
   const collapsibleFieldsGridClass =
     'grid w-full min-w-0 grid-cols-1 items-start gap-4 sm:grid-cols-2 sm:gap-6'
 
-  const getDefaultPaidBy = (): string | undefined => {
+  const getDefaultPaidBy = (): ExpenseFormValues['paidBy'] | undefined => {
     if (!isCreate) return undefined
 
     if (
       currentUserId &&
       group.participants.some(({ id }) => id === currentUserId)
     ) {
-      return currentUserId
+      const initialAmount = Number(searchParams.get('amount')) || 0
+      return [{ participant: currentUserId, amount: initialAmount }]
     }
 
     return undefined
@@ -561,7 +572,18 @@ export function ExpenseForm({
               : undefined,
           conversionRate: expense.conversionRate?.toNumber(),
           category: expense.categoryId,
-          paidBy: expense.paidById,
+          paidBy:
+            expense.payers && expense.payers.length > 0
+              ? expense.payers.map((p) => ({
+                  participant: p.userId,
+                  amount: amountAsDecimal(p.amount, groupCurrency),
+                }))
+              : [
+                  {
+                    participant: expense.paidById,
+                    amount: amountAsDecimal(expense.amount, groupCurrency),
+                  },
+                ],
           paidFor: expense.paidFor.map(({ userId, shares }) => {
             const shareValue =
               expense.splitMode === 'BY_AMOUNT'
@@ -592,7 +614,17 @@ export function ExpenseForm({
             originalAmount: undefined,
             conversionRate: undefined,
             category: 1, // category with id 1 is Payment
-            paidBy: searchParams.get('from') ?? undefined,
+            paidBy: searchParams.get('from')
+              ? [
+                  {
+                    participant: searchParams.get('from')!,
+                    amount: amountAsDecimal(
+                      Number(searchParams.get('amount')) || 0,
+                      groupCurrency,
+                    ),
+                  },
+                ]
+              : getDefaultPaidBy(),
             paidFor: searchParams.get('to')
               ? [
                   {
@@ -624,7 +656,16 @@ export function ExpenseForm({
               category:
                 createPrefill.category ??
                 (createPrefill.isReimbursement ? 1 : 0),
-              paidBy: createPrefill.paidBy ?? getDefaultPaidBy(),
+              paidBy: createPrefill.paidBy
+                ? Array.isArray(createPrefill.paidBy)
+                  ? createPrefill.paidBy
+                  : [
+                      {
+                        participant: createPrefill.paidBy,
+                        amount: createPrefill.amount ?? 0,
+                      },
+                    ]
+                : getDefaultPaidBy(),
               paidFor: createPrefill.paidFor ?? defaultSplittingOptions.paidFor,
               isReimbursement: createPrefill.isReimbursement ?? false,
               splitMode:
@@ -784,6 +825,10 @@ export function ExpenseForm({
 
     // Store monetary amounts in minor units (cents)
     values.amount = amountAsMinorUnits(values.amount, groupCurrency)
+    values.paidBy = values.paidBy.map(({ participant, amount }) => ({
+      participant,
+      amount: amountAsMinorUnits(amount, groupCurrency),
+    }))
     values.paidFor = values.paidFor.map(({ participant, shares }) => ({
       participant,
       shares:
@@ -895,6 +940,36 @@ export function ExpenseForm({
   useEffect(() => {
     setManuallyEditedParticipants(new Set())
   }, [splitMode, amount])
+
+  // When isReimbursement is toggled on and there are multiple payers, collapse to single payer
+  const isReimbursement = form.watch('isReimbursement')
+  useEffect(() => {
+    if (!isReimbursement) return
+    const currentPaidBy = form.getValues('paidBy')
+    if (Array.isArray(currentPaidBy) && currentPaidBy.length > 1) {
+      form.setValue('paidBy', [currentPaidBy[0]], {
+        shouldDirty: true,
+        shouldValidate: true,
+      })
+    }
+  }, [isReimbursement, form])
+
+  // Synchronize single-payer amount with the expense total.
+  // When there's only one payer, their amount must always equal the expense amount.
+  const paidBy = form.watch('paidBy')
+  useEffect(() => {
+    if (!Array.isArray(paidBy) || paidBy.length !== 1) return
+    const expenseAmount = Number(amount) || 0
+    const currentPayerAmount =
+      typeof paidBy[0].amount === 'string'
+        ? Number(paidBy[0].amount) || 0
+        : paidBy[0].amount
+    if (currentPayerAmount !== expenseAmount) {
+      form.setValue('paidBy', [{ ...paidBy[0], amount: expenseAmount }], {
+        shouldValidate: false,
+      })
+    }
+  }, [amount, paidBy, form])
 
   useEffect(() => {
     const splitMode = form.getValues().splitMode
@@ -1254,45 +1329,6 @@ export function ExpenseForm({
                     )}
                   />
 
-                  <FormField
-                    control={form.control}
-                    name="paidBy"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {t(`${sExpense}.paidByField.label`)}
-                        </FormLabel>
-                        <Select
-                          items={group.participants.map(({ id, name }) => ({
-                            value: id,
-                            label: name,
-                          }))}
-                          onValueChange={field.onChange}
-                          value={field.value ?? getDefaultPaidBy()}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue
-                              placeholder={t(
-                                `${sExpense}.paidByField.placeholder`,
-                              )}
-                            />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {group.participants.map(({ id, name }) => (
-                              <SelectItem key={id} value={id}>
-                                {name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormDescription>
-                          {t(`${sExpense}.paidByField.description`)}
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
                   {conversionRequired ? (
                     <FormField
                       control={form.control}
@@ -1536,6 +1572,41 @@ export function ExpenseForm({
                   )}
                 </ExpenseFormSectionContent>
               </ExpenseFormSection>
+
+              <Card className="gap-4 py-0 shadow-none ring-0">
+                <CardHeader className="px-0">
+                  <CardTitle>{t(`${sExpense}.paidByField.label`)}</CardTitle>
+                  <CardDescription>
+                    {t(`${sExpense}.paidByField.description`)}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="px-0">
+                  <FormField
+                    control={form.control}
+                    name="paidBy"
+                    render={({ field }) => (
+                      <FormItem className="space-y-0">
+                        <PayerSelector
+                          participants={group.participants.map(
+                            ({ id, name }) => ({
+                              id,
+                              name: name?.trim() || id,
+                            }),
+                          )}
+                          value={(field.value ?? []) as PayerEntry[]}
+                          onChange={field.onChange}
+                          expenseTotal={Number(form.watch('amount')) || 0}
+                          currency={groupCurrency}
+                          locale={locale}
+                          isReimbursement={form.watch('isReimbursement')}
+                          singlePayerOnly={singlePayerOnly}
+                        />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
 
               <ExpenseFormSection>
                 <ExpenseFormSectionHeader>

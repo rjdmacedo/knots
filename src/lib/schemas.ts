@@ -83,6 +83,13 @@ const inputCoercedToNumber = z.union([
   }),
 ])
 
+export const paidByEntrySchema = z.object({
+  participant: z.string().min(1),
+  amount: z
+    .union([z.number(), z.string().transform(expressionToNumber)])
+    .refine((a) => a > 0, 'paidByAmountPositive'),
+})
+
 export const expenseFormSchema = z
   .object({
     expenseDate: z.coerce.date(),
@@ -109,7 +116,7 @@ export const expenseFormSchema = z
         inputCoercedToNumber.refine((amount) => amount > 0, 'ratePositive'),
       ])
       .nullish(),
-    paidBy: z.string({ required_error: 'paidByRequired' }),
+    paidBy: z.array(paidByEntrySchema).min(1, 'paidByRequired'),
     paidFor: z
       .array(
         z.object({
@@ -192,6 +199,40 @@ export const expenseFormSchema = z
         code: z.ZodIssueCode.custom,
         message: 'min2',
         path: ['title'],
+      })
+    }
+
+    // Reimbursements must have exactly one payer
+    if (expense.isReimbursement && expense.paidBy.length > 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'reimbursementSinglePayer',
+        path: ['paidBy'],
+      })
+    }
+
+    // No duplicate payer participants
+    const payerIds = expense.paidBy.map((entry) => entry.participant)
+    if (new Set(payerIds).size !== payerIds.length) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'paidByDuplicateParticipants',
+        path: ['paidBy'],
+      })
+    }
+
+    // Sum of payer amounts must equal expense amount
+    const payerSum = expense.paidBy.reduce(
+      (sum, entry) => sum + entry.amount,
+      0,
+    )
+    const amountMinor = toAmountMinorUnitsForValidation(expense.amount)
+    const payerSumMinor = toAmountMinorUnitsForValidation(payerSum)
+    if (payerSumMinor !== amountMinor) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'paidByAmountSum',
+        path: ['paidBy'],
       })
     }
 

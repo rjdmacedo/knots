@@ -355,7 +355,7 @@ describe('Feature: expense-amount-math-expressions, Property 5: Schema Expressio
           title: 'Test',
           category: 0,
           amount: printed,
-          paidBy: 'user1',
+          paidBy: [{ participant: 'user1', amount: evalResult.value }],
           paidFor: [{ participant: 'user2', shares: '100' }],
           splitMode: 'EVENLY',
           saveDefaultSplittingOptions: false,

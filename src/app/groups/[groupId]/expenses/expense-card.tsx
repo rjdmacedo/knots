@@ -46,7 +46,36 @@ function Participants({
   participantCount: number
 }) {
   const t = useTranslations('ExpenseCard')
-  const key = expense.amount > 0 ? 'paidBy' : 'receivedBy'
+
+  // Determine payer label: use payers array if multi-payer, fall back to legacy paidBy
+  const hasMultiplePayers = expense.payers && expense.payers.length > 1
+  let payerLabel: string
+  let key: string
+
+  if (expense.amount > 0) {
+    if (hasMultiplePayers) {
+      const payers = expense.payers
+      if (payers.length === 2) {
+        payerLabel = t('multiPayerLabel', {
+          first: payers[0].user.name ?? '?',
+          second: payers[1].user.name ?? '?',
+        })
+      } else {
+        payerLabel = t('multiPayerLabelOverflow', {
+          first: payers[0].user.name ?? '?',
+          count: payers.length - 1,
+        })
+      }
+      key = 'paidByMultiple'
+    } else {
+      payerLabel = expense.paidBy.name ?? '?'
+      key = 'paidBy'
+    }
+  } else {
+    payerLabel = expense.paidBy.name ?? '?'
+    key = 'receivedBy'
+  }
+
   const paidFor =
     expense.paidFor.length == participantCount && participantCount >= 4 ? (
       <strong>{t('everyone')}</strong>
@@ -61,7 +90,7 @@ function Participants({
 
   const participants = t.rich(key, {
     strong: (chunks) => <strong>{chunks}</strong>,
-    paidBy: expense.paidBy.name,
+    paidBy: payerLabel,
     paidFor: () => paidFor,
     forCount: expense.paidFor.length,
   })
@@ -106,6 +135,10 @@ export function ExpenseCard({
       amount: expense.amount,
       categoryId: expense.categoryId,
       paidById: expense.paidBy.id,
+      payers: expense.payers?.map((p) => ({
+        userId: p.userId,
+        amount: p.amount,
+      })),
       splitMode: expense.splitMode,
       isReimbursement: expense.isReimbursement,
       notes: expense.notes,

@@ -8,6 +8,7 @@ export type CopyableExpense = {
   amount: number // minor units (cents)
   categoryId: number | null
   paidById: string
+  payers?: Array<{ userId: string; amount: number }>
   splitMode: SplitMode
   isReimbursement: boolean
   notes: string | null
@@ -25,7 +26,13 @@ export function buildCopyExpensePrefill(
     expenseDate: new Date(), // today
     amount,
     category: expense.categoryId ?? 0,
-    paidBy: expense.paidById,
+    paidBy:
+      expense.payers && expense.payers.length > 0
+        ? expense.payers.map((p) => ({
+            participant: p.userId,
+            amount: amountAsDecimal(p.amount, currency),
+          }))
+        : expense.paidById,
     splitMode: expense.splitMode,
     isReimbursement: expense.isReimbursement,
     notes: expense.notes ?? '',

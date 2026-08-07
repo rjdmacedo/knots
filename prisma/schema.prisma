@@ -56,6 +56,7 @@ model Expense {
   conversionRate   Decimal?
   paidBy           User              @relation("ExpensesPaidBy", fields: [paidById], references: [id])
   paidById         String
+  payers           ExpensePaidBy[]   @relation("ExpensesPaidByMulti")
   paidFor          ExpensePaidFor[]
   groupId          String?
   isReimbursement  Boolean           @default(false)
@@ -116,6 +117,16 @@ model ExpensePaidFor {
   expenseId String
   userId    String
   shares    Int     @default(1)
+
+  @@id([expenseId, userId])
+}
+
+model ExpensePaidBy {
+  expense   Expense @relation("ExpensesPaidByMulti", fields: [expenseId], references: [id], onDelete: Cascade)
+  user      User    @relation("UserExpensesPaidBy", fields: [userId], references: [id], onDelete: Cascade)
+  expenseId String
+  userId    String
+  amount    Int     // minor currency units
 
   @@id([expenseId, userId])
 }
@@ -206,6 +217,7 @@ model User {
   memberships     GroupMembership[]
   invitationsSent Invitation[]      @relation("InvitedBy")
   expensesPaidBy  Expense[]         @relation("ExpensesPaidBy")
+  paidByExpenses  ExpensePaidBy[]   @relation("UserExpensesPaidBy")
   expensesPaidFor ExpensePaidFor[]  @relation("ExpensesPaidFor")
   friendsOwned    Friend[]          @relation("FriendsOwned")
   friendsLinked   Friend[]          @relation("FriendsLinked")

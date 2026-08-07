@@ -58,7 +58,9 @@ describe('parseKnotsExport', () => {
     const expenses = await parseKnotsExport(exportJson, 'group-1')
 
     expect(expenses).toHaveLength(1)
-    expect(expenses[0].paidBy).toBe('user-ana')
+    expect(expenses[0].paidBy).toEqual([
+      { participant: 'user-ana', amount: 3466 },
+    ])
     expect(expenses[0].paidFor).toEqual([
       { participant: 'user-ana', shares: 1733 },
       { participant: 'user-rafael', shares: 1733 },
@@ -200,5 +202,104 @@ describe('parseKnotsExport', () => {
     await expect(parseKnotsExport(exportJson, 'group-1')).rejects.toThrow(
       'These export participants are not in the group: Unknown Person',
     )
+  })
+
+  describe('multi-payer import', () => {
+    it('JSON with paidBy array creates correct multi-payer entries', async () => {
+      const exportJson = JSON.stringify({
+        participants: [
+          { id: 'user-ana', name: 'Ana Ferreira' },
+          { id: 'user-rafael', name: 'Rafael Macedo' },
+        ],
+        expenses: [
+          {
+            expenseDate: '2023-05-10T00:00:00.000Z',
+            title: 'Dinner',
+            amount: 5000,
+            paidById: 'user-ana',
+            paidBy: [
+              { userId: 'user-ana', amount: 3000 },
+              { userId: 'user-rafael', amount: 2000 },
+            ],
+            paidFor: [
+              { userId: 'user-ana', shares: 2500 },
+              { userId: 'user-rafael', shares: 2500 },
+            ],
+            isReimbursement: false,
+            splitMode: 'EVENLY',
+          },
+        ],
+      })
+
+      const expenses = await parseKnotsExport(exportJson, 'group-1')
+
+      expect(expenses).toHaveLength(1)
+      expect(expenses[0].paidBy).toEqual([
+        { participant: 'user-ana', amount: 3000 },
+        { participant: 'user-rafael', amount: 2000 },
+      ])
+    })
+
+    it('legacy JSON without paidBy array creates single-payer entry with full amount', async () => {
+      const exportJson = JSON.stringify({
+        participants: [
+          { id: 'user-ana', name: 'Ana Ferreira' },
+          { id: 'user-rafael', name: 'Rafael Macedo' },
+        ],
+        expenses: [
+          {
+            expenseDate: '2023-05-10T00:00:00.000Z',
+            title: 'Groceries',
+            amount: 4200,
+            paidById: 'user-rafael',
+            paidFor: [
+              { userId: 'user-ana', shares: 2100 },
+              { userId: 'user-rafael', shares: 2100 },
+            ],
+            isReimbursement: false,
+            splitMode: 'EVENLY',
+          },
+        ],
+      })
+
+      const expenses = await parseKnotsExport(exportJson, 'group-1')
+
+      expect(expenses).toHaveLength(1)
+      expect(expenses[0].paidBy).toEqual([
+        { participant: 'user-rafael', amount: 4200 },
+      ])
+    })
+
+    it('unknown userId in paidBy array throws descriptive error', async () => {
+      const exportJson = JSON.stringify({
+        participants: [
+          { id: 'user-ana', name: 'Ana Ferreira' },
+          { id: 'user-rafael', name: 'Rafael Macedo' },
+          { id: 'user-unknown', name: 'Ghost User' },
+        ],
+        expenses: [
+          {
+            expenseDate: '2023-05-10T00:00:00.000Z',
+            title: 'Taxi',
+            amount: 3000,
+            paidById: 'user-ana',
+            paidBy: [
+              { userId: 'user-ana', amount: 1500 },
+              { userId: 'user-unknown', amount: 1500 },
+            ],
+            paidFor: [
+              { userId: 'user-ana', shares: 1500 },
+              { userId: 'user-rafael', shares: 1500 },
+            ],
+            isReimbursement: false,
+            splitMode: 'EVENLY',
+          },
+        ],
+      })
+
+      await expect(parseKnotsExport(exportJson, 'group-1')).rejects.toThrow(
+        /Ghost User/,
+      )
+    })
   })
 })

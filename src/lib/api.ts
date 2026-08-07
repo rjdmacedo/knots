@@ -2,6 +2,7 @@ import {
   FieldChange,
   computeExpenseChanges,
   computeGroupChanges,
+  serializePayers,
 } from '@/lib/activity-diff'
 import { isPaymentCategory } from '@/lib/categories'
 import { upsertCategoryMapping } from '@/lib/category-mapping'
@@ -54,12 +55,41 @@ export async function createExpense(
 
   const memberIds = new Set(group.participants.map((p) => p.id))
 
-  if (!memberIds.has(expenseFormValues.paidBy)) {
+  // Validate all payer participant IDs are group members
+  for (const payer of expenseFormValues.paidBy) {
+    if (!memberIds.has(payer.participant)) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: `User ${payer.participant} is not a group member`,
+      })
+    }
+  }
+
+  // Validate no duplicate userIds in paidBy
+  const payerUserIds = expenseFormValues.paidBy.map((p) => p.participant)
+  const uniquePayerIds = new Set(payerUserIds)
+  if (uniquePayerIds.size !== payerUserIds.length) {
+    const duplicate = payerUserIds.find(
+      (id, idx) => payerUserIds.indexOf(id) !== idx,
+    )
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message: 'paidBy user is not a group member',
+      message: `Duplicate payer: ${duplicate}`,
     })
   }
+
+  // Validate sum of payer amounts equals expense total
+  const payerAmountSum = expenseFormValues.paidBy.reduce(
+    (sum, entry) => sum + entry.amount,
+    0,
+  )
+  if (payerAmountSum !== expenseFormValues.amount) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Payer amounts must sum to expense total',
+    })
+  }
+
   for (const pf of expenseFormValues.paidFor) {
     if (!memberIds.has(pf.participant)) {
       throw new TRPCError({
@@ -77,7 +107,16 @@ export async function createExpense(
       oldValue: null,
       newValue: String(expenseFormValues.amount),
     },
-    { field: 'paidBy', oldValue: null, newValue: expenseFormValues.paidBy },
+    {
+      field: 'paidBy',
+      oldValue: null,
+      newValue: serializePayers(
+        expenseFormValues.paidBy.map((entry) => ({
+          userId: entry.participant,
+          amount: entry.amount,
+        })),
+      ),
+    },
   ]
 
   await logActivity(groupId, ActivityType.CREATE_EXPENSE, {
@@ -95,6 +134,9 @@ export async function createExpense(
     groupId,
   )
 
+  // Set deprecated paidById to first payer's ID
+  const paidById = expenseFormValues.paidBy[0].participant
+
   return prisma.expense.create({
     data: {
       id: expenseId,
@@ -106,7 +148,7 @@ export async function createExpense(
       originalCurrency: expenseFormValues.originalCurrency || null,
       conversionRate: expenseFormValues.conversionRate ?? null,
       title: expenseFormValues.title,
-      paidById: expenseFormValues.paidBy,
+      paidById,
       splitMode: expenseFormValues.splitMode,
       recurrenceRule: expenseFormValues.recurrenceRule,
       recurringExpenseLink: {
@@ -121,6 +163,15 @@ export async function createExpense(
           data: expenseFormValues.paidFor.map((paidFor) => ({
             userId: paidFor.participant,
             shares: paidFor.shares,
+          })),
+        },
+      },
+      // Create ExpensePaidBy rows for each payer entry
+      payers: {
+        createMany: {
+          data: expenseFormValues.paidBy.map((payer) => ({
+            userId: payer.participant,
+            amount: payer.amount,
           })),
         },
       },
@@ -185,6 +236,7 @@ export async function getGroupExpenseUserIds(groupId: string) {
     new Set(
       expenses.flatMap((e) => [
         e.paidBy.id,
+        ...(e.payers?.map((p) => p.userId) ?? []),
         ...e.paidFor.map((pf) => pf.user.id),
       ]),
     ),
@@ -235,12 +287,41 @@ export async function updateExpense(
 
   const memberIds = new Set(group.participants.map((p) => p.id))
 
-  if (!memberIds.has(expenseFormValues.paidBy)) {
+  // Validate all payer participant IDs are group members
+  for (const payer of expenseFormValues.paidBy) {
+    if (!memberIds.has(payer.participant)) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: `User ${payer.participant} is not a group member`,
+      })
+    }
+  }
+
+  // Validate no duplicate userIds in paidBy
+  const payerUserIds = expenseFormValues.paidBy.map((p) => p.participant)
+  const uniquePayerIds = new Set(payerUserIds)
+  if (uniquePayerIds.size !== payerUserIds.length) {
+    const duplicate = payerUserIds.find(
+      (id, idx) => payerUserIds.indexOf(id) !== idx,
+    )
     throw new TRPCError({
       code: 'BAD_REQUEST',
-      message: 'paidBy user is not a group member',
+      message: `Duplicate payer: ${duplicate}`,
     })
   }
+
+  // Validate sum of payer amounts equals expense total
+  const payerAmountSum = expenseFormValues.paidBy.reduce(
+    (sum, entry) => sum + entry.amount,
+    0,
+  )
+  if (payerAmountSum !== expenseFormValues.amount) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Payer amounts must sum to expense total',
+    })
+  }
+
   for (const pf of expenseFormValues.paidFor) {
     if (!memberIds.has(pf.participant)) {
       throw new TRPCError({
@@ -301,7 +382,7 @@ export async function updateExpense(
       conversionRate: expenseFormValues.conversionRate ?? null,
       title: expenseFormValues.title,
       categoryId: expenseFormValues.category,
-      paidById: expenseFormValues.paidBy,
+      paidById: expenseFormValues.paidBy[0].participant,
       splitMode: expenseFormValues.splitMode,
       recurrenceRule: expenseFormValues.recurrenceRule,
       paidFor: {
@@ -335,6 +416,16 @@ export async function updateExpense(
               ),
           )
           .map((pf) => ({ expenseId: pf.expenseId, userId: pf.userId })),
+      },
+      // Delete all existing ExpensePaidBy rows and recreate with new payer entries
+      payers: {
+        deleteMany: { expenseId },
+        createMany: {
+          data: expenseFormValues.paidBy.map((entry) => ({
+            userId: entry.participant,
+            amount: entry.amount,
+          })),
+        },
       },
       recurringExpenseLink: {
         ...(isCreateRecurrenceExpenseLink
@@ -583,6 +674,13 @@ export async function getGroupExpenses(
           shares: true,
         },
       },
+      payers: {
+        select: {
+          userId: true,
+          amount: true,
+          user: { select: { id: true, name: true } },
+        },
+      },
       splitMode: true,
       recurrenceRule: true,
       title: true,
@@ -613,6 +711,13 @@ export async function getExpense(groupId: string, expenseId: string) {
       paidFor: {
         include: {
           user: { select: { id: true, name: true, email: true } },
+        },
+      },
+      payers: {
+        select: {
+          userId: true,
+          amount: true,
+          user: { select: { id: true, name: true } },
         },
       },
       category: true,
@@ -791,6 +896,7 @@ async function createRecurringExpenses() {
           include: {
             paidBy: true,
             paidFor: true,
+            payers: true,
             category: true,
             documents: true,
           },
@@ -817,6 +923,7 @@ async function createRecurringExpenses() {
         category,
         paidBy,
         paidFor,
+        payers,
         documents,
         ...destructuredCurrentExpenseRecord
       } = currentExpenseRecord
@@ -835,6 +942,14 @@ async function createRecurringExpenses() {
                   data: currentExpenseRecord.paidFor.map((paidFor) => ({
                     userId: paidFor.userId,
                     shares: paidFor.shares,
+                  })),
+                },
+              },
+              payers: {
+                createMany: {
+                  data: currentExpenseRecord.payers.map((payer) => ({
+                    userId: payer.userId,
+                    amount: payer.amount,
                   })),
                 },
               },
@@ -861,6 +976,7 @@ async function createRecurringExpenses() {
               documents: true,
               category: true,
               paidBy: true,
+              payers: true,
             },
           })
 

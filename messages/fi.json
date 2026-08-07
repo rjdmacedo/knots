@@ -45,6 +45,32 @@
       "earlierThisYear": "Aikaisemmin tänä vuonna",
       "lastYear": "Viime vuonna",
       "older": "Vanhemmat"
+    },
+    "paidBy": {
+      "addPayer": "Lisää maksaja",
+      "removePayer": "Poista maksaja",
+      "splitEvenly": "Jaa tasan",
+      "total": "Yhteensä",
+      "mismatch": "Summa ei täsmää",
+      "overpayment": "Ylimaksu {amount}",
+      "underpayment": "Alimaksu {amount}",
+      "reimbursementSingleOnly": "Hyvitykset tukevat vain yhtä maksajaa",
+      "amountPositive": "Summan on oltava positiivinen",
+      "singleSection": "Single",
+      "multipleSection": "Multiple payers",
+      "singleTitle": "Single payer",
+      "singleDescription": "One person covers the full expense",
+      "evenlyTitle": "Evenly",
+      "evenlyDescription": "Each pays an equal share",
+      "bySharesTitle": "By shares",
+      "bySharesDescription": "Each pays a weighted share",
+      "byPercentageTitle": "By percentage",
+      "byPercentageDescription": "Each pays a percentage",
+      "byAmountTitle": "By amount",
+      "byAmountDescription": "Each pays a fixed amount",
+      "selectPayers": "Select who paid",
+      "shareLabel": "Shares",
+      "percentageLabel": "Percent"
     }
   },
   "ExpenseCard": {
@@ -53,7 +79,10 @@
     "receivedBy": "<strong>{paidBy}</strong> sai rahaa {forCount, plural, =1 {henkilön} other {henkilöiden}} <paidFor></paidFor> puolesta",
     "yourBalance": "Saldosi:",
     "notInvolved": "You are not involved",
-    "close": "Sulje"
+    "close": "Sulje",
+    "paidByMultiple": "<strong>{paidBy}</strong> maksoi {forCount, plural, =1 {henkilön} other {henkilöiden}} <paidFor></paidFor> puolesta",
+    "multiPayerLabel": "{first}, {second}",
+    "multiPayerLabelOverflow": "{first} +{count}"
   },
   "Groups": {
     "myGroups": "Omat ryhmät",
@@ -193,7 +222,7 @@
       "paidByField": {
         "label": "Maksaja",
         "placeholder": "Select a participant",
-        "description": "Valitse kuka maksoi kulun."
+        "description": "Select who provided the money and how much each payer contributed."
       },
       "recurrenceRule": {
         "label": "Expense Recurrence",
@@ -541,7 +570,11 @@
     "paidForMin1": "Valitse vähintään yksi osallistuja.",
     "noZeroShares": "Jokaisen osuuden täytyy olla suurempi kuin 0.",
     "amountSum": "Osuuksien summan täytyy vastata kulun summaa.",
-    "percentageSum": "Prosenttiosuuksien summan täytyy olla 100."
+    "percentageSum": "Prosenttiosuuksien summan täytyy olla 100.",
+    "paidByAmountPositive": "Each payer's amount must be greater than zero.",
+    "paidByAmountSum": "Payer amounts must sum to the expense total.",
+    "paidByDuplicateParticipants": "Each payer can only appear once.",
+    "reimbursementSinglePayer": "Reimbursements support only a single payer."
   },
   "Categories": {
     "search": "Etsi kategoriaa...",

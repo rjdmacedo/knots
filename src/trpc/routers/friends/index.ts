@@ -506,6 +506,13 @@ export const friendsRouter = createTRPCRouter({
               shares: true,
             },
           },
+          payers: {
+            select: {
+              userId: true,
+              amount: true,
+              user: { select: { id: true, name: true } },
+            },
+          },
           splitMode: true,
           recurrenceRule: true,
           title: true,
@@ -641,6 +648,13 @@ export const friendsRouter = createTRPCRouter({
             select: {
               user: { select: { id: true, name: true } },
               shares: true,
+            },
+          },
+          payers: {
+            select: {
+              userId: true,
+              amount: true,
+              user: { select: { id: true, name: true } },
             },
           },
           _count: { select: { documents: true } },
@@ -781,6 +795,9 @@ export const friendsRouter = createTRPCRouter({
                 { userId: friendUserId, shares: 1 },
               ],
             },
+          },
+          payers: {
+            create: [{ userId: input.paidById, amount: input.amount }],
           },
         },
         include: {
@@ -1026,6 +1043,9 @@ export const friendsRouter = createTRPCRouter({
                     })),
                   },
                 },
+                payers: {
+                  create: [{ userId: paidByUserId, amount: groupAmountMinor }],
+                },
                 documents: {
                   createMany: {
                     data: input.documents.map((doc) => ({
@@ -1120,6 +1140,11 @@ export const friendsRouter = createTRPCRouter({
                     { userId: dId, shares: 1 },
                   ],
                 },
+              },
+              payers: {
+                create: [
+                  { userId: paidByUserId, amount: directShareAmount * 2 },
+                ],
               },
               documents: {
                 createMany: {
@@ -1427,6 +1452,9 @@ export const friendsRouter = createTRPCRouter({
                   shares: 1,
                 },
               },
+              payers: {
+                create: [{ userId: bucket.from, amount: bucket.amount }],
+              },
             },
             include: {
               paidBy: { select: { id: true, name: true } },
@@ -1509,6 +1537,9 @@ export const friendsRouter = createTRPCRouter({
               userId: input.toUserId,
               shares: 1,
             },
+          },
+          payers: {
+            create: [{ userId: input.fromUserId, amount: input.amount }],
           },
         },
         include: {
@@ -1744,7 +1775,7 @@ export const friendsRouter = createTRPCRouter({
           conversionRate: expenseFormValues.conversionRate,
           title: expenseFormValues.title,
           categoryId: expenseFormValues.category,
-          paidById: expenseFormValues.paidBy,
+          paidById: expenseFormValues.paidBy[0].participant,
           splitMode: expenseFormValues.splitMode,
           recurrenceRule: expenseFormValues.recurrenceRule,
           recurringExpenseLink: getRecurringExpenseLinkUpdates(
@@ -1783,6 +1814,16 @@ export const friendsRouter = createTRPCRouter({
                   ),
               )
               .map((pf) => ({ expenseId: pf.expenseId, userId: pf.userId })),
+          },
+          // Sync ExpensePaidBy for direct expenses (single payer with full amount)
+          payers: {
+            deleteMany: {},
+            create: [
+              {
+                userId: expenseFormValues.paidBy[0].participant,
+                amount: expenseFormValues.amount,
+              },
+            ],
           },
           isReimbursement: expenseFormValues.isReimbursement,
           documents: {

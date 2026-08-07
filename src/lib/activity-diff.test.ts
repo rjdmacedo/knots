@@ -12,6 +12,7 @@ describe('computeExpenseChanges', () => {
     notes: null,
     recurrenceRule: null,
     paidFor: [{ userId: 'participant-1' }, { userId: 'participant-2' }],
+    payers: [{ userId: 'participant-1', amount: 5000 }],
   }
 
   const baseUpdated = {
@@ -19,7 +20,7 @@ describe('computeExpenseChanges', () => {
     amount: 5000,
     expenseDate: new Date('2024-06-15T12:00:00.000Z'),
     category: 1,
-    paidBy: 'participant-1',
+    paidBy: [{ participant: 'participant-1', amount: 5000 }],
     splitMode: 'EVENLY',
     isReimbursement: false,
     notes: null,
@@ -126,6 +127,183 @@ describe('computeExpenseChanges', () => {
       expect(changedFields).not.toContain('recurrenceRule')
       expect(changedFields).not.toContain('paidFor')
     })
+  })
+})
+
+describe('computeExpenseChanges — paidBy changes', () => {
+  const baseExpense = {
+    title: 'Dinner',
+    amount: 5000,
+    expenseDate: new Date('2024-06-15T12:00:00.000Z'),
+    categoryId: 1,
+    paidById: 'participant-1',
+    splitMode: 'EVENLY',
+    isReimbursement: false,
+    notes: null,
+    recurrenceRule: null,
+    paidFor: [{ userId: 'participant-1' }, { userId: 'participant-2' }],
+    payers: [{ userId: 'participant-1', amount: 5000 }],
+  }
+
+  const baseUpdated = {
+    title: 'Dinner',
+    amount: 5000,
+    expenseDate: new Date('2024-06-15T12:00:00.000Z'),
+    category: 1,
+    paidBy: [{ participant: 'participant-1', amount: 5000 }],
+    splitMode: 'EVENLY',
+    isReimbursement: false,
+    notes: null,
+    recurrenceRule: null,
+    paidFor: [
+      { participant: 'participant-1' },
+      { participant: 'participant-2' },
+    ],
+  }
+
+  it('generates a paidBy change when a second payer is added', () => {
+    const updated = {
+      ...baseUpdated,
+      paidBy: [
+        { participant: 'participant-1', amount: 3000 },
+        { participant: 'participant-2', amount: 2000 },
+      ],
+    }
+    const changes = computeExpenseChanges(baseExpense, updated)
+    const paidByChange = changes.find((c) => c.field === 'paidBy')
+    expect(paidByChange).toBeDefined()
+    expect(paidByChange!.oldValue).toBe(
+      JSON.stringify([{ userId: 'participant-1', amount: 5000 }]),
+    )
+    expect(paidByChange!.newValue).toBe(
+      JSON.stringify([
+        { userId: 'participant-1', amount: 3000 },
+        { userId: 'participant-2', amount: 2000 },
+      ]),
+    )
+  })
+
+  it('generates a paidBy change when payer amounts change', () => {
+    const existing = {
+      ...baseExpense,
+      payers: [
+        { userId: 'participant-1', amount: 3000 },
+        { userId: 'participant-2', amount: 2000 },
+      ],
+    }
+    const updated = {
+      ...baseUpdated,
+      paidBy: [
+        { participant: 'participant-1', amount: 4000 },
+        { participant: 'participant-2', amount: 1000 },
+      ],
+    }
+    const changes = computeExpenseChanges(existing, updated)
+    const paidByChange = changes.find((c) => c.field === 'paidBy')
+    expect(paidByChange).toBeDefined()
+    expect(paidByChange!.oldValue).toBe(
+      JSON.stringify([
+        { userId: 'participant-1', amount: 3000 },
+        { userId: 'participant-2', amount: 2000 },
+      ]),
+    )
+    expect(paidByChange!.newValue).toBe(
+      JSON.stringify([
+        { userId: 'participant-1', amount: 4000 },
+        { userId: 'participant-2', amount: 1000 },
+      ]),
+    )
+  })
+
+  it('does not generate a paidBy change when payers and amounts are identical', () => {
+    const existing = {
+      ...baseExpense,
+      payers: [
+        { userId: 'participant-1', amount: 3000 },
+        { userId: 'participant-2', amount: 2000 },
+      ],
+    }
+    const updated = {
+      ...baseUpdated,
+      paidBy: [
+        { participant: 'participant-1', amount: 3000 },
+        { participant: 'participant-2', amount: 2000 },
+      ],
+    }
+    const changes = computeExpenseChanges(existing, updated)
+    const paidByChange = changes.find((c) => c.field === 'paidBy')
+    expect(paidByChange).toBeUndefined()
+  })
+
+  it('does not generate a paidBy change when payers are identical but in different order', () => {
+    const existing = {
+      ...baseExpense,
+      payers: [
+        { userId: 'participant-2', amount: 2000 },
+        { userId: 'participant-1', amount: 3000 },
+      ],
+    }
+    const updated = {
+      ...baseUpdated,
+      paidBy: [
+        { participant: 'participant-1', amount: 3000 },
+        { participant: 'participant-2', amount: 2000 },
+      ],
+    }
+    const changes = computeExpenseChanges(existing, updated)
+    const paidByChange = changes.find((c) => c.field === 'paidBy')
+    expect(paidByChange).toBeUndefined()
+  })
+
+  it('records initial payer set on creation (fallback from paidById when no payers array)', () => {
+    const existing = {
+      ...baseExpense,
+      payers: undefined as unknown as Array<{
+        userId: string
+        amount: number
+      }>,
+    }
+    const updated = {
+      ...baseUpdated,
+      paidBy: [
+        { participant: 'participant-1', amount: 3000 },
+        { participant: 'participant-2', amount: 2000 },
+      ],
+    }
+    const changes = computeExpenseChanges(existing, updated)
+    const paidByChange = changes.find((c) => c.field === 'paidBy')
+    expect(paidByChange).toBeDefined()
+    // Fallback: old state derived from paidById + full amount
+    expect(paidByChange!.oldValue).toBe(
+      JSON.stringify([{ userId: 'participant-1', amount: 5000 }]),
+    )
+    expect(paidByChange!.newValue).toBe(
+      JSON.stringify([
+        { userId: 'participant-1', amount: 3000 },
+        { userId: 'participant-2', amount: 2000 },
+      ]),
+    )
+  })
+
+  it('records initial payer set on creation (empty payers array falls back to paidById)', () => {
+    const existing = {
+      ...baseExpense,
+      payers: [] as Array<{ userId: string; amount: number }>,
+    }
+    const updated = {
+      ...baseUpdated,
+      paidBy: [
+        { participant: 'participant-1', amount: 3000 },
+        { participant: 'participant-2', amount: 2000 },
+      ],
+    }
+    const changes = computeExpenseChanges(existing, updated)
+    const paidByChange = changes.find((c) => c.field === 'paidBy')
+    expect(paidByChange).toBeDefined()
+    // Fallback: old state derived from paidById + full amount
+    expect(paidByChange!.oldValue).toBe(
+      JSON.stringify([{ userId: 'participant-1', amount: 5000 }]),
+    )
   })
 })
 

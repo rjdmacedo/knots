@@ -65,7 +65,56 @@ describe('splitwise-import', () => {
     })
 
     expect(expenses).toHaveLength(2)
-    expect(expenses[0].paidBy).toBe('user-rafael')
-    expect(expenses[1].paidBy).toBe('user-ana')
+    expect(expenses[0].paidBy).toEqual([
+      { participant: 'user-rafael', amount: 1000 },
+    ])
+    expect(expenses[1].paidBy).toEqual([
+      { participant: 'user-ana', amount: 400 },
+    ])
+  })
+
+  it('detects multi-payer rows and creates paidBy array', async () => {
+    const multiPayerCSV = `Date,Description,Category,Cost,Currency,Rafael,Ana
+2026-01-01,Dinner,General,30.00,EUR,20.00,10.00`
+
+    const expenses = await parseSplitwiseCSV(multiPayerCSV, 'group-1', {
+      csvNameToUserId: {
+        Rafael: 'user-rafael',
+        Ana: 'user-ana',
+      },
+    })
+
+    expect(expenses).toHaveLength(1)
+    expect(expenses[0].paidBy).toEqual([
+      { participant: 'user-rafael', amount: 2000 },
+      { participant: 'user-ana', amount: 1000 },
+    ])
+  })
+
+  it('adjusts last payer amount to reconcile rounding differences', async () => {
+    // Cost is 10.00 (1000 cents), but payer columns sum to 10.01 (1001 cents)
+    const roundingCSV = `Date,Description,Category,Cost,Currency,Rafael,Ana
+2026-01-01,Lunch,General,10.00,EUR,6.67,3.34`
+
+    const expenses = await parseSplitwiseCSV(roundingCSV, 'group-1', {
+      csvNameToUserId: {
+        Rafael: 'user-rafael',
+        Ana: 'user-ana',
+      },
+    })
+
+    expect(expenses).toHaveLength(1)
+    const paidBy = expenses[0].paidBy
+    expect(paidBy).toHaveLength(2)
+    // Sum of payer amounts must equal cost (1000 cents)
+    const totalPaid = paidBy.reduce(
+      (sum: number, entry: { amount: number }) => sum + entry.amount,
+      0,
+    )
+    expect(totalPaid).toBe(1000)
+    // First payer keeps their original amount
+    expect(paidBy[0].amount).toBe(667)
+    // Last payer is adjusted: 334 + (1000 - 1001) = 333
+    expect(paidBy[1].amount).toBe(333)
   })
 })

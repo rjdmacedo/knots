@@ -28,6 +28,14 @@ const knotsExportExpenseSchema = z.object({
   originalCurrency: z.string().nullable().optional(),
   conversionRate: z.union([z.number(), z.string()]).nullable().optional(),
   paidById: z.string(),
+  paidBy: z
+    .array(
+      z.object({
+        userId: z.string(),
+        amount: z.number().int(),
+      }),
+    )
+    .optional(),
   paidFor: z.array(
     z.object({
       userId: z.string(),
@@ -231,6 +239,11 @@ function buildParticipantMatchReport(
 
   for (const expense of exportData.expenses) {
     const participantIds = new Set<string>([expense.paidById])
+    if (expense.paidBy) {
+      for (const entry of expense.paidBy) {
+        participantIds.add(entry.userId)
+      }
+    }
     for (const entry of expense.paidFor) {
       participantIds.add(entry.userId)
     }
@@ -264,6 +277,11 @@ function collectReferencedParticipantIds(exportData: KnotsExport): Set<string> {
 
   for (const expense of exportData.expenses) {
     referencedIds.add(expense.paidById)
+    if (expense.paidBy) {
+      for (const entry of expense.paidBy) {
+        referencedIds.add(entry.userId)
+      }
+    }
     for (const entry of expense.paidFor) {
       referencedIds.add(entry.userId)
     }
@@ -495,13 +513,31 @@ function convertExportExpense(
     throw new Error(`Invalid expense date on row ${index + 1}`)
   }
 
-  let paidBy: string
-  try {
-    paidBy = mapParticipantId(expense.paidById)
-  } catch (error) {
-    throw new Error(
-      `Expense "${expense.title}" (row ${index + 1}): ${error instanceof Error ? error.message : error}`,
-    )
+  // Build paidBy array: use explicit paidBy array if present, otherwise fallback to legacy paidById
+  let paidBy: Array<{ participant: string; amount: number }>
+  if (expense.paidBy && expense.paidBy.length > 0) {
+    paidBy = expense.paidBy.map((entry) => {
+      let participant: string
+      try {
+        participant = mapParticipantId(entry.userId)
+      } catch (error) {
+        throw new Error(
+          `Expense "${expense.title}" (row ${index + 1}): payer ${error instanceof Error ? error.message : error}`,
+        )
+      }
+      return { participant, amount: entry.amount }
+    })
+  } else {
+    // Legacy fallback: single payer from paidById with full amount
+    let participant: string
+    try {
+      participant = mapParticipantId(expense.paidById)
+    } catch (error) {
+      throw new Error(
+        `Expense "${expense.title}" (row ${index + 1}): ${error instanceof Error ? error.message : error}`,
+      )
+    }
+    paidBy = [{ participant, amount: expense.amount }]
   }
 
   const paidForMap = new Map<string, number>()

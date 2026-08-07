@@ -90,6 +90,13 @@ export async function getFriendActivities(
           shares: true,
         },
       },
+      payers: {
+        select: {
+          userId: true,
+          amount: true,
+          user: { select: { id: true, name: true } },
+        },
+      },
       _count: { select: { documents: true } },
     },
   })

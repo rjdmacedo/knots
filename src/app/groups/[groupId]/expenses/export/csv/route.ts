@@ -43,6 +43,7 @@ export async function GET(
           conversionRate: true,
           paidById: true,
           paidFor: { select: { userId: true, shares: true } },
+          payers: { select: { userId: true, amount: true } },
           isReimbursement: true,
           splitMode: true,
         },
@@ -129,6 +130,7 @@ export async function GET(
     splitMode: splitModeLabel[expense.splitMode],
     ...Object.fromEntries(
       participants.map((participant) => {
+        // Compute beneficiary debit from paidFor shares
         const { totalShares, participantShare } = expense.paidFor.reduce(
           (acc, { userId, shares }) => {
             acc.totalShares += shares
@@ -140,19 +142,46 @@ export async function GET(
           { totalShares: 0, participantShare: 0 },
         )
 
-        const isPaidByParticipant = expense.paidById === participant.id
-        const participantAmountShare =
+        const isSinglePayer = expense.payers.length <= 1
+
+        if (isSinglePayer) {
+          // Single-payer: preserve backward-compatible format
+          // Payer column = +share, non-payer column = -share
+          const isPaidByParticipant =
+            (expense.payers.length === 1 &&
+              expense.payers[0].userId === participant.id) ||
+            (expense.payers.length === 0 && expense.paidById === participant.id)
+          const participantAmountShare =
+            totalShares === 0
+              ? 0
+              : +formatAmountAsDecimal(
+                  (expense.amount / totalShares) * participantShare,
+                  currency,
+                )
+
+          return [
+            participant.name,
+            participantAmountShare * (isPaidByParticipant ? 1 : -1),
+          ]
+        }
+
+        // Multi-payer: net position = payer credit - beneficiary debit
+        const debit =
           totalShares === 0
             ? 0
-            : +formatAmountAsDecimal(
-                (expense.amount / totalShares) * participantShare,
-                currency,
-              )
+            : (expense.amount / totalShares) * participantShare
 
-        return [
-          participant.name,
-          participantAmountShare * (isPaidByParticipant ? 1 : -1),
-        ]
+        // Compute payer credit from payers array
+        const payerEntry = expense.payers.find(
+          (p) => p.userId === participant.id,
+        )
+        const credit = payerEntry ? payerEntry.amount : 0
+
+        // Net amount: payer credit (positive) minus beneficiary debit (negative)
+        const net = credit - debit
+        const netFormatted = +formatAmountAsDecimal(net, currency)
+
+        return [participant.name, netFormatted]
       }),
     ),
   }))

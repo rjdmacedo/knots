@@ -317,8 +317,6 @@ async function parseExpenseRow(
     : 0
 
   const userAmounts = new Map<string, number>()
-  let paidByCsvName = ''
-  let maxAmount = -Infinity
 
   for (const userColumn of userColumns) {
     const userIndex = headers.indexOf(userColumn)
@@ -326,19 +324,34 @@ async function parseExpenseRow(
       const amount = parseFloat(row[userIndex]) || 0
       const amountInCents = Math.round(amount * 100)
       userAmounts.set(userColumn, amountInCents)
-
-      if (amountInCents > maxAmount) {
-        maxAmount = amountInCents
-        paidByCsvName = userColumn
-      }
     }
   }
 
-  if (!paidByCsvName) {
+  // Detect payers: users with positive column values
+  const payerEntries: Array<{ csvName: string; amount: number }> = []
+  for (const userColumn of userColumns) {
+    const amount = userAmounts.get(userColumn) ?? 0
+    if (amount > 0) {
+      payerEntries.push({ csvName: userColumn, amount })
+    }
+  }
+
+  if (payerEntries.length === 0) {
     throw new Error('Could not determine who paid for this expense')
   }
 
-  const paidBy = resolveCsvName(paidByCsvName)
+  // Build paidBy array with each payer's positive column value as their amount
+  const paidBy: Array<{ participant: string; amount: number }> =
+    payerEntries.map((entry) => ({
+      participant: resolveCsvName(entry.csvName),
+      amount: entry.amount,
+    }))
+
+  // Reconcile rounding: adjust last payer's amount if sum doesn't match cost
+  const payerSum = paidBy.reduce((sum, entry) => sum + entry.amount, 0)
+  if (payerSum !== costInCents) {
+    paidBy[paidBy.length - 1].amount += costInCents - payerSum
+  }
 
   const paidFor: Array<{ participant: string; shares: number }> = []
 
