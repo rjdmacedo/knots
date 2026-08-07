@@ -56,21 +56,21 @@
       "underpayment": "Unterzahlung von {amount}",
       "reimbursementSingleOnly": "Erstattungen unterstützen nur einen Zahler",
       "amountPositive": "Betrag muss positiv sein",
-      "singleSection": "Single",
-      "multipleSection": "Multiple payers",
-      "singleTitle": "Single payer",
-      "singleDescription": "One person covers the full expense",
-      "evenlyTitle": "Evenly",
-      "evenlyDescription": "Each pays an equal share",
-      "bySharesTitle": "By shares",
-      "bySharesDescription": "Each pays a weighted share",
-      "byPercentageTitle": "By percentage",
-      "byPercentageDescription": "Each pays a percentage",
-      "byAmountTitle": "By amount",
-      "byAmountDescription": "Each pays a fixed amount",
-      "selectPayers": "Select who paid",
-      "shareLabel": "Shares",
-      "percentageLabel": "Percent"
+      "singleSection": "Einzeln",
+      "multipleSection": "Mehrere Zahler",
+      "singleTitle": "Ein Zahler",
+      "singleDescription": "Eine Person übernimmt die gesamte Ausgabe",
+      "evenlyTitle": "Gleichmäßig",
+      "evenlyDescription": "Jeder zahlt einen gleichen Anteil",
+      "bySharesTitle": "Nach Anteilen",
+      "bySharesDescription": "Jeder zahlt einen gewichteten Anteil",
+      "byPercentageTitle": "Nach Prozent",
+      "byPercentageDescription": "Jeder zahlt einen Prozentsatz",
+      "byAmountTitle": "Nach Betrag",
+      "byAmountDescription": "Jeder zahlt einen festen Betrag",
+      "selectPayers": "Auswählen, wer bezahlt hat",
+      "shareLabel": "Anteile",
+      "percentageLabel": "Prozent"
     }
   },
   "ExpenseCard": {
@@ -278,12 +278,16 @@
     "shares": "Anteil(e)",
     "advancedOptions": "Fortgeschrittene Aufteilungsoptionen…",
     "SplitModeField": {
-      "label": "Aufteilungsart",
-      "evenly": "Gleich verteilt",
-      "byShares": "Ungleich – Nach Anteilen",
-      "byPercentage": "Ungleich – Prozentual",
-      "byAmount": "Ungleich – Nach Betrag",
-      "saveAsDefault": "Als Standardoptionen zur Aufteilung speichern"
+      "label": "Aufteilungsmodus",
+      "evenly": "Gleichmäßig",
+      "byShares": "Nach Anteilen",
+      "byPercentage": "Nach Prozent",
+      "byAmount": "Nach Betrag",
+      "saveAsDefault": "Als Standardoptionen zur Aufteilung speichern",
+      "evenlyDescription": "Gleichmäßig unter den ausgewählten Teilnehmern aufteilen",
+      "bySharesDescription": "Mit gewichteten Anteilen aufteilen",
+      "byPercentageDescription": "Mit Prozentsätzen aufteilen, die 100 % ergeben",
+      "byAmountDescription": "Mit festen Beträgen für jeden Teilnehmer aufteilen"
     },
     "DeletePopup": {
       "label": "Löschen",
@@ -298,7 +302,10 @@
     "save": "Speichern",
     "saving": "Speichert…",
     "cancel": "Abbrechen",
-    "reimbursement": "Rückzahlung"
+    "reimbursement": "Rückzahlung",
+    "PaidByField": {
+      "saveAsDefault": "Als Standard-Zahlungsoptionen speichern"
+    }
   },
   "ExpenseDocumentsInput": {
     "TooBigToast": {
@@ -1141,5 +1148,8 @@
   },
   "CurrencyAmountInput": {
     "expressionHint": "oder 10+5"
+  },
+  "ExpenseTitleInput": {
+    "clear": "Löschen"
   }
 }

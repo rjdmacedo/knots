@@ -1,15 +1,15 @@
 'use client'
 
-import { Input } from '@/components/ui/input'
 import {
   InputGroup,
   InputGroupAddon,
+  InputGroupButton,
   InputGroupInput,
 } from '@/components/ui/input-group'
 import { cn } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { keepPreviousData } from '@tanstack/react-query'
-import { Loader2 } from 'lucide-react'
+import { Loader2, XIcon } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import {
   useEffect,
@@ -64,14 +64,13 @@ export function ExpenseTitleInput({
 }: ExpenseTitleInputProps & InputPassthroughProps) {
   if (groupId === DIRECT_GROUP_ID) {
     return (
-      <Input
-        {...inputProps}
-        className={cn('text-base', className)}
+      <DirectExpenseTitleInput
         value={value}
-        onChange={(event) => onChange(event.target.value)}
+        onChange={onChange}
         onBlur={onBlur}
         placeholder={placeholder}
-        autoComplete="off"
+        className={className}
+        inputProps={inputProps}
       />
     )
   }
@@ -88,6 +87,52 @@ export function ExpenseTitleInput({
       className={className}
       inputProps={inputProps}
     />
+  )
+}
+
+function DirectExpenseTitleInput({
+  value,
+  onChange,
+  onBlur,
+  placeholder,
+  className,
+  inputProps,
+}: {
+  value: string
+  onChange: (value: string) => void
+  onBlur: () => void
+  placeholder?: string
+  className?: string
+  inputProps: InputPassthroughProps
+}) {
+  const t = useTranslations('ExpenseTitleInput')
+
+  return (
+    <InputGroup className="w-full">
+      <InputGroupInput
+        {...inputProps}
+        className={cn('text-base', className)}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        onBlur={onBlur}
+        placeholder={placeholder}
+        autoComplete="off"
+      />
+      {value ? (
+        <InputGroupAddon align="inline-end">
+          <InputGroupButton
+            type="button"
+            variant="ghost"
+            size="icon-xs"
+            aria-label={t('clear')}
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={() => onChange('')}
+          >
+            <XIcon />
+          </InputGroupButton>
+        </InputGroupAddon>
+      ) : null}
+    </InputGroup>
   )
 }
 
@@ -212,6 +257,10 @@ function ExpenseTitleSuggestionsInput({
     }
   }
 
+  const clearInput = () => {
+    handleInputChange('')
+  }
+
   return (
     <div className="relative w-full">
       <InputGroup className="w-full">
@@ -250,6 +299,21 @@ function ExpenseTitleSuggestionsInput({
         {isLoadingSuggestions ? (
           <InputGroupAddon align="inline-end" className="pointer-events-none">
             <Loader2 className="size-4 shrink-0 animate-spin text-muted-foreground opacity-50" />
+          </InputGroupAddon>
+        ) : inputText ? (
+          <InputGroupAddon align="inline-end">
+            <InputGroupButton
+              type="button"
+              variant="ghost"
+              size="icon-xs"
+              aria-label={t('clear')}
+              onMouseDown={(event) => {
+                event.preventDefault()
+              }}
+              onClick={clearInput}
+            >
+              <XIcon />
+            </InputGroupButton>
           </InputGroupAddon>
         ) : null}
       </InputGroup>

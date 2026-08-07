@@ -8,7 +8,6 @@ import { useDuplicateCheck } from '@/components/hooks/use-duplicate-check'
 import { useFormPersistence } from '@/components/hooks/use-form-persistence'
 import { PreventNavigation } from '@/components/prevent-navigation'
 import { SubmitButton } from '@/components/submit-button'
-import { Button, buttonVariants } from '@/components/ui/button'
 import { DialogFooter } from '@/components/ui/dialog'
 import {
   Form,
@@ -54,7 +53,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { RecurrenceRule } from '@prisma/client'
 import { Save } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
@@ -69,7 +67,6 @@ type Props = {
   currentUserId?: string
   onSubmit: (value: ExpenseFormValues) => Promise<void>
   onDelete?: () => Promise<void>
-  onCancel?: () => void
   scrollHeader?: ReactNode
 }
 
@@ -126,7 +123,6 @@ export function PaymentForm({
   currentUserId,
   onSubmit,
   onDelete,
-  onCancel,
   scrollHeader,
 }: Props) {
   const t = useTranslations('PaymentForm')
@@ -211,6 +207,7 @@ export function PaymentForm({
       paidFor: [{ participant: values.paidTo, shares: amountMinor }],
       splitMode: 'BY_AMOUNT',
       saveDefaultSplittingOptions: false,
+      saveDefaultPaidByOptions: false,
       isReimbursement: true,
       documents: expense?.documents ?? [],
       notes: values.notes ?? '',
@@ -277,7 +274,7 @@ export function PaymentForm({
   )
 
   const formFooter = (
-    <DialogFooter className="flex shrink-0 flex-col-reverse gap-2 border-t bg-popover px-0 pt-4 pb-0 sm:flex-row sm:justify-end">
+    <DialogFooter className="flex shrink-0 flex-row justify-end gap-2 border-t bg-popover px-0 pt-4 pb-0">
       <SubmitButton
         form="payment-form"
         loadingContent={tExpense(isCreate ? 'creating' : 'saving')}
@@ -287,18 +284,6 @@ export function PaymentForm({
         {tExpense(isCreate ? 'create' : 'save')}
       </SubmitButton>
       {!isCreate && onDelete ? <DeletePopup onDelete={onDelete} /> : null}
-      {onCancel ? (
-        <Button type="button" variant="ghost" onClick={onCancel}>
-          {tExpense('cancel')}
-        </Button>
-      ) : (
-        <Link
-          href={`/groups/${group.id}`}
-          className={buttonVariants({ variant: 'ghost' })}
-        >
-          {tExpense('cancel')}
-        </Link>
-      )}
     </DialogFooter>
   )
 

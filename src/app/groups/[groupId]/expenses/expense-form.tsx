@@ -19,8 +19,12 @@ import { useDuplicateCheck } from '@/components/hooks/use-duplicate-check'
 import { useFormPersistence } from '@/components/hooks/use-form-persistence'
 import { PayerSelector, type PayerEntry } from '@/components/payer-selector'
 import { PreventNavigation } from '@/components/prevent-navigation'
+import {
+  SplitModeSelector,
+  type SplitModeValue,
+} from '@/components/split-mode-selector'
 import { SubmitButton } from '@/components/submit-button'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -52,6 +56,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
 import { Locale } from '@/i18n'
 import { randomId } from '@/lib/api'
@@ -60,12 +65,14 @@ import {
   enforceCurrencyPattern,
   getCurrencyDisplaySymbol,
 } from '@/lib/currency-input'
+import { distributeEqualAmounts } from '@/lib/distribute-amount'
 import type { DuplicateCheckResult } from '@/lib/duplicate-expense-detection'
 import { getGroupExpenseDetailPath } from '@/lib/expense-detail-urls'
 import { RuntimeFeatureFlags } from '@/lib/featureFlags'
 import { useCurrencyRate, useGroupParticipantId } from '@/lib/hooks'
 import {
   ExpenseFormValues,
+  PaidByOptions,
   SplittingOptions,
   expenseFormSchema,
   toPercentageBasisPoints,
@@ -84,7 +91,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { RecurrenceRule } from '@prisma/client'
 import { ChevronRight, Save } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
-import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
@@ -381,6 +387,54 @@ async function persistDefaultSplittingOptions(
   }
 }
 
+function getStoredPaidByParticipantIds(
+  group: NonNullable<AppRouterOutput['groups']['get']['group']>,
+): string[] | null {
+  if (typeof localStorage === 'undefined') return null
+  const raw = localStorage.getItem(`${group.id}-defaultPaidByOptions`)
+  if (raw === null) return null
+
+  try {
+    const parsed = JSON.parse(raw) as PaidByOptions
+    if (!Array.isArray(parsed.payers) || parsed.payers.length === 0) {
+      return null
+    }
+
+    const validPayers = parsed.payers.filter((participantId) =>
+      group.participants.some(({ id }) => id === participantId),
+    )
+
+    if (validPayers.length !== parsed.payers.length) {
+      localStorage.removeItem(`${group.id}-defaultPaidByOptions`)
+      return null
+    }
+
+    return validPayers
+  } catch {
+    localStorage.removeItem(`${group.id}-defaultPaidByOptions`)
+    return null
+  }
+}
+
+async function persistDefaultPaidByOptions(
+  groupId: string,
+  expenseFormValues: ExpenseFormValues,
+): Promise<void> {
+  if (!localStorage || !expenseFormValues.saveDefaultPaidByOptions) return
+
+  const payers = expenseFormValues.paidBy
+    .map(({ participant }) => participant)
+    .filter(Boolean)
+
+  if (payers.length === 0) return
+
+  const paidByOptions = { payers } satisfies PaidByOptions
+  localStorage.setItem(
+    `${groupId}-defaultPaidByOptions`,
+    JSON.stringify(paidByOptions),
+  )
+}
+
 /**
  * Determines the default expense currency based on the provided group and an optional preferred currency.
  *
@@ -406,16 +460,7 @@ function ExpenseFormSection({
   className?: string
   children: React.ReactNode
 }) {
-  return (
-    <div
-      className={cn(
-        'min-w-0 space-y-4 border-t border-border pt-4 first:border-t-0 first:pt-0',
-        className,
-      )}
-    >
-      {children}
-    </div>
-  )
+  return <div className={cn('min-w-0 space-y-4', className)}>{children}</div>
 }
 
 function ExpenseFormSectionHeader({ children }: { children: React.ReactNode }) {
@@ -473,7 +518,6 @@ export type ExpenseFormCreatePrefill = {
  * @param props.expense - Existing expense data, if editing an expense.
  * @param props.onSubmit - Function to handle form submission, receives form values and an optional participant ID.
  * @param props.onDelete - Function to handle deletion of an expense, receives an optional participant ID.
- * @param props.onCancel - Function to handle cancellation of the form.
  * @param props.categories - Available categories for the expense.
  * @param props.createPrefill - Optional pre-fill data for initializing the form.
  * @param props.currentUserId - Current user's ID.
@@ -487,7 +531,6 @@ export function ExpenseForm({
   expense,
   onSubmit,
   onDelete,
-  onCancel,
   categories,
   createPrefill,
   currentUserId,
@@ -501,7 +544,6 @@ export function ExpenseForm({
   expense?: AppRouterOutput['groups']['expenses']['get']['expense']
   onSubmit: (value: ExpenseFormValues, participantId?: string) => Promise<void>
   onDelete?: (participantId?: string) => Promise<void>
-  onCancel?: () => void
   categories: AppRouterOutput['categories']['list']['categories']
   createPrefill?: ExpenseFormCreatePrefill
   currentUserId?: string
@@ -532,25 +574,43 @@ export function ExpenseForm({
   const collapsibleFieldsGridClass =
     'grid w-full min-w-0 grid-cols-1 items-start gap-4 sm:grid-cols-2 sm:gap-6'
 
+  const getSelectedRecurrenceRule = (field?: { value: string }) => {
+    return field?.value as RecurrenceRule
+  }
+  const defaultSplittingOptions = getDefaultSplittingOptions(group)
+  const groupCurrency = getCurrencyFromGroup(group)
+
   const getDefaultPaidBy = (): ExpenseFormValues['paidBy'] | undefined => {
     if (!isCreate) return undefined
+
+    const initialAmount = Number(searchParams.get('amount')) || 0
+    const storedPayers = getStoredPaidByParticipantIds(group)
+
+    if (storedPayers && storedPayers.length > 0) {
+      if (storedPayers.length === 1) {
+        return [{ participant: storedPayers[0], amount: initialAmount }]
+      }
+      const amounts = distributeEqualAmounts(
+        initialAmount,
+        storedPayers.length,
+        groupCurrency.decimal_digits,
+      )
+      return storedPayers.map((participant, index) => ({
+        participant,
+        amount: amounts[index] ?? 0,
+      }))
+    }
 
     if (
       currentUserId &&
       group.participants.some(({ id }) => id === currentUserId)
     ) {
-      const initialAmount = Number(searchParams.get('amount')) || 0
       return [{ participant: currentUserId, amount: initialAmount }]
     }
 
     return undefined
   }
 
-  const getSelectedRecurrenceRule = (field?: { value: string }) => {
-    return field?.value as RecurrenceRule
-  }
-  const defaultSplittingOptions = getDefaultSplittingOptions(group)
-  const groupCurrency = getCurrencyFromGroup(group)
   const defaultExpenseCurrency = getDefaultExpenseCurrency(
     group,
     preferredCurrency,
@@ -597,6 +657,7 @@ export function ExpenseForm({
           }),
           splitMode: expense.splitMode,
           saveDefaultSplittingOptions: false,
+          saveDefaultPaidByOptions: false,
           isReimbursement: expense.isReimbursement,
           documents: expense.documents,
           notes: expense.notes ?? '',
@@ -639,6 +700,7 @@ export function ExpenseForm({
             isReimbursement: true,
             splitMode: 'BY_AMOUNT',
             saveDefaultSplittingOptions: false,
+            saveDefaultPaidByOptions: false,
             documents: [],
             notes: '',
             recurrenceRule: RecurrenceRule.NONE,
@@ -671,6 +733,7 @@ export function ExpenseForm({
               splitMode:
                 createPrefill.splitMode ?? defaultSplittingOptions.splitMode,
               saveDefaultSplittingOptions: false,
+              saveDefaultPaidByOptions: false,
               documents: createPrefill.documents ?? [],
               notes: createPrefill.notes ?? '',
               recurrenceRule: RecurrenceRule.NONE,
@@ -693,6 +756,7 @@ export function ExpenseForm({
               isReimbursement: false,
               splitMode: defaultSplittingOptions.splitMode,
               saveDefaultSplittingOptions: false,
+              saveDefaultPaidByOptions: false,
               documents: searchParams.get('imageUrl')
                 ? [
                     {
@@ -822,6 +886,7 @@ export function ExpenseForm({
 
   const proceedWithSubmit = async (values: ExpenseFormValues) => {
     await persistDefaultSplittingOptions(group.id, values)
+    await persistDefaultPaidByOptions(group.id, values)
 
     // Store monetary amounts in minor units (cents)
     values.amount = amountAsMinorUnits(values.amount, groupCurrency)
@@ -1175,7 +1240,7 @@ export function ExpenseForm({
   ])
 
   const formFooter = (
-    <DialogFooter className="flex shrink-0 flex-col-reverse gap-2 border-t bg-popover px-0 pt-4 pb-0 sm:flex-row sm:justify-end">
+    <DialogFooter className="flex shrink-0 flex-row justify-end gap-2 border-t bg-popover px-0 pt-4 pb-0">
       <SubmitButton
         form="expense-form"
         loadingContent={t(isCreate ? 'creating' : 'saving')}
@@ -1186,18 +1251,6 @@ export function ExpenseForm({
       </SubmitButton>
       {!isCreate && onDelete && (
         <DeletePopup onDelete={() => onDelete(participantId)}></DeletePopup>
-      )}
-      {onCancel ? (
-        <Button type="button" variant="ghost" onClick={onCancel}>
-          {t('cancel')}
-        </Button>
-      ) : (
-        <Link
-          href={`/groups/${group.id}`}
-          className={buttonVariants({ variant: 'ghost' })}
-        >
-          {t('cancel')}
-        </Link>
       )}
     </DialogFooter>
   )
@@ -1222,7 +1275,7 @@ export function ExpenseForm({
                     control={form.control}
                     name="title"
                     render={({ field }) => (
-                      <FormItem className="">
+                      <FormItem className="col-span-full">
                         <FormLabel>
                           {t(`${sExpense}.TitleField.label`)}
                         </FormLabel>
@@ -1286,6 +1339,28 @@ export function ExpenseForm({
 
                   <FormField
                     control={form.control}
+                    name="category"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('categoryField.label')}</FormLabel>
+                        <CategorySelector
+                          categories={categories}
+                          defaultValue={
+                            form.watch(field.name) // may be overwritten externally
+                          }
+                          onValueChange={field.onChange}
+                          isLoading={isCategoryLoading}
+                        />
+                        <FormDescription>
+                          {t(`${sExpense}.categoryFieldDescription`)}
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
                     name="expenseDate"
                     render={({ field }) => (
                       <FormItem>
@@ -1309,20 +1384,59 @@ export function ExpenseForm({
 
                   <FormField
                     control={form.control}
-                    name="category"
+                    name="recurrenceRule"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('categoryField.label')}</FormLabel>
-                        <CategorySelector
-                          categories={categories}
-                          defaultValue={
-                            form.watch(field.name) // may be overwritten externally
-                          }
-                          onValueChange={field.onChange}
-                          isLoading={isCategoryLoading}
-                        />
+                        <FormLabel>
+                          {t(`${sExpense}.recurrenceRule.label`)}
+                        </FormLabel>
+                        <Select
+                          items={[
+                            {
+                              value: 'NONE',
+                              label: t(`${sExpense}.recurrenceRule.none`),
+                            },
+                            {
+                              value: 'DAILY',
+                              label: t(`${sExpense}.recurrenceRule.daily`),
+                            },
+                            {
+                              value: 'WEEKLY',
+                              label: t(`${sExpense}.recurrenceRule.weekly`),
+                            },
+                            {
+                              value: 'MONTHLY',
+                              label: t(`${sExpense}.recurrenceRule.monthly`),
+                            },
+                          ]}
+                          onValueChange={(value) => {
+                            form.setValue(
+                              'recurrenceRule',
+                              value as RecurrenceRule,
+                            )
+                          }}
+                          value={getSelectedRecurrenceRule(field)}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="NONE" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="NONE">
+                              {t(`${sExpense}.recurrenceRule.none`)}
+                            </SelectItem>
+                            <SelectItem value="DAILY">
+                              {t(`${sExpense}.recurrenceRule.daily`)}
+                            </SelectItem>
+                            <SelectItem value="WEEKLY">
+                              {t(`${sExpense}.recurrenceRule.weekly`)}
+                            </SelectItem>
+                            <SelectItem value="MONTHLY">
+                              {t(`${sExpense}.recurrenceRule.monthly`)}
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
                         <FormDescription>
-                          {t(`${sExpense}.categoryFieldDescription`)}
+                          {t(`${sExpense}.recurrenceRule.description`)}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -1487,67 +1601,6 @@ export function ExpenseForm({
                     />
                   )}
 
-                  <FormField
-                    control={form.control}
-                    name="recurrenceRule"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {t(`${sExpense}.recurrenceRule.label`)}
-                        </FormLabel>
-                        <Select
-                          items={[
-                            {
-                              value: 'NONE',
-                              label: t(`${sExpense}.recurrenceRule.none`),
-                            },
-                            {
-                              value: 'DAILY',
-                              label: t(`${sExpense}.recurrenceRule.daily`),
-                            },
-                            {
-                              value: 'WEEKLY',
-                              label: t(`${sExpense}.recurrenceRule.weekly`),
-                            },
-                            {
-                              value: 'MONTHLY',
-                              label: t(`${sExpense}.recurrenceRule.monthly`),
-                            },
-                          ]}
-                          onValueChange={(value) => {
-                            form.setValue(
-                              'recurrenceRule',
-                              value as RecurrenceRule,
-                            )
-                          }}
-                          value={getSelectedRecurrenceRule(field)}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="NONE" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="NONE">
-                              {t(`${sExpense}.recurrenceRule.none`)}
-                            </SelectItem>
-                            <SelectItem value="DAILY">
-                              {t(`${sExpense}.recurrenceRule.daily`)}
-                            </SelectItem>
-                            <SelectItem value="WEEKLY">
-                              {t(`${sExpense}.recurrenceRule.weekly`)}
-                            </SelectItem>
-                            <SelectItem value="MONTHLY">
-                              {t(`${sExpense}.recurrenceRule.monthly`)}
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormDescription>
-                          {t(`${sExpense}.recurrenceRule.description`)}
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
                   {conversionRequired && (
                     <ExpenseConversionRateField
                       control={form.control}
@@ -1572,6 +1625,8 @@ export function ExpenseForm({
                   )}
                 </ExpenseFormSectionContent>
               </ExpenseFormSection>
+
+              <Separator />
 
               <Card className="gap-4 py-0 shadow-none ring-0">
                 <CardHeader className="px-0">
@@ -1602,15 +1657,34 @@ export function ExpenseForm({
                           singlePayerOnly={singlePayerOnly}
                         />
                         <FormMessage />
+                        <FormField
+                          control={form.control}
+                          name="saveDefaultPaidByOptions"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-start gap-2 space-y-0 pt-1">
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                {t('PaidByField.saveAsDefault')}
+                              </FormLabel>
+                            </FormItem>
+                          )}
+                        />
                       </FormItem>
                     )}
                   />
                 </CardContent>
               </Card>
 
-              <ExpenseFormSection>
-                <ExpenseFormSectionHeader>
-                  <ExpenseFormSectionTitle className="flex justify-between">
+              <Separator />
+
+              <Card className="gap-4 py-0 shadow-none ring-0">
+                <CardHeader className="px-0">
+                  <CardTitle className="flex items-center justify-between gap-2">
                     <span>{t(`${sExpense}.paidFor.title`)}</span>
                     <Button
                       variant="link"
@@ -1664,491 +1738,630 @@ export function ExpenseForm({
                         <>{t('selectAll')}</>
                       )}
                     </Button>
-                  </ExpenseFormSectionTitle>
-                  <ExpenseFormSectionDescription>
+                  </CardTitle>
+                  <CardDescription>
                     {t(`${sExpense}.paidFor.description`)}
-                  </ExpenseFormSectionDescription>
-                </ExpenseFormSectionHeader>
-                <ExpenseFormSectionContent>
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="px-0">
                   <FormField
                     control={form.control}
-                    name="paidFor"
-                    render={() => (
-                      <FormItem className="sm:order-4 row-span-2 space-y-0">
-                        {group.participants.map(({ id, name }) => (
+                    name="splitMode"
+                    render={({ field: splitModeField }) => (
+                      <FormItem className="space-y-3">
+                        <SplitModeSelector
+                          value={splitModeField.value as SplitModeValue}
+                          onChange={(splitMode) => {
+                            if (splitMode === 'BY_PERCENTAGE') {
+                              const paidFor = form.getValues('paidFor') ?? []
+                              form.setValue(
+                                'paidFor',
+                                withEqualPercentageSplit(paidFor),
+                                {
+                                  shouldDirty: true,
+                                  shouldTouch: true,
+                                },
+                              )
+                              setManuallyEditedParticipants(new Set())
+                            }
+
+                            if (splitMode === 'BY_AMOUNT') {
+                              const paidFor = form.getValues('paidFor') ?? []
+                              form.setValue(
+                                'paidFor',
+                                withEqualAmountSplit(
+                                  paidFor,
+                                  Number(form.getValues('amount')) || 0,
+                                  groupCurrency.decimal_digits,
+                                ),
+                                {
+                                  shouldDirty: true,
+                                  shouldTouch: true,
+                                },
+                              )
+                              setManuallyEditedParticipants(new Set())
+                            }
+
+                            form.setValue('splitMode', splitMode, {
+                              shouldDirty: true,
+                              shouldTouch: true,
+                              shouldValidate: true,
+                            })
+                          }}
+                        >
                           <FormField
-                            key={id}
                             control={form.control}
                             name="paidFor"
-                            render={({ field }) => {
-                              return (
-                                <div
-                                  data-id={`${id}/${form.getValues().splitMode}/${
-                                    group.currency
-                                  }`}
-                                  className={participantRowClass}
-                                >
-                                  <FormItem
-                                    className={participantFormItemClass}
-                                  >
-                                    <FormControl>
-                                      <Checkbox
-                                        checked={field.value?.some(
-                                          ({ participant }) =>
-                                            participant === id,
-                                        )}
-                                        onCheckedChange={(checked) => {
-                                          const options = {
-                                            shouldDirty: true,
-                                            shouldTouch: true,
-                                            shouldValidate: true,
-                                          }
-                                          let newPaidFor = checked
-                                            ? [
-                                                ...field.value,
-                                                {
-                                                  participant: id,
-                                                  shares: 1,
-                                                },
-                                              ]
-                                            : field.value?.filter(
-                                                (value) =>
-                                                  value.participant !== id,
-                                              )
+                            render={() => (
+                              <FormItem className="space-y-0">
+                                {group.participants.map(({ id, name }) => (
+                                  <FormField
+                                    key={id}
+                                    control={form.control}
+                                    name="paidFor"
+                                    render={({ field }) => {
+                                      return (
+                                        <div
+                                          data-id={`${id}/${form.getValues().splitMode}/${
+                                            group.currency
+                                          }`}
+                                          className={participantRowClass}
+                                        >
+                                          <FormItem
+                                            className={participantFormItemClass}
+                                          >
+                                            <FormControl>
+                                              <Checkbox
+                                                checked={field.value?.some(
+                                                  ({ participant }) =>
+                                                    participant === id,
+                                                )}
+                                                onCheckedChange={(checked) => {
+                                                  const options = {
+                                                    shouldDirty: true,
+                                                    shouldTouch: true,
+                                                    shouldValidate: true,
+                                                  }
+                                                  let newPaidFor = checked
+                                                    ? [
+                                                        ...field.value,
+                                                        {
+                                                          participant: id,
+                                                          shares: 1,
+                                                        },
+                                                      ]
+                                                    : field.value?.filter(
+                                                        (value) =>
+                                                          value.participant !==
+                                                          id,
+                                                      )
 
-                                          if (
-                                            form.getValues('splitMode') ===
-                                            'BY_PERCENTAGE'
-                                          ) {
-                                            newPaidFor =
-                                              withEqualPercentageSplit(
-                                                newPaidFor ?? [],
-                                              )
-                                            setManuallyEditedParticipants(
-                                              new Set(),
-                                            )
-                                          }
+                                                  if (
+                                                    form.getValues(
+                                                      'splitMode',
+                                                    ) === 'BY_PERCENTAGE'
+                                                  ) {
+                                                    newPaidFor =
+                                                      withEqualPercentageSplit(
+                                                        newPaidFor ?? [],
+                                                      )
+                                                    setManuallyEditedParticipants(
+                                                      new Set(),
+                                                    )
+                                                  }
 
-                                          form.setValue(
-                                            'paidFor',
-                                            newPaidFor,
-                                            options,
-                                          )
-                                        }}
-                                      />
-                                    </FormControl>
-                                    <FormLabel className="text-sm font-normal flex-1">
-                                      {name}
-                                      {field.value?.some(
-                                        ({ participant }) => participant === id,
-                                      ) &&
-                                        !form.watch('isReimbursement') && (
-                                          <span className="text-muted-foreground ml-2">
-                                            (
-                                            {formatCurrency(
-                                              groupCurrency,
-                                              calculateShare(id, {
-                                                amount: amountAsMinorUnits(
-                                                  Number(form.watch('amount')),
-                                                  groupCurrency,
-                                                ), // Convert to cents
-                                                paidFor: field.value.map(
-                                                  ({
-                                                    participant,
-                                                    shares,
-                                                  }) => ({
-                                                    user: {
-                                                      id: participant,
-                                                      name: '',
-                                                    },
-                                                    shares:
-                                                      form.watch(
-                                                        'splitMode',
-                                                      ) === 'BY_PERCENTAGE'
-                                                        ? Number(shares) * 100 // Convert percentage to basis points (e.g. 50% -> 5000)
-                                                        : form.watch(
-                                                              'splitMode',
-                                                            ) === 'BY_AMOUNT'
-                                                          ? amountAsMinorUnits(
-                                                              shares,
-                                                              groupCurrency,
-                                                            )
-                                                          : shares,
-                                                  }),
-                                                ),
-                                                splitMode:
-                                                  form.watch('splitMode'),
-                                                isReimbursement:
-                                                  form.watch('isReimbursement'),
-                                              }),
-                                              locale,
-                                            )}
-                                            )
-                                          </span>
-                                        )}
-                                    </FormLabel>
-                                  </FormItem>
-                                  <div className={participantSharesClass}>
-                                    {form.getValues().splitMode ===
-                                      'BY_AMOUNT' &&
-                                      !!conversionRequired && (
-                                        <FormField
-                                          name={`paidFor[${field.value.findIndex(
-                                            ({ participant }) =>
-                                              participant === id,
-                                          )}].originalAmount`}
-                                          render={() => {
-                                            const isParticipantSelected =
-                                              field.value?.some(
+                                                  form.setValue(
+                                                    'paidFor',
+                                                    newPaidFor,
+                                                    options,
+                                                  )
+                                                }}
+                                              />
+                                            </FormControl>
+                                            <FormLabel className="text-sm font-normal flex-1">
+                                              {name}
+                                              {field.value?.some(
                                                 ({ participant }) =>
                                                   participant === id,
-                                              )
-
-                                            return (
-                                              <div>
-                                                <div
-                                                  className={shareInputRowClass}
-                                                >
-                                                  <FormControl>
-                                                    <InputGroup
-                                                      className={
-                                                        shareInputGroupClass
-                                                      }
-                                                    >
-                                                      <InputGroupAddon align="inline-start">
-                                                        <InputGroupText
-                                                          className={cn(
-                                                            'font-medium text-foreground tabular-nums',
-                                                            !isParticipantSelected &&
-                                                              'text-muted-foreground',
-                                                          )}
-                                                        >
-                                                          {getCurrencyDisplaySymbol(
-                                                            originalCurrency,
-                                                          )}
-                                                        </InputGroupText>
-                                                      </InputGroupAddon>
-                                                      <CurrencyAmountInput
-                                                        key={String(
-                                                          !isParticipantSelected,
-                                                        )}
-                                                        disabled={
-                                                          !isParticipantSelected
-                                                        }
-                                                        currency={
-                                                          originalCurrency
-                                                        }
-                                                        locale={locale}
-                                                        value={
-                                                          field.value.find(
-                                                            ({ participant }) =>
-                                                              participant ===
-                                                              id,
-                                                          )?.originalAmount ??
-                                                          ''
-                                                        }
-                                                        onValueChange={(
-                                                          nextValue,
-                                                        ) => {
-                                                          const originalAmount =
-                                                            Number(nextValue)
-                                                          let convertedAmount =
-                                                            ''
-                                                          if (
-                                                            !Number.isNaN(
-                                                              originalAmount,
-                                                            ) &&
-                                                            exchangeRate.data
-                                                          ) {
-                                                            convertedAmount = (
-                                                              originalAmount *
-                                                              exchangeRate.data
-                                                            ).toFixed(
-                                                              groupCurrency.decimal_digits,
-                                                            )
-                                                          }
-                                                          field.onChange(
-                                                            field.value.map(
-                                                              (p) =>
-                                                                p.participant ===
-                                                                id
-                                                                  ? {
-                                                                      participant:
-                                                                        id,
-                                                                      originalAmount:
-                                                                        nextValue,
-                                                                      shares:
-                                                                        enforceCurrencyPattern(
-                                                                          convertedAmount,
-                                                                        ),
-                                                                    }
-                                                                  : p,
-                                                            ),
-                                                          )
-                                                          setManuallyEditedParticipants(
-                                                            (prev) =>
-                                                              new Set(prev).add(
-                                                                id,
+                                              ) &&
+                                                !form.watch(
+                                                  'isReimbursement',
+                                                ) && (
+                                                  <span className="text-muted-foreground ml-2">
+                                                    (
+                                                    {formatCurrency(
+                                                      groupCurrency,
+                                                      calculateShare(id, {
+                                                        amount:
+                                                          amountAsMinorUnits(
+                                                            Number(
+                                                              form.watch(
+                                                                'amount',
                                                               ),
-                                                          )
-                                                        }}
-                                                      />
-                                                    </InputGroup>
-                                                  </FormControl>
-                                                  <ChevronRight className="mx-1 h-4 w-4 shrink-0 opacity-50" />
-                                                </div>
-                                              </div>
-                                            )
-                                          }}
-                                        />
-                                      )}
-                                    {form.getValues().splitMode !==
-                                      'EVENLY' && (
-                                      <FormField
-                                        name={`paidFor[${field.value.findIndex(
-                                          ({ participant }) =>
-                                            participant === id,
-                                        )}].shares`}
-                                        render={() => {
-                                          const splitMode =
-                                            form.getValues().splitMode
-                                          const isParticipantSelected =
-                                            field.value?.some(
-                                              ({ participant }) =>
-                                                participant === id,
-                                            )
-
-                                          return (
-                                            <div>
-                                              <FormControl>
-                                                <ParticipantShareInput
-                                                  key={String(
-                                                    !isParticipantSelected,
-                                                  )}
-                                                  className={cn(
-                                                    shareInputGroupClass,
-                                                    splitMode === 'BY_SHARES' &&
-                                                      'w-[6.5rem]',
-                                                  )}
-                                                  disabled={
-                                                    !isParticipantSelected
-                                                  }
-                                                  splitMode={splitMode}
-                                                  groupCurrency={groupCurrency}
-                                                  locale={locale}
-                                                  sharesLabel={t('shares')}
-                                                  value={String(
-                                                    field.value?.find(
-                                                      ({ participant }) =>
-                                                        participant === id,
-                                                    )?.shares ?? '',
-                                                  )}
-                                                  onValueChange={(
-                                                    nextValue,
-                                                  ) => {
-                                                    const editedParticipantIds =
-                                                      new Set(
-                                                        manuallyEditedParticipants,
-                                                      )
-                                                    editedParticipantIds.add(id)
-
-                                                    if (
-                                                      splitMode ===
-                                                      'BY_PERCENTAGE'
-                                                    ) {
-                                                      const percentage =
-                                                        Number(nextValue)
-                                                      let newPaidFor =
-                                                        field.value.map((p) =>
-                                                          p.participant === id
-                                                            ? {
-                                                                participant: id,
-                                                                shares:
-                                                                  percentage,
-                                                              }
-                                                            : p,
-                                                        )
-
-                                                      if (
-                                                        !Number.isNaN(
-                                                          percentage,
-                                                        )
-                                                      ) {
-                                                        newPaidFor =
-                                                          balancePaidForPercentages(
-                                                            newPaidFor,
-                                                            editedParticipantIds,
-                                                          )
-                                                      }
-
-                                                      field.onChange(newPaidFor)
-                                                      setManuallyEditedParticipants(
-                                                        editedParticipantIds,
-                                                      )
-                                                      return
-                                                    }
-
-                                                    const shareValue =
-                                                      splitMode === 'BY_AMOUNT'
-                                                        ? enforceCurrencyPattern(
-                                                            nextValue,
-                                                          )
-                                                        : nextValue
-                                                    field.onChange(
-                                                      field.value.map((p) =>
-                                                        p.participant === id
-                                                          ? {
-                                                              participant: id,
+                                                            ),
+                                                            groupCurrency,
+                                                          ), // Convert to cents
+                                                        paidFor:
+                                                          field.value.map(
+                                                            ({
+                                                              participant,
+                                                              shares,
+                                                            }) => ({
+                                                              user: {
+                                                                id: participant,
+                                                                name: '',
+                                                              },
                                                               shares:
-                                                                shareValue,
-                                                            }
-                                                          : p,
-                                                      ),
+                                                                form.watch(
+                                                                  'splitMode',
+                                                                ) ===
+                                                                'BY_PERCENTAGE'
+                                                                  ? Number(
+                                                                      shares,
+                                                                    ) * 100 // Convert percentage to basis points (e.g. 50% -> 5000)
+                                                                  : form.watch(
+                                                                        'splitMode',
+                                                                      ) ===
+                                                                      'BY_AMOUNT'
+                                                                    ? amountAsMinorUnits(
+                                                                        shares,
+                                                                        groupCurrency,
+                                                                      )
+                                                                    : shares,
+                                                            }),
+                                                          ),
+                                                        splitMode:
+                                                          form.watch(
+                                                            'splitMode',
+                                                          ),
+                                                        isReimbursement:
+                                                          form.watch(
+                                                            'isReimbursement',
+                                                          ),
+                                                      }),
+                                                      locale,
+                                                    )}
                                                     )
-                                                    setManuallyEditedParticipants(
-                                                      editedParticipantIds,
+                                                  </span>
+                                                )}
+                                            </FormLabel>
+                                          </FormItem>
+                                          <div
+                                            className={participantSharesClass}
+                                          >
+                                            {form.getValues().splitMode ===
+                                              'BY_AMOUNT' &&
+                                              !!conversionRequired && (
+                                                <FormField
+                                                  name={`paidFor[${field.value.findIndex(
+                                                    ({ participant }) =>
+                                                      participant === id,
+                                                  )}].originalAmount`}
+                                                  render={() => {
+                                                    const isParticipantSelected =
+                                                      field.value?.some(
+                                                        ({ participant }) =>
+                                                          participant === id,
+                                                      )
+
+                                                    return (
+                                                      <div>
+                                                        <div
+                                                          className={
+                                                            shareInputRowClass
+                                                          }
+                                                        >
+                                                          <FormControl>
+                                                            <InputGroup
+                                                              className={
+                                                                shareInputGroupClass
+                                                              }
+                                                            >
+                                                              <InputGroupAddon align="inline-start">
+                                                                <InputGroupText
+                                                                  className={cn(
+                                                                    'font-medium text-foreground tabular-nums',
+                                                                    !isParticipantSelected &&
+                                                                      'text-muted-foreground',
+                                                                  )}
+                                                                >
+                                                                  {getCurrencyDisplaySymbol(
+                                                                    originalCurrency,
+                                                                  )}
+                                                                </InputGroupText>
+                                                              </InputGroupAddon>
+                                                              <CurrencyAmountInput
+                                                                key={String(
+                                                                  !isParticipantSelected,
+                                                                )}
+                                                                disabled={
+                                                                  !isParticipantSelected
+                                                                }
+                                                                currency={
+                                                                  originalCurrency
+                                                                }
+                                                                locale={locale}
+                                                                value={
+                                                                  field.value.find(
+                                                                    ({
+                                                                      participant,
+                                                                    }) =>
+                                                                      participant ===
+                                                                      id,
+                                                                  )
+                                                                    ?.originalAmount ??
+                                                                  ''
+                                                                }
+                                                                onValueChange={(
+                                                                  nextValue,
+                                                                ) => {
+                                                                  const originalAmount =
+                                                                    Number(
+                                                                      nextValue,
+                                                                    )
+                                                                  let convertedAmount =
+                                                                    ''
+                                                                  if (
+                                                                    !Number.isNaN(
+                                                                      originalAmount,
+                                                                    ) &&
+                                                                    exchangeRate.data
+                                                                  ) {
+                                                                    convertedAmount =
+                                                                      (
+                                                                        originalAmount *
+                                                                        exchangeRate.data
+                                                                      ).toFixed(
+                                                                        groupCurrency.decimal_digits,
+                                                                      )
+                                                                  }
+                                                                  field.onChange(
+                                                                    field.value.map(
+                                                                      (p) =>
+                                                                        p.participant ===
+                                                                        id
+                                                                          ? {
+                                                                              participant:
+                                                                                id,
+                                                                              originalAmount:
+                                                                                nextValue,
+                                                                              shares:
+                                                                                enforceCurrencyPattern(
+                                                                                  convertedAmount,
+                                                                                ),
+                                                                            }
+                                                                          : p,
+                                                                    ),
+                                                                  )
+                                                                  setManuallyEditedParticipants(
+                                                                    (prev) =>
+                                                                      new Set(
+                                                                        prev,
+                                                                      ).add(id),
+                                                                  )
+                                                                }}
+                                                              />
+                                                            </InputGroup>
+                                                          </FormControl>
+                                                          <ChevronRight className="mx-1 h-4 w-4 shrink-0 opacity-50" />
+                                                        </div>
+                                                      </div>
                                                     )
                                                   }}
                                                 />
-                                              </FormControl>
-                                              <FormMessage className="float-right" />
-                                            </div>
-                                          )
-                                        }}
-                                      />
-                                    )}
-                                  </div>
-                                </div>
-                              )
-                            }}
-                          />
-                        ))}
-
-                        {/* Show former members still in this expense's paidFor (can be unchecked to remove) */}
-                        {expense &&
-                          expense.paidFor
-                            .filter(
-                              (pf) =>
-                                !group.participants.some(
-                                  (p) => p.id === pf.userId,
-                                ),
-                            )
-                            .map((pf) => (
-                              <FormField
-                                key={pf.userId}
-                                control={form.control}
-                                name="paidFor"
-                                render={({ field }) => (
-                                  <div className={participantRowClass}>
-                                    <FormItem
-                                      className={participantFormItemClass}
-                                    >
-                                      <FormControl>
-                                        <Checkbox
-                                          checked={field.value?.some(
-                                            ({ participant }) =>
-                                              participant === pf.userId,
-                                          )}
-                                          onCheckedChange={(checked) => {
-                                            const options = {
-                                              shouldDirty: true,
-                                              shouldTouch: true,
-                                              shouldValidate: true,
-                                            }
-                                            checked
-                                              ? form.setValue(
-                                                  'paidFor',
-                                                  [
-                                                    ...field.value,
-                                                    {
-                                                      participant: pf.userId,
-                                                      shares: 1,
-                                                    },
-                                                  ],
-                                                  options,
-                                                )
-                                              : form.setValue(
-                                                  'paidFor',
-                                                  field.value?.filter(
-                                                    (value) =>
-                                                      value.participant !==
-                                                      pf.userId,
-                                                  ),
-                                                  options,
-                                                )
-                                          }}
-                                        />
-                                      </FormControl>
-                                      <FormLabel className="text-sm font-normal flex-1">
-                                        {pf.user?.name ?? 'Unknown user'}
-                                        {field.value?.some(
-                                          ({ participant }) =>
-                                            participant === pf.userId,
-                                        ) &&
-                                          !form.watch('isReimbursement') && (
-                                            <span className="text-muted-foreground ml-2">
-                                              (
-                                              {formatCurrency(
-                                                groupCurrency,
-                                                calculateShare(pf.userId, {
-                                                  amount: amountAsMinorUnits(
-                                                    Number(
-                                                      form.watch('amount'),
-                                                    ),
-                                                    groupCurrency,
-                                                  ),
-                                                  paidFor: field.value.map(
-                                                    ({
-                                                      participant,
-                                                      shares,
-                                                    }) => ({
-                                                      user: {
-                                                        id: participant,
-                                                        name: '',
-                                                      },
-                                                      shares:
-                                                        form.watch(
-                                                          'splitMode',
-                                                        ) === 'BY_PERCENTAGE'
-                                                          ? Number(shares) * 100
-                                                          : form.watch(
-                                                                'splitMode',
-                                                              ) === 'BY_AMOUNT'
-                                                            ? amountAsMinorUnits(
-                                                                shares,
-                                                                groupCurrency,
-                                                              )
-                                                            : shares,
-                                                    }),
-                                                  ),
-                                                  splitMode:
-                                                    form.watch('splitMode'),
-                                                  isReimbursement:
-                                                    form.watch(
-                                                      'isReimbursement',
-                                                    ),
-                                                }),
-                                                locale,
                                               )}
-                                              )
-                                            </span>
-                                          )}
-                                        <span className="ml-2 text-xs text-muted-foreground italic">
-                                          ({t('noLongerInGroup')})
-                                        </span>
-                                      </FormLabel>
-                                    </FormItem>
-                                  </div>
-                                )}
-                              />
-                            ))}
+                                            {form.getValues().splitMode !==
+                                              'EVENLY' && (
+                                              <FormField
+                                                name={`paidFor[${field.value.findIndex(
+                                                  ({ participant }) =>
+                                                    participant === id,
+                                                )}].shares`}
+                                                render={() => {
+                                                  const splitMode =
+                                                    form.getValues().splitMode
+                                                  const isParticipantSelected =
+                                                    field.value?.some(
+                                                      ({ participant }) =>
+                                                        participant === id,
+                                                    )
 
-                        <FormMessage />
+                                                  return (
+                                                    <div>
+                                                      <FormControl>
+                                                        <ParticipantShareInput
+                                                          key={String(
+                                                            !isParticipantSelected,
+                                                          )}
+                                                          className={cn(
+                                                            shareInputGroupClass,
+                                                            splitMode ===
+                                                              'BY_SHARES' &&
+                                                              'w-[6.5rem]',
+                                                          )}
+                                                          disabled={
+                                                            !isParticipantSelected
+                                                          }
+                                                          splitMode={splitMode}
+                                                          groupCurrency={
+                                                            groupCurrency
+                                                          }
+                                                          locale={locale}
+                                                          sharesLabel={t(
+                                                            'shares',
+                                                          )}
+                                                          value={String(
+                                                            field.value?.find(
+                                                              ({
+                                                                participant,
+                                                              }) =>
+                                                                participant ===
+                                                                id,
+                                                            )?.shares ?? '',
+                                                          )}
+                                                          onValueChange={(
+                                                            nextValue,
+                                                          ) => {
+                                                            const editedParticipantIds =
+                                                              new Set(
+                                                                manuallyEditedParticipants,
+                                                              )
+                                                            editedParticipantIds.add(
+                                                              id,
+                                                            )
+
+                                                            if (
+                                                              splitMode ===
+                                                              'BY_PERCENTAGE'
+                                                            ) {
+                                                              const percentage =
+                                                                Number(
+                                                                  nextValue,
+                                                                )
+                                                              let newPaidFor =
+                                                                field.value.map(
+                                                                  (p) =>
+                                                                    p.participant ===
+                                                                    id
+                                                                      ? {
+                                                                          participant:
+                                                                            id,
+                                                                          shares:
+                                                                            percentage,
+                                                                        }
+                                                                      : p,
+                                                                )
+
+                                                              if (
+                                                                !Number.isNaN(
+                                                                  percentage,
+                                                                )
+                                                              ) {
+                                                                newPaidFor =
+                                                                  balancePaidForPercentages(
+                                                                    newPaidFor,
+                                                                    editedParticipantIds,
+                                                                  )
+                                                              }
+
+                                                              field.onChange(
+                                                                newPaidFor,
+                                                              )
+                                                              setManuallyEditedParticipants(
+                                                                editedParticipantIds,
+                                                              )
+                                                              return
+                                                            }
+
+                                                            const shareValue =
+                                                              splitMode ===
+                                                              'BY_AMOUNT'
+                                                                ? enforceCurrencyPattern(
+                                                                    nextValue,
+                                                                  )
+                                                                : nextValue
+                                                            field.onChange(
+                                                              field.value.map(
+                                                                (p) =>
+                                                                  p.participant ===
+                                                                  id
+                                                                    ? {
+                                                                        participant:
+                                                                          id,
+                                                                        shares:
+                                                                          shareValue,
+                                                                      }
+                                                                    : p,
+                                                              ),
+                                                            )
+                                                            setManuallyEditedParticipants(
+                                                              editedParticipantIds,
+                                                            )
+                                                          }}
+                                                        />
+                                                      </FormControl>
+                                                      <FormMessage className="float-right" />
+                                                    </div>
+                                                  )
+                                                }}
+                                              />
+                                            )}
+                                          </div>
+                                        </div>
+                                      )
+                                    }}
+                                  />
+                                ))}
+
+                                {/* Show former members still in this expense's paidFor (can be unchecked to remove) */}
+                                {expense &&
+                                  expense.paidFor
+                                    .filter(
+                                      (pf) =>
+                                        !group.participants.some(
+                                          (p) => p.id === pf.userId,
+                                        ),
+                                    )
+                                    .map((pf) => (
+                                      <FormField
+                                        key={pf.userId}
+                                        control={form.control}
+                                        name="paidFor"
+                                        render={({ field }) => (
+                                          <div className={participantRowClass}>
+                                            <FormItem
+                                              className={
+                                                participantFormItemClass
+                                              }
+                                            >
+                                              <FormControl>
+                                                <Checkbox
+                                                  checked={field.value?.some(
+                                                    ({ participant }) =>
+                                                      participant === pf.userId,
+                                                  )}
+                                                  onCheckedChange={(
+                                                    checked,
+                                                  ) => {
+                                                    const options = {
+                                                      shouldDirty: true,
+                                                      shouldTouch: true,
+                                                      shouldValidate: true,
+                                                    }
+                                                    checked
+                                                      ? form.setValue(
+                                                          'paidFor',
+                                                          [
+                                                            ...field.value,
+                                                            {
+                                                              participant:
+                                                                pf.userId,
+                                                              shares: 1,
+                                                            },
+                                                          ],
+                                                          options,
+                                                        )
+                                                      : form.setValue(
+                                                          'paidFor',
+                                                          field.value?.filter(
+                                                            (value) =>
+                                                              value.participant !==
+                                                              pf.userId,
+                                                          ),
+                                                          options,
+                                                        )
+                                                  }}
+                                                />
+                                              </FormControl>
+                                              <FormLabel className="text-sm font-normal flex-1">
+                                                {pf.user?.name ??
+                                                  'Unknown user'}
+                                                {field.value?.some(
+                                                  ({ participant }) =>
+                                                    participant === pf.userId,
+                                                ) &&
+                                                  !form.watch(
+                                                    'isReimbursement',
+                                                  ) && (
+                                                    <span className="text-muted-foreground ml-2">
+                                                      (
+                                                      {formatCurrency(
+                                                        groupCurrency,
+                                                        calculateShare(
+                                                          pf.userId,
+                                                          {
+                                                            amount:
+                                                              amountAsMinorUnits(
+                                                                Number(
+                                                                  form.watch(
+                                                                    'amount',
+                                                                  ),
+                                                                ),
+                                                                groupCurrency,
+                                                              ),
+                                                            paidFor:
+                                                              field.value.map(
+                                                                ({
+                                                                  participant,
+                                                                  shares,
+                                                                }) => ({
+                                                                  user: {
+                                                                    id: participant,
+                                                                    name: '',
+                                                                  },
+                                                                  shares:
+                                                                    form.watch(
+                                                                      'splitMode',
+                                                                    ) ===
+                                                                    'BY_PERCENTAGE'
+                                                                      ? Number(
+                                                                          shares,
+                                                                        ) * 100
+                                                                      : form.watch(
+                                                                            'splitMode',
+                                                                          ) ===
+                                                                          'BY_AMOUNT'
+                                                                        ? amountAsMinorUnits(
+                                                                            shares,
+                                                                            groupCurrency,
+                                                                          )
+                                                                        : shares,
+                                                                }),
+                                                              ),
+                                                            splitMode:
+                                                              form.watch(
+                                                                'splitMode',
+                                                              ),
+                                                            isReimbursement:
+                                                              form.watch(
+                                                                'isReimbursement',
+                                                              ),
+                                                          },
+                                                        ),
+                                                        locale,
+                                                      )}
+                                                      )
+                                                    </span>
+                                                  )}
+                                                <span className="ml-2 text-xs text-muted-foreground italic">
+                                                  ({t('noLongerInGroup')})
+                                                </span>
+                                              </FormLabel>
+                                            </FormItem>
+                                          </div>
+                                        )}
+                                      />
+                                    ))}
+
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </SplitModeSelector>
+                        <FormField
+                          control={form.control}
+                          name="saveDefaultSplittingOptions"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-start gap-2 space-y-0 pt-1">
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                {t('SplitModeField.saveAsDefault')}
+                              </FormLabel>
+                            </FormItem>
+                          )}
+                        />
                       </FormItem>
                     )}
                   />
-                </ExpenseFormSectionContent>
-              </ExpenseFormSection>
+                </CardContent>
+              </Card>
+
+              <Separator />
 
               <ExpenseFormSection>
                 <div className="flex flex-col gap-2">
@@ -2169,129 +2382,6 @@ export function ExpenseForm({
                         </FormItem>
                       )}
                     />
-                  </ExpenseFormCollapsible>
-
-                  <ExpenseFormCollapsible
-                    title={t('advancedOptions')}
-                    description={t(`${sExpense}.splitModeDescription`)}
-                    defaultOpen={form.getValues().splitMode !== 'EVENLY'}
-                  >
-                    <div className={collapsibleFieldsGridClass}>
-                      <FormField
-                        control={form.control}
-                        name="splitMode"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>{t('SplitModeField.label')}</FormLabel>
-                            <FormControl>
-                              <Select
-                                items={[
-                                  {
-                                    value: 'EVENLY',
-                                    label: t('SplitModeField.evenly'),
-                                  },
-                                  {
-                                    value: 'BY_SHARES',
-                                    label: t('SplitModeField.byShares'),
-                                  },
-                                  {
-                                    value: 'BY_PERCENTAGE',
-                                    label: t('SplitModeField.byPercentage'),
-                                  },
-                                  {
-                                    value: 'BY_AMOUNT',
-                                    label: t('SplitModeField.byAmount'),
-                                  },
-                                ]}
-                                onValueChange={(value) => {
-                                  const splitMode =
-                                    value as ExpenseFormValues['splitMode']
-
-                                  if (splitMode === 'BY_PERCENTAGE') {
-                                    const paidFor =
-                                      form.getValues('paidFor') ?? []
-                                    form.setValue(
-                                      'paidFor',
-                                      withEqualPercentageSplit(paidFor),
-                                      {
-                                        shouldDirty: true,
-                                        shouldTouch: true,
-                                      },
-                                    )
-                                    setManuallyEditedParticipants(new Set())
-                                  }
-
-                                  if (splitMode === 'BY_AMOUNT') {
-                                    const paidFor =
-                                      form.getValues('paidFor') ?? []
-                                    form.setValue(
-                                      'paidFor',
-                                      withEqualAmountSplit(
-                                        paidFor,
-                                        Number(form.getValues('amount')) || 0,
-                                        groupCurrency.decimal_digits,
-                                      ),
-                                      {
-                                        shouldDirty: true,
-                                        shouldTouch: true,
-                                      },
-                                    )
-                                    setManuallyEditedParticipants(new Set())
-                                  }
-
-                                  form.setValue('splitMode', splitMode, {
-                                    shouldDirty: true,
-                                    shouldTouch: true,
-                                    shouldValidate: true,
-                                  })
-                                }}
-                                value={field.value}
-                              >
-                                <SelectTrigger className="w-full">
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="EVENLY">
-                                    {t('SplitModeField.evenly')}
-                                  </SelectItem>
-                                  <SelectItem value="BY_SHARES">
-                                    {t('SplitModeField.byShares')}
-                                  </SelectItem>
-                                  <SelectItem value="BY_PERCENTAGE">
-                                    {t('SplitModeField.byPercentage')}
-                                  </SelectItem>
-                                  <SelectItem value="BY_AMOUNT">
-                                    {t('SplitModeField.byAmount')}
-                                  </SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="saveDefaultSplittingOptions"
-                        render={({ field }) => (
-                          <FormItem
-                            className={cn(
-                              'flex flex-row items-start gap-2 space-y-0',
-                              isMobileLayout ? 'self-start' : 'self-center',
-                            )}
-                          >
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {t('SplitModeField.saveAsDefault')}
-                            </FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
                   </ExpenseFormCollapsible>
 
                   {runtimeFeatureFlags.enableExpenseDocuments && (

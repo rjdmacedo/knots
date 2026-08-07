@@ -56,21 +56,21 @@
       "underpayment": "Pagament insuficient de {amount}",
       "reimbursementSingleOnly": "Els reemborsaments només admeten un pagador",
       "amountPositive": "L'import ha de ser positiu",
-      "singleSection": "Single",
-      "multipleSection": "Multiple payers",
-      "singleTitle": "Single payer",
-      "singleDescription": "One person covers the full expense",
-      "evenlyTitle": "Evenly",
-      "evenlyDescription": "Each pays an equal share",
-      "bySharesTitle": "By shares",
-      "bySharesDescription": "Each pays a weighted share",
-      "byPercentageTitle": "By percentage",
-      "byPercentageDescription": "Each pays a percentage",
-      "byAmountTitle": "By amount",
-      "byAmountDescription": "Each pays a fixed amount",
-      "selectPayers": "Select who paid",
-      "shareLabel": "Shares",
-      "percentageLabel": "Percent"
+      "singleSection": "Únic",
+      "multipleSection": "Diversos pagadors",
+      "singleTitle": "Un pagador",
+      "singleDescription": "Una persona cobreix la despesa sencera",
+      "evenlyTitle": "Per igual",
+      "evenlyDescription": "Cadascú paga una part igual",
+      "bySharesTitle": "Per parts",
+      "bySharesDescription": "Cadascú paga una part ponderada",
+      "byPercentageTitle": "Per percentatge",
+      "byPercentageDescription": "Cadascú paga un percentatge",
+      "byAmountTitle": "Per import",
+      "byAmountDescription": "Cadascú paga un import fix",
+      "selectPayers": "Selecciona qui ha pagat",
+      "shareLabel": "Parts",
+      "percentageLabel": "Percentatge"
     }
   },
   "ExpenseCard": {
@@ -283,7 +283,11 @@
       "byShares": "Desigual: per parts",
       "byPercentage": "Desigual: per percentatge",
       "byAmount": "Desigual: Per quantitat",
-      "saveAsDefault": "Desa com a mode preferit"
+      "saveAsDefault": "Desa com a mode preferit",
+      "evenlyDescription": "Split equally among selected participants",
+      "bySharesDescription": "Split using weighted shares",
+      "byPercentageDescription": "Split using percentages that add up to 100%",
+      "byAmountDescription": "Split using fixed amounts for each participant"
     },
     "DeletePopup": {
       "label": "Esborrar",
@@ -298,7 +302,10 @@
     "save": "Desar",
     "saving": "Desant",
     "cancel": "Cancel·lar",
-    "reimbursement": "Reemborsament"
+    "reimbursement": "Reemborsament",
+    "PaidByField": {
+      "saveAsDefault": "Desa com a opcions de pagament per defecte"
+    }
   },
   "ExpenseDocumentsInput": {
     "TooBigToast": {
@@ -1141,5 +1148,8 @@
   },
   "CurrencyAmountInput": {
     "expressionHint": "o 10+5"
+  },
+  "ExpenseTitleInput": {
+    "clear": "Esborra"
   }
 }

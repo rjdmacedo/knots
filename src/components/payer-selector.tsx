@@ -32,6 +32,14 @@ import {
   distributeWeightedAmounts,
 } from '@/lib/distribute-amount'
 import { formatCurrency } from '@/lib/utils'
+import {
+  Coins,
+  Equal,
+  Hash,
+  Percent,
+  User,
+  type LucideIcon,
+} from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useId, useState } from 'react'
 
@@ -46,6 +54,26 @@ export type PayerMode =
   | 'by_shares'
   | 'by_percentage'
   | 'by_amount'
+
+const MODE_ICONS: Record<PayerMode, LucideIcon> = {
+  single: User,
+  evenly: Equal,
+  by_shares: Hash,
+  by_percentage: Percent,
+  by_amount: Coins,
+}
+
+function ModeIcon({ mode }: { mode: PayerMode }) {
+  const Icon = MODE_ICONS[mode]
+  return (
+    <span
+      aria-hidden="true"
+      className="mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground transition-colors group-hover/field-label:text-foreground group-has-data-checked/field-label:bg-primary/10 group-has-data-checked/field-label:text-primary"
+    >
+      <Icon className="size-4" />
+    </span>
+  )
+}
 
 export interface PayerSelectorProps {
   participants: Array<{ id: string; name: string }>
@@ -448,6 +476,7 @@ export function PayerSelector({
       </p>
       <FieldLabel htmlFor={`${idPrefix}-single`}>
         <Field orientation="horizontal">
+          <ModeIcon mode="single" />
           <FieldContent>
             <FieldTitle>{t('paidBy.singleTitle')}</FieldTitle>
             <FieldDescription>{t('paidBy.singleDescription')}</FieldDescription>
@@ -492,6 +521,7 @@ export function PayerSelector({
           {multipleModes.map(({ mode: m, title, description }) => (
             <FieldLabel key={m} htmlFor={`${idPrefix}-${m}`}>
               <Field orientation="horizontal">
+                <ModeIcon mode={m} />
                 <FieldContent>
                   <FieldTitle>{title}</FieldTitle>
                   <FieldDescription>{description}</FieldDescription>

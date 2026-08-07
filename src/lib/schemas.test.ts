@@ -14,6 +14,7 @@ function validExpenseInput(
     paidFor: [{ participant: 'user-1', shares: 5000 }],
     splitMode: 'BY_AMOUNT',
     saveDefaultSplittingOptions: false,
+    saveDefaultPaidByOptions: false,
     isReimbursement: false,
     ...overrides,
   }

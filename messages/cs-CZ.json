@@ -56,21 +56,21 @@
       "underpayment": "Nedoplatek o {amount}",
       "reimbursementSingleOnly": "Náhrady podporují pouze jednoho plátce",
       "amountPositive": "Částka musí být kladná",
-      "singleSection": "Single",
-      "multipleSection": "Multiple payers",
-      "singleTitle": "Single payer",
-      "singleDescription": "One person covers the full expense",
-      "evenlyTitle": "Evenly",
-      "evenlyDescription": "Each pays an equal share",
-      "bySharesTitle": "By shares",
-      "bySharesDescription": "Each pays a weighted share",
-      "byPercentageTitle": "By percentage",
-      "byPercentageDescription": "Each pays a percentage",
-      "byAmountTitle": "By amount",
-      "byAmountDescription": "Each pays a fixed amount",
-      "selectPayers": "Select who paid",
-      "shareLabel": "Shares",
-      "percentageLabel": "Percent"
+      "singleSection": "Jeden",
+      "multipleSection": "Více plátců",
+      "singleTitle": "Jeden plátce",
+      "singleDescription": "Jedna osoba pokryje celý výdaj",
+      "evenlyTitle": "Rovnoměrně",
+      "evenlyDescription": "Každý platí stejný podíl",
+      "bySharesTitle": "Podle podílů",
+      "bySharesDescription": "Každý platí vážený podíl",
+      "byPercentageTitle": "Podle procent",
+      "byPercentageDescription": "Každý platí procento",
+      "byAmountTitle": "Podle částky",
+      "byAmountDescription": "Každý platí pevnou částku",
+      "selectPayers": "Vyberte, kdo zaplatil",
+      "shareLabel": "Podíly",
+      "percentageLabel": "Procenta"
     }
   },
   "ExpenseCard": {
@@ -280,10 +280,14 @@
     "SplitModeField": {
       "label": "Způsob rozdělení",
       "evenly": "Rovnoměrně",
-      "byShares": "Nerovnoměrně – podle podílů",
-      "byPercentage": "Nerovnoměrně – podle procent",
-      "byAmount": "Nerovnoměrně – podle částky",
-      "saveAsDefault": "Uložit jako výchozí možnosti rozdělení"
+      "byShares": "podle podílů",
+      "byPercentage": "podle procent",
+      "byAmount": "podle částky",
+      "saveAsDefault": "Uložit jako výchozí možnosti rozdělení",
+      "evenlyDescription": "Split equally among selected participants",
+      "bySharesDescription": "Split using weighted shares",
+      "byPercentageDescription": "Split using percentages that add up to 100%",
+      "byAmountDescription": "Split using fixed amounts for each participant"
     },
     "DeletePopup": {
       "label": "Smazat",
@@ -298,7 +302,10 @@
     "save": "Uložit",
     "saving": "Ukládání…",
     "cancel": "Zrušit",
-    "reimbursement": "Proplacení"
+    "reimbursement": "Proplacení",
+    "PaidByField": {
+      "saveAsDefault": "Uložit jako výchozí možnosti plátce"
+    }
   },
   "ExpenseDocumentsInput": {
     "TooBigToast": {
@@ -1141,5 +1148,8 @@
   },
   "CurrencyAmountInput": {
     "expressionHint": "nebo 10+5"
+  },
+  "ExpenseTitleInput": {
+    "clear": "Vymazat"
   }
 }

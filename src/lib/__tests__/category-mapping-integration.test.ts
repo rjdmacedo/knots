@@ -158,6 +158,7 @@ function buildExpenseFormValues(
     paidFor: [{ participant: 'participant-1', shares: 5000 }],
     splitMode: 'EVENLY' as const,
     saveDefaultSplittingOptions: false,
+    saveDefaultPaidByOptions: false,
     isReimbursement: overrides.isReimbursement ?? false,
     documents: [],
     notes: undefined,

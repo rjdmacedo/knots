@@ -586,6 +586,7 @@ function convertExportExpense(
     paidFor,
     splitMode: expense.splitMode as SplitMode,
     saveDefaultSplittingOptions: false,
+    saveDefaultPaidByOptions: false,
     isReimbursement: expense.isReimbursement,
     documents: [],
     notes: expense.notes,

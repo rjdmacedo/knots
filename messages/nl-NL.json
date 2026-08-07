@@ -56,21 +56,21 @@
       "underpayment": "Te weinig betaald met {amount}",
       "reimbursementSingleOnly": "Vergoedingen ondersteunen slechts één betaler",
       "amountPositive": "Bedrag moet positief zijn",
-      "singleSection": "Single",
-      "multipleSection": "Multiple payers",
-      "singleTitle": "Single payer",
-      "singleDescription": "One person covers the full expense",
-      "evenlyTitle": "Evenly",
-      "evenlyDescription": "Each pays an equal share",
-      "bySharesTitle": "By shares",
-      "bySharesDescription": "Each pays a weighted share",
-      "byPercentageTitle": "By percentage",
-      "byPercentageDescription": "Each pays a percentage",
-      "byAmountTitle": "By amount",
-      "byAmountDescription": "Each pays a fixed amount",
-      "selectPayers": "Select who paid",
-      "shareLabel": "Shares",
-      "percentageLabel": "Percent"
+      "singleSection": "Enkel",
+      "multipleSection": "Meerdere betalers",
+      "singleTitle": "Eén betaler",
+      "singleDescription": "Eén persoon betaalt de hele uitgave",
+      "evenlyTitle": "Gelijk",
+      "evenlyDescription": "Iedereen betaalt een gelijk deel",
+      "bySharesTitle": "Op aandelen",
+      "bySharesDescription": "Iedereen betaalt een gewogen aandeel",
+      "byPercentageTitle": "Op percentage",
+      "byPercentageDescription": "Iedereen betaalt een percentage",
+      "byAmountTitle": "Op bedrag",
+      "byAmountDescription": "Iedereen betaalt een vast bedrag",
+      "selectPayers": "Selecteer wie heeft betaald",
+      "shareLabel": "Aandelen",
+      "percentageLabel": "Percentage"
     }
   },
   "ExpenseCard": {
@@ -280,10 +280,14 @@
     "SplitModeField": {
       "label": "Split soort",
       "evenly": "Gelijk verdeeld",
-      "byShares": "Ongelijk – Met delen",
-      "byPercentage": "Ongelijk – Met percentage",
-      "byAmount": "Ongelijk – Met bedrag",
-      "saveAsDefault": "Opslaan als standaard-optie"
+      "byShares": "Met delen",
+      "byPercentage": "Met percentage",
+      "byAmount": "Met bedrag",
+      "saveAsDefault": "Opslaan als standaard-optie",
+      "evenlyDescription": "Split equally among selected participants",
+      "bySharesDescription": "Split using weighted shares",
+      "byPercentageDescription": "Split using percentages that add up to 100%",
+      "byAmountDescription": "Split using fixed amounts for each participant"
     },
     "DeletePopup": {
       "label": "Verwijderen",
@@ -298,7 +302,10 @@
     "save": "Opslaan",
     "saving": "Aan het opslaan…",
     "cancel": "Annuleren",
-    "reimbursement": "Terugbetaling"
+    "reimbursement": "Terugbetaling",
+    "PaidByField": {
+      "saveAsDefault": "Opslaan als standaard betaald-door-opties"
+    }
   },
   "ExpenseDocumentsInput": {
     "TooBigToast": {
@@ -1138,5 +1145,8 @@
   },
   "CurrencyAmountInput": {
     "expressionHint": "of 10+5"
+  },
+  "ExpenseTitleInput": {
+    "clear": "Wissen"
   }
 }

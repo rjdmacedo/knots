@@ -56,21 +56,21 @@
       "underpayment": "Niedopłata o {amount}",
       "reimbursementSingleOnly": "Zwroty obsługują tylko jednego płatnika",
       "amountPositive": "Kwota musi być dodatnia",
-      "singleSection": "Single",
-      "multipleSection": "Multiple payers",
-      "singleTitle": "Single payer",
-      "singleDescription": "One person covers the full expense",
-      "evenlyTitle": "Evenly",
-      "evenlyDescription": "Each pays an equal share",
-      "bySharesTitle": "By shares",
-      "bySharesDescription": "Each pays a weighted share",
-      "byPercentageTitle": "By percentage",
-      "byPercentageDescription": "Each pays a percentage",
-      "byAmountTitle": "By amount",
-      "byAmountDescription": "Each pays a fixed amount",
-      "selectPayers": "Select who paid",
-      "shareLabel": "Shares",
-      "percentageLabel": "Percent"
+      "singleSection": "Jeden",
+      "multipleSection": "Wielu płatników",
+      "singleTitle": "Jeden płatnik",
+      "singleDescription": "Jedna osoba pokrywa cały wydatek",
+      "evenlyTitle": "Po równo",
+      "evenlyDescription": "Każdy płaci równą część",
+      "bySharesTitle": "Według udziałów",
+      "bySharesDescription": "Każdy płaci ważony udział",
+      "byPercentageTitle": "Według procentów",
+      "byPercentageDescription": "Każdy płaci procent",
+      "byAmountTitle": "Według kwoty",
+      "byAmountDescription": "Każdy płaci stałą kwotę",
+      "selectPayers": "Wybierz, kto zapłacił",
+      "shareLabel": "Udziały",
+      "percentageLabel": "Procent"
     }
   },
   "ExpenseCard": {
@@ -280,10 +280,14 @@
     "SplitModeField": {
       "label": "Typ podziału",
       "evenly": "Równy",
-      "byShares": "Nierówny – Poprzez udziały",
-      "byPercentage": "Nierówny – Procentowo",
-      "byAmount": "Nierówny – Na konkretne sumy",
-      "saveAsDefault": "Wybierz jako domyślny typ podziału"
+      "byShares": "Poprzez udziały",
+      "byPercentage": "Procentowo",
+      "byAmount": "Na konkretne sumy",
+      "saveAsDefault": "Wybierz jako domyślny typ podziału",
+      "evenlyDescription": "Split equally among selected participants",
+      "bySharesDescription": "Split using weighted shares",
+      "byPercentageDescription": "Split using percentages that add up to 100%",
+      "byAmountDescription": "Split using fixed amounts for each participant"
     },
     "DeletePopup": {
       "label": "Usuń",
@@ -298,7 +302,10 @@
     "save": "Zapisz",
     "saving": "Zapisywanie…",
     "cancel": "Anuluj",
-    "reimbursement": "Zwrot środków"
+    "reimbursement": "Zwrot środków",
+    "PaidByField": {
+      "saveAsDefault": "Zapisz jako domyślne opcje płatnika"
+    }
   },
   "ExpenseDocumentsInput": {
     "TooBigToast": {
@@ -1138,5 +1145,8 @@
   },
   "CurrencyAmountInput": {
     "expressionHint": "lub 10+5"
+  },
+  "ExpenseTitleInput": {
+    "clear": "Wyczyść"
   }
 }

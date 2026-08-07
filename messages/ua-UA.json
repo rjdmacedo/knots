@@ -56,21 +56,21 @@
       "underpayment": "Недоплата на {amount}",
       "reimbursementSingleOnly": "Відшкодування підтримують лише одного платника",
       "amountPositive": "Сума повинна бути додатною",
-      "singleSection": "Single",
-      "multipleSection": "Multiple payers",
-      "singleTitle": "Single payer",
-      "singleDescription": "One person covers the full expense",
-      "evenlyTitle": "Evenly",
-      "evenlyDescription": "Each pays an equal share",
-      "bySharesTitle": "By shares",
-      "bySharesDescription": "Each pays a weighted share",
-      "byPercentageTitle": "By percentage",
-      "byPercentageDescription": "Each pays a percentage",
-      "byAmountTitle": "By amount",
-      "byAmountDescription": "Each pays a fixed amount",
-      "selectPayers": "Select who paid",
-      "shareLabel": "Shares",
-      "percentageLabel": "Percent"
+      "singleSection": "Один",
+      "multipleSection": "Кілька платників",
+      "singleTitle": "Один платник",
+      "singleDescription": "Одна людина покриває всю витрату",
+      "evenlyTitle": "Порівну",
+      "evenlyDescription": "Кожен платить рівну частку",
+      "bySharesTitle": "За частками",
+      "bySharesDescription": "Кожен платить зважену частку",
+      "byPercentageTitle": "За відсотками",
+      "byPercentageDescription": "Кожен платить відсоток",
+      "byAmountTitle": "За сумою",
+      "byAmountDescription": "Кожен платить фіксовану суму",
+      "selectPayers": "Виберіть, хто заплатив",
+      "shareLabel": "Частки",
+      "percentageLabel": "Відсоток"
     }
   },
   "ExpenseCard": {
@@ -280,10 +280,14 @@
     "SplitModeField": {
       "label": "Режим поділу",
       "evenly": "Рівномірно",
-      "byShares": "Нерівномірно – за частками",
-      "byPercentage": "Нерівномірно – за відсотками",
-      "byAmount": "Нерівномірно – за сумами",
-      "saveAsDefault": "Зберегти як параметри поділу за замовчуванням"
+      "byShares": "за частками",
+      "byPercentage": "за відсотками",
+      "byAmount": "за сумами",
+      "saveAsDefault": "Зберегти як параметри поділу за замовчуванням",
+      "evenlyDescription": "Split equally among selected participants",
+      "bySharesDescription": "Split using weighted shares",
+      "byPercentageDescription": "Split using percentages that add up to 100%",
+      "byAmountDescription": "Split using fixed amounts for each participant"
     },
     "DeletePopup": {
       "label": "Видалити",
@@ -298,7 +302,10 @@
     "save": "Зберегти",
     "saving": "Збереження..",
     "cancel": "Скасувати",
-    "reimbursement": "Відшкодування"
+    "reimbursement": "Відшкодування",
+    "PaidByField": {
+      "saveAsDefault": "Зберегти як типові параметри платника"
+    }
   },
   "ExpenseDocumentsInput": {
     "TooBigToast": {
@@ -1138,5 +1145,8 @@
   },
   "CurrencyAmountInput": {
     "expressionHint": "або 10+5"
+  },
+  "ExpenseTitleInput": {
+    "clear": "Очистити"
   }
 }

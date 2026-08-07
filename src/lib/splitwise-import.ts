@@ -387,6 +387,7 @@ async function parseExpenseRow(
     paidFor,
     splitMode: splitMode as SplitMode,
     saveDefaultSplittingOptions: false,
+    saveDefaultPaidByOptions: false,
     isReimbursement,
     documents: [],
     notes: `Imported from Splitwise`,

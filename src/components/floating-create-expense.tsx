@@ -726,7 +726,6 @@ export function FloatingCreateExpense({
             currentUserId={profile?.id}
             onSubmit={handleSubmit}
             onDelete={editingExpenseId ? handleDelete : undefined}
-            onCancel={resetForm}
             scrollHeader={participantScrollHeader}
           />
         ) : (
@@ -740,7 +739,6 @@ export function FloatingCreateExpense({
             preferredCurrency={profile?.preferredCurrency}
             onSubmit={handleSubmit}
             onDelete={editingExpenseId ? handleDelete : undefined}
-            onCancel={resetForm}
             runtimeFeatureFlags={runtimeFeatureFlags}
             isDesktop={isDesktop}
             scrollHeader={participantScrollHeader}
@@ -819,7 +817,13 @@ export function FloatingCreateExpense({
 
       <Dialog
         open={open}
-        onOpenChange={(val) => {
+        disablePointerDismissal
+        onOpenChange={(val, eventDetails) => {
+          // Only allow explicit close (X). Escape / outside click stay open.
+          // Save and Delete call resetForm() → setOpen(false) directly.
+          if (!val && eventDetails.reason !== 'close-press') {
+            return
+          }
           setOpen(val)
           if (!val) resetForm()
         }}

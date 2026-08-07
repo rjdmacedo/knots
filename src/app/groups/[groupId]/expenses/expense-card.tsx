@@ -25,15 +25,25 @@ import { Currency } from '@/lib/currency'
 import type { CopyableExpense } from '@/lib/expense-copy'
 import { buildCopyExpensePrefill } from '@/lib/expense-copy'
 import { getGroupExpenseDetailPath } from '@/lib/expense-detail-urls'
-import { openCopyGroupExpense } from '@/lib/expense-dialog-events'
+import {
+  openCopyGroupExpense,
+  openEditGroupExpense,
+} from '@/lib/expense-dialog-events'
 import { invalidateActivityQueries } from '@/lib/invalidate-activity-queries'
 import { isConsolidatedPayment } from '@/lib/payments'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
-import { ChevronRight, Copy, Loader2, MoreVertical, Trash2 } from 'lucide-react'
+import {
+  ChevronRight,
+  Copy,
+  Loader2,
+  MoreVertical,
+  Pencil,
+  Trash2,
+} from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
-import { Fragment, useState } from 'react'
+import { Fragment, useRef, useState } from 'react'
 import { useCurrentGroup } from '../current-group-context'
 
 type Expense = Awaited<ReturnType<typeof getGroupExpenses>>[number]
@@ -116,6 +126,11 @@ export function ExpenseCard({
   const { group } = useCurrentGroup()
   const utils = trpc.useUtils()
   const [deleteOpen, setDeleteOpen] = useState(false)
+  const ignoreCardClickRef = useRef(false)
+
+  const suppressCardNavigation = () => {
+    ignoreCardClickRef.current = true
+  }
 
   const isLocked = isConsolidatedPayment(expense)
 
@@ -159,10 +174,14 @@ export function ExpenseCard({
         expense.isReimbursement && 'italic',
       )}
       onClick={(e) => {
+        if (ignoreCardClickRef.current) {
+          ignoreCardClickRef.current = false
+          return
+        }
         const target = e.target as HTMLElement
         if (
           target.closest(
-            'button, a, [role="dialog"], [data-slot="drawer-overlay"], [data-slot="popover-content"]',
+            'button, a, [role="menuitem"], [role="dialog"], [data-slot="drawer-overlay"], [data-slot="popover-content"], [data-slot="dropdown-menu-content"], [data-slot="dropdown-menu-item"]',
           )
         ) {
           return
@@ -189,57 +208,79 @@ export function ExpenseCard({
         </div>
       </div>
       <div className="flex flex-col items-end shrink-0">
-        <div className="flex items-start gap-0.5">
-          <div
-            className={cn(
-              'tabular-nums whitespace-nowrap pt-0.5',
-              expense.isReimbursement ? 'italic' : 'font-bold',
-            )}
-          >
-            {formatCurrency(currency, expense.amount, locale)}
-          </div>
-          {!isLocked ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    className="-mt-1 -mr-1"
-                    aria-label={`${t('copy')}, ${t('delete')}`}
-                  />
-                }
-              >
-                <MoreVertical className="h-4 w-4" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={handleCopy}>
-                  <Copy className="h-4 w-4" />
-                  <span>{t('copy')}</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  variant="destructive"
-                  onClick={() => setDeleteOpen(true)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                  <span>{t('delete')}</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              className="-mt-1 -mr-1 hidden sm:inline-flex"
-              onClick={(event) => {
-                event.stopPropagation()
-                router.push(getGroupExpenseDetailPath(groupId, expense.id))
+        {!isLocked ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  className="-mt-1 -mr-1"
+                  aria-label={`${t('edit')}, ${t('copy')}, ${t('delete')}`}
+                />
+              }
+            >
+              <MoreVertical className="h-4 w-4" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              onClick={(e) => e.stopPropagation()}
+              onPointerDown={(e) => {
+                e.stopPropagation()
+                suppressCardNavigation()
               }}
             >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+              <DropdownMenuItem
+                onClick={() => {
+                  suppressCardNavigation()
+                  openEditGroupExpense(groupId, expense.id)
+                }}
+              >
+                <Pencil className="h-4 w-4" />
+                <span>{t('edit')}</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  suppressCardNavigation()
+                  handleCopy()
+                }}
+              >
+                <Copy className="h-4 w-4" />
+                <span>{t('copy')}</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => {
+                  suppressCardNavigation()
+                  setDeleteOpen(true)
+                }}
+              >
+                <Trash2 className="h-4 w-4" />
+                <span>{t('delete')}</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className="-mt-1 -mr-1 hidden sm:inline-flex"
+            onClick={(event) => {
+              event.stopPropagation()
+              router.push(getGroupExpenseDetailPath(groupId, expense.id))
+            }}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        )}
+        <div
+          className={cn(
+            'tabular-nums whitespace-nowrap',
+            expense.isReimbursement ? 'italic' : 'font-bold',
           )}
+        >
+          {formatCurrency(currency, expense.amount, locale)}
         </div>
         <div className="text-xs text-muted-foreground">
           <DocumentsCount count={expense._count.documents} />

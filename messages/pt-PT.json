@@ -58,21 +58,21 @@
       "underpayment": "Pagamento em falta de {amount}",
       "reimbursementSingleOnly": "Os reembolsos suportam apenas um pagador",
       "amountPositive": "O valor deve ser positivo",
-      "singleSection": "Single",
-      "multipleSection": "Multiple payers",
-      "singleTitle": "Single payer",
-      "singleDescription": "One person covers the full expense",
-      "evenlyTitle": "Evenly",
-      "evenlyDescription": "Each pays an equal share",
-      "bySharesTitle": "By shares",
-      "bySharesDescription": "Each pays a weighted share",
-      "byPercentageTitle": "By percentage",
-      "byPercentageDescription": "Each pays a percentage",
-      "byAmountTitle": "By amount",
-      "byAmountDescription": "Each pays a fixed amount",
-      "selectPayers": "Select who paid",
-      "shareLabel": "Shares",
-      "percentageLabel": "Percent"
+      "singleSection": "Uma pessoa",
+      "multipleSection": "Várias pessoas",
+      "singleTitle": "Uma pessoa",
+      "singleDescription": "Uma pessoa cobre a despesa na totalidade",
+      "evenlyTitle": "Igualmente",
+      "evenlyDescription": "Cada um paga uma parte igual",
+      "bySharesTitle": "Por partes",
+      "bySharesDescription": "Cada um paga uma parte ponderada",
+      "byPercentageTitle": "Por percentagem",
+      "byPercentageDescription": "Cada um paga uma percentagem",
+      "byAmountTitle": "Por montante",
+      "byAmountDescription": "Cada um paga um valor fixo",
+      "selectPayers": "Selecciona quem pagou",
+      "shareLabel": "Partes",
+      "percentageLabel": "Percentagem"
     },
     "export": "Exportar"
   },
@@ -264,12 +264,12 @@
       "categoryFieldDescription": "Selecciona a categoria da despesa.",
       "paidByField": {
         "label": "Pago por",
-        "description": "Select who provided the money and how much each payer contributed.",
+        "description": "Selecciona quem forneceu o dinheiro e quanto cada pagador contribuiu.",
         "placeholder": "Selecciona um participante"
       },
       "paidFor": {
-        "title": "Pago para",
-        "description": "Selecciona para quem a despesa foi paga."
+        "title": "Dividir entre participantes",
+        "description": "Escolhe como dividir a despesa e quem está incluído."
       },
       "splitModeDescription": "Selecciona como dividir a despesa.",
       "notesDescription": "Adiciona detalhes opcionais sobre esta despesa.",
@@ -308,10 +308,14 @@
     "SplitModeField": {
       "label": "Modo de divisão",
       "evenly": "Igualmente",
-      "byShares": "Desigualmente – Por partes",
-      "byPercentage": "Desigualmente – Por percentagem",
-      "byAmount": "Desigualmente – Por valor",
-      "saveAsDefault": "Guardar como opções de divisão padrão"
+      "byShares": "Por partes",
+      "byPercentage": "Por percentagem",
+      "byAmount": "Por montante",
+      "saveAsDefault": "Guardar como opções de divisão padrão",
+      "evenlyDescription": "Dividido igualmente entre os participantes selecionados",
+      "bySharesDescription": "Dividir com partes ponderadas",
+      "byPercentageDescription": "Dividir com percentagens que somam 100%",
+      "byAmountDescription": "Dividir com um montante fixo para cada participante"
     },
     "DeletePopup": {
       "label": "Apagar",
@@ -351,10 +355,14 @@
       "refresh": "Atualizar",
       "customRate": "A usar taxa personalizada"
     },
-    "noLongerInGroup": "já não faz parte deste grupo"
+    "noLongerInGroup": "já não faz parte deste grupo",
+    "PaidByField": {
+      "saveAsDefault": "Guardar como opções de pagamento padrão"
+    }
   },
   "ExpenseTitleInput": {
-    "noSuggestions": "Nenhuma sugestão encontrada."
+    "noSuggestions": "Nenhuma sugestão encontrada.",
+    "clear": "Limpar"
   },
   "ExpenseDocumentsInput": {
     "addImage": "Adicionar imagem",
@@ -645,10 +653,10 @@
     "amountSum": "A soma dos valores tem de ser igual ao valor da despesa.",
     "percentageSum": "A soma das percentagens tem de ser igual a 100.",
     "ratePositive": "A taxa tem de ser estritamente superior a zero.",
-    "paidByAmountPositive": "Each payer's amount must be greater than zero.",
-    "paidByAmountSum": "Payer amounts must sum to the expense total.",
-    "paidByDuplicateParticipants": "Each payer can only appear once.",
-    "reimbursementSinglePayer": "Reimbursements support only a single payer."
+    "paidByAmountPositive": "O valor de cada pagador tem de ser superior a zero.",
+    "paidByAmountSum": "A soma dos valores dos pagadores tem de ser igual ao valor da despesa.",
+    "paidByDuplicateParticipants": "Cada pagador só pode aparecer uma vez.",
+    "reimbursementSinglePayer": "Os reembolsos suportam apenas um pagador."
   },
   "Categories": {
     "search": "Procurar categoria...",
@@ -949,6 +957,16 @@
       "errorMissingUppercase": "Deve conter pelo menos uma letra maiúscula",
       "errorMissingLowercase": "Deve conter pelo menos uma letra minúscula",
       "errorMissingDigit": "Deve conter pelo menos um dígito"
+    },
+    "usernameTitle": "Nome de utilizador",
+    "usernameDescription": "O teu nome de utilizador aparece nos URLs do teu perfil. Tem de ser único.",
+    "UsernameForm": {
+      "successToast": "Nome de utilizador actualizado com sucesso.",
+      "label": "Nome de utilizador",
+      "placeholder": "o-teu-nome-de-utilizador",
+      "description": "Usado no URL do teu perfil. Apenas letras minúsculas, números e hífenes.",
+      "saving": "A guardar...",
+      "submit": "Guardar nome de utilizador"
     }
   },
   "Friends": {
@@ -1051,7 +1069,8 @@
         "earlierThisYear": "Anteriores neste ano",
         "lastYear": "Ano passado",
         "older": "Mais antigas"
-      }
+      },
+      "backToFriend": "Voltar a {name}"
     },
     "List": {
       "totalOwedToYou": "No total, devem-lhe {amount}",

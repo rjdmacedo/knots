@@ -92,6 +92,7 @@ function makeExpenseFormValues(
     documents: [],
     notes: '',
     saveDefaultSplittingOptions: false,
+    saveDefaultPaidByOptions: false,
     recurrenceRule: 'NONE',
     ...overrides,
   } as ExpenseFormValues

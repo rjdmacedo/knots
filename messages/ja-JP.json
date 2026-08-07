@@ -56,21 +56,21 @@
       "underpayment": "{amount} の不足",
       "reimbursementSingleOnly": "払い戻しは1人の支払者のみ対応しています",
       "amountPositive": "金額は正の値である必要があります",
-      "singleSection": "Single",
-      "multipleSection": "Multiple payers",
-      "singleTitle": "Single payer",
-      "singleDescription": "One person covers the full expense",
-      "evenlyTitle": "Evenly",
-      "evenlyDescription": "Each pays an equal share",
-      "bySharesTitle": "By shares",
-      "bySharesDescription": "Each pays a weighted share",
-      "byPercentageTitle": "By percentage",
-      "byPercentageDescription": "Each pays a percentage",
-      "byAmountTitle": "By amount",
-      "byAmountDescription": "Each pays a fixed amount",
-      "selectPayers": "Select who paid",
-      "shareLabel": "Shares",
-      "percentageLabel": "Percent"
+      "singleSection": "単一",
+      "multipleSection": "複数の支払者",
+      "singleTitle": "一人が支払い",
+      "singleDescription": "一人が費用の全額を負担します",
+      "evenlyTitle": "均等",
+      "evenlyDescription": "それぞれが同じ金額を支払います",
+      "bySharesTitle": "シェア別",
+      "bySharesDescription": "それぞれが重み付けされたシェアを支払います",
+      "byPercentageTitle": "割合別",
+      "byPercentageDescription": "それぞれが割合で支払います",
+      "byAmountTitle": "金額別",
+      "byAmountDescription": "それぞれが固定金額を支払います",
+      "selectPayers": "支払った人を選択",
+      "shareLabel": "シェア",
+      "percentageLabel": "割合"
     }
   },
   "ExpenseCard": {
@@ -283,7 +283,11 @@
       "byShares": "不均等に - シェアで",
       "byPercentage": "不均等に - パーセンテージで",
       "byAmount": "不均等に - 金額で",
-      "saveAsDefault": "デフォルトの分割オプションとして保存"
+      "saveAsDefault": "デフォルトの分割オプションとして保存",
+      "evenlyDescription": "Split equally among selected participants",
+      "bySharesDescription": "Split using weighted shares",
+      "byPercentageDescription": "Split using percentages that add up to 100%",
+      "byAmountDescription": "Split using fixed amounts for each participant"
     },
     "DeletePopup": {
       "label": "削除",
@@ -298,7 +302,10 @@
     "save": "保存",
     "saving": "保存中...",
     "cancel": "キャンセル",
-    "reimbursement": "払い戻し"
+    "reimbursement": "払い戻し",
+    "PaidByField": {
+      "saveAsDefault": "デフォルトの支払者オプションとして保存"
+    }
   },
   "ExpenseDocumentsInput": {
     "TooBigToast": {
@@ -1138,5 +1145,8 @@
   },
   "CurrencyAmountInput": {
     "expressionHint": "または 10+5"
+  },
+  "ExpenseTitleInput": {
+    "clear": "クリア"
   }
 }

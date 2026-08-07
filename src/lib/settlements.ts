@@ -96,6 +96,7 @@ export function buildSettlementFormValues(
     paidFor: [{ participant: toUserId, shares: amountMinor }],
     splitMode: 'BY_AMOUNT',
     saveDefaultSplittingOptions: false,
+    saveDefaultPaidByOptions: false,
     isReimbursement: true,
     documents: [],
     notes: '',

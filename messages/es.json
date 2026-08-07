@@ -56,21 +56,21 @@
       "underpayment": "Pago insuficiente de {amount}",
       "reimbursementSingleOnly": "Los reembolsos solo admiten un pagador",
       "amountPositive": "El monto debe ser positivo",
-      "singleSection": "Single",
-      "multipleSection": "Multiple payers",
-      "singleTitle": "Single payer",
-      "singleDescription": "One person covers the full expense",
-      "evenlyTitle": "Evenly",
-      "evenlyDescription": "Each pays an equal share",
-      "bySharesTitle": "By shares",
-      "bySharesDescription": "Each pays a weighted share",
-      "byPercentageTitle": "By percentage",
-      "byPercentageDescription": "Each pays a percentage",
-      "byAmountTitle": "By amount",
-      "byAmountDescription": "Each pays a fixed amount",
-      "selectPayers": "Select who paid",
-      "shareLabel": "Shares",
-      "percentageLabel": "Percent"
+      "singleSection": "Único",
+      "multipleSection": "Varios pagadores",
+      "singleTitle": "Un pagador",
+      "singleDescription": "Una persona cubre el gasto completo",
+      "evenlyTitle": "Por igual",
+      "evenlyDescription": "Cada uno paga una parte igual",
+      "bySharesTitle": "Por partes",
+      "bySharesDescription": "Cada uno paga una parte ponderada",
+      "byPercentageTitle": "Por porcentaje",
+      "byPercentageDescription": "Cada uno paga un porcentaje",
+      "byAmountTitle": "Por importe",
+      "byAmountDescription": "Cada uno paga un importe fijo",
+      "selectPayers": "Selecciona quién pagó",
+      "shareLabel": "Partes",
+      "percentageLabel": "Porcentaje"
     }
   },
   "ExpenseCard": {
@@ -279,11 +279,15 @@
     "advancedOptions": "Opciones avanzadas",
     "SplitModeField": {
       "label": "Modo de división",
-      "evenly": "Uniformemente",
-      "byShares": "Desigualmente – Por partes",
-      "byPercentage": "Desigualmente – por porcentaje",
-      "byAmount": "Desigualmente – por cantidad",
-      "saveAsDefault": "Guardar como modo preferido"
+      "evenly": "Por igual",
+      "byShares": "Por partes",
+      "byPercentage": "Por porcentaje",
+      "byAmount": "Por importe",
+      "saveAsDefault": "Guardar como modo preferido",
+      "evenlyDescription": "Dividir por igual entre los participantes seleccionados",
+      "bySharesDescription": "Dividir con partes ponderadas",
+      "byPercentageDescription": "Dividir con porcentajes que suman 100%",
+      "byAmountDescription": "Dividir con un importe fijo para cada participante"
     },
     "DeletePopup": {
       "label": "Borrar",
@@ -298,7 +302,10 @@
     "save": "Guardar",
     "saving": "Guardando",
     "cancel": "Cancelar",
-    "reimbursement": "Reembolso"
+    "reimbursement": "Reembolso",
+    "PaidByField": {
+      "saveAsDefault": "Guardar como opciones de pago predeterminadas"
+    }
   },
   "ExpenseDocumentsInput": {
     "TooBigToast": {
@@ -1141,5 +1148,8 @@
   },
   "CurrencyAmountInput": {
     "expressionHint": "o 10+5"
+  },
+  "ExpenseTitleInput": {
+    "clear": "Borrar"
   }
 }

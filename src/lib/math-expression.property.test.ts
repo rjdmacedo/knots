@@ -359,6 +359,7 @@ describe('Feature: expense-amount-math-expressions, Property 5: Schema Expressio
           paidFor: [{ participant: 'user2', shares: '100' }],
           splitMode: 'EVENLY',
           saveDefaultSplittingOptions: false,
+          saveDefaultPaidByOptions: false,
           isReimbursement: false,
         })
 

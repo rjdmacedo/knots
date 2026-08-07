@@ -56,21 +56,21 @@
       "underpayment": "Alimaksu {amount}",
       "reimbursementSingleOnly": "Hyvitykset tukevat vain yhtä maksajaa",
       "amountPositive": "Summan on oltava positiivinen",
-      "singleSection": "Single",
-      "multipleSection": "Multiple payers",
-      "singleTitle": "Single payer",
-      "singleDescription": "One person covers the full expense",
-      "evenlyTitle": "Evenly",
-      "evenlyDescription": "Each pays an equal share",
-      "bySharesTitle": "By shares",
-      "bySharesDescription": "Each pays a weighted share",
-      "byPercentageTitle": "By percentage",
-      "byPercentageDescription": "Each pays a percentage",
-      "byAmountTitle": "By amount",
-      "byAmountDescription": "Each pays a fixed amount",
-      "selectPayers": "Select who paid",
-      "shareLabel": "Shares",
-      "percentageLabel": "Percent"
+      "singleSection": "Yksi",
+      "multipleSection": "Useita maksajia",
+      "singleTitle": "Yksi maksaja",
+      "singleDescription": "Yksi henkilö maksaa koko kulun",
+      "evenlyTitle": "Tasan",
+      "evenlyDescription": "Jokainen maksaa yhtä suuren osuuden",
+      "bySharesTitle": "Osuuksina",
+      "bySharesDescription": "Jokainen maksaa painotetun osuuden",
+      "byPercentageTitle": "Prosentteina",
+      "byPercentageDescription": "Jokainen maksaa prosenttiosuuden",
+      "byAmountTitle": "Summina",
+      "byAmountDescription": "Jokainen maksaa kiinteän summan",
+      "selectPayers": "Valitse kuka maksoi",
+      "shareLabel": "Osuudet",
+      "percentageLabel": "Prosentti"
     }
   },
   "ExpenseCard": {
@@ -280,10 +280,14 @@
     "SplitModeField": {
       "label": "Jakamistapa",
       "evenly": "Tasan",
-      "byShares": "Epätasan – osuuksien mukaan",
-      "byPercentage": "Epätasan – prosenttien mukaan",
-      "byAmount": "Epätasan – summan mukaan",
-      "saveAsDefault": "Tallenna oletustavaksi"
+      "byShares": "osuuksien mukaan",
+      "byPercentage": "prosenttien mukaan",
+      "byAmount": "summan mukaan",
+      "saveAsDefault": "Tallenna oletustavaksi",
+      "evenlyDescription": "Split equally among selected participants",
+      "bySharesDescription": "Split using weighted shares",
+      "byPercentageDescription": "Split using percentages that add up to 100%",
+      "byAmountDescription": "Split using fixed amounts for each participant"
     },
     "DeletePopup": {
       "label": "Poista",
@@ -298,7 +302,10 @@
     "save": "Tallenna",
     "saving": "Tallennetaan…",
     "cancel": "Peruuta",
-    "reimbursement": "Velanmaksu"
+    "reimbursement": "Velanmaksu",
+    "PaidByField": {
+      "saveAsDefault": "Tallenna oletusmaksaja-asetuksiksi"
+    }
   },
   "ExpenseDocumentsInput": {
     "TooBigToast": {
@@ -1141,5 +1148,8 @@
   },
   "CurrencyAmountInput": {
     "expressionHint": "tai 10+5"
+  },
+  "ExpenseTitleInput": {
+    "clear": "Tyhjennä"
   }
 }

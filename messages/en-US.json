@@ -280,8 +280,8 @@
         "monthly": "Monthly"
       },
       "paidFor": {
-        "title": "Paid for",
-        "description": "Select who the expense was paid for."
+        "title": "Split between",
+        "description": "Choose how to split the expense and who is included."
       },
       "splitModeDescription": "Select how to split the expense.",
       "notesDescription": "Add optional details about this expense.",
@@ -333,10 +333,14 @@
     "SplitModeField": {
       "label": "Split mode",
       "evenly": "Evenly",
-      "byShares": "Unevenly – By shares",
-      "byPercentage": "Unevenly – By percentage",
-      "byAmount": "Unevenly – By amount",
-      "saveAsDefault": "Save as default splitting options"
+      "byShares": "By shares",
+      "byPercentage": "By percentage",
+      "byAmount": "By amount",
+      "saveAsDefault": "Save as default splitting options",
+      "evenlyDescription": "Split equally among selected participants",
+      "bySharesDescription": "Split using weighted shares",
+      "byPercentageDescription": "Split using percentages that add up to 100%",
+      "byAmountDescription": "Split using fixed amounts for each participant"
     },
     "DeletePopup": {
       "label": "Delete",
@@ -351,10 +355,14 @@
     "save": "Save",
     "saving": "Saving…",
     "cancel": "Cancel",
-    "reimbursement": "Reimbursement"
+    "reimbursement": "Reimbursement",
+    "PaidByField": {
+      "saveAsDefault": "Save as default paid by options"
+    }
   },
   "ExpenseTitleInput": {
-    "noSuggestions": "No suggestions found."
+    "noSuggestions": "No suggestions found.",
+    "clear": "Clear"
   },
   "ExpenseDocumentsInput": {
     "addImage": "Add image",

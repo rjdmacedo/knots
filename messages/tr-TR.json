@@ -56,21 +56,21 @@
       "underpayment": "{amount} eksik ödeme",
       "reimbursementSingleOnly": "Geri ödemeler yalnızca bir ödeyeni destekler",
       "amountPositive": "Tutar pozitif olmalıdır",
-      "singleSection": "Single",
-      "multipleSection": "Multiple payers",
-      "singleTitle": "Single payer",
-      "singleDescription": "One person covers the full expense",
-      "evenlyTitle": "Evenly",
-      "evenlyDescription": "Each pays an equal share",
-      "bySharesTitle": "By shares",
-      "bySharesDescription": "Each pays a weighted share",
-      "byPercentageTitle": "By percentage",
-      "byPercentageDescription": "Each pays a percentage",
-      "byAmountTitle": "By amount",
-      "byAmountDescription": "Each pays a fixed amount",
-      "selectPayers": "Select who paid",
-      "shareLabel": "Shares",
-      "percentageLabel": "Percent"
+      "singleSection": "Tek",
+      "multipleSection": "Birden fazla ödeyen",
+      "singleTitle": "Tek ödeyen",
+      "singleDescription": "Bir kişi tüm masrafı karşılar",
+      "evenlyTitle": "Eşit",
+      "evenlyDescription": "Herkes eşit pay öder",
+      "bySharesTitle": "Paylara göre",
+      "bySharesDescription": "Herkes ağırlıklı bir pay öder",
+      "byPercentageTitle": "Yüzdeye göre",
+      "byPercentageDescription": "Herkes bir yüzde öder",
+      "byAmountTitle": "Tutara göre",
+      "byAmountDescription": "Herkes sabit bir tutar öder",
+      "selectPayers": "Kim ödediğini seçin",
+      "shareLabel": "Paylar",
+      "percentageLabel": "Yüzde"
     }
   },
   "ExpenseCard": {
@@ -280,10 +280,14 @@
     "SplitModeField": {
       "label": "Paylaşım modu",
       "evenly": "Eşit pay",
-      "byShares": "Eşit olmayan – Pay adedine göre",
-      "byPercentage": "Eşit olmayan – Yüzdeye göre",
-      "byAmount": "Eşit olmayan – Tutar bazında",
-      "saveAsDefault": "Varsayılan paylaşım ayarları olarak kaydet"
+      "byShares": "Pay adedine göre",
+      "byPercentage": "Yüzdeye göre",
+      "byAmount": "Tutar bazında",
+      "saveAsDefault": "Varsayılan paylaşım ayarları olarak kaydet",
+      "evenlyDescription": "Split equally among selected participants",
+      "bySharesDescription": "Split using weighted shares",
+      "byPercentageDescription": "Split using percentages that add up to 100%",
+      "byAmountDescription": "Split using fixed amounts for each participant"
     },
     "DeletePopup": {
       "label": "Sil",
@@ -298,7 +302,10 @@
     "save": "Kaydet",
     "saving": "Kaydediliyor…",
     "cancel": "İptal",
-    "reimbursement": "Geri ödeme"
+    "reimbursement": "Geri ödeme",
+    "PaidByField": {
+      "saveAsDefault": "Varsayılan ödeyen seçenekleri olarak kaydet"
+    }
   },
   "ExpenseDocumentsInput": {
     "TooBigToast": {
@@ -1138,5 +1145,8 @@
   },
   "CurrencyAmountInput": {
     "expressionHint": "veya 10+5"
+  },
+  "ExpenseTitleInput": {
+    "clear": "Temizle"
   }
 }

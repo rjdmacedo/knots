@@ -78,6 +78,7 @@ const arbExpenseFormValues = fc.record({
   paidFor: fc.array(arbPaidForEntry, { minLength: 1, maxLength: 10 }),
   splitMode: arbSplitMode,
   saveDefaultSplittingOptions: fc.boolean(),
+  saveDefaultPaidByOptions: fc.boolean(),
   isReimbursement: fc.boolean(),
   documents: fc.array(arbDocument, { minLength: 0, maxLength: 3 }),
   notes: fc.option(fc.string({ minLength: 0, maxLength: 200 }), {

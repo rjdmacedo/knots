@@ -56,21 +56,21 @@
       "underpayment": "Недоплата на {amount}",
       "reimbursementSingleOnly": "Возмещения поддерживают только одного плательщика",
       "amountPositive": "Сумма должна быть положительной",
-      "singleSection": "Single",
-      "multipleSection": "Multiple payers",
-      "singleTitle": "Single payer",
-      "singleDescription": "One person covers the full expense",
-      "evenlyTitle": "Evenly",
-      "evenlyDescription": "Each pays an equal share",
-      "bySharesTitle": "By shares",
-      "bySharesDescription": "Each pays a weighted share",
-      "byPercentageTitle": "By percentage",
-      "byPercentageDescription": "Each pays a percentage",
-      "byAmountTitle": "By amount",
-      "byAmountDescription": "Each pays a fixed amount",
-      "selectPayers": "Select who paid",
-      "shareLabel": "Shares",
-      "percentageLabel": "Percent"
+      "singleSection": "Один",
+      "multipleSection": "Несколько плательщиков",
+      "singleTitle": "Один плательщик",
+      "singleDescription": "Один человек оплачивает весь расход",
+      "evenlyTitle": "Поровну",
+      "evenlyDescription": "Каждый платит равную долю",
+      "bySharesTitle": "По долям",
+      "bySharesDescription": "Каждый платит взвешенную долю",
+      "byPercentageTitle": "По процентам",
+      "byPercentageDescription": "Каждый платит процент",
+      "byAmountTitle": "По сумме",
+      "byAmountDescription": "Каждый платит фиксированную сумму",
+      "selectPayers": "Выберите, кто заплатил",
+      "shareLabel": "Доли",
+      "percentageLabel": "Процент"
     }
   },
   "ExpenseCard": {
@@ -280,10 +280,14 @@
     "SplitModeField": {
       "label": "Режим разделения",
       "evenly": "Равный",
-      "byShares": "Неравный – По долям",
-      "byPercentage": "Неравный – По процентам",
-      "byAmount": "Неравный – По суммам",
-      "saveAsDefault": "Сделать режимом по умолчанию"
+      "byShares": "По долям",
+      "byPercentage": "По процентам",
+      "byAmount": "По суммам",
+      "saveAsDefault": "Сделать режимом по умолчанию",
+      "evenlyDescription": "Split equally among selected participants",
+      "bySharesDescription": "Split using weighted shares",
+      "byPercentageDescription": "Split using percentages that add up to 100%",
+      "byAmountDescription": "Split using fixed amounts for each participant"
     },
     "DeletePopup": {
       "label": "Удалить",
@@ -298,7 +302,10 @@
     "save": "Сохранить",
     "saving": "Сохранение…",
     "cancel": "Отмена",
-    "reimbursement": "Возмещение"
+    "reimbursement": "Возмещение",
+    "PaidByField": {
+      "saveAsDefault": "Сохранить как параметры плательщика по умолчанию"
+    }
   },
   "ExpenseDocumentsInput": {
     "TooBigToast": {
@@ -1138,5 +1145,8 @@
   },
   "CurrencyAmountInput": {
     "expressionHint": "или 10+5"
+  },
+  "ExpenseTitleInput": {
+    "clear": "Очистить"
   }
 }

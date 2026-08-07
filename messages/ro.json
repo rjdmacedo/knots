@@ -56,21 +56,21 @@
       "underpayment": "Plată insuficientă cu {amount}",
       "reimbursementSingleOnly": "Rambursările suportă doar un plătitor",
       "amountPositive": "Suma trebuie să fie pozitivă",
-      "singleSection": "Single",
-      "multipleSection": "Multiple payers",
-      "singleTitle": "Single payer",
-      "singleDescription": "One person covers the full expense",
-      "evenlyTitle": "Evenly",
-      "evenlyDescription": "Each pays an equal share",
-      "bySharesTitle": "By shares",
-      "bySharesDescription": "Each pays a weighted share",
-      "byPercentageTitle": "By percentage",
-      "byPercentageDescription": "Each pays a percentage",
-      "byAmountTitle": "By amount",
-      "byAmountDescription": "Each pays a fixed amount",
-      "selectPayers": "Select who paid",
-      "shareLabel": "Shares",
-      "percentageLabel": "Percent"
+      "singleSection": "Unul",
+      "multipleSection": "Mai mulți plătitori",
+      "singleTitle": "Un plătitor",
+      "singleDescription": "O persoană acoperă toată cheltuiala",
+      "evenlyTitle": "Egal",
+      "evenlyDescription": "Fiecare plătește o parte egală",
+      "bySharesTitle": "După cote",
+      "bySharesDescription": "Fiecare plătește o cotă ponderată",
+      "byPercentageTitle": "După procent",
+      "byPercentageDescription": "Fiecare plătește un procent",
+      "byAmountTitle": "După sumă",
+      "byAmountDescription": "Fiecare plătește o sumă fixă",
+      "selectPayers": "Selectează cine a plătit",
+      "shareLabel": "Cote",
+      "percentageLabel": "Procent"
     }
   },
   "ExpenseCard": {
@@ -280,10 +280,14 @@
     "SplitModeField": {
       "label": "Împărțire",
       "evenly": "Egal",
-      "byShares": "Inegal – În funcție de parte",
-      "byPercentage": "Inegal – În funcție de procentaj",
-      "byAmount": "Inegal – În funcție de sumă",
-      "saveAsDefault": "Salvează ca și implicite opțiunile de împărțire"
+      "byShares": "În funcție de parte",
+      "byPercentage": "În funcție de procentaj",
+      "byAmount": "În funcție de sumă",
+      "saveAsDefault": "Salvează ca și implicite opțiunile de împărțire",
+      "evenlyDescription": "Split equally among selected participants",
+      "bySharesDescription": "Split using weighted shares",
+      "byPercentageDescription": "Split using percentages that add up to 100%",
+      "byAmountDescription": "Split using fixed amounts for each participant"
     },
     "DeletePopup": {
       "label": "Șterge",
@@ -298,7 +302,10 @@
     "save": "Salvează",
     "saving": "Se salvează…",
     "cancel": "Anulează",
-    "reimbursement": "Rambursare"
+    "reimbursement": "Rambursare",
+    "PaidByField": {
+      "saveAsDefault": "Salvează ca opțiuni implicite de plată"
+    }
   },
   "ExpenseDocumentsInput": {
     "TooBigToast": {
@@ -1138,5 +1145,8 @@
   },
   "CurrencyAmountInput": {
     "expressionHint": "sau 10+5"
+  },
+  "ExpenseTitleInput": {
+    "clear": "Șterge"
   }
 }

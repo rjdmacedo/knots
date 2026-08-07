@@ -56,21 +56,21 @@
       "underpayment": "Pagamento insuficiente de {amount}",
       "reimbursementSingleOnly": "Reembolsos suportam apenas um pagador",
       "amountPositive": "O valor deve ser positivo",
-      "singleSection": "Single",
-      "multipleSection": "Multiple payers",
-      "singleTitle": "Single payer",
-      "singleDescription": "One person covers the full expense",
-      "evenlyTitle": "Evenly",
-      "evenlyDescription": "Each pays an equal share",
-      "bySharesTitle": "By shares",
-      "bySharesDescription": "Each pays a weighted share",
-      "byPercentageTitle": "By percentage",
-      "byPercentageDescription": "Each pays a percentage",
-      "byAmountTitle": "By amount",
-      "byAmountDescription": "Each pays a fixed amount",
-      "selectPayers": "Select who paid",
-      "shareLabel": "Shares",
-      "percentageLabel": "Percent"
+      "singleSection": "Uma pessoa",
+      "multipleSection": "Várias pessoas",
+      "singleTitle": "Uma pessoa",
+      "singleDescription": "Uma pessoa cobre a despesa por completo",
+      "evenlyTitle": "Igualmente",
+      "evenlyDescription": "Cada um paga uma parte igual",
+      "bySharesTitle": "Por cotas",
+      "bySharesDescription": "Cada um paga uma cota ponderada",
+      "byPercentageTitle": "Por porcentagem",
+      "byPercentageDescription": "Cada um paga uma porcentagem",
+      "byAmountTitle": "Por montante",
+      "byAmountDescription": "Cada um paga um valor fixo",
+      "selectPayers": "Selecione quem pagou",
+      "shareLabel": "Cotas",
+      "percentageLabel": "Porcentagem"
     }
   },
   "ExpenseCard": {
@@ -222,7 +222,7 @@
       "paidByField": {
         "label": "Pago por",
         "placeholder": "Selecione um participante",
-        "description": "Select who provided the money and how much each payer contributed."
+        "description": "Selecione quem forneceu o dinheiro e quanto cada pagador contribuiu."
       },
       "recurrenceRule": {
         "label": "Recorrência da Despesa",
@@ -233,8 +233,8 @@
         "monthly": "Mensalmente"
       },
       "paidFor": {
-        "title": "Pago para",
-        "description": "Selecione para quem a despesa foi paga."
+        "title": "Dividir entre participantes",
+        "description": "Escolha como dividir a despesa e quem está incluído."
       },
       "splitModeDescription": "Selecione como dividir a despesa.",
       "attachDescription": "Veja e anexe recibos à despesa."
@@ -280,10 +280,14 @@
     "SplitModeField": {
       "label": "Modo de divisão",
       "evenly": "Igualmente",
-      "byShares": "Desigualmente - Por partes",
-      "byPercentage": "Desigualmente - Por porcentagem",
-      "byAmount": "Desigualmente - Por valor",
-      "saveAsDefault": "Salvar como opções de divisão padrão"
+      "byShares": "Por cotas",
+      "byPercentage": "Por porcentagem",
+      "byAmount": "Por montante",
+      "saveAsDefault": "Salvar como opções de divisão padrão",
+      "evenlyDescription": "Dividido igualmente entre os participantes selecionados",
+      "bySharesDescription": "Dividir com cotas ponderadas",
+      "byPercentageDescription": "Dividir com porcentagens que somam 100%",
+      "byAmountDescription": "Dividir com um montante fixo para cada participante"
     },
     "DeletePopup": {
       "label": "Excluir",
@@ -298,7 +302,10 @@
     "save": "Salvar",
     "saving": "Salvando…",
     "cancel": "Cancelar",
-    "reimbursement": "Reembolso"
+    "reimbursement": "Reembolso",
+    "PaidByField": {
+      "saveAsDefault": "Salvar como opções de pagamento padrão"
+    }
   },
   "ExpenseDocumentsInput": {
     "TooBigToast": {
@@ -571,10 +578,10 @@
     "noZeroShares": "Todas as partes devem ser maiores que 0.",
     "amountSum": "A soma dos valores deve ser igual ao valor da despesa.",
     "percentageSum": "A soma das porcentagens deve ser igual a 100.",
-    "paidByAmountPositive": "Each payer's amount must be greater than zero.",
-    "paidByAmountSum": "Payer amounts must sum to the expense total.",
-    "paidByDuplicateParticipants": "Each payer can only appear once.",
-    "reimbursementSinglePayer": "Reimbursements support only a single payer."
+    "paidByAmountPositive": "O valor de cada pagador deve ser maior que zero.",
+    "paidByAmountSum": "A soma dos valores dos pagadores deve ser igual ao valor da despesa.",
+    "paidByDuplicateParticipants": "Cada pagador só pode aparecer uma vez.",
+    "reimbursementSinglePayer": "Reembolsos suportam apenas um pagador."
   },
   "Categories": {
     "search": "Pesquisar categoria...",
@@ -1143,5 +1150,8 @@
   },
   "CurrencyAmountInput": {
     "expressionHint": "ou 10+5"
+  },
+  "ExpenseTitleInput": {
+    "clear": "Limpar"
   }
 }
