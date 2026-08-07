@@ -292,7 +292,7 @@ export function FloatingCreateExpense({
     groupParticipants.forEach((p) => {
       uniqueMap.set(p.id, {
         id: p.id,
-        name: p.name ?? '',
+        name: p.name?.trim() || p.id,
         email: p.email ?? null,
       })
     })
@@ -529,7 +529,7 @@ export function FloatingCreateExpense({
               title: values.title,
               amount: amountMajor,
               currency: activeCurrency,
-              paidById: values.paidBy,
+              paidById: values.paidBy[0].participant,
               expenseDate: values.expenseDate,
               notes: values.notes || undefined,
               groupId: selectedGroup.id,
@@ -571,7 +571,7 @@ export function FloatingCreateExpense({
             amount: values.amount,
             currency:
               values.originalCurrency || profile?.preferredCurrency || 'EUR',
-            fromUserId: values.paidBy,
+            fromUserId: values.paidBy[0].participant,
             toUserId: values.paidFor[0].participant,
             date: values.expenseDate,
           })
@@ -584,7 +584,7 @@ export function FloatingCreateExpense({
             amount: values.amount,
             currency:
               values.originalCurrency || profile?.preferredCurrency || 'EUR',
-            paidById: values.paidBy,
+            paidById: values.paidBy[0].participant,
             expenseDate: values.expenseDate,
             notes: values.notes || undefined,
             recurrenceRule: values.recurrenceRule,
@@ -601,7 +601,7 @@ export function FloatingCreateExpense({
             title: values.title,
             amount: amountMajor,
             currency: activeCurrency,
-            paidById: values.paidBy,
+            paidById: values.paidBy[0].participant,
             expenseDate: values.expenseDate,
             notes: values.notes || undefined,
             groupId: null,
@@ -744,6 +744,8 @@ export function FloatingCreateExpense({
             runtimeFeatureFlags={runtimeFeatureFlags}
             isDesktop={isDesktop}
             scrollHeader={participantScrollHeader}
+            // Friend and hybrid (group+friends) paths only persist the first payer
+            singlePayerOnly={selectedFriends.length > 0}
           />
         )
       ) : !editingExpenseId ? (

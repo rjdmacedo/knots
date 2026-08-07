@@ -124,6 +124,7 @@ describe('computeFriendBalance', () => {
           { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
           { user: { id: friendUserId, name: 'Friend' }, shares: 1 },
         ],
+        payers: [],
       },
     ]
 
@@ -182,6 +183,7 @@ describe('computeFriendBalance', () => {
           { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
           { user: { id: friendUserId, name: 'Friend' }, shares: 1 },
         ],
+        payers: [],
       },
     ]
 
@@ -263,6 +265,7 @@ describe('computeFriendBalance', () => {
           { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
           { user: { id: friendUserId, name: 'Friend' }, shares: 1 },
         ],
+        payers: [],
       },
     ]
 
@@ -316,6 +319,7 @@ describe('computeFriendBalance', () => {
             { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
             { user: { id: friendUserId, name: 'Friend' }, shares: 1 },
           ],
+          payers: [],
         },
       ]
 
@@ -362,6 +366,7 @@ describe('computeFriendBalance', () => {
             { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
             { user: { id: friendUserId, name: 'Friend' }, shares: 1 },
           ],
+          payers: [],
         },
         {
           id: 'direct-payment-1',
@@ -382,6 +387,7 @@ describe('computeFriendBalance', () => {
           paidFor: [
             { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
           ],
+          payers: [],
         },
       ]
 
@@ -425,6 +431,7 @@ describe('computeFriendBalance', () => {
             { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
             { user: { id: friendUserId, name: 'Friend' }, shares: 1 },
           ],
+          payers: [],
         },
         {
           id: 'direct-expense-2',
@@ -446,6 +453,7 @@ describe('computeFriendBalance', () => {
             { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
             { user: { id: friendUserId, name: 'Friend' }, shares: 1 },
           ],
+          payers: [],
         },
       ]
 
@@ -492,6 +500,7 @@ describe('computeFriendBalance', () => {
             { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
             { user: { id: friendUserId, name: 'Friend' }, shares: 1 },
           ],
+          payers: [],
         },
       ]
 
@@ -516,6 +525,7 @@ describe('computeFriendBalance', () => {
             { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
             { user: { id: friendUserId, name: 'Friend' }, shares: 1 },
           ],
+          payers: [],
         },
       ]
 
@@ -589,6 +599,7 @@ describe('computeFriendBalance', () => {
             { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
             { user: { id: friendUserId, name: 'Friend' }, shares: 1 },
           ],
+          payers: [],
         },
       ]
 
@@ -613,6 +624,7 @@ describe('computeFriendBalance', () => {
             { user: { id: currentUserId, name: 'Current User' }, shares: 1 },
             { user: { id: friendUserId, name: 'Friend' }, shares: 1 },
           ],
+          payers: [],
         },
       ]
 

@@ -13,7 +13,6 @@ const TRACKED_SCALAR_FIELDS = [
   'amount',
   'expenseDate',
   'category',
-  'paidBy',
   'splitMode',
   'isReimbursement',
   'notes',
@@ -67,13 +66,19 @@ const existingExpenseArb = fc.record({
   paidFor: existingPaidForArb,
 })
 
+// Arbitrary for a paidBy entry in updated shape (multi-payer)
+const paidByEntryArb = fc.record({
+  participant: participantIdArb,
+  amount: fc.integer({ min: 1, max: 1_000_000 }),
+})
+
 // Arbitrary for an updated expense object
 const updatedExpenseArb = fc.record({
   title: fc.string({ minLength: 1, maxLength: 50 }),
   amount: fc.integer({ min: 0, max: 1_000_000 }),
   expenseDate: dateArb,
   category: fc.integer({ min: 0, max: 100 }),
-  paidBy: participantIdArb,
+  paidBy: fc.array(paidByEntryArb, { minLength: 1, maxLength: 5 }),
   splitMode: fc.constantFrom(
     'EVENLY',
     'BY_SHARES',
@@ -119,7 +124,7 @@ function computeExpectedChangedFields(
     amount: number
     expenseDate: Date
     category: number
-    paidBy: string
+    paidBy: Array<{ participant: string; amount: number }>
     splitMode: string
     isReimbursement: boolean
     notes: string | null | undefined
@@ -143,7 +148,6 @@ function computeExpectedChangedFields(
         oldVal: existing.categoryId,
         newVal: updated.category,
       },
-      { field: 'paidBy', oldVal: existing.paidById, newVal: updated.paidBy },
       {
         field: 'splitMode',
         oldVal: existing.splitMode,
@@ -170,6 +174,22 @@ function computeExpectedChangedFields(
     if (serialize(oldVal) !== serialize(newVal)) {
       changedFields.add(field)
     }
+  }
+
+  // paidBy comparison (multi-payer: compare sorted {userId, amount} arrays)
+  const oldPayers = [{ userId: existing.paidById, amount: existing.amount }]
+  const newPayers = updated.paidBy.map((e) => ({
+    userId: e.participant,
+    amount: e.amount,
+  }))
+  const sortedOld = [...oldPayers].sort((a, b) =>
+    a.userId.localeCompare(b.userId),
+  )
+  const sortedNew = [...newPayers].sort((a, b) =>
+    a.userId.localeCompare(b.userId),
+  )
+  if (JSON.stringify(sortedOld) !== JSON.stringify(sortedNew)) {
+    changedFields.add('paidBy')
   }
 
   // paidFor comparison

@@ -19,11 +19,23 @@ export function getBalances(
   const balances: Balances = {}
 
   for (const expense of expenses) {
-    const paidBy = expense.paidBy.id
     const paidFors = expense.paidFor
 
-    if (!balances[paidBy]) balances[paidBy] = { paid: 0, paidFor: 0, total: 0 }
-    balances[paidBy].paid += expense.amount
+    // Credit each payer by their individual amount (multi-payer support)
+    if (expense.payers && expense.payers.length > 0) {
+      for (const payer of expense.payers) {
+        const payerId = payer.user.id
+        if (!balances[payerId])
+          balances[payerId] = { paid: 0, paidFor: 0, total: 0 }
+        balances[payerId].paid += payer.amount
+      }
+    } else {
+      // Graceful degradation: fall back to single paidBy with full amount
+      const paidBy = expense.paidBy.id
+      if (!balances[paidBy])
+        balances[paidBy] = { paid: 0, paidFor: 0, total: 0 }
+      balances[paidBy].paid += expense.amount
+    }
 
     if (expense.splitMode === 'BY_PERCENTAGE') {
       for (const paidFor of paidFors) {
@@ -119,12 +131,28 @@ export function getDirectReimbursements(
 
   for (const expense of expenses) {
     const balances = getBalances([expense])
-    const payer = expense.paidBy.id
+
+    // Identify all payers (positive total) and debtors (negative total)
+    const payers: Array<{ userId: string; total: number }> = []
+    const debtors: Array<{ userId: string; total: number }> = []
 
     for (const [userId, { total }] of Object.entries(balances)) {
-      if (userId === payer || total >= 0) continue
-      const key = `${userId}:${payer}`
-      pairOwes.set(key, (pairOwes.get(key) ?? 0) + -total)
+      if (total > 0) payers.push({ userId, total })
+      else if (total < 0) debtors.push({ userId, total })
+    }
+
+    // Total credit across all payers for proportional distribution
+    const totalCredit = payers.reduce((sum, p) => sum + p.total, 0)
+
+    // Each debtor owes each payer proportionally to that payer's share of credit
+    for (const debtor of debtors) {
+      const debtAmount = -debtor.total
+      for (const payer of payers) {
+        const payerShare = (debtAmount * payer.total) / totalCredit
+        if (payerShare === 0) continue
+        const key = `${debtor.userId}:${payer.userId}`
+        pairOwes.set(key, (pairOwes.get(key) ?? 0) + payerShare)
+      }
     }
   }
 

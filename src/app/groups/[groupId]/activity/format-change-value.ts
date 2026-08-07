@@ -62,7 +62,12 @@ export function formatFieldValue(
       return formatBoolean(value, context.t)
 
     case 'paidBy':
-      return resolveParticipantName(value, context.participants)
+      return formatPaidBy(
+        value,
+        context.participants,
+        context.currency,
+        context.locale,
+      )
 
     case 'paidFor':
       return formatPaidFor(value, context.participants)
@@ -140,4 +145,34 @@ function formatCategory(
   }
   const category = categories.find((c) => c.id === parsed)
   return category ? `${category.grouping}/${category.name}` : value
+}
+
+function formatPaidBy(
+  value: string,
+  participants: Array<{ id: string; name: string }>,
+  currency: Currency,
+  locale: string,
+): string {
+  // Try parsing as JSON array (multi-payer format: [{userId, amount}, ...])
+  try {
+    const parsed: unknown = JSON.parse(value)
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed
+        .map((entry) => {
+          const e = entry as { userId?: string; amount?: number }
+          const name = resolveParticipantName(
+            String(e.userId ?? entry),
+            participants,
+          )
+          if (e.amount != null) {
+            return `${name} (${formatCurrency(currency, e.amount, locale)})`
+          }
+          return name
+        })
+        .join(', ')
+    }
+  } catch {
+    // Not JSON — treat as a plain participant ID (legacy format)
+  }
+  return resolveParticipantName(value, participants)
 }

@@ -45,6 +45,32 @@
       "earlierThisYear": "今年初め",
       "lastYear": "昨年",
       "older": "それ以前"
+    },
+    "paidBy": {
+      "addPayer": "支払者を追加",
+      "removePayer": "支払者を削除",
+      "splitEvenly": "均等に分割",
+      "total": "合計",
+      "mismatch": "金額の不一致",
+      "overpayment": "{amount} の過払い",
+      "underpayment": "{amount} の不足",
+      "reimbursementSingleOnly": "払い戻しは1人の支払者のみ対応しています",
+      "amountPositive": "金額は正の値である必要があります",
+      "singleSection": "Single",
+      "multipleSection": "Multiple payers",
+      "singleTitle": "Single payer",
+      "singleDescription": "One person covers the full expense",
+      "evenlyTitle": "Evenly",
+      "evenlyDescription": "Each pays an equal share",
+      "bySharesTitle": "By shares",
+      "bySharesDescription": "Each pays a weighted share",
+      "byPercentageTitle": "By percentage",
+      "byPercentageDescription": "Each pays a percentage",
+      "byAmountTitle": "By amount",
+      "byAmountDescription": "Each pays a fixed amount",
+      "selectPayers": "Select who paid",
+      "shareLabel": "Shares",
+      "percentageLabel": "Percent"
     }
   },
   "ExpenseCard": {
@@ -53,7 +79,10 @@
     "receivedBy": "<strong>{paidBy}</strong>が<paidFor></paidFor>のために受け取りました",
     "yourBalance": "あなたの残高:",
     "notInvolved": "You are not involved",
-    "close": "閉じる"
+    "close": "閉じる",
+    "paidByMultiple": "<strong>{paidBy}</strong>が<paidFor></paidFor>のために支払いました",
+    "multiPayerLabel": "{first}, {second}",
+    "multiPayerLabelOverflow": "{first} +{count}"
   },
   "Groups": {
     "myGroups": "マイグループ",
@@ -193,7 +222,7 @@
       "paidByField": {
         "label": "支払者",
         "placeholder": "Select a participant",
-        "description": "支出を支払った参加者を選択してください。"
+        "description": "Select who provided the money and how much each payer contributed."
       },
       "recurrenceRule": {
         "label": "支出の繰り返し",
@@ -541,7 +570,11 @@
     "paidForMin1": "支出は少なくとも1人の参加者のために支払われている必要があります。",
     "noZeroShares": "すべてのシェアは0より大きくなければなりません。",
     "amountSum": "金額の合計は支出金額と一致する必要があります。",
-    "percentageSum": "パーセンテージの合計は100である必要があります。"
+    "percentageSum": "パーセンテージの合計は100である必要があります。",
+    "paidByAmountPositive": "Each payer's amount must be greater than zero.",
+    "paidByAmountSum": "Payer amounts must sum to the expense total.",
+    "paidByDuplicateParticipants": "Each payer can only appear once.",
+    "reimbursementSinglePayer": "Reimbursements support only a single payer."
   },
   "Categories": {
     "search": "カテゴリーを検索...",

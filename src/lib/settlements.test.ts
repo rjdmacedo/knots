@@ -87,6 +87,7 @@ describe('buildSettlementFormValues', () => {
           { user: { id: 'rafael', name: 'Rafael' }, shares: 1 },
           { user: { id: 'ana', name: 'Ana' }, shares: 1 },
         ],
+        payers: [{ user: { id: 'rafael', name: 'Rafael' }, amount: 10000 }],
       },
     ]
 
@@ -111,10 +112,14 @@ describe('buildSettlementFormValues', () => {
         amount: settlement.amount,
         isReimbursement: true,
         splitMode: settlement.splitMode,
-        paidBy: { id: settlement.paidBy, name: 'Ana' },
+        paidBy: { id: settlement.paidBy[0].participant, name: 'Ana' },
         paidFor: settlement.paidFor.map((pf) => ({
           user: { id: pf.participant, name: pf.participant },
           shares: pf.shares,
+        })),
+        payers: settlement.paidBy.map((p) => ({
+          user: { id: p.participant, name: p.participant },
+          amount: p.amount,
         })),
       },
     ] as any)
@@ -133,6 +138,7 @@ describe('buildSettlementFormValues', () => {
           { user: { id: 'rafael', name: 'Rafael' }, shares: 1 },
           { user: { id: 'ana', name: 'Ana' }, shares: 1 },
         ],
+        payers: [{ user: { id: 'rafael', name: 'Rafael' }, amount: 10000 }],
       },
     ]
 
@@ -149,10 +155,14 @@ describe('buildSettlementFormValues', () => {
         amount: partialSettlement.amount,
         isReimbursement: true,
         splitMode: partialSettlement.splitMode,
-        paidBy: { id: partialSettlement.paidBy, name: 'Ana' },
+        paidBy: { id: partialSettlement.paidBy[0].participant, name: 'Ana' },
         paidFor: partialSettlement.paidFor.map((pf) => ({
           user: { id: pf.participant, name: pf.participant },
           shares: pf.shares,
+        })),
+        payers: partialSettlement.paidBy.map((p) => ({
+          user: { id: p.participant, name: p.participant },
+          amount: p.amount,
         })),
       },
     ] as any)

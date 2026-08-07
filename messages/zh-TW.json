@@ -45,6 +45,32 @@
       "earlierThisYear": "今年稍早",
       "lastYear": "去年",
       "older": "更早"
+    },
+    "paidBy": {
+      "addPayer": "新增付款人",
+      "removePayer": "移除付款人",
+      "splitEvenly": "平均分攤",
+      "total": "合計",
+      "mismatch": "金額不符",
+      "overpayment": "多付 {amount}",
+      "underpayment": "少付 {amount}",
+      "reimbursementSingleOnly": "退款僅支援一位付款人",
+      "amountPositive": "金額必須為正數",
+      "singleSection": "Single",
+      "multipleSection": "Multiple payers",
+      "singleTitle": "Single payer",
+      "singleDescription": "One person covers the full expense",
+      "evenlyTitle": "Evenly",
+      "evenlyDescription": "Each pays an equal share",
+      "bySharesTitle": "By shares",
+      "bySharesDescription": "Each pays a weighted share",
+      "byPercentageTitle": "By percentage",
+      "byPercentageDescription": "Each pays a percentage",
+      "byAmountTitle": "By amount",
+      "byAmountDescription": "Each pays a fixed amount",
+      "selectPayers": "Select who paid",
+      "shareLabel": "Shares",
+      "percentageLabel": "Percent"
     }
   },
   "ExpenseCard": {
@@ -53,7 +79,10 @@
     "receivedBy": "由 <strong>{paidBy}</strong> 收取 <paidFor></paidFor>。",
     "yourBalance": "你的餘額：",
     "notInvolved": "You are not involved",
-    "close": "關閉"
+    "close": "關閉",
+    "paidByMultiple": "由 <strong>{paidBy}</strong> 支付 <paidFor></paidFor>。",
+    "multiPayerLabel": "{first}, {second}",
+    "multiPayerLabelOverflow": "{first} +{count}"
   },
   "Groups": {
     "myGroups": "我的群組",
@@ -193,7 +222,7 @@
       "paidByField": {
         "label": "支付人",
         "placeholder": "Select a participant",
-        "description": "选择支付这笔消费的群组成员。"
+        "description": "Select who provided the money and how much each payer contributed."
       },
       "recurrenceRule": {
         "label": "Expense Recurrence",
@@ -541,7 +570,11 @@
     "paidForMin1": "這筆消費必須包含至少一個成員。",
     "noZeroShares": "份額需大於 0。",
     "amountSum": "金額總計必須等於消費金額。",
-    "percentageSum": "百分比加總必須等於 100。"
+    "percentageSum": "百分比加總必須等於 100。",
+    "paidByAmountPositive": "Each payer's amount must be greater than zero.",
+    "paidByAmountSum": "Payer amounts must sum to the expense total.",
+    "paidByDuplicateParticipants": "Each payer can only appear once.",
+    "reimbursementSinglePayer": "Reimbursements support only a single payer."
   },
   "Categories": {
     "search": "搜尋類別……",

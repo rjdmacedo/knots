@@ -8,6 +8,11 @@ type SplitExpense = {
   isReimbursement: boolean
   splitMode: SplitMode
   paidBy: { id: string; name?: string | null; email?: string | null }
+  payers?: Array<{
+    userId: string
+    amount: number
+    user: { id: string; name: string | null }
+  }>
   paidFor: Array<{
     user: { id: string; name: string | null; email?: string | null }
     shares: number
@@ -47,7 +52,10 @@ export function buildExpenseSplitLines(
       name: entry.user.name ?? entry.user.email ?? '',
       amount: getParticipantShareAmount(expense, entry.user.id),
       isCurrentUser: entry.user.id === currentUserId,
-      isPayer: entry.user.id === expense.paidBy.id,
+      isPayer:
+        expense.payers && expense.payers.length > 0
+          ? expense.payers.some((p) => p.userId === entry.user.id)
+          : entry.user.id === expense.paidBy.id,
     }))
     .filter((line) => line.amount > 0)
 }

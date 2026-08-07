@@ -138,7 +138,9 @@ export function PaymentForm({
   const groupCurrency = getCurrencyFromGroup(group)
   const defaultPaidBy =
     expense?.paidById ??
-    createPrefill?.paidBy ??
+    (typeof createPrefill?.paidBy === 'string'
+      ? createPrefill.paidBy
+      : createPrefill?.paidBy?.[0]?.participant) ??
     getDefaultPaidBy(group, currentUserId)
 
   const { checkForDuplicates, isChecking } = useDuplicateCheck({
@@ -205,7 +207,7 @@ export function PaymentForm({
       title: '',
       category: PAYMENT_CATEGORY_ID,
       amount: amountMinor,
-      paidBy: values.paidBy,
+      paidBy: [{ participant: values.paidBy, amount: amountMinor }],
       paidFor: [{ participant: values.paidTo, shares: amountMinor }],
       splitMode: 'BY_AMOUNT',
       saveDefaultSplittingOptions: false,

@@ -48,6 +48,32 @@
       "lastYear": "Ano passado",
       "older": "Mais antigas"
     },
+    "paidBy": {
+      "addPayer": "Adicionar pagador",
+      "removePayer": "Remover pagador",
+      "splitEvenly": "Dividir igualmente",
+      "total": "Total",
+      "mismatch": "Valor incompatível",
+      "overpayment": "Pagamento em excesso de {amount}",
+      "underpayment": "Pagamento em falta de {amount}",
+      "reimbursementSingleOnly": "Os reembolsos suportam apenas um pagador",
+      "amountPositive": "O valor deve ser positivo",
+      "singleSection": "Single",
+      "multipleSection": "Multiple payers",
+      "singleTitle": "Single payer",
+      "singleDescription": "One person covers the full expense",
+      "evenlyTitle": "Evenly",
+      "evenlyDescription": "Each pays an equal share",
+      "bySharesTitle": "By shares",
+      "bySharesDescription": "Each pays a weighted share",
+      "byPercentageTitle": "By percentage",
+      "byPercentageDescription": "Each pays a percentage",
+      "byAmountTitle": "By amount",
+      "byAmountDescription": "Each pays a fixed amount",
+      "selectPayers": "Select who paid",
+      "shareLabel": "Shares",
+      "percentageLabel": "Percent"
+    },
     "export": "Exportar"
   },
   "ExpenseCard": {
@@ -56,7 +82,10 @@
     "yourBalance": "O teu saldo:",
     "everyone": "Todos",
     "notInvolved": "Não estás envolvido",
-    "close": "Fechar"
+    "close": "Fechar",
+    "paidByMultiple": "Pago por <strong>{paidBy}</strong> para <paidFor></paidFor>",
+    "multiPayerLabel": "{first}, {second}",
+    "multiPayerLabelOverflow": "{first} +{count}"
   },
   "ExpenseDetail": {
     "backToExpenses": "Voltar às despesas",
@@ -80,6 +109,9 @@
     "receiptUploadSuccess": "Recibo anexado.",
     "paidAmount": "{name} pagou {amount}",
     "youPaidAmount": "Pagou {amount}",
+    "paidAmountMultiple": "{name} pagou {amount}",
+    "youPaidAmountMultiple": "Pagou {amount}",
+    "multiPayerSeparator": " e ",
     "paidYou": "{name} pagou-lhe {amount}",
     "youPaidRecipient": "Pagou {amount} a {name}",
     "payerPaidPayee": "{payer} pagou {amount} a {payee}",
@@ -232,7 +264,7 @@
       "categoryFieldDescription": "Selecciona a categoria da despesa.",
       "paidByField": {
         "label": "Pago por",
-        "description": "Selecciona o participante que pagou a despesa.",
+        "description": "Select who provided the money and how much each payer contributed.",
         "placeholder": "Selecciona um participante"
       },
       "paidFor": {
@@ -612,7 +644,11 @@
     "noZeroShares": "Todas as partes têm de ser superiores a 0.",
     "amountSum": "A soma dos valores tem de ser igual ao valor da despesa.",
     "percentageSum": "A soma das percentagens tem de ser igual a 100.",
-    "ratePositive": "A taxa tem de ser estritamente superior a zero."
+    "ratePositive": "A taxa tem de ser estritamente superior a zero.",
+    "paidByAmountPositive": "Each payer's amount must be greater than zero.",
+    "paidByAmountSum": "Payer amounts must sum to the expense total.",
+    "paidByDuplicateParticipants": "Each payer can only appear once.",
+    "reimbursementSinglePayer": "Reimbursements support only a single payer."
   },
   "Categories": {
     "search": "Procurar categoria...",

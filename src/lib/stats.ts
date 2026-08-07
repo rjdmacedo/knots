@@ -289,15 +289,29 @@ export function computeParticipantRanking(
 
   // Accumulate paid amounts
   for (const expense of nonReimbursements) {
-    const existing = paidMap.get(expense.paidBy.id)
-    if (existing) {
-      existing.totalPaid += expense.amount
+    if (expense.payers && expense.payers.length > 0) {
+      for (const payer of expense.payers) {
+        const payerId = payer.user.id
+        const existing = paidMap.get(payerId)
+        if (existing) {
+          existing.totalPaid += payer.amount
+        } else {
+          paidMap.set(payerId, {
+            name: payer.user.name,
+            totalPaid: payer.amount,
+          })
+        }
+      }
     } else {
-      // Participant not in the list but paid for an expense
-      paidMap.set(expense.paidBy.id, {
-        name: expense.paidBy.name,
-        totalPaid: expense.amount,
-      })
+      const existing = paidMap.get(expense.paidBy.id)
+      if (existing) {
+        existing.totalPaid += expense.amount
+      } else {
+        paidMap.set(expense.paidBy.id, {
+          name: expense.paidBy.name,
+          totalPaid: expense.amount,
+        })
+      }
     }
   }
 
@@ -343,15 +357,31 @@ export function computeExpenseDistribution(
 
   // Accumulate paid amounts
   for (const expense of nonReimbursements) {
-    const existing = distributionMap.get(expense.paidBy.id)
-    if (existing) {
-      existing.totalPaid += expense.amount
+    if (expense.payers && expense.payers.length > 0) {
+      for (const payer of expense.payers) {
+        const payerId = payer.user.id
+        const existing = distributionMap.get(payerId)
+        if (existing) {
+          existing.totalPaid += payer.amount
+        } else {
+          distributionMap.set(payerId, {
+            name: payer.user.name,
+            totalPaid: payer.amount,
+            totalShare: 0,
+          })
+        }
+      }
     } else {
-      distributionMap.set(expense.paidBy.id, {
-        name: expense.paidBy.name,
-        totalPaid: expense.amount,
-        totalShare: 0,
-      })
+      const existing = distributionMap.get(expense.paidBy.id)
+      if (existing) {
+        existing.totalPaid += expense.amount
+      } else {
+        distributionMap.set(expense.paidBy.id, {
+          name: expense.paidBy.name,
+          totalPaid: expense.amount,
+          totalShare: 0,
+        })
+      }
     }
   }
 
@@ -478,10 +508,19 @@ export function computePaidVsSharePercentages(
 
   // Accumulate paid amounts and shares
   for (const expense of nonReimbursements) {
-    const payerId = expense.paidBy.id
-    const payerEntry = paidMap.get(payerId)
-    if (payerEntry) {
-      payerEntry.totalPaid += expense.amount
+    if (expense.payers && expense.payers.length > 0) {
+      for (const payer of expense.payers) {
+        const payerEntry = paidMap.get(payer.user.id)
+        if (payerEntry) {
+          payerEntry.totalPaid += payer.amount
+        }
+      }
+    } else {
+      const payerId = expense.paidBy.id
+      const payerEntry = paidMap.get(payerId)
+      if (payerEntry) {
+        payerEntry.totalPaid += expense.amount
+      }
     }
 
     for (const participant of participants) {

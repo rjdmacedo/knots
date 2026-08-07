@@ -78,6 +78,20 @@ export function computeGroupChanges(
 }
 
 /**
+ * Serializes payer state to a canonical JSON string for comparison.
+ * Sorts by userId to ensure order-independent comparison.
+ * Returns a JSON array of `{userId, amount}` objects.
+ */
+export function serializePayers(
+  payers: Array<{ userId: string; amount: number }>,
+): string {
+  const sorted = [...payers].sort((a, b) => a.userId.localeCompare(b.userId))
+  return JSON.stringify(
+    sorted.map(({ userId, amount }) => ({ userId, amount })),
+  )
+}
+
+/**
  * Computes field-level differences between an existing expense (from DB)
  * and updated form values being submitted.
  */
@@ -93,13 +107,14 @@ export function computeExpenseChanges(
     notes?: string | null
     recurrenceRule?: string | null
     paidFor: Array<{ userId: string }>
+    payers?: Array<{ userId: string; amount: number }>
   },
   updated: {
     title: string
     amount: number
     expenseDate: Date
     category: number
-    paidBy: string
+    paidBy: Array<{ participant: string; amount: number }>
     splitMode: string
     isReimbursement: boolean
     notes?: string | null
@@ -126,7 +141,6 @@ export function computeExpenseChanges(
       oldVal: existing.categoryId,
       newVal: updated.category,
     },
-    { field: 'paidBy', oldVal: existing.paidById, newVal: updated.paidBy },
     {
       field: 'splitMode',
       oldVal: existing.splitMode,
@@ -160,6 +174,31 @@ export function computeExpenseChanges(
         newValue: newSerialized,
       })
     }
+  }
+
+  // Track paidBy changes (multi-payer support)
+  // Build the old payer state from existing.payers (preferred) or fall back to paidById + amount
+  const oldPayers: Array<{ userId: string; amount: number }> =
+    existing.payers && existing.payers.length > 0
+      ? existing.payers
+      : [{ userId: existing.paidById, amount: existing.amount }]
+
+  // Build the new payer state from updated.paidBy array
+  const newPayers: Array<{ userId: string; amount: number }> =
+    updated.paidBy.map((entry) => ({
+      userId: entry.participant,
+      amount: entry.amount,
+    }))
+
+  const oldPayersSerialized = serializePayers(oldPayers)
+  const newPayersSerialized = serializePayers(newPayers)
+
+  if (oldPayersSerialized !== newPayersSerialized) {
+    changes.push({
+      field: 'paidBy',
+      oldValue: oldPayersSerialized,
+      newValue: newPayersSerialized,
+    })
   }
 
   // Track paidFor changes (participants involved in split)

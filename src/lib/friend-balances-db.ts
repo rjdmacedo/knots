@@ -27,6 +27,13 @@ export async function getDirectExpensesBetweenUsers(
           shares: true,
         },
       },
+      payers: {
+        select: {
+          userId: true,
+          amount: true,
+          user: { select: { id: true, name: true } },
+        },
+      },
       splitMode: true,
       recurrenceRule: true,
       title: true,

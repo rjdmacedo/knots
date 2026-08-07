@@ -64,6 +64,7 @@ function makeExpense(
       { user: { id: CURRENT_USER_ID, name: 'Current User' }, shares: 1 },
       { user: { id: FRIEND_USER_ID, name: 'Friend' }, shares: 1 },
     ],
+    payers: [],
   }
 }
 
