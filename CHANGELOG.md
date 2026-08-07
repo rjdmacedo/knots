@@ -1,3 +1,17 @@
+# [1.50.0](https://github.com/rjdmacedo/knots/compare/v1.49.0...v1.50.0) (2026-08-07)
+
+
+### Bug Fixes
+
+* silence CategorySelector exhaustive-deps warning ([973cec6](https://github.com/rjdmacedo/knots/commit/973cec6a7ac42045085788cddfed0e7a0f265af9))
+
+
+### Features
+
+* add copy action to duplicate expenses into the create form ([523f65f](https://github.com/rjdmacedo/knots/commit/523f65f8d921026c55a7a704ca745eb1739fbb5a))
+* resolve FX rates server-side for multi-currency expenses ([6fda537](https://github.com/rjdmacedo/knots/commit/6fda5370f24f45a0697a599e8d5971653c31173e))
+* support multi-payer expenses with Spliit-style Paid by UI ([ac311b3](https://github.com/rjdmacedo/knots/commit/ac311b3c9806d7ff997c8c2f0467715bc22f9d76))
+
 # [1.49.0](https://github.com/rjdmacedo/knots/compare/v1.48.0...v1.49.0) (2026-08-06)
 
 
