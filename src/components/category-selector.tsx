@@ -98,7 +98,6 @@ export function CategorySelector({
   // allow overwriting currently selected category from outside
   useEffect(() => {
     setValue(defaultValue)
-    onValueChange(defaultValue)
   }, [defaultValue])
 
   if (!isClient || !isDesktop) {
