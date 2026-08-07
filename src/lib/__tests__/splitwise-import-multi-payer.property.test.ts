@@ -52,9 +52,7 @@ const arbCostDollars = fc
  * K is between 1 and the total number of users.
  * The amounts don't need to sum to cost — the importer adjusts the last payer.
  */
-function arbPayerAmounts(
-  userNames: string[],
-): fc.Arbitrary<{
+function arbPayerAmounts(userNames: string[]): fc.Arbitrary<{
   payerAmounts: Map<string, number>
   nonPayerNames: string[]
 }> {

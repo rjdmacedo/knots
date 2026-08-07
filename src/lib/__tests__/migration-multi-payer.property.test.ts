@@ -117,9 +117,7 @@ function arbPaidFor(
  * Generate a single-payer expense (pre-migration state).
  * These expenses have a single paidById user and no payers entries.
  */
-function arbSinglePayerExpense(
-  participantIds: string[],
-): fc.Arbitrary<{
+function arbSinglePayerExpense(participantIds: string[]): fc.Arbitrary<{
   total: number
   splitMode: string
   paidFor: any[]
