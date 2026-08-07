@@ -1,3 +1,10 @@
+# [1.51.0](https://github.com/rjdmacedo/knots/compare/v1.50.0...v1.51.0) (2026-08-07)
+
+
+### Features
+
+* polish expense form Paid by and Split Between UX ([1f5da34](https://github.com/rjdmacedo/knots/commit/1f5da3418afa7e618e43ba628f199f24ee281c85))
+
 # [1.50.0](https://github.com/rjdmacedo/knots/compare/v1.49.0...v1.50.0) (2026-08-07)
 
 
