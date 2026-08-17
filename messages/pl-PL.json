@@ -1132,10 +1132,17 @@
   },
   "DuplicateExpense": {
     "title": "Wykryto możliwe duplikaty",
-    "description": "Wydatek, który zapisujesz, odpowiada istniejącemu wydatkowi. Czy chcesz kontynuować?",
+    "description": "Wydatek, który zapisujesz, wygląda podobnie do istniejącego. Porównaj poniżej i zdecyduj, czy kontynuować.",
     "cancel": "Anuluj",
-    "confirm": "Potwierdź",
+    "confirm": "Zapisz mimo to",
     "persistError": "Nie udało się zapisać danych formularza. Nawigacja jest niedostępna.",
+    "yours": "Twoja",
+    "existing": "Istniejąca",
+    "fields": {
+      "title": "Tytuł",
+      "amount": "Kwota",
+      "date": "Data"
+    },
     "indicators": {
       "similar-title": "Podobny tytuł",
       "same-amount": "Ta sama kwota",

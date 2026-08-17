@@ -1135,10 +1135,17 @@
   },
   "DuplicateExpense": {
     "title": "Zjištěn možný duplicitní výdaj",
-    "description": "Výdaj, který ukládáte, odpovídá existujícímu výdaji. Chcete pokračovat?",
+    "description": "Výdaj, který ukládáte, vypadá podobně jako existující. Porovnejte níže a rozhodněte, zda chcete pokračovat.",
     "cancel": "Zrušit",
-    "confirm": "Potvrdit",
+    "confirm": "Přesto uložit",
     "persistError": "Nepodařilo se uložit data formuláře. Navigace není dostupná.",
+    "yours": "Vaše",
+    "existing": "Existující",
+    "fields": {
+      "title": "Název",
+      "amount": "Částka",
+      "date": "Datum"
+    },
     "indicators": {
       "similar-title": "Podobný název",
       "same-amount": "Stejná částka",

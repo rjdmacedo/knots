@@ -1295,10 +1295,17 @@
   },
   "DuplicateExpense": {
     "title": "Potential duplicate detected",
-    "description": "The expense you are saving matches an existing expense. Do you want to continue?",
+    "description": "The expense you are saving looks similar to an existing one. Compare below and decide whether to continue.",
     "cancel": "Cancel",
-    "confirm": "Confirm",
+    "confirm": "Save anyway",
     "persistError": "Could not save form data. Navigation is unavailable.",
+    "yours": "Yours",
+    "existing": "Existing",
+    "fields": {
+      "title": "Title",
+      "amount": "Amount",
+      "date": "Date"
+    },
     "indicators": {
       "similar-title": "Similar title",
       "same-amount": "Same amount",

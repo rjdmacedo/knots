@@ -1135,9 +1135,16 @@
   },
   "DuplicateExpense": {
     "title": "Möglicher Duplikat erkannt",
-    "description": "Die Ausgabe, die du speicherst, stimmt mit einer vorhandenen Ausgabe überein. Möchtest du fortfahren?",
+    "description": "Die Ausgabe, die du speicherst, ähnelt einer vorhandenen. Vergleiche unten und entscheide, ob du fortfahren möchtest.",
+    "yours": "Deine",
+    "existing": "Vorhandene",
+    "fields": {
+      "title": "Titel",
+      "amount": "Betrag",
+      "date": "Datum"
+    },
     "cancel": "Abbrechen",
-    "confirm": "Bestätigen",
+    "confirm": "Trotzdem speichern",
     "persistError": "Formulardaten konnten nicht gespeichert werden. Navigation ist nicht verfügbar.",
     "indicators": {
       "similar-title": "Ähnlicher Titel",

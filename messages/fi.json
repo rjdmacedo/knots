@@ -1135,10 +1135,17 @@
   },
   "DuplicateExpense": {
     "title": "Mahdollinen kaksoiskappale havaittu",
-    "description": "Tallentamasi kulu vastaa olemassa olevaa kulua. Haluatko jatkaa?",
+    "description": "Tallentamasi kulu näyttää samanlaiselta kuin olemassa oleva. Vertaa alla ja päätä, haluatko jatkaa.",
     "cancel": "Peruuta",
-    "confirm": "Vahvista",
+    "confirm": "Tallenna silti",
     "persistError": "Lomakkeen tietoja ei voitu tallentaa. Navigointi ei ole käytettävissä.",
+    "yours": "Sinun",
+    "existing": "Olemassa oleva",
+    "fields": {
+      "title": "Otsikko",
+      "amount": "Summa",
+      "date": "Päivämäärä"
+    },
     "indicators": {
       "similar-title": "Samankaltainen otsikko",
       "same-amount": "Sama summa",

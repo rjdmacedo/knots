@@ -1135,9 +1135,16 @@
   },
   "DuplicateExpense": {
     "title": "Posible duplicado detectado",
-    "description": "El gasto que estás guardando coincide con un gasto existente. ¿Quieres continuar?",
+    "description": "El gasto que estás guardando parece similar a uno existente. Compáralos abajo y decide si continuar.",
+    "yours": "El tuyo",
+    "existing": "Existente",
+    "fields": {
+      "title": "Título",
+      "amount": "Importe",
+      "date": "Fecha"
+    },
     "cancel": "Cancelar",
-    "confirm": "Confirmar",
+    "confirm": "Guardar de todos modos",
     "persistError": "No se pudieron guardar los datos del formulario. La navegación no está disponible.",
     "indicators": {
       "similar-title": "Título similar",

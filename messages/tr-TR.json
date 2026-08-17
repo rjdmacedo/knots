@@ -1132,10 +1132,17 @@
   },
   "DuplicateExpense": {
     "title": "Olası yinelenen harcama tespit edildi",
-    "description": "Kaydettiğiniz harcama mevcut bir harcamayla eşleşiyor. Devam etmek istiyor musunuz?",
+    "description": "Kaydettiğiniz harcama mevcut bir harcamaya benziyor. Aşağıda karşılaştırın ve devam edip etmeyeceğinize karar verin.",
     "cancel": "İptal",
-    "confirm": "Onayla",
+    "confirm": "Yine de kaydet",
     "persistError": "Form verileri kaydedilemedi. Gezinme kullanılamıyor.",
+    "yours": "Sizin",
+    "existing": "Mevcut",
+    "fields": {
+      "title": "Başlık",
+      "amount": "Tutar",
+      "date": "Tarih"
+    },
     "indicators": {
       "similar-title": "Benzer başlık",
       "same-amount": "Aynı tutar",

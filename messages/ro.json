@@ -1132,10 +1132,17 @@
   },
   "DuplicateExpense": {
     "title": "Posibil duplicat detectat",
-    "description": "Cheltuiala pe care o salvezi corespunde unei cheltuieli existente. Vrei să continui?",
+    "description": "Cheltuiala pe care o salvezi pare similară cu una existentă. Compară mai jos și decide dacă vrei să continui.",
     "cancel": "Anulează",
-    "confirm": "Confirmă",
+    "confirm": "Salvează oricum",
     "persistError": "Nu s-au putut salva datele formularului. Navigarea nu este disponibilă.",
+    "yours": "A ta",
+    "existing": "Existentă",
+    "fields": {
+      "title": "Titlu",
+      "amount": "Sumă",
+      "date": "Dată"
+    },
     "indicators": {
       "similar-title": "Titlu similar",
       "same-amount": "Aceeași sumă",

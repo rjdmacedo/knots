@@ -3,6 +3,28 @@ import '@testing-library/jest-dom'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { DuplicateExpenseDialog } from '../duplicate-expense-dialog'
 
+jest.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => {
+    const messages: Record<string, string> = {
+      title: 'Potential duplicate detected',
+      description:
+        'The expense you are saving looks similar to an existing one. Compare below and decide whether to continue.',
+      cancel: 'Cancel',
+      confirm: 'Save anyway',
+      yours: 'Yours',
+      existing: 'Existing',
+      'fields.title': 'Title',
+      'fields.amount': 'Amount',
+      'fields.date': 'Date',
+      'indicators.similar-title': 'Similar title',
+      'indicators.same-amount': 'Same amount',
+      'indicators.close-in-date': 'Close in date',
+      'indicators.same-category': 'Same category',
+    }
+    return messages[key] ?? key
+  },
+}))
+
 const usdCurrency: Currency = {
   name: 'US Dollar',
   symbol_native: '$',

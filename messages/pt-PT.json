@@ -1295,10 +1295,17 @@
   },
   "DuplicateExpense": {
     "title": "Possível duplicado detetado",
-    "description": "A despesa que estás a guardar corresponde a uma despesa existente. Queres continuar?",
+    "description": "A despesa que estás a guardar parece semelhante a uma existente. Compara abaixo e decide se queres continuar.",
     "cancel": "Cancelar",
-    "confirm": "Confirmar",
+    "confirm": "Guardar na mesma",
     "persistError": "Não foi possível guardar os dados do formulário. Navegação indisponível.",
+    "yours": "A tua",
+    "existing": "Existente",
+    "fields": {
+      "title": "Título",
+      "amount": "Valor",
+      "date": "Data"
+    },
     "indicators": {
       "similar-title": "Título semelhante",
       "same-amount": "Mesmo valor",

@@ -1135,9 +1135,16 @@
   },
   "DuplicateExpense": {
     "title": "Possibile duplicato rilevato",
-    "description": "La spesa che stai salvando corrisponde a una spesa esistente. Vuoi continuare?",
+    "description": "La spesa che stai salvando sembra simile a una esistente. Confronta qui sotto e decidi se continuare.",
+    "yours": "La tua",
+    "existing": "Esistente",
+    "fields": {
+      "title": "Titolo",
+      "amount": "Importo",
+      "date": "Data"
+    },
     "cancel": "Annulla",
-    "confirm": "Conferma",
+    "confirm": "Salva comunque",
     "persistError": "Impossibile salvare i dati del modulo. La navigazione non è disponibile.",
     "indicators": {
       "similar-title": "Titolo simile",

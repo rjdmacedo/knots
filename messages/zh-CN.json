@@ -1132,10 +1132,17 @@
   },
   "DuplicateExpense": {
     "title": "检测到可能的重复支出",
-    "description": "你正在保存的支出与现有支出匹配。是否继续？",
+    "description": "你正在保存的支出与已有支出相似。请在下方比较并决定是否继续。",
     "cancel": "取消",
-    "confirm": "确认",
+    "confirm": "仍然保存",
     "persistError": "无法保存表单数据。导航不可用。",
+    "yours": "当前",
+    "existing": "已有",
+    "fields": {
+      "title": "标题",
+      "amount": "金额",
+      "date": "日期"
+    },
     "indicators": {
       "similar-title": "相似标题",
       "same-amount": "相同金额",

@@ -1137,10 +1137,17 @@
   },
   "DuplicateExpense": {
     "title": "Possível duplicata detectada",
-    "description": "A despesa que você está salvando corresponde a uma despesa existente. Deseja continuar?",
+    "description": "A despesa que você está salvando parece semelhante a uma existente. Compare abaixo e decida se deseja continuar.",
     "cancel": "Cancelar",
-    "confirm": "Confirmar",
+    "confirm": "Salvar mesmo assim",
     "persistError": "Não foi possível salvar os dados do formulário. Navegação indisponível.",
+    "yours": "A sua",
+    "existing": "Existente",
+    "fields": {
+      "title": "Título",
+      "amount": "Valor",
+      "date": "Data"
+    },
     "indicators": {
       "similar-title": "Título semelhante",
       "same-amount": "Mesmo valor",

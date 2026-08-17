@@ -14,11 +14,9 @@ import { Badge } from '@/components/ui/badge'
 import type { Locale } from '@/i18n'
 import type { Currency } from '@/lib/currency'
 import type { DuplicateCheckResult } from '@/lib/duplicate-expense-detection'
-import {
-  computeSimilarityIndicators,
-  type SimilarityIndicator,
-} from '@/lib/duplicate-expense-detection'
+import { computeSimilarityIndicators } from '@/lib/duplicate-expense-detection'
 import { formatCurrency, formatDate } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 
 type DuplicateExpenseDialogProps = {
   open: boolean
@@ -36,32 +34,23 @@ type DuplicateExpenseDialogProps = {
   locale: Locale
 }
 
-const indicatorLabels: Record<SimilarityIndicator, string> = {
-  'similar-title': 'Similar title',
-  'same-amount': 'Same amount',
-  'close-in-date': 'Close in date',
-  'same-category': 'Same category',
-}
-
 export function DuplicateExpenseDialog({
   open,
   matches,
   newExpense,
   onConfirm,
   onCancel,
-  onMatchClick,
   currency,
   locale,
 }: DuplicateExpenseDialogProps) {
+  const t = useTranslations('DuplicateExpense')
+
   return (
     <AlertDialog open={open} onOpenChange={(isOpen) => !isOpen && onCancel()}>
       <AlertDialogContent className="max-w-lg">
         <AlertDialogHeader>
-          <AlertDialogTitle>Potential duplicate detected</AlertDialogTitle>
-          <AlertDialogDescription>
-            The expense you are saving looks similar to an existing one. Compare
-            below and decide whether to continue.
-          </AlertDialogDescription>
+          <AlertDialogTitle>{t('title')}</AlertDialogTitle>
+          <AlertDialogDescription>{t('description')}</AlertDialogDescription>
         </AlertDialogHeader>
 
         <div className="space-y-4 max-h-[60vh] overflow-y-auto">
@@ -84,10 +73,10 @@ export function DuplicateExpenseDialog({
                     <tr className="border-b bg-muted/30">
                       <th className="px-3 py-1.5 text-left font-medium text-muted-foreground w-[80px]" />
                       <th className="px-3 py-1.5 text-left font-medium text-muted-foreground">
-                        Yours
+                        {t('yours')}
                       </th>
                       <th className="px-3 py-1.5 text-left font-medium text-muted-foreground">
-                        Existing
+                        {t('existing')}
                       </th>
                     </tr>
                   </thead>
@@ -95,7 +84,7 @@ export function DuplicateExpenseDialog({
                     {/* Title row */}
                     <tr className="border-b">
                       <td className="px-3 py-1.5 text-muted-foreground">
-                        Title
+                        {t('fields.title')}
                       </td>
                       <td
                         className={`px-3 py-1.5 ${titleMatches ? warningClass : ''}`}
@@ -111,7 +100,7 @@ export function DuplicateExpenseDialog({
                     {/* Amount row */}
                     <tr className="border-b">
                       <td className="px-3 py-1.5 text-muted-foreground">
-                        Amount
+                        {t('fields.amount')}
                       </td>
                       <td
                         className={`px-3 py-1.5 ${amountMatches ? warningClass : ''}`}
@@ -127,7 +116,7 @@ export function DuplicateExpenseDialog({
                     {/* Date row */}
                     <tr>
                       <td className="px-3 py-1.5 text-muted-foreground">
-                        Date
+                        {t('fields.date')}
                       </td>
                       <td
                         className={`px-3 py-1.5 ${dateMatches ? warningClass : ''}`}
@@ -151,7 +140,7 @@ export function DuplicateExpenseDialog({
                   <div className="flex flex-wrap gap-1 px-3 py-2 border-t">
                     {indicators.map((indicator) => (
                       <Badge key={indicator} variant="secondary">
-                        {indicatorLabels[indicator]}
+                        {t(`indicators.${indicator}`)}
                       </Badge>
                     ))}
                   </div>
@@ -162,8 +151,12 @@ export function DuplicateExpenseDialog({
         </div>
 
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancel}>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm}>Save anyway</AlertDialogAction>
+          <AlertDialogCancel onClick={onCancel}>
+            {t('cancel')}
+          </AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm}>
+            {t('confirm')}
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

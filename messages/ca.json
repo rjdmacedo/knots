@@ -1135,9 +1135,16 @@
   },
   "DuplicateExpense": {
     "title": "Possible duplicat detectat",
-    "description": "La despesa que estàs desant coincideix amb una despesa existent. Vols continuar?",
+    "description": "La despesa que estàs desant sembla similar a una existent. Compara-les a sota i decideix si vols continuar.",
+    "yours": "La teva",
+    "existing": "Existent",
+    "fields": {
+      "title": "Títol",
+      "amount": "Import",
+      "date": "Data"
+    },
     "cancel": "Cancel·lar",
-    "confirm": "Confirmar",
+    "confirm": "Desa igualment",
     "persistError": "No s'han pogut desar les dades del formulari. La navegació no està disponible.",
     "indicators": {
       "similar-title": "Títol similar",

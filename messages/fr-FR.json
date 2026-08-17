@@ -1135,9 +1135,16 @@
   },
   "DuplicateExpense": {
     "title": "Doublon potentiel détecté",
-    "description": "La dépense que vous enregistrez correspond à une dépense existante. Voulez-vous continuer ?",
+    "description": "La dépense que vous enregistrez semble similaire à une dépense existante. Comparez ci-dessous et décidez si vous souhaitez continuer.",
+    "yours": "La vôtre",
+    "existing": "Existante",
+    "fields": {
+      "title": "Titre",
+      "amount": "Montant",
+      "date": "Date"
+    },
     "cancel": "Annuler",
-    "confirm": "Confirmer",
+    "confirm": "Enregistrer quand même",
     "persistError": "Impossible d'enregistrer les données du formulaire. La navigation est indisponible.",
     "indicators": {
       "similar-title": "Titre similaire",

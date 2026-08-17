@@ -1132,10 +1132,17 @@
   },
   "DuplicateExpense": {
     "title": "Mogelijk duplicaat gedetecteerd",
-    "description": "De uitgave die je opslaat komt overeen met een bestaande uitgave. Wil je doorgaan?",
+    "description": "De uitgave die je opslaat lijkt op een bestaande. Vergelijk hieronder en beslis of je wilt doorgaan.",
     "cancel": "Annuleren",
-    "confirm": "Bevestigen",
+    "confirm": "Toch opslaan",
     "persistError": "Kon formuliergegevens niet opslaan. Navigatie is niet beschikbaar.",
+    "yours": "Jouw",
+    "existing": "Bestaand",
+    "fields": {
+      "title": "Titel",
+      "amount": "Bedrag",
+      "date": "Datum"
+    },
     "indicators": {
       "similar-title": "Vergelijkbare titel",
       "same-amount": "Zelfde bedrag",

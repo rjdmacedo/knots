@@ -1132,10 +1132,17 @@
   },
   "DuplicateExpense": {
     "title": "偵測到可能的重複支出",
-    "description": "你正在儲存的支出與現有支出相符。要繼續嗎？",
+    "description": "你正在儲存的支出與既有支出相似。請在下方比較並決定是否繼續。",
     "cancel": "取消",
-    "confirm": "確認",
+    "confirm": "仍要儲存",
     "persistError": "無法儲存表單資料。導覽無法使用。",
+    "yours": "目前",
+    "existing": "既有",
+    "fields": {
+      "title": "標題",
+      "amount": "金額",
+      "date": "日期"
+    },
     "indicators": {
       "similar-title": "相似標題",
       "same-amount": "相同金額",
