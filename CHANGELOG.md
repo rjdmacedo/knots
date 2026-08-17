@@ -1,3 +1,10 @@
+# [1.52.0](https://github.com/rjdmacedo/knots/compare/v1.51.0...v1.52.0) (2026-08-17)
+
+
+### Features
+
+* localize the potential duplicate expense dialog ([529b409](https://github.com/rjdmacedo/knots/commit/529b409385171b21c24dedc50b1c6d10f2d6cc33))
+
 # [1.51.0](https://github.com/rjdmacedo/knots/compare/v1.50.0...v1.51.0) (2026-08-07)
 
 
