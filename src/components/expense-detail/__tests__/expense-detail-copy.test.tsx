@@ -67,6 +67,10 @@ jest.mock('../expense-detail-trends', () => ({
   ExpenseDetailTrends: () => <div data-testid="trends" />,
 }))
 
+jest.mock('../expense-detail-activity-list', () => ({
+  ExpenseActivityList: () => <div data-testid="activity-list" />,
+}))
+
 import { ExpenseDetailContent } from '../expense-detail'
 
 const usdCurrency: Currency = {
@@ -156,5 +160,35 @@ describe('ExpenseDetailContent - Copy button', () => {
 
     const copyButton = screen.queryByRole('button', { name: 'copy' })
     expect(copyButton).not.toBeInTheDocument()
+  })
+
+  it('renders the activity list when activity scope is provided', () => {
+    render(
+      <ExpenseDetailContent
+        {...baseProps}
+        isLocked={false}
+        activity={{
+          groupId: 'g1',
+          expenseId: 'exp-1',
+          group: {
+            id: 'g1',
+            name: 'Test Group',
+            currency: '$',
+            currencyCode: 'USD',
+            participants: [
+              { id: 'user-1', name: 'Alice', email: 'alice@example.com' },
+            ],
+          },
+        }}
+      />,
+    )
+
+    expect(screen.getByTestId('activity-list')).toBeInTheDocument()
+  })
+
+  it('does not render the activity list without activity scope', () => {
+    render(<ExpenseDetailContent {...baseProps} isLocked={false} />)
+
+    expect(screen.queryByTestId('activity-list')).not.toBeInTheDocument()
   })
 })

@@ -1,5 +1,6 @@
 'use client'
 
+import type { ActivityGroup } from '@/app/groups/[groupId]/activity/activity-item'
 import { CategoryIcon } from '@/app/groups/[groupId]/expenses/category-icon'
 import {
   AlertDialog,
@@ -44,6 +45,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound, useRouter } from 'next/navigation'
 import { useSpinDelay } from 'spin-delay'
+import { ExpenseActivityList } from './expense-detail-activity-list'
 import { ExpenseDetailCategoryPicker } from './expense-detail-category-picker'
 import { ExpenseDetailReceiptUpload } from './expense-detail-receipt-upload'
 import { ExpenseDetailTrends } from './expense-detail-trends'
@@ -256,6 +258,17 @@ function GroupExpenseDetailLoader({
       lastUpdatedBy={expenseData.lastUpdatedBy}
       lastUpdatedAt={expenseData.lastUpdatedAt}
       isLocked={isLocked}
+      activity={{
+        groupId,
+        expenseId,
+        group: {
+          id: group.id,
+          name: group.name,
+          currency: group.currency,
+          currencyCode: group.currencyCode,
+          participants: group.participants,
+        },
+      }}
     />
   )
 }
@@ -425,6 +438,11 @@ export type ExpenseDetailContentProps = {
   lastUpdatedBy?: { id: string; name: string } | null
   lastUpdatedAt?: Date | null
   isLocked: boolean
+  activity?: {
+    groupId: string
+    expenseId: string
+    group: ActivityGroup
+  }
 }
 
 export function ExpenseDetailContent({
@@ -452,6 +470,7 @@ export function ExpenseDetailContent({
   lastUpdatedBy,
   lastUpdatedAt,
   isLocked,
+  activity,
 }: ExpenseDetailContentProps) {
   const t = useTranslations('ExpenseDetail')
   const tExpenses = useTranslations('Expenses')
@@ -800,6 +819,14 @@ export function ExpenseDetailContent({
             </p>
           </CardContent>
         </Card>
+      ) : null}
+
+      {activity ? (
+        <ExpenseActivityList
+          groupId={activity.groupId}
+          expenseId={activity.expenseId}
+          group={activity.group}
+        />
       ) : null}
 
       {expense.isReimbursement ? (

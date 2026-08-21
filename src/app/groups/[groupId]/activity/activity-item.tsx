@@ -39,6 +39,8 @@ type Props = {
   categories: Array<{ id: number; grouping: string; name: string }>
   showGroupName?: boolean
   variant?: 'default' | 'card'
+  linkToExpense?: boolean
+  summaryContext?: 'feed' | 'expense'
 }
 
 function isPaymentActivity(activity: Activity) {
@@ -54,7 +56,11 @@ function openActivityExpense(
   router.push(getGroupExpenseDetailPath(groupId, expenseId))
 }
 
-function useSummary(activity: Activity, participantName?: string) {
+function useSummary(
+  activity: Activity,
+  participantName?: string,
+  summaryContext: 'feed' | 'expense' = 'feed',
+) {
   const t = useTranslations('Activity')
   const participant = participantName ?? t('someone')
   const expense = activity.data?.trim() || t('reimbursement')
@@ -67,6 +73,19 @@ function useSummary(activity: Activity, participantName?: string) {
       em: (chunks) => <em>&ldquo;{chunks}&rdquo;</em>,
       strong: (chunks) => <strong>{chunks}</strong>,
     })
+
+  if (summaryContext === 'expense') {
+    if (activity.activityType == ActivityType.CREATE_EXPENSE) {
+      return (
+        <>{tr(isPayment ? 'paymentRecordedDetail' : 'expenseCreatedDetail')}</>
+      )
+    }
+    if (activity.activityType == ActivityType.UPDATE_EXPENSE) {
+      return (
+        <>{tr(isPayment ? 'paymentUpdatedDetail' : 'expenseUpdatedDetail')}</>
+      )
+    }
+  }
 
   if (activity.activityType == ActivityType.UPDATE_GROUP) {
     return <>{tr('settingsModified')}</>
@@ -115,13 +134,15 @@ export function ActivityItem({
   categories,
   showGroupName,
   variant = 'default',
+  linkToExpense = true,
+  summaryContext = 'feed',
 }: Props) {
   const locale = useLocale()
   const router = useRouter()
 
-  const expenseExists = activity.expense !== undefined
+  const canOpenExpense = linkToExpense && activity.expense !== undefined
   const isPayment = isPaymentActivity(activity)
-  const summary = useSummary(activity, participant?.name)
+  const summary = useSummary(activity, participant?.name, summaryContext)
   const isRecent = dateStyle === undefined
   const timeFormatOptions = isRecent
     ? ({ timeStyle: 'medium' } as const)
@@ -134,10 +155,10 @@ export function ActivityItem({
       <div
         className={cn(
           'flex justify-between sm:mx-6 px-4 sm:rounded-lg sm:pr-2 sm:pl-4 py-4 text-sm gap-1 items-stretch',
-          expenseExists && 'cursor-pointer hover:bg-accent',
+          canOpenExpense && 'cursor-pointer hover:bg-accent',
         )}
         onClick={() => {
-          if (expenseExists && activity.expenseId) {
+          if (canOpenExpense && activity.expenseId) {
             openActivityExpense(router, groupId, activity.expenseId)
           }
         }}
@@ -170,7 +191,7 @@ export function ActivityItem({
             </div>
           )}
         </div>
-        {expenseExists && activity.expenseId && (
+        {canOpenExpense && activity.expenseId && (
           <Button
             type="button"
             variant="link"
@@ -194,11 +215,12 @@ export function ActivityItem({
   return (
     <div
       className={cn(
-        'flex justify-between sm:rounded-lg px-2 sm:pr-1 sm:pl-2 py-2 text-sm hover:bg-accent gap-1 items-stretch',
-        expenseExists && 'cursor-pointer',
+        'flex justify-between sm:rounded-lg px-2 sm:pr-1 sm:pl-2 py-2 text-sm gap-1 items-stretch',
+        linkToExpense && 'hover:bg-accent',
+        canOpenExpense && 'cursor-pointer',
       )}
       onClick={() => {
-        if (expenseExists && activity.expenseId) {
+        if (canOpenExpense && activity.expenseId) {
           openActivityExpense(router, groupId, activity.expenseId)
         }
       }}
@@ -235,7 +257,7 @@ export function ActivityItem({
           />
         )}
       </div>
-      {expenseExists && activity.expenseId && (
+      {canOpenExpense && activity.expenseId && (
         <Button
           type="button"
           variant="link"
