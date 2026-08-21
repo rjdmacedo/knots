@@ -84,6 +84,10 @@
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
+  "ExpenseDetail": {
+    "activity": "Активность",
+    "noActivity": "Для этого расхода пока нет записей."
+  },
   "Groups": {
     "myGroups": "Мои группы",
     "create": "Создать",
@@ -509,6 +513,10 @@
     "expenseCreated": "Расход <em>{expense}</em> создан участником <strong>{participant}</strong>.",
     "expenseUpdated": "Расход <em>{expense}</em> изменен участником <strong>{participant}</strong>.",
     "expenseDeleted": "Расход <em>{expense}</em> удален участником <strong>{participant}</strong>.",
+    "expenseCreatedDetail": "Создан участником <strong>{participant}</strong>.",
+    "expenseUpdatedDetail": "Изменен участником <strong>{participant}</strong>.",
+    "paymentRecordedDetail": "Записан участником <strong>{participant}</strong>.",
+    "paymentUpdatedDetail": "Изменен участником <strong>{participant}</strong>.",
     "Groups": {
       "today": "Сегодня",
       "yesterday": "Вчера",

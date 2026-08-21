@@ -84,6 +84,10 @@
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
+  "ExpenseDetail": {
+    "activity": "Tapahtumat",
+    "noActivity": "Tälle kululle ei ole vielä tapahtumia."
+  },
   "Groups": {
     "myGroups": "Omat ryhmät",
     "create": "Luo ryhmä",
@@ -509,6 +513,10 @@
     "expenseCreated": "<strong>{participant}</strong> lisäsi kulun <em>{expense}</em>.",
     "expenseUpdated": "<strong>{participant}</strong> muokkasi kulua <em>{expense}</em>.",
     "expenseDeleted": "<strong>{participant}</strong> poisti kulun <em>{expense}</em>.",
+    "expenseCreatedDetail": "Lisännyt <strong>{participant}</strong>.",
+    "expenseUpdatedDetail": "Muokannut <strong>{participant}</strong>.",
+    "paymentRecordedDetail": "Kirjannut <strong>{participant}</strong>.",
+    "paymentUpdatedDetail": "Muokannut <strong>{participant}</strong>.",
     "Groups": {
       "today": "Tänään",
       "yesterday": "Eilen",

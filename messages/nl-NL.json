@@ -84,6 +84,10 @@
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
+  "ExpenseDetail": {
+    "activity": "Gebeurtenissen",
+    "noActivity": "Er zijn nog geen gebeurtenissen voor deze uitgave."
+  },
   "Groups": {
     "myGroups": "Mijn groepen",
     "create": "Maak",
@@ -509,6 +513,10 @@
     "expenseCreated": "Uitgave <em>{expense}</em> gemaakt door <strong>{participant}</strong>.",
     "expenseUpdated": "Uitgave <em>{expense}</em> bewerkt door <strong>{participant}</strong>.",
     "expenseDeleted": "Uitgave <em>{expense}</em> verwijderd door <strong>{participant}</strong>.",
+    "expenseCreatedDetail": "Gemaakt door <strong>{participant}</strong>.",
+    "expenseUpdatedDetail": "Bewerkt door <strong>{participant}</strong>.",
+    "paymentRecordedDetail": "Vastgelegd door <strong>{participant}</strong>.",
+    "paymentUpdatedDetail": "Bewerkt door <strong>{participant}</strong>.",
     "Groups": {
       "today": "Vandaag",
       "yesterday": "Gisteren",

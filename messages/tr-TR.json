@@ -84,6 +84,10 @@
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
+  "ExpenseDetail": {
+    "activity": "Etkinlik",
+    "noActivity": "Bu masraf için henüz bir etkinlik kaydedilmedi."
+  },
   "Groups": {
     "myGroups": "Gruplarım",
     "create": "Oluştur",
@@ -509,6 +513,10 @@
     "expenseCreated": "Masraf <em>{expense}</em>, <strong>{participant}</strong> tarafından oluşturuldu.",
     "expenseUpdated": "Masraf <em>{expense}</em>, <strong>{participant}</strong> tarafından güncellendi.",
     "expenseDeleted": "Masraf <em>{expense}</em>, <strong>{participant}</strong> tarafından silindi.",
+    "expenseCreatedDetail": "<strong>{participant}</strong> tarafından oluşturuldu.",
+    "expenseUpdatedDetail": "<strong>{participant}</strong> tarafından güncellendi.",
+    "paymentRecordedDetail": "<strong>{participant}</strong> tarafından kaydedildi.",
+    "paymentUpdatedDetail": "<strong>{participant}</strong> tarafından güncellendi.",
     "Groups": {
       "today": "Bugün",
       "yesterday": "Dün",

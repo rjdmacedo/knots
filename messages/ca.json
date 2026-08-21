@@ -84,6 +84,10 @@
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
+  "ExpenseDetail": {
+    "activity": "Activitat",
+    "noActivity": "Encara no hi ha activitat registrada per a aquesta despesa."
+  },
   "Groups": {
     "myGroups": "Els meus grups",
     "create": "Crear",
@@ -509,6 +513,10 @@
     "expenseCreated": "Despesa <em>{expense}</em> creada per <strong>{participant}</strong>.",
     "expenseUpdated": "Despesa <em>{expense}</em> actualitzada per <strong>{participant}</strong>.",
     "expenseDeleted": "Despesa <em>{expense}</em> esborrada per <strong>{participant}</strong>.",
+    "expenseCreatedDetail": "Creada per <strong>{participant}</strong>.",
+    "expenseUpdatedDetail": "Actualitzada per <strong>{participant}</strong>.",
+    "paymentRecordedDetail": "Registrat per <strong>{participant}</strong>.",
+    "paymentUpdatedDetail": "Actualitzat per <strong>{participant}</strong>.",
     "Groups": {
       "today": "Avui",
       "yesterday": "Ahir",

@@ -84,6 +84,10 @@
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
+  "ExpenseDetail": {
+    "activity": "アクティビティ",
+    "noActivity": "この支出にはまだアクティビティがありません。"
+  },
   "Groups": {
     "myGroups": "マイグループ",
     "create": "作成",
@@ -509,6 +513,10 @@
     "expenseCreated": "支出<em>{expense}</em>が<strong>{participant}</strong>によって作成されました。",
     "expenseUpdated": "支出<em>{expense}</em>が<strong>{participant}</strong>によって更新されました。",
     "expenseDeleted": "支出<em>{expense}</em>が<strong>{participant}</strong>によって削除されました。",
+    "expenseCreatedDetail": "<strong>{participant}</strong>によって作成されました。",
+    "expenseUpdatedDetail": "<strong>{participant}</strong>によって更新されました。",
+    "paymentRecordedDetail": "<strong>{participant}</strong>によって記録されました。",
+    "paymentUpdatedDetail": "<strong>{participant}</strong>によって更新されました。",
     "Groups": {
       "today": "今日",
       "yesterday": "昨日",

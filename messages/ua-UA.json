@@ -84,6 +84,10 @@
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
+  "ExpenseDetail": {
+    "activity": "Активність",
+    "noActivity": "Для цієї витрати ще немає активності"
+  },
   "Groups": {
     "myGroups": "Мої групи",
     "create": "Створити",
@@ -509,6 +513,10 @@
     "expenseCreated": "Витрата <em>{expense}</em> створена <strong>{participant}</strong>",
     "expenseUpdated": "Витрата <em>{expense}</em> оновлена <strong>{participant}</strong>",
     "expenseDeleted": "Витрата <em>{expense}</em> видалена <strong>{participant}</strong>",
+    "expenseCreatedDetail": "Створена <strong>{participant}</strong>",
+    "expenseUpdatedDetail": "Оновлена <strong>{participant}</strong>",
+    "paymentRecordedDetail": "Записана <strong>{participant}</strong>",
+    "paymentUpdatedDetail": "Оновлена <strong>{participant}</strong>",
     "Groups": {
       "today": "Сьогодні",
       "yesterday": "Вчора",
