@@ -1,3 +1,10 @@
+# [1.53.0](https://github.com/rjdmacedo/knots/compare/v1.52.0...v1.53.0) (2026-08-21)
+
+
+### Features
+
+* show expense activity history on expense detail pages ([#37](https://github.com/rjdmacedo/knots/issues/37)) ([d65eb25](https://github.com/rjdmacedo/knots/commit/d65eb25b1c691c67d697eadbe8f7695ba5690cf9))
+
 # [1.52.0](https://github.com/rjdmacedo/knots/compare/v1.51.0...v1.52.0) (2026-08-17)
 
 
