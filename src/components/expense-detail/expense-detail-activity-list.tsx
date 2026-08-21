@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { trpc } from '@/trpc/client'
+import { find, flatMap, isEmpty, last, pick, times } from 'lodash-es'
 import { useTranslations } from 'next-intl'
 import { forwardRef, useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
@@ -18,14 +19,12 @@ const PAGE_SIZE = 20
 const ActivitiesLoading = forwardRef<HTMLDivElement>((_, ref) => {
   return (
     <div ref={ref} className="flex flex-col gap-3">
-      {Array(3)
-        .fill(undefined)
-        .map((_, index) => (
-          <div key={index} className="flex gap-2 py-1">
-            <Skeleton className="h-3 w-16" />
-            <Skeleton className="h-3 w-48" />
-          </div>
-        ))}
+      {times(3, (index) => (
+        <div key={index} className="flex gap-2 py-1">
+          <Skeleton className="h-3 w-16" />
+          <Skeleton className="h-3 w-48" />
+        </div>
+      ))}
     </div>
   )
 })
@@ -57,8 +56,8 @@ export function ExpenseActivityList({ groupId, expenseId, group }: Props) {
   )
   const { ref: loadingRef, inView } = useInView()
 
-  const activities = activitiesData?.pages.flatMap((page) => page.activities)
-  const hasMore = activitiesData?.pages.at(-1)?.hasMore ?? false
+  const activities = flatMap(activitiesData?.pages, (page) => page.activities)
+  const hasMore = last(activitiesData?.pages)?.hasMore ?? false
 
   const isInitialLoading = useSpinDelay(isLoading && !activitiesData, {
     delay: 200,
@@ -90,16 +89,14 @@ export function ExpenseActivityList({ groupId, expenseId, group }: Props) {
         <h2 className="mb-2 text-sm font-semibold">{t('activity')}</h2>
         {isInitialLoading ? (
           <ActivitiesLoading />
-        ) : !activities || activities.length === 0 ? (
+        ) : isEmpty(activities) ? (
           <p className="text-sm text-muted-foreground">{t('noActivity')}</p>
         ) : (
           <div className="-mx-2">
             {activities.map((activity) => {
               const participant =
                 activity.participantId !== null
-                  ? group.participants.find(
-                      (p) => p.id === activity.participantId,
-                    )
+                  ? find(group.participants, { id: activity.participantId })
                   : undefined
 
               return (
@@ -109,9 +106,7 @@ export function ExpenseActivityList({ groupId, expenseId, group }: Props) {
                   activity={activity}
                   group={group}
                   participant={
-                    participant
-                      ? { id: participant.id, name: participant.name }
-                      : undefined
+                    participant ? pick(participant, ['id', 'name']) : undefined
                   }
                   dateStyle="medium"
                   categories={categories}
