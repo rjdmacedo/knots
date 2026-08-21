@@ -84,6 +84,10 @@
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
+  "ExpenseDetail": {
+    "activity": "活動",
+    "noActivity": "這筆消費尚無任何活動記錄。"
+  },
   "Groups": {
     "myGroups": "我的群組",
     "create": "建立",
@@ -509,6 +513,10 @@
     "expenseCreated": "消費 <em>{expense}</em> 由 <strong>{participant}</strong> 新增。",
     "expenseUpdated": "消費 <em>{expense}</em> 由 <strong>{participant}</strong> 更新。",
     "expenseDeleted": "消費 <em>{expense}</em> 由 <strong>{participant}</strong> 刪除。",
+    "expenseCreatedDetail": "由 <strong>{participant}</strong> 新增。",
+    "expenseUpdatedDetail": "由 <strong>{participant}</strong> 更新。",
+    "paymentRecordedDetail": "由 <strong>{participant}</strong> 記錄。",
+    "paymentUpdatedDetail": "由 <strong>{participant}</strong> 更新。",
     "Groups": {
       "today": "今天",
       "yesterday": "昨天",

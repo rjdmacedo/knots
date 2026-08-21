@@ -729,10 +729,13 @@ export async function getExpense(groupId: string, expenseId: string) {
 
 export async function getActivities(
   groupId: string,
-  options?: { offset?: number; length?: number },
+  options?: { offset?: number; length?: number; expenseId?: string },
 ) {
   const activities = await prisma.activity.findMany({
-    where: { groupId },
+    where: {
+      groupId,
+      ...(options?.expenseId ? { expenseId: options.expenseId } : {}),
+    },
     include: { changes: true },
     orderBy: [{ time: 'desc' }, { id: 'desc' }],
     skip: options?.offset,

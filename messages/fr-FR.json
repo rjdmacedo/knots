@@ -84,6 +84,10 @@
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
+  "ExpenseDetail": {
+    "activity": "Activité",
+    "noActivity": "Aucune activité n'a encore été enregistrée pour cette dépense."
+  },
   "Groups": {
     "myGroups": "Mes groupes",
     "create": "Créer",
@@ -509,6 +513,10 @@
     "expenseCreated": "Dépense <em>{expense}</em> créée par <strong>{participant}</strong>.",
     "expenseUpdated": "Dépense <em>{expense}</em> mise à jour par <strong>{participant}</strong>.",
     "expenseDeleted": "Dépense <em>{expense}</em> supprimée par <strong>{participant}</strong>.",
+    "expenseCreatedDetail": "Créée par <strong>{participant}</strong>.",
+    "expenseUpdatedDetail": "Mise à jour par <strong>{participant}</strong>.",
+    "paymentRecordedDetail": "Enregistré par <strong>{participant}</strong>.",
+    "paymentUpdatedDetail": "Mis à jour par <strong>{participant}</strong>.",
     "Groups": {
       "today": "Aujourd'hui",
       "yesterday": "Hier",

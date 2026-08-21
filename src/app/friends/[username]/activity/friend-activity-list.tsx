@@ -19,6 +19,7 @@ import {
   groupActivitiesByDate,
 } from '@/lib/activity-date-groups'
 import { trpc } from '@/trpc/client'
+import { find, flatMap, isEmpty, last, times } from 'lodash-es'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { forwardRef, useEffect } from 'react'
@@ -35,14 +36,12 @@ const ActivitiesLoading = forwardRef<HTMLDivElement>((_, ref) => {
   return (
     <div ref={ref} className="flex flex-col">
       <Skeleton className="mt-2 h-3 w-24 mx-6" />
-      {Array(5)
-        .fill(undefined)
-        .map((_, index) => (
-          <div key={index} className="px-4 py-4">
-            <Skeleton className="mb-2 h-5 w-24" />
-            <Skeleton className="h-12 w-full" />
-          </div>
-        ))}
+      {times(5, (index) => (
+        <div key={index} className="px-4 py-4">
+          <Skeleton className="mb-2 h-5 w-24" />
+          <Skeleton className="h-12 w-full" />
+        </div>
+      ))}
     </div>
   )
 })
@@ -68,10 +67,13 @@ export function FriendActivityList({ friendId }: Props) {
   )
   const { ref: loadingRef, inView } = useInView()
 
-  const activities = activitiesData?.pages.flatMap(
-    (page) => page.activities,
-  ) as FriendActivity[] | undefined
-  const hasMore = activitiesData?.pages.at(-1)?.hasMore ?? false
+  const activities = activitiesData
+    ? (flatMap(
+        activitiesData.pages,
+        (page) => page.activities,
+      ) as FriendActivity[])
+    : undefined
+  const hasMore = last(activitiesData?.pages)?.hasMore ?? false
 
   const isLoading = useSpinDelay(activitiesAreLoading || !activities, {
     delay: 200,
@@ -108,7 +110,7 @@ export function FriendActivityList({ friendId }: Props) {
         <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent className="p-0">
-        {activities.length === 0 ? (
+        {isEmpty(activities) ? (
           <p className="px-4 pb-4 text-sm text-muted-foreground">
             {t('noActivity')}
           </p>
@@ -116,7 +118,7 @@ export function FriendActivityList({ friendId }: Props) {
           <>
             {ACTIVITY_DATE_GROUP_ORDER.map((dateGroup) => {
               const groupActivities = groupedActivitiesByDate[dateGroup]
-              if (!groupActivities || groupActivities.length === 0) return null
+              if (isEmpty(groupActivities)) return null
               const dateStyle =
                 dateGroup === 'today' || dateGroup === 'yesterday'
                   ? undefined
@@ -130,9 +132,9 @@ export function FriendActivityList({ friendId }: Props) {
                   {groupActivities.map((activity) => {
                     const participant =
                       activity.participantId !== null
-                        ? activity.group.participants.find(
-                            (p) => p.id === activity.participantId,
-                          )
+                        ? find(activity.group.participants, {
+                            id: activity.participantId,
+                          })
                         : undefined
 
                     return (

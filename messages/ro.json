@@ -84,6 +84,10 @@
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
+  "ExpenseDetail": {
+    "activity": "Activitate",
+    "noActivity": "Nu există încă nicio activitate pentru această cheltuială."
+  },
   "Groups": {
     "myGroups": "Grupurile mele",
     "create": "Adaugă",
@@ -509,6 +513,10 @@
     "expenseCreated": "Cheltuială <em>{expense}</em> adăugată de <strong>{participant}</strong>.",
     "expenseUpdated": "Cheltuială <em>{expense}</em> modificată de <strong>{participant}</strong>.",
     "expenseDeleted": "Cheltuială <em>{expense}</em> ștearsă de <strong>{participant}</strong>.",
+    "expenseCreatedDetail": "Adăugată de <strong>{participant}</strong>.",
+    "expenseUpdatedDetail": "Modificată de <strong>{participant}</strong>.",
+    "paymentRecordedDetail": "Înregistrată de <strong>{participant}</strong>.",
+    "paymentUpdatedDetail": "Modificată de <strong>{participant}</strong>.",
     "Groups": {
       "today": "Azi",
       "yesterday": "Ieri",

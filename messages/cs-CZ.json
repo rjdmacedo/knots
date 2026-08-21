@@ -84,6 +84,10 @@
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
+  "ExpenseDetail": {
+    "activity": "Aktivita",
+    "noActivity": "U tohoto výdaje zatím není žádná aktivita."
+  },
   "Groups": {
     "myGroups": "Moje skupiny",
     "create": "Vytvořit",
@@ -509,6 +513,10 @@
     "expenseCreated": "Výdaj <em>{expense}</em> vytvořil <strong>{participant}</strong>.",
     "expenseUpdated": "Výdaj <em>{expense}</em> upravil <strong>{participant}</strong>.",
     "expenseDeleted": "Výdaj <em>{expense}</em> smazal <strong>{participant}</strong>.",
+    "expenseCreatedDetail": "Vytvořil <strong>{participant}</strong>.",
+    "expenseUpdatedDetail": "Upravil <strong>{participant}</strong>.",
+    "paymentRecordedDetail": "Zaznamenal <strong>{participant}</strong>.",
+    "paymentUpdatedDetail": "Upravil <strong>{participant}</strong>.",
     "Groups": {
       "today": "Dnes",
       "yesterday": "Včera",

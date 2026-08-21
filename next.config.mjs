@@ -52,6 +52,7 @@ remotePatterns.push({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ['lodash-es'],
   images: {
     remotePatterns,
     // Disable image optimization for homelab setups with private IPs

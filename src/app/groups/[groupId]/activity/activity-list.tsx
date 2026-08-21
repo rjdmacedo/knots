@@ -7,6 +7,7 @@ import {
   groupActivitiesByDate,
 } from '@/lib/activity-date-groups'
 import { trpc } from '@/trpc/client'
+import { find, flatMap, isEmpty, last, times } from 'lodash-es'
 import { useTranslations } from 'next-intl'
 import { forwardRef, useEffect } from 'react'
 import { useInView } from 'react-intersection-observer'
@@ -19,18 +20,16 @@ const ActivitiesLoading = forwardRef<HTMLDivElement>((_, ref) => {
   return (
     <div ref={ref} className="flex flex-col gap-4">
       <Skeleton className="mt-2 h-3 w-24" />
-      {Array(5)
-        .fill(undefined)
-        .map((_, index) => (
-          <div key={index} className="flex gap-2 p-2">
-            <div className="flex-0">
-              <Skeleton className="h-3 w-12" />
-            </div>
-            <div className="flex-1">
-              <Skeleton className="h-3 w-48" />
-            </div>
+      {times(5, (index) => (
+        <div key={index} className="flex gap-2 p-2">
+          <div className="flex-0">
+            <Skeleton className="h-3 w-12" />
           </div>
-        ))}
+          <div className="flex-1">
+            <Skeleton className="h-3 w-48" />
+          </div>
+        </div>
+      ))}
     </div>
   )
 })
@@ -56,8 +55,10 @@ export function ActivityList() {
   )
   const { ref: loadingRef, inView } = useInView()
 
-  const activities = activitiesData?.pages.flatMap((page) => page.activities)
-  const hasMore = activitiesData?.pages.at(-1)?.hasMore ?? false
+  const activities = activitiesData
+    ? flatMap(activitiesData.pages, (page) => page.activities)
+    : undefined
+  const hasMore = last(activitiesData?.pages)?.hasMore ?? false
 
   const isInitialLoading = useSpinDelay(
     (isLoading && !activitiesData) || !group,
@@ -90,11 +91,11 @@ export function ActivityList() {
 
   const groupedActivitiesByDate = groupActivitiesByDate(activities)
 
-  return activities.length > 0 ? (
+  return !isEmpty(activities) ? (
     <>
       {ACTIVITY_DATE_GROUP_ORDER.map((dateGroup) => {
         const groupActivities = groupedActivitiesByDate[dateGroup]
-        if (!groupActivities || groupActivities.length === 0) return null
+        if (isEmpty(groupActivities)) return null
         const dateStyle =
           dateGroup === 'today' || dateGroup === 'yesterday'
             ? undefined
@@ -108,9 +109,7 @@ export function ActivityList() {
             {groupActivities.map((activity) => {
               const participant =
                 activity.participantId !== null
-                  ? group.participants.find(
-                      (p) => p.id === activity.participantId,
-                    )
+                  ? find(group.participants, { id: activity.participantId })
                   : undefined
               return (
                 <ActivityItem

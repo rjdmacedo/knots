@@ -262,4 +262,70 @@ describe('getActivities with changes', () => {
       expect(result[0].changes).toEqual([])
     })
   })
+
+  describe('expenseId filter', () => {
+    it('queries all group activities when expenseId is omitted', async () => {
+      mockActivityFindMany.mockResolvedValue([])
+
+      await getActivities('group-1')
+
+      expect(mockActivityFindMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { groupId: 'group-1' },
+        }),
+      )
+    })
+
+    it('filters activities by expenseId when provided', async () => {
+      mockActivityFindMany.mockResolvedValue([])
+
+      await getActivities('group-1', { expenseId: 'expense-1' })
+
+      expect(mockActivityFindMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { groupId: 'group-1', expenseId: 'expense-1' },
+        }),
+      )
+    })
+
+    it('returns only activities for the requested expense', async () => {
+      mockActivityFindMany.mockResolvedValue([
+        {
+          id: 'activity-1',
+          groupId: 'group-1',
+          time: new Date('2024-01-15T10:00:00Z'),
+          activityType: ActivityType.CREATE_EXPENSE,
+          participantId: 'participant-1',
+          expenseId: 'expense-1',
+          data: 'Lunch',
+          changes: [],
+        },
+        {
+          id: 'activity-2',
+          groupId: 'group-1',
+          time: new Date('2024-01-16T10:00:00Z'),
+          activityType: ActivityType.UPDATE_EXPENSE,
+          participantId: 'participant-2',
+          expenseId: 'expense-1',
+          data: 'Lunch',
+          changes: [
+            {
+              id: 'change-1',
+              activityId: 'activity-2',
+              field: 'amount',
+              oldValue: '1000',
+              newValue: '2000',
+            },
+          ],
+        },
+      ])
+
+      const result = await getActivities('group-1', { expenseId: 'expense-1' })
+
+      expect(result).toHaveLength(2)
+      expect(
+        result.every((activity) => activity.expenseId === 'expense-1'),
+      ).toBe(true)
+    })
+  })
 })
