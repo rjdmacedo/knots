@@ -32,6 +32,7 @@ model Group {
   categoryMappings  ExpenseCategoryMapping[]
   memberships       GroupMembership[]
   invitations       Invitation[]
+  emailDigestPending GroupEmailDigestPending?
   createdAt         DateTime                 @default(now())
 }
 
@@ -291,19 +292,34 @@ enum TokenType {
 }
 
 model GroupMembership {
-  id         String          @id @default(cuid())
-  userId     String
-  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  groupId    String
-  group      Group           @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  role       MembershipRole  @default(MEMBER)
-  joinedAt   DateTime        @default(now())
-  archivedAt DateTime?
+  id                        String         @id @default(cuid())
+  userId                    String
+  user                      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  groupId                   String
+  group                     Group          @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  role                      MembershipRole @default(MEMBER)
+  joinedAt                  DateTime       @default(now())
+  archivedAt                DateTime?
+  /// When true, the member receives a debounced email digest after group activity.
+  emailNotificationsEnabled Boolean        @default(false)
 
   @@unique([userId, groupId])
   @@index([userId])
   @@index([groupId])
   @@index([userId, archivedAt])
+  @@index([groupId, emailNotificationsEnabled])
+}
+
+/// One pending email digest per group. `sendAfter` is reset on every new change (5-minute debounce).
+model GroupEmailDigestPending {
+  groupId         String   @id
+  group           Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  lastActorUserId String
+  sendAfter       DateTime
+  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now())
+
+  @@index([sendAfter])
 }
 
 enum MembershipRole {

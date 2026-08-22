@@ -48,6 +48,12 @@ export interface EmailService {
     remainingBalance: string,
     isDirectBalance?: boolean,
   ): Promise<{ ok: true } | { ok: false; error: string }>
+  sendGroupActivityDigestEmail(
+    to: string,
+    actorName: string,
+    groupName: string,
+    activityLink: string,
+  ): Promise<{ ok: true } | { ok: false; error: string }>
 }
 
 const APP_NAME = 'Knots'
@@ -410,6 +416,50 @@ export function buildSettlementRecordedEmailText(
   ].join('\n')
 }
 
+export function buildGroupActivityDigestEmailHtml(
+  actorName: string,
+  groupName: string,
+  activityLink: string,
+): string {
+  const safeActor = escapeHtml(actorName)
+  const safeGroup = escapeHtml(groupName)
+
+  return buildTransactionalEmailHtml({
+    appName: APP_NAME,
+    previewText: `${actorName} made changes in ${groupName}`,
+    title: 'Group activity',
+    intro: `<strong style="color:#1f2937;">${safeActor}</strong> made changes in the group <strong style="color:#1f2937;">${safeGroup}</strong>.`,
+    detailsTitle: 'Activity',
+    details: [
+      { label: 'Changed by', value: actorName },
+      { label: 'Group', value: groupName },
+    ],
+    cta: { label: 'View activity', href: activityLink },
+  })
+}
+
+export function buildGroupActivityDigestEmailSubject(
+  actorName: string,
+  groupName: string,
+): string {
+  return `${actorName} made changes in "${groupName}" on ${APP_NAME}`
+}
+
+export function buildGroupActivityDigestEmailText(
+  actorName: string,
+  groupName: string,
+  activityLink: string,
+): string {
+  return [
+    `Group activity on ${APP_NAME}`,
+    '',
+    `${actorName} made changes in the group "${groupName}".`,
+    '',
+    'View activity:',
+    activityLink,
+  ].join('\n')
+}
+
 function createEmailService(): EmailService {
   return {
     async sendVerificationEmail(to, token) {
@@ -672,6 +722,48 @@ function createEmailService(): EmailService {
           err instanceof Error ? err.message : 'Unknown email delivery error'
         console.error(
           `[EmailService] Failed to send settlement recorded email to ${to}:`,
+          message,
+        )
+        return { ok: false, error: message }
+      }
+    },
+
+    async sendGroupActivityDigestEmail(to, actorName, groupName, activityLink) {
+      const resend = await getResendClient()
+      const from = getFromAddress()
+      const subject = buildGroupActivityDigestEmailSubject(actorName, groupName)
+      const html = buildGroupActivityDigestEmailHtml(
+        actorName,
+        groupName,
+        activityLink,
+      )
+      const text = buildGroupActivityDigestEmailText(
+        actorName,
+        groupName,
+        activityLink,
+      )
+
+      try {
+        const { error } = await resend.emails.send({
+          from,
+          to,
+          subject,
+          html,
+          text,
+        })
+        if (error) {
+          console.error(
+            `[EmailService] Failed to send group activity digest email to ${to}:`,
+            error,
+          )
+          return { ok: false, error: error.message }
+        }
+        return { ok: true }
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : 'Unknown email delivery error'
+        console.error(
+          `[EmailService] Failed to send group activity digest email to ${to}:`,
           message,
         )
         return { ok: false, error: message }

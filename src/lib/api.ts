@@ -601,6 +601,7 @@ export async function addExpenseDocuments(
 export async function updateGroup(
   groupId: string,
   groupFormValues: GroupFormValues,
+  userId?: string,
 ) {
   const existingGroup = await getGroup(groupId)
   if (!existingGroup) throw new Error('Invalid group ID')
@@ -608,6 +609,7 @@ export async function updateGroup(
   const changes = computeGroupChanges(existingGroup, groupFormValues)
 
   await logActivity(groupId, ActivityType.UPDATE_GROUP, {
+    userId,
     changes,
   })
 

@@ -5,6 +5,7 @@
  */
 import { groupService } from '@/lib/auth/group-service'
 import { invitationService } from '@/lib/auth/invitation-service'
+import { prisma } from '@/lib/prisma'
 import { isBlockedByEmail } from '@/lib/profile/block-check'
 import { createTRPCRouter, protectedProcedure } from '@/trpc/init'
 import { TRPCError } from '@trpc/server'
@@ -187,5 +188,72 @@ export const groupMembershipRouter = createTRPCRouter({
       }
 
       return invitationService.getPendingInvitations(input.groupId)
+    }),
+
+  /**
+   * Whether the authenticated member wants debounced email digests for this group.
+   */
+  getEmailNotifications: protectedProcedure
+    .input(z.object({ groupId: z.string().min(1) }))
+    .query(async ({ ctx, input }) => {
+      const membership = await prisma.groupMembership.findUnique({
+        where: {
+          userId_groupId: {
+            userId: ctx.user.id,
+            groupId: input.groupId,
+          },
+        },
+        select: { emailNotificationsEnabled: true },
+      })
+
+      if (!membership) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'You are not a member of this group.',
+        })
+      }
+
+      return {
+        emailNotificationsEnabled: membership.emailNotificationsEnabled,
+      }
+    }),
+
+  /**
+   * Opt in/out of debounced email digests for this group.
+   */
+  setEmailNotifications: protectedProcedure
+    .input(
+      z.object({
+        groupId: z.string().min(1),
+        enabled: z.boolean(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const membership = await prisma.groupMembership.findUnique({
+        where: {
+          userId_groupId: {
+            userId: ctx.user.id,
+            groupId: input.groupId,
+          },
+        },
+        select: { id: true },
+      })
+
+      if (!membership) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'You are not a member of this group.',
+        })
+      }
+
+      const updated = await prisma.groupMembership.update({
+        where: { id: membership.id },
+        data: { emailNotificationsEnabled: input.enabled },
+        select: { emailNotificationsEnabled: true },
+      })
+
+      return {
+        emailNotificationsEnabled: updated.emailNotificationsEnabled,
+      }
     }),
 })
