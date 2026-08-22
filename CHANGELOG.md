@@ -1,3 +1,10 @@
+# [1.54.0](https://github.com/rjdmacedo/knots/compare/v1.53.0...v1.54.0) (2026-08-22)
+
+
+### Features
+
+* add debounced group email activity digests ([e2e112a](https://github.com/rjdmacedo/knots/commit/e2e112a64da165b8c495d9927bcdc32853253c2b))
+
 # [1.53.0](https://github.com/rjdmacedo/knots/compare/v1.52.0...v1.53.0) (2026-08-21)
 
 
