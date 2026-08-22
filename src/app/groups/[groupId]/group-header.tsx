@@ -6,6 +6,7 @@ import {
   DetailPageHeader,
   DetailPageTabs,
 } from '@/components/detail-page-layout'
+import { EmailNotificationToggle } from '@/components/email-notification-toggle'
 import { PushNotificationToggle } from '@/components/push-notification-toggle'
 import { Skeleton } from '@/components/ui/skeleton'
 import { trpc } from '@/trpc/client'
@@ -40,6 +41,7 @@ export const GroupHeader = () => {
       actions={
         group ? (
           <>
+            <EmailNotificationToggle groupId={groupId} />
             {process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && (
               <PushNotificationToggle
                 groupId={groupId}

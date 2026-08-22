@@ -17,6 +17,9 @@
 # production
 /build
 
+# Ralph Loop runtime state
+.cursor/ralph/
+
 # misc
 .DS_Store
 *.pem
