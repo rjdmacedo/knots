@@ -1,7 +1,10 @@
 import 'server-only'
 
+import { ActivityType } from '@prisma/client'
+
 import { emailService } from '@/lib/auth/email-service'
 import { prisma } from '@/lib/prisma'
+import { isActivityTypeEnabled } from '@/lib/push/subscription-filters'
 
 /** Debounce window after the last group change before sending digest emails. */
 export const GROUP_EMAIL_DIGEST_DELAY_MS = 5 * 60 * 1000
@@ -92,7 +95,25 @@ export async function processDueGroupEmailDigests(
 
   for (const pending of due) {
     try {
-      const [actor, recipients] = await Promise.all([
+      // Query the activity window [pending.createdAt, pending.sendAfter)
+      const windowActivities = await prisma.activity.findMany({
+        where: {
+          groupId: pending.groupId,
+          time: { gte: pending.createdAt, lt: pending.sendAfter },
+        },
+        select: { activityType: true, participantId: true },
+      })
+
+      const windowEventTypes = new Set<ActivityType>(
+        windowActivities.map((a) => a.activityType),
+      )
+      const windowActorIds = new Set<string>(
+        windowActivities
+          .map((a) => a.participantId)
+          .filter((id): id is string => id !== null),
+      )
+
+      const [actor, candidates] = await Promise.all([
         prisma.user.findUnique({
           where: { id: pending.lastActorUserId },
           select: { id: true, name: true },
@@ -102,9 +123,17 @@ export async function processDueGroupEmailDigests(
             groupId: pending.groupId,
             emailNotificationsEnabled: true,
             archivedAt: null,
-            userId: { not: pending.lastActorUserId },
+            ...(windowActorIds.size > 0
+              ? { userId: { notIn: Array.from(windowActorIds) } }
+              : {}),
           },
-          include: {
+          select: {
+            userId: true,
+            notifyAllMembers: true,
+            includedUserIds: true,
+            notifyOnCreate: true,
+            notifyOnUpdate: true,
+            notifyOnDelete: true,
             user: {
               select: {
                 id: true,
@@ -116,6 +145,25 @@ export async function processDueGroupEmailDigests(
           },
         }),
       ])
+
+      // Apply event-type and member filters
+      const recipients = candidates.filter((membership) => {
+        // Require at least one activity type in the window that this member wants
+        const wantsEventType = Array.from(windowEventTypes).some(
+          (activityType) => isActivityTypeEnabled(activityType, membership),
+        )
+        if (!wantsEventType) return false
+
+        // If notifyAllMembers = false, require at least one window actor in includedUserIds
+        if (!membership.notifyAllMembers) {
+          const hasTrackedActor = Array.from(windowActorIds).some((actorId) =>
+            membership.includedUserIds.includes(actorId),
+          )
+          if (!hasTrackedActor) return false
+        }
+
+        return true
+      })
 
       const actorName = actor?.name?.trim() || 'Someone'
       const groupName = pending.group.name

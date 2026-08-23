@@ -34,9 +34,9 @@ const SHARE_BUTTON_PATH = path.resolve(
   __dirname,
   '../../groups/[groupId]/share-button.tsx',
 )
-const PUSH_NOTIFICATION_TOGGLE_PATH = path.resolve(
+const GROUP_NOTIFICATION_TOGGLE_PATH = path.resolve(
   __dirname,
-  '../../../components/push-notification-toggle.tsx',
+  '../../../components/group-notification-toggle.tsx',
 )
 const EXPORT_BUTTON_PATH = path.resolve(
   __dirname,
@@ -115,8 +115,8 @@ const AFFECTED_BUTTONS: ButtonTestCase[] = [
     description: 'Share button in group header',
   },
   {
-    name: 'PushNotificationToggle',
-    filePath: PUSH_NOTIFICATION_TOGGLE_PATH,
+    name: 'GroupNotificationToggle',
+    filePath: GROUP_NOTIFICATION_TOGGLE_PATH,
     expectedLabel: 'Enable notifications / Disable notifications',
     description: 'Notifications (bell) button in group header',
   },

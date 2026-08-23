@@ -142,6 +142,8 @@ model Activity {
   expenseId     String?
   data          String?
   changes       ActivityChange[]
+
+  @@index([groupId, time])
 }
 
 model ActivityChange {
@@ -302,6 +304,18 @@ model GroupMembership {
   archivedAt                DateTime?
   /// When true, the member receives a debounced email digest after group activity.
   emailNotificationsEnabled Boolean        @default(false)
+
+  // --- New shared notification filter fields ---
+  /// When true, notify about activity by any member (excluding self).
+  notifyAllMembers          Boolean  @default(true)
+  /// Used when notifyAllMembers = false. Only notify about activity by these user IDs.
+  includedUserIds           String[] @default([])
+  /// Notify when an expense is created.
+  notifyOnCreate            Boolean  @default(true)
+  /// Notify when an expense or group settings are updated.
+  notifyOnUpdate            Boolean  @default(true)
+  /// Notify when an expense is deleted.
+  notifyOnDelete            Boolean  @default(true)
 
   @@unique([userId, groupId])
   @@index([userId])
