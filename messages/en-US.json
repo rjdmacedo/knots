@@ -1238,11 +1238,13 @@
     "eventDelete": "Expense deleted",
     "selectAtLeastOneFilter": "Select at least one member or event.",
     "subscribeError": "Could not enable notifications. Please try again.",
-    "enableEmailNotifications": "Enable email notifications for this group",
-    "disableEmailNotifications": "Disable email notifications for this group",
-    "emailEnabledToast": "You will get an email about group changes after 5 quiet minutes.",
-    "emailDisabledToast": "Email notifications for this group are off.",
-    "emailToggleError": "Could not update email notification settings."
+    "channelsLabel": "Channels",
+    "pushLabel": "Push notifications",
+    "pushUnavailable": "Push notifications are not available in this deployment.",
+    "emailLabel": "Email digest",
+    "emailHint": "after 5 quiet minutes",
+    "enableChannelHint": "Enable a channel to configure who and what you get notified about.",
+    "pushSyncWarning": "Preferences saved, but push notification filter sync failed."
   },
   "AppError": {
     "title": "Something went wrong",

@@ -6,8 +6,7 @@ import {
   DetailPageHeader,
   DetailPageTabs,
 } from '@/components/detail-page-layout'
-import { EmailNotificationToggle } from '@/components/email-notification-toggle'
-import { PushNotificationToggle } from '@/components/push-notification-toggle'
+import { GroupNotificationToggle } from '@/components/group-notification-toggle'
 import { Skeleton } from '@/components/ui/skeleton'
 import { trpc } from '@/trpc/client'
 import { useTranslations } from 'next-intl'
@@ -41,17 +40,14 @@ export const GroupHeader = () => {
       actions={
         group ? (
           <>
-            <EmailNotificationToggle groupId={groupId} />
-            {process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && (
-              <PushNotificationToggle
-                groupId={groupId}
-                currentUserId={profile?.id}
-                members={group.participants.map((participant) => ({
-                  id: participant.id,
-                  name: participant.name,
-                }))}
-              />
-            )}
+            <GroupNotificationToggle
+              groupId={groupId}
+              currentUserId={profile?.id}
+              members={group.participants.map((p) => ({
+                id: p.id,
+                name: p.name,
+              }))}
+            />
             <ShareButton group={group} />
           </>
         ) : undefined

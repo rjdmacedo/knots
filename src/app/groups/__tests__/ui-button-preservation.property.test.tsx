@@ -29,9 +29,9 @@ const SHARE_BUTTON_PATH = path.resolve(
   __dirname,
   '../../groups/[groupId]/share-button.tsx',
 )
-const PUSH_NOTIFICATION_TOGGLE_PATH = path.resolve(
+const GROUP_NOTIFICATION_TOGGLE_PATH = path.resolve(
   __dirname,
-  '../../../components/push-notification-toggle.tsx',
+  '../../../components/group-notification-toggle.tsx',
 )
 const EXPORT_BUTTON_PATH = path.resolve(
   __dirname,
@@ -93,25 +93,25 @@ function shareButtonPreservesClickBehavior(fileContent: string): {
 }
 
 /**
- * Verifies that the PushNotificationToggle preserves its Popover click behavior.
- * The button must open a panel with Switch for subscribe/unsubscribe and
- * RadioGroup for participant selection.
+ * Verifies that the GroupNotificationToggle preserves its Popover click behavior.
+ * The button must open a Popover with PopoverTrigger and PopoverContent
+ * that renders the NotificationSettingsPopover.
  */
 function notificationButtonPreservesClickBehavior(fileContent: string): {
   hasPopover: boolean
   hasPopoverTrigger: boolean
   hasPopoverContent: boolean
-  hasSubscribeToggle: boolean
-  hasParticipantSelection: boolean
+  hasNotificationSettings: boolean
+  hasTooltip: boolean
 } {
   return {
     hasPopover: fileContent.includes('<Popover'),
     hasPopoverTrigger: fileContent.includes('<PopoverTrigger'),
     hasPopoverContent: fileContent.includes('<PopoverContent'),
-    hasSubscribeToggle: fileContent.includes('<Switch'),
-    hasParticipantSelection:
-      fileContent.includes('<Checkbox') &&
-      fileContent.includes('otherMembers.map'),
+    hasNotificationSettings: fileContent.includes(
+      'NotificationSettingsPopover',
+    ),
+    hasTooltip: fileContent.includes('<Tooltip'),
   }
 }
 
@@ -249,10 +249,9 @@ const PRESERVATION_TEST_CASES: PreservationTestCase[] = [
     requirement: '3.1',
   },
   {
-    name: 'PushNotificationToggle',
-    filePath: PUSH_NOTIFICATION_TOGGLE_PATH,
-    description:
-      'Click opens notification dropdown with subscribe/unsubscribe options',
+    name: 'GroupNotificationToggle',
+    filePath: GROUP_NOTIFICATION_TOGGLE_PATH,
+    description: 'Click opens notification popover with settings panel',
     requirement: '3.2',
   },
   {
@@ -341,19 +340,19 @@ describe('UI Button Preservation Property Tests', () => {
     })
 
     /**
-     * PushNotificationToggle: Clicking SHALL CONTINUE TO open the notification popover
-     * with subscribe/unsubscribe and participant selection options.
+     * GroupNotificationToggle: Clicking SHALL CONTINUE TO open the notification popover
+     * with the NotificationSettingsPopover panel.
      *
      * **Validates: Requirements 3.2**
      */
-    it('PushNotificationToggle click SHALL CONTINUE TO open notification popover', () => {
+    it('GroupNotificationToggle click SHALL CONTINUE TO open notification popover', () => {
       fc.assert(
         fc.property(
           arbButtonState,
           arbInteractionSequence,
           (state, sequence) => {
             const fileContent = fs.readFileSync(
-              PUSH_NOTIFICATION_TOGGLE_PATH,
+              GROUP_NOTIFICATION_TOGGLE_PATH,
               'utf-8',
             )
             const result = notificationButtonPreservesClickBehavior(fileContent)
@@ -361,8 +360,8 @@ describe('UI Button Preservation Property Tests', () => {
             expect(result.hasPopover).toBe(true)
             expect(result.hasPopoverTrigger).toBe(true)
             expect(result.hasPopoverContent).toBe(true)
-            expect(result.hasSubscribeToggle).toBe(true)
-            expect(result.hasParticipantSelection).toBe(true)
+            expect(result.hasNotificationSettings).toBe(true)
+            expect(result.hasTooltip).toBe(true)
           },
         ),
         { numRuns: PBT_NUM_RUNS },
@@ -539,7 +538,7 @@ describe('UI Button Preservation Property Tests', () => {
                 expect(r.hasPopoverContent).toBe(true)
                 break
               }
-              case 'PushNotificationToggle': {
+              case 'GroupNotificationToggle': {
                 const r = notificationButtonPreservesClickBehavior(fileContent)
                 expect(r.hasPopover).toBe(true)
                 expect(r.hasPopoverTrigger).toBe(true)

@@ -10,6 +10,9 @@ jest.mock('@/lib/auth/email-service', () => ({
 
 jest.mock('@/lib/prisma', () => ({
   prisma: {
+    activity: {
+      findMany: jest.fn(),
+    },
     groupMembership: {
       count: jest.fn(),
       findMany: jest.fn(),
@@ -40,6 +43,7 @@ const mockUpsert = prisma.groupEmailDigestPending.upsert as jest.Mock
 const mockFindManyPending = prisma.groupEmailDigestPending.findMany as jest.Mock
 const mockDeletePending = prisma.groupEmailDigestPending.delete as jest.Mock
 const mockFindUser = prisma.user.findUnique as jest.Mock
+const mockFindManyActivities = prisma.activity.findMany as jest.Mock
 const mockSend = emailService.sendGroupActivityDigestEmail as jest.Mock
 
 describe('scheduleGroupEmailDigest', () => {
@@ -140,12 +144,22 @@ describe('processDueGroupEmailDigests', () => {
         groupId: 'group-1',
         lastActorUserId: 'actor-1',
         sendAfter: new Date('2026-08-21T12:00:00.000Z'),
+        createdAt: new Date('2026-08-21T11:55:00.000Z'),
         group: { id: 'group-1', name: 'Trip' },
       },
+    ])
+    mockFindManyActivities.mockResolvedValue([
+      { activityType: 'CREATE_EXPENSE', participantId: 'actor-1' },
     ])
     mockFindUser.mockResolvedValue({ id: 'actor-1', name: 'Alice' })
     mockFindManyMemberships.mockResolvedValue([
       {
+        userId: 'bob',
+        notifyAllMembers: true,
+        includedUserIds: [],
+        notifyOnCreate: true,
+        notifyOnUpdate: true,
+        notifyOnDelete: true,
         user: {
           id: 'bob',
           email: 'bob@example.com',
@@ -184,12 +198,22 @@ describe('processDueGroupEmailDigests', () => {
         groupId: 'group-1',
         lastActorUserId: 'actor-1',
         sendAfter: new Date('2026-08-21T12:00:00.000Z'),
+        createdAt: new Date('2026-08-21T11:55:00.000Z'),
         group: { id: 'group-1', name: 'Trip' },
       },
+    ])
+    mockFindManyActivities.mockResolvedValue([
+      { activityType: 'CREATE_EXPENSE', participantId: 'actor-1' },
     ])
     mockFindUser.mockResolvedValue({ id: 'actor-1', name: 'Alice' })
     mockFindManyMemberships.mockResolvedValue([
       {
+        userId: 'bob',
+        notifyAllMembers: true,
+        includedUserIds: [],
+        notifyOnCreate: true,
+        notifyOnUpdate: true,
+        notifyOnDelete: true,
         user: {
           id: 'bob',
           email: 'bob@example.com',
