@@ -1,3 +1,10 @@
+# [1.55.0](https://github.com/rjdmacedo/knots/compare/v1.54.0...v1.55.0) (2026-08-23)
+
+
+### Features
+
+* unify group push and email notification settings ([6bd3bbc](https://github.com/rjdmacedo/knots/commit/6bd3bbcbc48de3252791c1a90094b1ea1b515eb8))
+
 # [1.54.0](https://github.com/rjdmacedo/knots/compare/v1.53.0...v1.54.0) (2026-08-22)
 
 
