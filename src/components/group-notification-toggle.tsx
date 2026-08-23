@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/tooltip'
 import { usePushNotificationSubscription } from '@/lib/push/use-push-notification-subscription'
 import { trpc } from '@/trpc/client'
-import { Bell } from 'lucide-react'
+import { Bell, BellOff } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useId } from 'react'
 import { NotificationSettingsPopover } from './notification-settings-popover'
@@ -59,17 +59,20 @@ export function GroupNotificationToggle({
                   variant="ghost"
                   size="icon"
                   className="shrink-0"
-                  aria-label={t('settings')}
                   aria-controls={panelId}
                 />
               }
             />
           }
         >
-          <Bell className="size-4" />
+          {anyChannelEnabled ? (
+            <Bell className="size-4" />
+          ) : (
+            <BellOff className="size-4" />
+          )}
         </TooltipTrigger>
         <TooltipContent>
-          <p>{t('settings')}</p>
+          <p>{anyChannelEnabled ? t('unsubscribe') : t('subscribe')}</p>
         </TooltipContent>
       </Tooltip>
 

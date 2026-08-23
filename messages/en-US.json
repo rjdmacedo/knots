@@ -1256,7 +1256,8 @@
     "channelsLabel": "Channels",
     "pushLabel": "Push notifications",
     "pushUnavailable": "Push notifications are not available in this deployment.",
-    "emailLabel": "Email notifications",
+    "emailLabel": "Email digest",
+    "emailHint": "after 5 quiet minutes",
     "enableChannelHint": "Enable a channel to configure who and what you get notified about.",
     "pushSyncWarning": "Preferences saved, but push notification filter sync failed."
   },

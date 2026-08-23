@@ -4,10 +4,12 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
-import { type PushSubscriptionPreferences } from '@/lib/push/subscription-filters'
+import {
+  defaultPushPreferences,
+  type PushSubscriptionPreferences,
+} from '@/lib/push/subscription-filters'
 import {
   isPushSupported,
-  type PushNotificationErrorCode,
   usePushNotificationSubscription,
 } from '@/lib/push/use-push-notification-subscription'
 import { trpc } from '@/trpc/client'
@@ -15,7 +17,6 @@ import { AlertCircle, Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useId, useMemo, useState } from 'react'
 import { toast } from 'sonner'
-import { useSpinDelay } from 'spin-delay'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -47,32 +48,28 @@ function normalizeMemberSelection(
 // ---------------------------------------------------------------------------
 
 interface PushChannelRowProps {
+  groupId: string
   currentUserId: string | undefined
-  pushEnabled: boolean
-  pushLoading: boolean
-  pushError: PushNotificationErrorCode | null
-  subscribe: () => Promise<PushNotificationErrorCode | null>
-  unsubscribe: () => Promise<PushNotificationErrorCode | null>
-  clearError: () => void
+  sharedPrefs: PushSubscriptionPreferences | null
 }
 
 function PushChannelRow({
+  groupId,
   currentUserId,
-  pushEnabled,
-  pushLoading,
-  pushError,
-  subscribe,
-  unsubscribe,
-  clearError,
+  sharedPrefs,
 }: PushChannelRowProps) {
   const t = useTranslations('Notifications')
   const vapidKeyMissing = !process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
   const browserSupported = isPushSupported()
 
-  const showPushLoading = useSpinDelay(pushLoading, {
-    delay: 1000,
-    minDuration: 1000,
-  })
+  const {
+    isSubscribed,
+    isLoading: pushLoading,
+    error: pushError,
+    subscribe,
+    unsubscribe,
+    clearError,
+  } = usePushNotificationSubscription(groupId, currentUserId)
 
   // Determine disabled reason
   let disabledReason: string | null = null
@@ -90,19 +87,20 @@ function PushChannelRow({
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between gap-4">
         <span className="text-sm font-medium">{t('pushLabel')}</span>
-        {showPushLoading ? (
-          <div className="flex h-[18.4px] w-[32px] items-center justify-center">
-            <Loader2 className="size-4 animate-spin text-muted-foreground" />
-          </div>
+        {pushLoading ? (
+          <Loader2 className="size-4 animate-spin text-muted-foreground" />
         ) : (
           <Switch
-            checked={pushEnabled && !vapidKeyMissing && browserSupported}
+            checked={isSubscribed && !vapidKeyMissing && browserSupported}
             disabled={isDisabled}
             aria-label={t('pushLabel')}
             onCheckedChange={async (checked) => {
               clearError()
               if (checked) {
-                await subscribe()
+                const prefs =
+                  sharedPrefs ??
+                  (currentUserId ? defaultPushPreferences(currentUserId) : null)
+                if (prefs) await subscribe(prefs)
               } else {
                 await unsubscribe()
               }
@@ -140,11 +138,6 @@ function EmailChannelRow({
   isMutationPending,
 }: EmailChannelRowProps) {
   const t = useTranslations('Notifications')
-  const isEmailLoading = emailEnabled === undefined || isMutationPending
-  const showEmailLoading = useSpinDelay(isEmailLoading, {
-    delay: 1500,
-    minDuration: 1000,
-  })
 
   if (queryFailed) {
     return (
@@ -166,15 +159,18 @@ function EmailChannelRow({
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between gap-4">
-        <span className="text-sm font-medium">{t('emailLabel')}</span>
-        {showEmailLoading ? (
-          <div className="flex h-[18.4px] w-[32px] items-center justify-center">
-            <Loader2 className="size-4 animate-spin text-muted-foreground" />
-          </div>
+        <div className="flex flex-col gap-0.5">
+          <span className="text-sm font-medium">{t('emailLabel')}</span>
+          <span className="text-xs text-muted-foreground">
+            {t('emailHint')}
+          </span>
+        </div>
+        {isMutationPending ? (
+          <Loader2 className="size-4 animate-spin text-muted-foreground" />
         ) : (
           <Switch
-            checked={emailEnabled}
-            disabled={isMutationPending}
+            checked={emailEnabled ?? false}
+            disabled={isMutationPending || emailEnabled === undefined}
             aria-label={t('emailLabel')}
             onCheckedChange={(checked) => onToggle(checked)}
           />
@@ -196,12 +192,6 @@ interface ChannelsSectionProps {
   queryFailed: boolean
   onEmailToggle: (enabled: boolean) => void
   isEmailMutationPending: boolean
-  pushEnabled: boolean
-  pushLoading: boolean
-  pushError: PushNotificationErrorCode | null
-  subscribe: () => Promise<PushNotificationErrorCode | null>
-  unsubscribe: () => Promise<PushNotificationErrorCode | null>
-  clearError: () => void
 }
 
 function ChannelsSection({
@@ -212,12 +202,6 @@ function ChannelsSection({
   queryFailed,
   onEmailToggle,
   isEmailMutationPending,
-  pushEnabled,
-  pushLoading,
-  pushError,
-  subscribe,
-  unsubscribe,
-  clearError,
 }: ChannelsSectionProps) {
   const t = useTranslations('Notifications')
 
@@ -225,13 +209,9 @@ function ChannelsSection({
     <div className="flex flex-col gap-3">
       <p className="text-sm font-semibold">{t('channelsLabel')}</p>
       <PushChannelRow
+        groupId={groupId}
         currentUserId={currentUserId}
-        pushEnabled={pushEnabled}
-        pushLoading={pushLoading}
-        pushError={pushError}
-        subscribe={subscribe}
-        unsubscribe={unsubscribe}
-        clearError={clearError}
+        sharedPrefs={sharedPrefs}
       />
       <EmailChannelRow
         groupId={groupId}
@@ -410,16 +390,8 @@ export function NotificationSettingsPopover({
   const panelId = useId()
 
   // ---- Push state (from hook) ----
-  const {
-    isSubscribed: pushEnabled,
-    isLoading: pushLoading,
-    error: pushError,
-    subscribe,
-    unsubscribe,
-    clearError,
-  } = usePushNotificationSubscription(groupId, currentUserId)
-
-  const utils = trpc.useUtils()
+  const { isSubscribed: pushEnabled, updatePreferences } =
+    usePushNotificationSubscription(groupId, currentUserId)
 
   // ---- Load all shared preferences in a single query ----
   const {
@@ -433,25 +405,6 @@ export function NotificationSettingsPopover({
 
   // ---- Mutation for all saves ----
   const setPrefs = trpc.groupMembership.setNotificationPreferences.useMutation()
-
-  const persistPrefs = useCallback(
-    async (patch: {
-      emailNotificationsEnabled?: boolean
-      notifyAllMembers?: boolean
-      includedUserIds?: string[]
-      notifyOnCreate?: boolean
-      notifyOnUpdate?: boolean
-      notifyOnDelete?: boolean
-    }) => {
-      const updated = await setPrefs.mutateAsync({ groupId, ...patch })
-      utils.groupMembership.getNotificationPreferences.setData(
-        { groupId },
-        updated,
-      )
-      return updated
-    },
-    [groupId, setPrefs, utils],
-  )
 
   // ---- Local state for email toggle ----
   const [emailEnabled, setEmailEnabled] = useState<boolean | undefined>(
@@ -509,7 +462,10 @@ export function NotificationSettingsPopover({
       setEmailEnabled(enabled)
       setIsEmailMutationPending(true)
       try {
-        await persistPrefs({ emailNotificationsEnabled: enabled })
+        await setPrefs.mutateAsync({
+          groupId,
+          emailNotificationsEnabled: enabled,
+        })
       } catch {
         setEmailEnabled(prevValue)
         toast.error(t('subscribeError'))
@@ -517,7 +473,7 @@ export function NotificationSettingsPopover({
         setIsEmailMutationPending(false)
       }
     },
-    [emailEnabled, persistPrefs, t],
+    [emailEnabled, groupId, setPrefs, t],
   )
 
   // ---- Filter save helper ----
@@ -529,18 +485,14 @@ export function NotificationSettingsPopover({
       notifyOnUpdate?: boolean
       notifyOnDelete?: boolean
     }) => {
+      if (!isFilterValid) return
+
       // Build the full resolved filter state to pass to updatePreferences
       const resolvedAllMembers = patch.notifyAllMembers ?? notifyAllOthers
       const resolvedIds = patch.includedUserIds ?? selectedMemberIds
       const resolvedCreate = patch.notifyOnCreate ?? notifyOnCreate
       const resolvedUpdate = patch.notifyOnUpdate ?? notifyOnUpdate
       const resolvedDelete = patch.notifyOnDelete ?? notifyOnDelete
-
-      const isResolvedFilterValid =
-        (resolvedCreate || resolvedUpdate || resolvedDelete) &&
-        (resolvedAllMembers || resolvedIds.length > 0)
-
-      if (!isResolvedFilterValid) return
 
       // Snapshot for revert
       const prevAllOthers = notifyAllOthers
@@ -551,7 +503,22 @@ export function NotificationSettingsPopover({
 
       setIsSaving(true)
       try {
-        await persistPrefs(patch)
+        await setPrefs.mutateAsync({ groupId, ...patch })
+
+        // If push subscription is active, sync PushSubscription row
+        if (pushEnabled && currentUserId) {
+          const syncErr = await updatePreferences({
+            subscriberUserId: currentUserId,
+            notifyAllMembers: resolvedAllMembers,
+            includedUserIds: resolvedAllMembers ? [] : resolvedIds,
+            notifyOnCreate: resolvedCreate,
+            notifyOnUpdate: resolvedUpdate,
+            notifyOnDelete: resolvedDelete,
+          })
+          if (syncErr) {
+            toast.warning(t('pushSyncWarning'), { duration: 5000 })
+          }
+        }
       } catch {
         // Revert local state on GroupMembership save failure
         setNotifyAllOthers(prevAllOthers)
@@ -565,12 +532,17 @@ export function NotificationSettingsPopover({
       }
     },
     [
+      isFilterValid,
       notifyAllOthers,
       selectedMemberIds,
       notifyOnCreate,
       notifyOnUpdate,
       notifyOnDelete,
-      persistPrefs,
+      groupId,
+      setPrefs,
+      pushEnabled,
+      currentUserId,
+      updatePreferences,
       t,
     ],
   )
@@ -651,12 +623,6 @@ export function NotificationSettingsPopover({
           queryFailed={prefsQueryFailed}
           onEmailToggle={handleEmailToggle}
           isEmailMutationPending={isEmailMutationPending}
-          pushEnabled={pushEnabled}
-          pushLoading={pushLoading}
-          pushError={pushError}
-          subscribe={subscribe}
-          unsubscribe={unsubscribe}
-          clearError={clearError}
         />
       </div>
 
