@@ -38,6 +38,9 @@ export async function getDirectExpensesBetweenUsers(
       recurrenceRule: true,
       title: true,
       notes: true,
+      expenseCurrencyCode: true,
+      linkedExpenseId: true,
+      originalTotalAtDecomposition: true,
       _count: { select: { documents: true } },
     },
     where: {

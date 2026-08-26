@@ -294,34 +294,34 @@ This plan implements support for expenses funded by multiple payers. The work is
     - Assert: `paidById` equals first entry's userId in `paidBy` array
     - **Validates: Requirements 10.3**
 
-- [ ] 14. Validation property tests
-  - [-] 14.1 Write property test: Per-Payer Amount Positivity (Property 15)
+- [x] 14. Validation property tests
+  - [x] 14.1 Write property test: Per-Payer Amount Positivity (Property 15)
     - **Property 15: Per-Payer Amount Positivity Validation**
     - Create `src/lib/__tests__/validation-multi-payer.property.test.ts`
     - Assert: zero or negative amount → rejection with inline error
     - **Validates: Requirements 11.1**
 
-  - [-] 14.2 Write property test: No Duplicate Payer Participants (Property 17)
+  - [x] 14.2 Write property test: No Duplicate Payer Participants (Property 17)
     - **Property 17: No Duplicate Payer Participants**
     - In `src/lib/__tests__/validation-multi-payer.property.test.ts`
     - Assert: duplicate userId in paidBy → rejection
     - **Validates: Requirements 2.5**
 
-- [ ] 15. Migration correctness tests
-  - [-] 15.1 Write property test: Migration Correctness and Idempotence (Property 6)
+- [x] 15. Migration correctness tests
+  - [x] 15.1 Write property test: Migration Correctness and Idempotence (Property 6)
     - **Property 6: Migration Correctness and Idempotence**
     - Create `src/lib/__tests__/migration-multi-payer.property.test.ts`
     - Assert: migration produces exactly one row per expense; repeated runs produce same state
     - **Validates: Requirements 6.1, 6.3**
 
-  - [-] 15.2 Write property test: Migration Balance Preservation (Property 7)
+  - [x] 15.2 Write property test: Migration Balance Preservation (Property 7)
     - **Property 7: Migration Balance Preservation**
     - In `src/lib/__tests__/migration-multi-payer.property.test.ts`
     - Assert: net balance for every participant is identical before and after migration
     - **Validates: Requirements 6.4**
 
-- [ ] 16. Recurring expense property test
-  - [-] 16.1 Write property test: Recurring Expense PaidBy Propagation (Property 16)
+- [x] 16. Recurring expense property test
+  - [x] 16.1 Write property test: Recurring Expense PaidBy Propagation (Property 16)
     - **Property 16: Recurring Expense PaidBy Propagation**
     - Create `src/lib/__tests__/recurring-multi-payer.property.test.ts`
     - Assert: materialized instance has identical payer rows as source

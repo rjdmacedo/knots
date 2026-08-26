@@ -86,7 +86,8 @@
   },
   "ExpenseDetail": {
     "activity": "Activitat",
-    "noActivity": "Encara no hi ha activitat registrada per a aquesta despesa."
+    "noActivity": "Encara no hi ha activitat registrada per a aquesta despesa.",
+    "viewGroupExpense": "View group expense"
   },
   "Groups": {
     "myGroups": "Els meus grups",
@@ -309,6 +310,19 @@
     "reimbursement": "Reemborsament",
     "PaidByField": {
       "saveAsDefault": "Desa com a opcions de pagament per defecte"
+    },
+    "decompositionBanner": {
+      "nonMemberLine": "{name} isn't in {group} — their {amount} share will be saved as a direct expense",
+      "groupHalfLine": "The group expense will be {amount}",
+      "postSaveTitle": "Expense split across group and direct records",
+      "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
+      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
+      "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
+      "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
+      "directHalfIndependentEditWarning": "This expense is part of a split that also includes a group expense. Editing or deleting it does not affect the group record.",
+      "notInGroupBadge": "Not in group",
+      "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
   "ExpenseDocumentsInput": {
@@ -1046,6 +1060,7 @@
     "signOut": "Tanca la sessió"
   },
   "Notifications": {
+    "settings": "Configuració de notificacions",
     "subscribe": "Activa les notificacions",
     "unsubscribe": "Desactiva les notificacions",
     "selectParticipant": "Notifica'm dels canvis d'altres",
@@ -1067,7 +1082,13 @@
     "eventCreate": "Despesa creada",
     "eventUpdate": "Despesa actualitzada",
     "eventDelete": "Despesa eliminada",
-    "selectAtLeastOneFilter": "Selecciona almenys un membre o un esdeveniment."
+    "selectAtLeastOneFilter": "Selecciona almenys un membre o un esdeveniment.",
+    "channelsLabel": "Canals",
+    "pushLabel": "Notificacions push",
+    "pushUnavailable": "Les notificacions push no estan disponibles en aquest desplegament.",
+    "emailLabel": "Notificacions per correu electrònic",
+    "enableChannelHint": "Activa un canal per configurar de qui i de què vols rebre notificacions.",
+    "pushSyncWarning": "Les preferències s'han desat, però la sincronització del filtre de notificacions push ha fallat."
   },
   "ExpenseImport": {
     "button": "Importa despeses",

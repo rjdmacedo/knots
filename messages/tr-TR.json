@@ -86,7 +86,8 @@
   },
   "ExpenseDetail": {
     "activity": "Etkinlik",
-    "noActivity": "Bu masraf için henüz bir etkinlik kaydedilmedi."
+    "noActivity": "Bu masraf için henüz bir etkinlik kaydedilmedi.",
+    "viewGroupExpense": "View group expense"
   },
   "Groups": {
     "myGroups": "Gruplarım",
@@ -309,6 +310,19 @@
     "reimbursement": "Geri ödeme",
     "PaidByField": {
       "saveAsDefault": "Varsayılan ödeyen seçenekleri olarak kaydet"
+    },
+    "decompositionBanner": {
+      "nonMemberLine": "{name} isn't in {group} — their {amount} share will be saved as a direct expense",
+      "groupHalfLine": "The group expense will be {amount}",
+      "postSaveTitle": "Expense split across group and direct records",
+      "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
+      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
+      "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
+      "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
+      "directHalfIndependentEditWarning": "This expense is part of a split that also includes a group expense. Editing or deleting it does not affect the group record.",
+      "notInGroupBadge": "Not in group",
+      "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
   "ExpenseDocumentsInput": {
@@ -1043,6 +1057,7 @@
     "signOut": "Çıkış yap"
   },
   "Notifications": {
+    "settings": "Bildirim ayarları",
     "subscribe": "Bildirimleri etkinleştir",
     "unsubscribe": "Bildirimleri devre dışı bırak",
     "selectParticipant": "Başkalarının değişikliklerini bana bildir",
@@ -1064,7 +1079,13 @@
     "eventCreate": "Gider oluşturuldu",
     "eventUpdate": "Gider güncellendi",
     "eventDelete": "Gider silindi",
-    "selectAtLeastOneFilter": "En az bir üye veya olay seçin."
+    "selectAtLeastOneFilter": "En az bir üye veya olay seçin.",
+    "channelsLabel": "Kanallar",
+    "pushLabel": "Anlık bildirimler",
+    "pushUnavailable": "Anlık bildirimler bu kurulumda kullanılamıyor.",
+    "emailLabel": "E-posta bildirimleri",
+    "enableChannelHint": "Kimden ve ne hakkında bildirim alacağınızı yapılandırmak için bir kanal etkinleştirin.",
+    "pushSyncWarning": "Tercihler kaydedildi, ancak anlık bildirim filtresi senkronizasyonu başarısız oldu."
   },
   "ExpenseImport": {
     "button": "Giderleri içe aktar",

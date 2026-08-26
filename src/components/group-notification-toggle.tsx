@@ -59,6 +59,7 @@ export function GroupNotificationToggle({
                   variant="ghost"
                   size="icon"
                   className="shrink-0"
+                  aria-label={t('settings')}
                   aria-controls={panelId}
                 />
               }
@@ -72,7 +73,7 @@ export function GroupNotificationToggle({
           )}
         </TooltipTrigger>
         <TooltipContent>
-          <p>{anyChannelEnabled ? t('unsubscribe') : t('subscribe')}</p>
+          <p>{t('settings')}</p>
         </TooltipContent>
       </Tooltip>
 

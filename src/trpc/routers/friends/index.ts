@@ -8,9 +8,11 @@ import {
 import { isPaymentCategory } from '@/lib/categories'
 import { upsertCategoryMapping } from '@/lib/category-mapping'
 import { getCurrency } from '@/lib/currency'
+import { decomposeExpense } from '@/lib/decompose-expense'
 import { computeRecentCategoryTrends } from '@/lib/expense-detail-trends'
 import { getFriendActivities } from '@/lib/friend-activities'
 import {
+  buildDirectBuckets,
   computeFriendBalance,
   computeFriendSettlements,
   FriendBalanceSummary,
@@ -30,11 +32,12 @@ import {
   listFriends,
   listIncomingFriendRequests,
   removeFriend,
+  upsertFriendByEmail,
 } from '@/lib/friends'
 import { assertPaymentEditable } from '@/lib/payments'
 import { prisma } from '@/lib/prisma'
 import { notifyOnActivity } from '@/lib/push/notify-on-activity'
-import { expenseFormSchema } from '@/lib/schemas'
+import { expenseFormSchema, type ExpenseFormValues } from '@/lib/schemas'
 import { amountAsMinorUnits } from '@/lib/utils'
 import { createTRPCRouter, protectedProcedure } from '@/trpc/init'
 import { checkDirectDuplicateProcedure } from '@/trpc/routers/friends/check-direct-duplicate.procedure'
@@ -87,13 +90,13 @@ export const friendsRouter = createTRPCRouter({
           }),
         )
 
+        const directBuckets = buildDirectBuckets(directExpenses, directCurrency)
+
         const balances = computeFriendBalance(
           ctx.user.id,
           friend.friendUserId!,
           sharedGroupsWithExpenses,
-          directExpenses.length > 0
-            ? [{ currency: directCurrency, expenses: directExpenses }]
-            : undefined,
+          directBuckets.length > 0 ? directBuckets : undefined,
         )
 
         return {
@@ -279,10 +282,8 @@ export const friendsRouter = createTRPCRouter({
         })),
       )
 
-      const directBucket =
-        directExpenses.length > 0
-          ? [{ currency: directCurrency, expenses: directExpenses }]
-          : undefined
+      const directBuckets = buildDirectBuckets(directExpenses, directCurrency)
+      const directBucket = directBuckets.length > 0 ? directBuckets : undefined
 
       const balances = computeFriendBalance(
         ctx.user.id,
@@ -470,13 +471,15 @@ export const friendsRouter = createTRPCRouter({
       )
 
       // 5. Compute balances (all buckets including direct)
+      const directBuckets = buildDirectBuckets(directExpenses, directCurrency)
+      const directBucketsOrUndefined =
+        directBuckets.length > 0 ? directBuckets : undefined
+
       const balances = computeFriendBalance(
         ctx.user.id,
         friend.friendUserId,
         sharedGroupsWithExpenses,
-        directExpenses.length > 0
-          ? [{ currency: directCurrency, expenses: directExpenses }]
-          : undefined,
+        directBucketsOrUndefined,
       )
 
       // 6. Compute settlements (all buckets including direct)
@@ -484,9 +487,7 @@ export const friendsRouter = createTRPCRouter({
         ctx.user.id,
         friend.friendUserId,
         sharedGroupsWithExpenses,
-        directExpenses.length > 0
-          ? [{ currency: directCurrency, expenses: directExpenses }]
-          : undefined,
+        directBucketsOrUndefined,
       )
 
       // 7. Fetch all payment expenses (isReimbursement = true) between current user and friend
@@ -521,6 +522,9 @@ export const friendsRouter = createTRPCRouter({
           groupId: true,
           creationMethod: true,
           bundleId: true,
+          linkedExpenseId: true,
+          expenseCurrencyCode: true,
+          originalTotalAtDecomposition: true,
         },
         where: {
           isReimbursement: true,
@@ -545,11 +549,16 @@ export const friendsRouter = createTRPCRouter({
         currentUserId: ctx.user.id,
         friendUserId: friend.friendUserId,
         sharedGroups: sharedGroupsWithExpenses,
-        directExpenses: directExpenses.map((exp) => ({
-          expense: exp,
-          currency: directCurrency.symbol,
-          currencyCode: directCurrency.code || null,
-        })),
+        directExpenses: directExpenses.map((exp) => {
+          const currency = exp.expenseCurrencyCode
+            ? getCurrency(exp.expenseCurrencyCode)
+            : directCurrency
+          return {
+            expense: exp,
+            currency: currency.symbol,
+            currencyCode: currency.code || null,
+          }
+        }),
         payments: paymentExpenses
           .filter((exp) => {
             // Only include payments where both users are involved
@@ -997,7 +1006,97 @@ export const friendsRouter = createTRPCRouter({
       const createdExpenseIds: string[] = []
       const expenseDate = input.expenseDate ?? new Date()
 
-      // A. Create Group Expense if groupId is selected
+      // When a groupId is present, attempt decomposition if non-members are in sharesMap
+      if (input.groupId) {
+        const group = await prisma.group.findUnique({
+          where: { id: input.groupId },
+          select: { id: true, currency: true, currencyCode: true },
+        })
+
+        const memberships = await prisma.groupMembership.findMany({
+          where: { groupId: input.groupId },
+          select: { userId: true },
+        })
+        const groupMemberUserIds = new Set(memberships.map((m) => m.userId))
+
+        // Non-members = participants in sharesMap whose userId is NOT in the group
+        const nonMemberIds = new Set(
+          participantIds.filter((id) => !groupMemberUserIds.has(id)),
+        )
+
+        if (group && nonMemberIds.size > 0) {
+          // Build the resolvedGroup shape expected by decomposeExpense
+          const resolvedGroup = {
+            id: group.id,
+            currency: group.currency,
+            currencyCode: group.currencyCode,
+            participants: Array.from(groupMemberUserIds).map((id) => ({ id })),
+          }
+
+          // Build mappedFormValues: ExpenseFormValues with BY_AMOUNT (sharesMap already resolved)
+          const mappedFormValues: ExpenseFormValues = {
+            title: input.title,
+            expenseDate,
+            category: input.category,
+            amount: totalAmountMinor,
+            splitMode: 'BY_AMOUNT',
+            paidBy: [{ participant: paidByUserId, amount: totalAmountMinor }],
+            paidFor: Array.from(sharesMap.entries()).map(
+              ([userId, shares]) => ({
+                participant: userId,
+                shares,
+              }),
+            ),
+            isReimbursement: false,
+            recurrenceRule: input.recurrenceRule,
+            originalAmount: undefined,
+            originalCurrency: undefined,
+            conversionRate: undefined,
+            notes: input.notes ?? undefined,
+            documents: input.documents,
+            saveDefaultSplittingOptions: false,
+            saveDefaultPaidByOptions: false,
+          }
+
+          // Upsert Friend records for non-members outside the transaction
+          for (const nonMemberId of Array.from(nonMemberIds)) {
+            const u = await prisma.user.findUnique({
+              where: { id: nonMemberId },
+              select: { email: true, name: true },
+            })
+            if (u) {
+              await upsertFriendByEmail({
+                userId: ctx.user.id,
+                email: u.email,
+                name: u.name ?? undefined,
+              })
+            }
+          }
+
+          const result = await prisma.$transaction(async (tx) =>
+            decomposeExpense(
+              {
+                values: mappedFormValues,
+                group: resolvedGroup,
+                actorUserId: ctx.user.id,
+              },
+              undefined,
+              tx,
+            ),
+          )
+
+          // Non-null result means decomposition succeeded
+          if (result) {
+            return {
+              groupHalf: result.groupHalf,
+              directHalves: result.directHalves,
+            }
+          }
+          // result === null means all non-member slots were zero → fall through to legacy path
+        }
+      }
+
+      // A. Create Group Expense if groupId is selected (legacy path — no non-members, or decomposition returned null)
       if (input.groupId) {
         const memberships = await prisma.groupMembership.findMany({
           where: { groupId: input.groupId },
@@ -1565,6 +1664,13 @@ export const friendsRouter = createTRPCRouter({
               user: { select: { id: true, name: true, email: true } },
             },
           },
+          payers: {
+            select: {
+              userId: true,
+              amount: true,
+              user: { select: { id: true, name: true } },
+            },
+          },
           category: true,
           documents: true,
           recurringExpenseLink: true,
@@ -1657,6 +1763,19 @@ export const friendsRouter = createTRPCRouter({
         },
       )
 
+      // R8.2, R8.4: Graceful degradation — if linkedExpenseId is set but Group_Half
+      // no longer exists (deleted), return null so the UI shows no broken link.
+      let linkedGroupHalf: { id: string; groupId: string } | null = null
+      if (expense.linkedExpenseId) {
+        const groupHalf = await prisma.expense.findUnique({
+          where: { id: expense.linkedExpenseId },
+          select: { id: true, groupId: true },
+        })
+        if (groupHalf?.groupId) {
+          linkedGroupHalf = { id: groupHalf.id, groupId: groupHalf.groupId }
+        }
+      }
+
       return {
         expense,
         friend,
@@ -1668,6 +1787,7 @@ export const friendsRouter = createTRPCRouter({
         addedAt: expense.createdAt,
         trends,
         categoryName: expense.category?.name ?? null,
+        linkedGroupHalf,
       }
     }),
 

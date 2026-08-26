@@ -86,7 +86,8 @@
   },
   "ExpenseDetail": {
     "activity": "活动",
-    "noActivity": "这笔消费还没有任何活动记录。"
+    "noActivity": "这笔消费还没有任何活动记录。",
+    "viewGroupExpense": "View group expense"
   },
   "Groups": {
     "myGroups": "我的群组",
@@ -309,6 +310,19 @@
     "reimbursement": "报销",
     "PaidByField": {
       "saveAsDefault": "保存为默认付款人选项"
+    },
+    "decompositionBanner": {
+      "nonMemberLine": "{name} isn't in {group} — their {amount} share will be saved as a direct expense",
+      "groupHalfLine": "The group expense will be {amount}",
+      "postSaveTitle": "Expense split across group and direct records",
+      "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
+      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
+      "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
+      "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
+      "directHalfIndependentEditWarning": "This expense is part of a split that also includes a group expense. Editing or deleting it does not affect the group record.",
+      "notInGroupBadge": "Not in group",
+      "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
   "ExpenseDocumentsInput": {
@@ -1043,6 +1057,7 @@
     "signOut": "退出登录"
   },
   "Notifications": {
+    "settings": "通知设置",
     "subscribe": "启用通知",
     "unsubscribe": "禁用通知",
     "selectParticipant": "通知我其他人的更改",
@@ -1064,7 +1079,13 @@
     "eventCreate": "已创建支出",
     "eventUpdate": "已更新支出",
     "eventDelete": "已删除支出",
-    "selectAtLeastOneFilter": "请至少选择一名成员或一种事件。"
+    "selectAtLeastOneFilter": "请至少选择一名成员或一种事件。",
+    "channelsLabel": "渠道",
+    "pushLabel": "推送通知",
+    "pushUnavailable": "此部署中无法使用推送通知。",
+    "emailLabel": "电子邮件通知",
+    "enableChannelHint": "启用一个渠道以配置你要接收谁以及哪些内容的通知。",
+    "pushSyncWarning": "偏好设置已保存，但推送通知筛选器同步失败。"
   },
   "ExpenseImport": {
     "button": "导入支出",

@@ -118,6 +118,9 @@ describe('computeFriendBalance', () => {
         categoryId: 0,
         creationMethod: null,
         bundleId: null,
+        linkedExpenseId: null,
+        expenseCurrencyCode: null,
+        originalTotalAtDecomposition: null,
         _count: { documents: 0 },
         paidBy: { id: currentUserId, name: 'Current User' },
         paidFor: [
@@ -177,6 +180,9 @@ describe('computeFriendBalance', () => {
         categoryId: 0,
         creationMethod: null,
         bundleId: null,
+        linkedExpenseId: null,
+        expenseCurrencyCode: null,
+        originalTotalAtDecomposition: null,
         _count: { documents: 0 },
         paidBy: { id: currentUserId, name: 'Current User' },
         paidFor: [
@@ -259,6 +265,9 @@ describe('computeFriendBalance', () => {
         categoryId: 0,
         creationMethod: null,
         bundleId: null,
+        linkedExpenseId: null,
+        expenseCurrencyCode: null,
+        originalTotalAtDecomposition: null,
         _count: { documents: 0 },
         paidBy: { id: currentUserId, name: 'Current User' },
         paidFor: [
@@ -313,6 +322,9 @@ describe('computeFriendBalance', () => {
           categoryId: 0,
           creationMethod: null,
           bundleId: null,
+          linkedExpenseId: null,
+          expenseCurrencyCode: null,
+          originalTotalAtDecomposition: null,
           _count: { documents: 0 },
           paidBy: { id: currentUserId, name: 'Current User' },
           paidFor: [
@@ -360,6 +372,9 @@ describe('computeFriendBalance', () => {
           categoryId: 0,
           creationMethod: null,
           bundleId: null,
+          linkedExpenseId: null,
+          expenseCurrencyCode: null,
+          originalTotalAtDecomposition: null,
           _count: { documents: 0 },
           paidBy: { id: currentUserId, name: 'Current User' },
           paidFor: [
@@ -382,6 +397,9 @@ describe('computeFriendBalance', () => {
           categoryId: 0,
           creationMethod: null,
           bundleId: null,
+          linkedExpenseId: null,
+          expenseCurrencyCode: null,
+          originalTotalAtDecomposition: null,
           _count: { documents: 0 },
           paidBy: { id: friendUserId, name: 'Friend' },
           paidFor: [
@@ -425,6 +443,9 @@ describe('computeFriendBalance', () => {
           categoryId: 0,
           creationMethod: null,
           bundleId: null,
+          linkedExpenseId: null,
+          expenseCurrencyCode: null,
+          originalTotalAtDecomposition: null,
           _count: { documents: 0 },
           paidBy: { id: currentUserId, name: 'Current User' },
           paidFor: [
@@ -447,6 +468,9 @@ describe('computeFriendBalance', () => {
           categoryId: 0,
           creationMethod: null,
           bundleId: null,
+          linkedExpenseId: null,
+          expenseCurrencyCode: null,
+          originalTotalAtDecomposition: null,
           _count: { documents: 0 },
           paidBy: { id: friendUserId, name: 'Friend' },
           paidFor: [
@@ -494,6 +518,9 @@ describe('computeFriendBalance', () => {
           categoryId: 0,
           creationMethod: null,
           bundleId: null,
+          linkedExpenseId: null,
+          expenseCurrencyCode: null,
+          originalTotalAtDecomposition: null,
           _count: { documents: 0 },
           paidBy: { id: currentUserId, name: 'Current User' },
           paidFor: [
@@ -519,6 +546,9 @@ describe('computeFriendBalance', () => {
           categoryId: 0,
           creationMethod: null,
           bundleId: null,
+          linkedExpenseId: null,
+          expenseCurrencyCode: null,
+          originalTotalAtDecomposition: null,
           _count: { documents: 0 },
           paidBy: { id: friendUserId, name: 'Friend' },
           paidFor: [
@@ -593,6 +623,9 @@ describe('computeFriendBalance', () => {
           categoryId: 0,
           creationMethod: null,
           bundleId: null,
+          linkedExpenseId: null,
+          expenseCurrencyCode: null,
+          originalTotalAtDecomposition: null,
           _count: { documents: 0 },
           paidBy: { id: currentUserId, name: 'Current User' },
           paidFor: [
@@ -618,6 +651,9 @@ describe('computeFriendBalance', () => {
           categoryId: 0,
           creationMethod: null,
           bundleId: null,
+          linkedExpenseId: null,
+          expenseCurrencyCode: null,
+          originalTotalAtDecomposition: null,
           _count: { documents: 0 },
           paidBy: { id: currentUserId, name: 'Current User' },
           paidFor: [

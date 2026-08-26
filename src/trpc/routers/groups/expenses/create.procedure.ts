@@ -68,5 +68,37 @@ export const createGroupExpenseProcedure = groupMemberProcedure
       console.error('Failed to upsert category mapping:', error)
     }
 
-    return { expenseId: expense.id }
+    // Build decomposition metadata when decomposition occurred
+    let decomposition:
+      | {
+          groupHalfAmount: number
+          directHalves: Array<{ nonMemberName: string; amount: number }>
+        }
+      | undefined = undefined
+
+    if (expense.creationMethod === 'NON_MEMBER_SPLIT') {
+      // Query Direct_Halves linked to this Group_Half
+      const directHalves = await prisma.expense.findMany({
+        where: { linkedExpenseId: expense.id },
+        include: {
+          paidFor: {
+            include: { user: { select: { id: true, name: true } } },
+          },
+        },
+      })
+
+      const directHalfItems = directHalves.map((dh) => {
+        // Each Direct_Half has exactly one paidFor entry — the non-member
+        const nonMemberName =
+          dh.paidFor[0]?.user?.name ?? dh.paidFor[0]?.userId ?? 'Unknown'
+        return { nonMemberName, amount: dh.amount }
+      })
+
+      decomposition = {
+        groupHalfAmount: expense.amount,
+        directHalves: directHalfItems,
+      }
+    }
+
+    return { expense, decomposition }
   })

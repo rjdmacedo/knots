@@ -159,12 +159,7 @@ function EmailChannelRow({
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between gap-4">
-        <div className="flex flex-col gap-0.5">
-          <span className="text-sm font-medium">{t('emailLabel')}</span>
-          <span className="text-xs text-muted-foreground">
-            {t('emailHint')}
-          </span>
-        </div>
+        <span className="text-sm font-medium">{t('emailLabel')}</span>
         {isMutationPending ? (
           <Loader2 className="size-4 animate-spin text-muted-foreground" />
         ) : (

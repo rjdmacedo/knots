@@ -130,7 +130,8 @@
     "deletePaymentConfirm": "Delete this payment?",
     "deleteDescription": "This will adjust balances as if this expense never happened.",
     "cancel": "Cancel",
-    "deleting": "Deleting…"
+    "deleting": "Deleting…",
+    "viewGroupExpense": "View group expense"
   },
   "Groups": {
     "myGroups": "My groups",
@@ -360,6 +361,19 @@
     "reimbursement": "Reimbursement",
     "PaidByField": {
       "saveAsDefault": "Save as default paid by options"
+    },
+    "decompositionBanner": {
+      "nonMemberLine": "{name} isn't in {group} — their {amount} share will be saved as a direct expense",
+      "groupHalfLine": "The group expense will be {amount}",
+      "postSaveTitle": "Expense split across group and direct records",
+      "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
+      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
+      "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
+      "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
+      "directHalfIndependentEditWarning": "This expense is part of a split that also includes a group expense. Editing or deleting it does not affect the group record.",
+      "notInGroupBadge": "Not in group",
+      "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
   "ExpenseTitleInput": {
@@ -1216,6 +1230,7 @@
     "signOut": "Sign out"
   },
   "Notifications": {
+    "settings": "Notification settings",
     "subscribe": "Enable notifications",
     "unsubscribe": "Disable notifications",
     "selectParticipant": "Notify me about changes by others",
@@ -1241,8 +1256,7 @@
     "channelsLabel": "Channels",
     "pushLabel": "Push notifications",
     "pushUnavailable": "Push notifications are not available in this deployment.",
-    "emailLabel": "Email digest",
-    "emailHint": "after 5 quiet minutes",
+    "emailLabel": "Email notifications",
     "enableChannelHint": "Enable a channel to configure who and what you get notified about.",
     "pushSyncWarning": "Preferences saved, but push notification filter sync failed."
   },
@@ -1304,7 +1318,8 @@
     "singleGroupAlertOk": "OK",
     "advancedOptions": "Advanced Options",
     "splitDetails": "Split details",
-    "notesPlaceholder": "Add notes (optional)"
+    "notesPlaceholder": "Add notes (optional)",
+    "viewGroupExpense": "View group expense"
   },
   "DuplicateExpense": {
     "title": "Potential duplicate detected",

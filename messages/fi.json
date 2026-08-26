@@ -86,7 +86,8 @@
   },
   "ExpenseDetail": {
     "activity": "Tapahtumat",
-    "noActivity": "Tälle kululle ei ole vielä tapahtumia."
+    "noActivity": "Tälle kululle ei ole vielä tapahtumia.",
+    "viewGroupExpense": "View group expense"
   },
   "Groups": {
     "myGroups": "Omat ryhmät",
@@ -309,6 +310,19 @@
     "reimbursement": "Velanmaksu",
     "PaidByField": {
       "saveAsDefault": "Tallenna oletusmaksaja-asetuksiksi"
+    },
+    "decompositionBanner": {
+      "nonMemberLine": "{name} isn't in {group} — their {amount} share will be saved as a direct expense",
+      "groupHalfLine": "The group expense will be {amount}",
+      "postSaveTitle": "Expense split across group and direct records",
+      "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
+      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
+      "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
+      "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
+      "directHalfIndependentEditWarning": "This expense is part of a split that also includes a group expense. Editing or deleting it does not affect the group record.",
+      "notInGroupBadge": "Not in group",
+      "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
   "ExpenseDocumentsInput": {
@@ -1046,6 +1060,7 @@
     "signOut": "Kirjaudu ulos"
   },
   "Notifications": {
+    "settings": "Ilmoitusasetukset",
     "subscribe": "Ota ilmoitukset käyttöön",
     "unsubscribe": "Poista ilmoitukset käytöstä",
     "selectParticipant": "Ilmoita muiden tekemistä muutoksista",
@@ -1067,7 +1082,13 @@
     "eventCreate": "Kulu luotu",
     "eventUpdate": "Kulu päivitetty",
     "eventDelete": "Kulu poistettu",
-    "selectAtLeastOneFilter": "Valitse vähintään yksi jäsen tai tapahtuma."
+    "selectAtLeastOneFilter": "Valitse vähintään yksi jäsen tai tapahtuma.",
+    "channelsLabel": "Kanavat",
+    "pushLabel": "Push-ilmoitukset",
+    "pushUnavailable": "Push-ilmoitukset eivät ole käytettävissä tässä asennuksessa.",
+    "emailLabel": "Sähköposti-ilmoitukset",
+    "enableChannelHint": "Ota kanava käyttöön, jotta voit määrittää, kenestä ja mistä saat ilmoituksia.",
+    "pushSyncWarning": "Asetukset tallennettiin, mutta push-ilmoitussuodattimen synkronointi epäonnistui."
   },
   "ExpenseImport": {
     "button": "Tuo kuluja",

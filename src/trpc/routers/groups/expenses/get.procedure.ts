@@ -17,40 +17,47 @@ export const getGroupExpenseProcedure = groupMemberProcedure
       })
     }
 
-    const [createActivity, lastUpdateActivity, trendExpenses] =
-      await Promise.all([
-        prisma.activity.findFirst({
-          where: {
-            groupId,
-            expenseId,
-            activityType: ActivityType.CREATE_EXPENSE,
-          },
-          select: { participantId: true, time: true },
-          orderBy: { time: 'asc' },
-        }),
-        prisma.activity.findFirst({
-          where: {
-            groupId,
-            expenseId,
-            activityType: ActivityType.UPDATE_EXPENSE,
-          },
-          select: { participantId: true, time: true },
-          orderBy: { time: 'desc' },
-        }),
-        prisma.expense.findMany({
-          where: {
-            groupId,
-            isReimbursement: false,
-            categoryId: expense.categoryId,
-          },
-          select: {
-            amount: true,
-            expenseDate: true,
-            categoryId: true,
-            isReimbursement: true,
-          },
-        }),
-      ])
+    const [
+      createActivity,
+      lastUpdateActivity,
+      trendExpenses,
+      linkedDirectHalvesCount,
+    ] = await Promise.all([
+      prisma.activity.findFirst({
+        where: {
+          groupId,
+          expenseId,
+          activityType: ActivityType.CREATE_EXPENSE,
+        },
+        select: { participantId: true, time: true },
+        orderBy: { time: 'asc' },
+      }),
+      prisma.activity.findFirst({
+        where: {
+          groupId,
+          expenseId,
+          activityType: ActivityType.UPDATE_EXPENSE,
+        },
+        select: { participantId: true, time: true },
+        orderBy: { time: 'desc' },
+      }),
+      prisma.expense.findMany({
+        where: {
+          groupId,
+          isReimbursement: false,
+          categoryId: expense.categoryId,
+        },
+        select: {
+          amount: true,
+          expenseDate: true,
+          categoryId: true,
+          isReimbursement: true,
+        },
+      }),
+      expense.creationMethod === 'NON_MEMBER_SPLIT'
+        ? prisma.expense.count({ where: { linkedExpenseId: expenseId } })
+        : Promise.resolve(0),
+    ])
 
     let addedBy: { id: string; name: string } | null = null
     let addedAt = expense.createdAt
@@ -98,5 +105,6 @@ export const getGroupExpenseProcedure = groupMemberProcedure
       lastUpdatedAt,
       trends,
       categoryName: expense.category?.name ?? null,
+      linkedDirectHalvesCount,
     }
   })

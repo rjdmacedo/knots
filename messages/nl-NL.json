@@ -86,7 +86,8 @@
   },
   "ExpenseDetail": {
     "activity": "Gebeurtenissen",
-    "noActivity": "Er zijn nog geen gebeurtenissen voor deze uitgave."
+    "noActivity": "Er zijn nog geen gebeurtenissen voor deze uitgave.",
+    "viewGroupExpense": "View group expense"
   },
   "Groups": {
     "myGroups": "Mijn groepen",
@@ -309,6 +310,19 @@
     "reimbursement": "Terugbetaling",
     "PaidByField": {
       "saveAsDefault": "Opslaan als standaard betaald-door-opties"
+    },
+    "decompositionBanner": {
+      "nonMemberLine": "{name} isn't in {group} — their {amount} share will be saved as a direct expense",
+      "groupHalfLine": "The group expense will be {amount}",
+      "postSaveTitle": "Expense split across group and direct records",
+      "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
+      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
+      "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
+      "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
+      "directHalfIndependentEditWarning": "This expense is part of a split that also includes a group expense. Editing or deleting it does not affect the group record.",
+      "notInGroupBadge": "Not in group",
+      "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
   "ExpenseDocumentsInput": {
@@ -1043,6 +1057,7 @@
     "signOut": "Uitloggen"
   },
   "Notifications": {
+    "settings": "Meldinginstellingen",
     "subscribe": "Meldingen inschakelen",
     "unsubscribe": "Meldingen uitschakelen",
     "selectParticipant": "Meld mij over wijzigingen van anderen",
@@ -1064,7 +1079,13 @@
     "eventCreate": "Uitgave aangemaakt",
     "eventUpdate": "Uitgave bijgewerkt",
     "eventDelete": "Uitgave verwijderd",
-    "selectAtLeastOneFilter": "Selecteer minstens één lid of gebeurtenis."
+    "selectAtLeastOneFilter": "Selecteer minstens één lid of gebeurtenis.",
+    "channelsLabel": "Kanalen",
+    "pushLabel": "Pushmeldingen",
+    "pushUnavailable": "Pushmeldingen zijn niet beschikbaar in deze omgeving.",
+    "emailLabel": "E-mailmeldingen",
+    "enableChannelHint": "Schakel een kanaal in om in te stellen over wie en wat je meldingen ontvangt.",
+    "pushSyncWarning": "Voorkeuren opgeslagen, maar het synchroniseren van het pushmeldingenfilter is mislukt."
   },
   "ExpenseImport": {
     "button": "Uitgaven importeren",

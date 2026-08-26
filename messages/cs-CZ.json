@@ -86,7 +86,8 @@
   },
   "ExpenseDetail": {
     "activity": "Aktivita",
-    "noActivity": "U tohoto výdaje zatím není žádná aktivita."
+    "noActivity": "U tohoto výdaje zatím není žádná aktivita.",
+    "viewGroupExpense": "View group expense"
   },
   "Groups": {
     "myGroups": "Moje skupiny",
@@ -309,6 +310,19 @@
     "reimbursement": "Proplacení",
     "PaidByField": {
       "saveAsDefault": "Uložit jako výchozí možnosti plátce"
+    },
+    "decompositionBanner": {
+      "nonMemberLine": "{name} isn't in {group} — their {amount} share will be saved as a direct expense",
+      "groupHalfLine": "The group expense will be {amount}",
+      "postSaveTitle": "Expense split across group and direct records",
+      "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
+      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
+      "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
+      "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
+      "directHalfIndependentEditWarning": "This expense is part of a split that also includes a group expense. Editing or deleting it does not affect the group record.",
+      "notInGroupBadge": "Not in group",
+      "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
   "ExpenseDocumentsInput": {
@@ -1046,6 +1060,7 @@
     "signOut": "Odhlásit se"
   },
   "Notifications": {
+    "settings": "Nastavení oznámení",
     "subscribe": "Povolit oznámení",
     "unsubscribe": "Zakázat oznámení",
     "selectParticipant": "Upozornit mě na změny ostatních",
@@ -1067,7 +1082,13 @@
     "eventCreate": "Výdaj vytvořen",
     "eventUpdate": "Výdaj upraven",
     "eventDelete": "Výdaj smazán",
-    "selectAtLeastOneFilter": "Vyberte alespoň jednoho člena nebo událost."
+    "selectAtLeastOneFilter": "Vyberte alespoň jednoho člena nebo událost.",
+    "channelsLabel": "Kanály",
+    "pushLabel": "Push notifikace",
+    "pushUnavailable": "Push notifikace nejsou v tomto nasazení k dispozici.",
+    "emailLabel": "E-mailové notifikace",
+    "enableChannelHint": "Zapněte kanál, abyste mohli nastavit, o kom a o čem chcete dostávat oznámení.",
+    "pushSyncWarning": "Předvolby byly uloženy, ale synchronizace filtru push notifikací selhala."
   },
   "ExpenseImport": {
     "button": "Importovat výdaje",

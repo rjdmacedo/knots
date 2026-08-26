@@ -15,6 +15,7 @@ datasource db {
 enum CreationMethod {
   PAYMENT
   DEBT_CONSOLIDATION
+  NON_MEMBER_SPLIT
 }
 
 model Group {
@@ -68,9 +69,15 @@ model Expense {
   creationMethod   CreationMethod?
   bundleId         String?
 
+  linkedExpenseId              String?
+  expenseCurrencyCode          String?
+  originalTotalAtDecomposition Int?
+
   recurrenceRule         RecurrenceRule?       @default(NONE)
   recurringExpenseLink   RecurringExpenseLink?
   recurringExpenseLinkId String?
+
+  @@index([linkedExpenseId])
 }
 
 model ExpenseDocument {
