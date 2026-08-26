@@ -277,6 +277,37 @@ export const groupMembershipRouter = createTRPCRouter({
         },
       })
 
+      // Sync push subscriptions with the new preferences
+      const pushFieldsToUpdate: any = {}
+      if (fields.notifyAllMembers !== undefined) {
+        pushFieldsToUpdate.notifyAllMembers = fields.notifyAllMembers
+      }
+      if (fields.includedUserIds !== undefined) {
+        pushFieldsToUpdate.includedUserIds =
+          (fields.notifyAllMembers ?? updated.notifyAllMembers)
+            ? []
+            : fields.includedUserIds
+      }
+      if (fields.notifyOnCreate !== undefined) {
+        pushFieldsToUpdate.notifyOnCreate = fields.notifyOnCreate
+      }
+      if (fields.notifyOnUpdate !== undefined) {
+        pushFieldsToUpdate.notifyOnUpdate = fields.notifyOnUpdate
+      }
+      if (fields.notifyOnDelete !== undefined) {
+        pushFieldsToUpdate.notifyOnDelete = fields.notifyOnDelete
+      }
+
+      if (Object.keys(pushFieldsToUpdate).length > 0) {
+        await prisma.pushSubscription.updateMany({
+          where: {
+            groupId,
+            subscriberUserId: ctx.user.id,
+          },
+          data: pushFieldsToUpdate,
+        })
+      }
+
       return updated
     }),
 

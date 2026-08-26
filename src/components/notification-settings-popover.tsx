@@ -4,10 +4,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
-import {
-  defaultPushPreferences,
-  type PushSubscriptionPreferences,
-} from '@/lib/push/subscription-filters'
+import { type PushSubscriptionPreferences } from '@/lib/push/subscription-filters'
 import {
   isPushSupported,
   usePushNotificationSubscription,
@@ -105,10 +102,7 @@ function PushChannelRow({
             onCheckedChange={async (checked) => {
               clearError()
               if (checked) {
-                const prefs =
-                  sharedPrefs ??
-                  (currentUserId ? defaultPushPreferences(currentUserId) : null)
-                if (prefs) await subscribe(prefs)
+                await subscribe()
               } else {
                 await unsubscribe()
               }
@@ -400,8 +394,10 @@ export function NotificationSettingsPopover({
   const panelId = useId()
 
   // ---- Push state (from hook) ----
-  const { isSubscribed: pushEnabled, updatePreferences } =
-    usePushNotificationSubscription(groupId, currentUserId)
+  const { isSubscribed: pushEnabled } = usePushNotificationSubscription(
+    groupId,
+    currentUserId,
+  )
 
   // ---- Load all shared preferences in a single query ----
   const {
@@ -518,21 +514,6 @@ export function NotificationSettingsPopover({
       setIsSaving(true)
       try {
         await setPrefs.mutateAsync({ groupId, ...patch })
-
-        // If push subscription is active, sync PushSubscription row
-        if (pushEnabled && currentUserId) {
-          const syncErr = await updatePreferences({
-            subscriberUserId: currentUserId,
-            notifyAllMembers: resolvedAllMembers,
-            includedUserIds: resolvedAllMembers ? [] : resolvedIds,
-            notifyOnCreate: resolvedCreate,
-            notifyOnUpdate: resolvedUpdate,
-            notifyOnDelete: resolvedDelete,
-          })
-          if (syncErr) {
-            toast.warning(t('pushSyncWarning'), { duration: 5000 })
-          }
-        }
       } catch {
         // Revert local state on GroupMembership save failure
         setNotifyAllOthers(prevAllOthers)
@@ -553,9 +534,6 @@ export function NotificationSettingsPopover({
       notifyOnDelete,
       groupId,
       setPrefs,
-      pushEnabled,
-      currentUserId,
-      updatePreferences,
       t,
     ],
   )
