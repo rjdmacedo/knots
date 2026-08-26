@@ -1,3 +1,10 @@
+# [1.56.0](https://github.com/rjdmacedo/knots/compare/v1.55.0...v1.56.0) (2026-08-26)
+
+
+### Features
+
+* implement non-member expense decomposition ([#40](https://github.com/rjdmacedo/knots/issues/40)) ([ca52921](https://github.com/rjdmacedo/knots/commit/ca5292109c747613ce6be45e91b63fa85851f150))
+
 # [1.55.0](https://github.com/rjdmacedo/knots/compare/v1.54.0...v1.55.0) (2026-08-23)
 
 
