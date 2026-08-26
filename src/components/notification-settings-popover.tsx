@@ -495,14 +495,18 @@ export function NotificationSettingsPopover({
       notifyOnUpdate?: boolean
       notifyOnDelete?: boolean
     }) => {
-      if (!isFilterValid) return
-
       // Build the full resolved filter state to pass to updatePreferences
       const resolvedAllMembers = patch.notifyAllMembers ?? notifyAllOthers
       const resolvedIds = patch.includedUserIds ?? selectedMemberIds
       const resolvedCreate = patch.notifyOnCreate ?? notifyOnCreate
       const resolvedUpdate = patch.notifyOnUpdate ?? notifyOnUpdate
       const resolvedDelete = patch.notifyOnDelete ?? notifyOnDelete
+
+      const isResolvedFilterValid =
+        (resolvedCreate || resolvedUpdate || resolvedDelete) &&
+        (resolvedAllMembers || resolvedIds.length > 0)
+
+      if (!isResolvedFilterValid) return
 
       // Snapshot for revert
       const prevAllOthers = notifyAllOthers
@@ -542,7 +546,6 @@ export function NotificationSettingsPopover({
       }
     },
     [
-      isFilterValid,
       notifyAllOthers,
       selectedMemberIds,
       notifyOnCreate,
