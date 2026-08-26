@@ -37,6 +37,13 @@ jest.mock('@/lib/push/use-push-notification-subscription', () => ({
 // tRPC client
 jest.mock('@/trpc/client', () => ({
   trpc: {
+    useUtils: () => ({
+      groupMembership: {
+        getNotificationPreferences: {
+          setData: jest.fn(),
+        },
+      },
+    }),
     groupMembership: {
       getNotificationPreferences: {
         useQuery: jest.fn(),
