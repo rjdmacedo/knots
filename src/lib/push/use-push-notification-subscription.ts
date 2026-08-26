@@ -4,10 +4,7 @@ import {
   getOrCreatePushSubscription,
   registerServiceWorker,
 } from '@/lib/push/register-sw'
-import {
-  defaultPushPreferences,
-  type PushSubscriptionPreferences,
-} from '@/lib/push/subscription-filters'
+import { type PushSubscriptionPreferences } from '@/lib/push/subscription-filters'
 import { trpc } from '@/trpc/client'
 import { useCallback, useEffect, useState } from 'react'
 
@@ -97,10 +94,7 @@ export function usePushNotificationSubscription(
   }, [groupId, utils])
 
   const persistSubscription = useCallback(
-    async (
-      subscription: PushSubscription,
-      prefs: PushSubscriptionPreferences,
-    ): Promise<void> => {
+    async (subscription: PushSubscription): Promise<void> => {
       const json = subscription.toJSON()
       await createMutation.mutateAsync({
         endpoint: subscription.endpoint,
@@ -109,18 +103,15 @@ export function usePushNotificationSubscription(
           auth: json.keys?.auth ?? '',
         },
         groupId,
-        preferences: prefs,
+        subscriberUserId: currentUserId ?? '',
       })
       setIsSubscribed(true)
-      setPreferences(prefs)
     },
-    [groupId, createMutation],
+    [groupId, currentUserId, createMutation],
   )
 
-  const subscribe = useCallback(
-    async (
-      prefs?: PushSubscriptionPreferences,
-    ): Promise<PushNotificationErrorCode | null> => {
+  const subscribe =
+    useCallback(async (): Promise<PushNotificationErrorCode | null> => {
       if (!currentUserId) {
         setError('subscribeError')
         return 'subscribeError'
@@ -128,9 +119,6 @@ export function usePushNotificationSubscription(
 
       setIsLoading(true)
       setError(null)
-
-      const resolved =
-        prefs ?? preferences ?? defaultPushPreferences(currentUserId)
 
       try {
         const permission = await Notification.requestPermission()
@@ -154,10 +142,7 @@ export function usePushNotificationSubscription(
           return 'subscribeError'
         }
 
-        await persistSubscription(subscription, {
-          ...resolved,
-          subscriberUserId: currentUserId,
-        })
+        await persistSubscription(subscription)
         return null
       } catch (err) {
         console.error('[push] Subscribe failed:', err)
@@ -166,9 +151,7 @@ export function usePushNotificationSubscription(
       } finally {
         setIsLoading(false)
       }
-    },
-    [currentUserId, preferences, persistSubscription],
-  )
+    }, [currentUserId, persistSubscription])
 
   const unsubscribe =
     useCallback(async (): Promise<PushNotificationErrorCode | null> => {
@@ -207,40 +190,6 @@ export function usePushNotificationSubscription(
       return subscribe()
     }, [isSubscribed, subscribe, unsubscribe])
 
-  const updatePreferences = useCallback(
-    async (
-      prefs: PushSubscriptionPreferences,
-    ): Promise<PushNotificationErrorCode | null> => {
-      if (!isSubscribed || !currentUserId) return null
-
-      setIsLoading(true)
-      setError(null)
-
-      try {
-        const registration = await registerServiceWorker()
-        const subscription = await registration?.pushManager.getSubscription()
-
-        if (!subscription) {
-          setError('subscribeError')
-          return 'subscribeError'
-        }
-
-        await persistSubscription(subscription, {
-          ...prefs,
-          subscriberUserId: currentUserId,
-        })
-        return null
-      } catch (err) {
-        console.error('[push] Update preferences failed:', err)
-        setError('subscribeError')
-        return 'subscribeError'
-      } finally {
-        setIsLoading(false)
-      }
-    },
-    [isSubscribed, currentUserId, persistSubscription],
-  )
-
   return {
     isSupported,
     isSubscribed,
@@ -250,7 +199,6 @@ export function usePushNotificationSubscription(
     subscribe,
     unsubscribe,
     toggle,
-    updatePreferences,
     clearError: () => setError(null),
   }
 }
