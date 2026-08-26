@@ -7,6 +7,7 @@ import { Switch } from '@/components/ui/switch'
 import { type PushSubscriptionPreferences } from '@/lib/push/subscription-filters'
 import {
   isPushSupported,
+  type PushNotificationErrorCode,
   usePushNotificationSubscription,
 } from '@/lib/push/use-push-notification-subscription'
 import { trpc } from '@/trpc/client'
@@ -46,28 +47,27 @@ function normalizeMemberSelection(
 // ---------------------------------------------------------------------------
 
 interface PushChannelRowProps {
-  groupId: string
   currentUserId: string | undefined
-  sharedPrefs: PushSubscriptionPreferences | null
+  pushEnabled: boolean
+  pushLoading: boolean
+  pushError: PushNotificationErrorCode | null
+  subscribe: () => Promise<PushNotificationErrorCode | null>
+  unsubscribe: () => Promise<PushNotificationErrorCode | null>
+  clearError: () => void
 }
 
 function PushChannelRow({
-  groupId,
   currentUserId,
-  sharedPrefs,
+  pushEnabled,
+  pushLoading,
+  pushError,
+  subscribe,
+  unsubscribe,
+  clearError,
 }: PushChannelRowProps) {
   const t = useTranslations('Notifications')
   const vapidKeyMissing = !process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
   const browserSupported = isPushSupported()
-
-  const {
-    isSubscribed,
-    isLoading: pushLoading,
-    error: pushError,
-    subscribe,
-    unsubscribe,
-    clearError,
-  } = usePushNotificationSubscription(groupId, currentUserId)
 
   const showPushLoading = useSpinDelay(pushLoading, {
     delay: 1000,
@@ -96,7 +96,7 @@ function PushChannelRow({
           </div>
         ) : (
           <Switch
-            checked={isSubscribed && !vapidKeyMissing && browserSupported}
+            checked={pushEnabled && !vapidKeyMissing && browserSupported}
             disabled={isDisabled}
             aria-label={t('pushLabel')}
             onCheckedChange={async (checked) => {
@@ -196,6 +196,12 @@ interface ChannelsSectionProps {
   queryFailed: boolean
   onEmailToggle: (enabled: boolean) => void
   isEmailMutationPending: boolean
+  pushEnabled: boolean
+  pushLoading: boolean
+  pushError: PushNotificationErrorCode | null
+  subscribe: () => Promise<PushNotificationErrorCode | null>
+  unsubscribe: () => Promise<PushNotificationErrorCode | null>
+  clearError: () => void
 }
 
 function ChannelsSection({
@@ -206,6 +212,12 @@ function ChannelsSection({
   queryFailed,
   onEmailToggle,
   isEmailMutationPending,
+  pushEnabled,
+  pushLoading,
+  pushError,
+  subscribe,
+  unsubscribe,
+  clearError,
 }: ChannelsSectionProps) {
   const t = useTranslations('Notifications')
 
@@ -213,9 +225,13 @@ function ChannelsSection({
     <div className="flex flex-col gap-3">
       <p className="text-sm font-semibold">{t('channelsLabel')}</p>
       <PushChannelRow
-        groupId={groupId}
         currentUserId={currentUserId}
-        sharedPrefs={sharedPrefs}
+        pushEnabled={pushEnabled}
+        pushLoading={pushLoading}
+        pushError={pushError}
+        subscribe={subscribe}
+        unsubscribe={unsubscribe}
+        clearError={clearError}
       />
       <EmailChannelRow
         groupId={groupId}
@@ -394,10 +410,16 @@ export function NotificationSettingsPopover({
   const panelId = useId()
 
   // ---- Push state (from hook) ----
-  const { isSubscribed: pushEnabled } = usePushNotificationSubscription(
-    groupId,
-    currentUserId,
-  )
+  const {
+    isSubscribed: pushEnabled,
+    isLoading: pushLoading,
+    error: pushError,
+    subscribe,
+    unsubscribe,
+    clearError,
+  } = usePushNotificationSubscription(groupId, currentUserId)
+
+  const utils = trpc.useUtils()
 
   // ---- Load all shared preferences in a single query ----
   const {
@@ -411,6 +433,25 @@ export function NotificationSettingsPopover({
 
   // ---- Mutation for all saves ----
   const setPrefs = trpc.groupMembership.setNotificationPreferences.useMutation()
+
+  const persistPrefs = useCallback(
+    async (patch: {
+      emailNotificationsEnabled?: boolean
+      notifyAllMembers?: boolean
+      includedUserIds?: string[]
+      notifyOnCreate?: boolean
+      notifyOnUpdate?: boolean
+      notifyOnDelete?: boolean
+    }) => {
+      const updated = await setPrefs.mutateAsync({ groupId, ...patch })
+      utils.groupMembership.getNotificationPreferences.setData(
+        { groupId },
+        updated,
+      )
+      return updated
+    },
+    [groupId, setPrefs, utils],
+  )
 
   // ---- Local state for email toggle ----
   const [emailEnabled, setEmailEnabled] = useState<boolean | undefined>(
@@ -468,10 +509,7 @@ export function NotificationSettingsPopover({
       setEmailEnabled(enabled)
       setIsEmailMutationPending(true)
       try {
-        await setPrefs.mutateAsync({
-          groupId,
-          emailNotificationsEnabled: enabled,
-        })
+        await persistPrefs({ emailNotificationsEnabled: enabled })
       } catch {
         setEmailEnabled(prevValue)
         toast.error(t('subscribeError'))
@@ -479,7 +517,7 @@ export function NotificationSettingsPopover({
         setIsEmailMutationPending(false)
       }
     },
-    [emailEnabled, groupId, setPrefs, t],
+    [emailEnabled, persistPrefs, t],
   )
 
   // ---- Filter save helper ----
@@ -513,7 +551,7 @@ export function NotificationSettingsPopover({
 
       setIsSaving(true)
       try {
-        await setPrefs.mutateAsync({ groupId, ...patch })
+        await persistPrefs(patch)
       } catch {
         // Revert local state on GroupMembership save failure
         setNotifyAllOthers(prevAllOthers)
@@ -532,8 +570,7 @@ export function NotificationSettingsPopover({
       notifyOnCreate,
       notifyOnUpdate,
       notifyOnDelete,
-      groupId,
-      setPrefs,
+      persistPrefs,
       t,
     ],
   )
@@ -614,6 +651,12 @@ export function NotificationSettingsPopover({
           queryFailed={prefsQueryFailed}
           onEmailToggle={handleEmailToggle}
           isEmailMutationPending={isEmailMutationPending}
+          pushEnabled={pushEnabled}
+          pushLoading={pushLoading}
+          pushError={pushError}
+          subscribe={subscribe}
+          unsubscribe={unsubscribe}
+          clearError={clearError}
         />
       </div>
 
