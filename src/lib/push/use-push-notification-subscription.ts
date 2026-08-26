@@ -29,7 +29,7 @@ export function usePushNotificationSubscription(
   const utils = trpc.useUtils()
   const [isSupported, setIsSupported] = useState(false)
   const [isSubscribed, setIsSubscribed] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [preferences, setPreferences] =
     useState<PushSubscriptionPreferences | null>(null)
   const [error, setError] = useState<PushNotificationErrorCode | null>(null)
@@ -43,12 +43,21 @@ export function usePushNotificationSubscription(
     const supported = isPushSupported()
     setIsSupported(supported)
 
-    if (!supported) return
+    if (!supported) {
+      setIsLoading(false)
+      return
+    }
+
+    setIsLoading(true)
 
     registerServiceWorker()
       .then((registration) => registration?.pushManager.getSubscription())
       .then(async (subscription) => {
-        if (cancelled || !subscription) return
+        if (cancelled) return
+        if (!subscription) {
+          setIsLoading(false)
+          return
+        }
 
         try {
           const subscriptions = await utils.client.pushSubscriptions.list.query(
@@ -57,7 +66,7 @@ export function usePushNotificationSubscription(
             },
           )
           const groupSub = subscriptions.find((s) => s.groupId === groupId)
-          if (groupSub) {
+          if (groupSub && !cancelled) {
             setIsSubscribed(true)
             setPreferences({
               subscriberUserId: groupSub.subscriberUserId,
@@ -70,9 +79,17 @@ export function usePushNotificationSubscription(
           }
         } catch {
           // Status check is best-effort
+        } finally {
+          if (!cancelled) {
+            setIsLoading(false)
+          }
         }
       })
-      .catch(() => {})
+      .catch(() => {
+        if (!cancelled) {
+          setIsLoading(false)
+        }
+      })
 
     return () => {
       cancelled = true
