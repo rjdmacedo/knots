@@ -17,6 +17,7 @@ import { AlertCircle, Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useId, useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import { useSpinDelay } from 'spin-delay'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -71,6 +72,11 @@ function PushChannelRow({
     clearError,
   } = usePushNotificationSubscription(groupId, currentUserId)
 
+  const showPushLoading = useSpinDelay(pushLoading, {
+    delay: 1000,
+    minDuration: 1000,
+  })
+
   // Determine disabled reason
   let disabledReason: string | null = null
   if (vapidKeyMissing) {
@@ -87,8 +93,10 @@ function PushChannelRow({
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between gap-4">
         <span className="text-sm font-medium">{t('pushLabel')}</span>
-        {pushLoading ? (
-          <Loader2 className="size-4 animate-spin text-muted-foreground" />
+        {showPushLoading ? (
+          <div className="flex h-[18.4px] w-[32px] items-center justify-center">
+            <Loader2 className="size-4 animate-spin text-muted-foreground" />
+          </div>
         ) : (
           <Switch
             checked={isSubscribed && !vapidKeyMissing && browserSupported}
@@ -138,6 +146,11 @@ function EmailChannelRow({
   isMutationPending,
 }: EmailChannelRowProps) {
   const t = useTranslations('Notifications')
+  const isEmailLoading = emailEnabled === undefined || isMutationPending
+  const showEmailLoading = useSpinDelay(isEmailLoading, {
+    delay: 1500,
+    minDuration: 1000,
+  })
 
   if (queryFailed) {
     return (
@@ -160,12 +173,14 @@ function EmailChannelRow({
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between gap-4">
         <span className="text-sm font-medium">{t('emailLabel')}</span>
-        {isMutationPending ? (
-          <Loader2 className="size-4 animate-spin text-muted-foreground" />
+        {showEmailLoading ? (
+          <div className="flex h-[18.4px] w-[32px] items-center justify-center">
+            <Loader2 className="size-4 animate-spin text-muted-foreground" />
+          </div>
         ) : (
           <Switch
-            checked={emailEnabled ?? false}
-            disabled={isMutationPending || emailEnabled === undefined}
+            checked={emailEnabled}
+            disabled={isMutationPending}
             aria-label={t('emailLabel')}
             onCheckedChange={(checked) => onToggle(checked)}
           />
