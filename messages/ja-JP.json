@@ -86,7 +86,8 @@
   },
   "ExpenseDetail": {
     "activity": "アクティビティ",
-    "noActivity": "この支出にはまだアクティビティがありません。"
+    "noActivity": "この支出にはまだアクティビティがありません。",
+    "viewGroupExpense": "View group expense"
   },
   "Groups": {
     "myGroups": "マイグループ",
@@ -309,6 +310,19 @@
     "reimbursement": "払い戻し",
     "PaidByField": {
       "saveAsDefault": "デフォルトの支払者オプションとして保存"
+    },
+    "decompositionBanner": {
+      "nonMemberLine": "{name} isn't in {group} — their {amount} share will be saved as a direct expense",
+      "groupHalfLine": "The group expense will be {amount}",
+      "postSaveTitle": "Expense split across group and direct records",
+      "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
+      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
+      "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
+      "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
+      "directHalfIndependentEditWarning": "This expense is part of a split that also includes a group expense. Editing or deleting it does not affect the group record.",
+      "notInGroupBadge": "Not in group",
+      "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
   "ExpenseDocumentsInput": {
@@ -1043,6 +1057,7 @@
     "signOut": "サインアウト"
   },
   "Notifications": {
+    "settings": "通知設定",
     "subscribe": "通知を有効にする",
     "unsubscribe": "通知を無効にする",
     "selectParticipant": "他のメンバーの変更を通知する",
@@ -1064,7 +1079,13 @@
     "eventCreate": "支出の作成",
     "eventUpdate": "支出の更新",
     "eventDelete": "支出の削除",
-    "selectAtLeastOneFilter": "メンバーまたはイベントを1つ以上選択してください。"
+    "selectAtLeastOneFilter": "メンバーまたはイベントを1つ以上選択してください。",
+    "channelsLabel": "チャンネル",
+    "pushLabel": "プッシュ通知",
+    "pushUnavailable": "このデプロイメントではプッシュ通知を利用できません。",
+    "emailLabel": "メール通知",
+    "enableChannelHint": "チャンネルを有効にして、誰のどのような通知を受け取るかを設定してください。",
+    "pushSyncWarning": "設定は保存されましたが、プッシュ通知フィルターの同期に失敗しました。"
   },
   "ExpenseImport": {
     "button": "支出をインポート",

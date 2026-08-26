@@ -18,6 +18,14 @@ jest.mock('@/lib/push/notify-on-activity', () => ({
   notifyOnActivity: jest.fn(),
 }))
 
+jest.mock('@/lib/friends', () => {
+  const actual = jest.requireActual('@/lib/friends')
+  return {
+    ...actual,
+    upsertFriendByEmail: jest.fn().mockResolvedValue(undefined),
+  }
+})
+
 jest.mock('@/lib/prisma', () => ({
   prisma: {
     friend: {
@@ -28,6 +36,9 @@ jest.mock('@/lib/prisma', () => ({
       findUnique: jest.fn(),
       create: jest.fn(),
     },
+    group: {
+      findUnique: jest.fn(),
+    },
     groupMembership: {
       findMany: jest.fn(),
     },
@@ -37,6 +48,7 @@ jest.mock('@/lib/prisma', () => ({
     expenseCategoryMapping: {
       upsert: jest.fn(),
     },
+    $transaction: jest.fn(),
   },
 }))
 
@@ -71,15 +83,32 @@ const mockFriendFindUnique = prisma.friend.findUnique as jest.Mock
 const mockFriendUpdate = prisma.friend.update as jest.Mock
 const mockUserFindUnique = prisma.user.findUnique as jest.Mock
 const mockUserCreate = prisma.user.create as jest.Mock
+const mockGroupFindUnique = prisma.group.findUnique as jest.Mock
 const mockGroupMembershipFindMany = prisma.groupMembership.findMany as jest.Mock
 const mockExpenseCreate = prisma.expense.create as jest.Mock
+const mockTransaction = prisma.$transaction as jest.Mock
+const mockTxExpenseCreate = jest.fn()
+const mockTxActivityCreate = jest.fn()
 
 describe('createGlobalExpense procedure', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+
+    mockTxExpenseCreate.mockImplementation(
+      async (args: { data: { id: string; groupId: string | null } }) => ({
+        ...args.data,
+      }),
+    )
+    mockTxActivityCreate.mockResolvedValue({})
+    mockTransaction.mockImplementation(async (cb: (tx: unknown) => unknown) =>
+      cb({
+        expense: { create: mockTxExpenseCreate },
+        activity: { create: mockTxActivityCreate },
+      }),
+    )
   })
 
-  it('splits expense evenly between group members and direct friends', async () => {
+  it('decomposes hybrid expenses into Group_Half + Direct_Half (Model A)', async () => {
     // Current user id: 'current-user-id'
     // Friend Alice: friendId = 'friend-id-alice', friendUserId = 'friend-user-alice'
     // Friend Bob (direct): friendId = 'friend-id-bob', friendUserId = 'friend-user-bob'
@@ -105,10 +134,21 @@ describe('createGlobalExpense procedure', () => {
       },
     )
 
+    mockGroupFindUnique.mockResolvedValue({
+      id: 'group-1',
+      currency: '€',
+      currencyCode: 'EUR',
+    })
+
     mockGroupMembershipFindMany.mockResolvedValue([
       { userId: 'current-user-id' },
       { userId: 'friend-user-alice' },
     ])
+
+    mockUserFindUnique.mockResolvedValue({
+      email: 'bob@example.com',
+      name: 'Bob',
+    })
 
     const caller = friendsRouter.createCaller({} as any)
 
@@ -123,21 +163,34 @@ describe('createGlobalExpense procedure', () => {
       documents: [],
     })
 
-    expect(result.success).toBe(true)
+    // Decomposition envelope — not the legacy { success, expenseIds } shape
+    expect(result).toEqual(
+      expect.objectContaining({
+        groupHalf: expect.objectContaining({ groupId: 'group-1' }),
+        directHalves: [
+          expect.objectContaining({
+            nonMemberId: 'friend-user-bob',
+            amount: 1000,
+          }),
+        ],
+      }),
+    )
+    expect(result).not.toHaveProperty('success')
 
-    // Total participants are: 'current-user-id', 'friend-user-alice', 'friend-user-bob' (3 people)
-    // 3000 cents divided by 3 is 1000 cents per person.
-    // Group participants are: 'current-user-id', 'friend-user-alice' (2 people -> 2000 cents)
-    // Direct participant: 'friend-user-bob' (1 person -> 1000 cents)
+    // Total participants: current-user, Alice, Bob → 3000 / 3 = 1000 each.
+    // Group_Half: members only (2000). Direct_Half: Bob's share (1000), Model A.
+    expect(mockTxExpenseCreate).toHaveBeenCalledTimes(2)
 
-    // 1. Group expense created
-    expect(mockExpenseCreate).toHaveBeenNthCalledWith(
+    expect(mockTxExpenseCreate).toHaveBeenNthCalledWith(
       1,
       expect.objectContaining({
         data: expect.objectContaining({
           groupId: 'group-1',
           amount: 2000,
           splitMode: 'BY_AMOUNT',
+          creationMethod: 'NON_MEMBER_SPLIT',
+          linkedExpenseId: null,
+          originalTotalAtDecomposition: 3000,
           paidFor: {
             createMany: {
               data: expect.arrayContaining([
@@ -150,25 +203,27 @@ describe('createGlobalExpense procedure', () => {
       }),
     )
 
-    // 2. Direct expense created for Bob (1000 * 2 = 2000) split evenly
-    expect(mockExpenseCreate).toHaveBeenNthCalledWith(
+    expect(mockTxExpenseCreate).toHaveBeenNthCalledWith(
       2,
       expect.objectContaining({
         data: expect.objectContaining({
           groupId: null,
-          amount: 2000,
-          splitMode: 'EVENLY',
+          amount: 1000,
+          splitMode: 'BY_AMOUNT',
+          creationMethod: 'NON_MEMBER_SPLIT',
+          linkedExpenseId: 'mocked-nanoid',
+          expenseCurrencyCode: 'EUR',
           paidFor: {
             createMany: {
-              data: expect.arrayContaining([
-                { userId: 'current-user-id', shares: 1 },
-                { userId: 'friend-user-bob', shares: 1 },
-              ]),
+              data: [{ userId: 'friend-user-bob', shares: 1000 }],
             },
           },
         }),
       }),
     )
+
+    // Legacy prisma.expense.create path must not run after a successful decompose
+    expect(mockExpenseCreate).not.toHaveBeenCalled()
   })
 
   it('creates a soft user account if a selected friend does not have one', async () => {

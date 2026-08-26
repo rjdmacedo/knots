@@ -130,7 +130,8 @@
     "deletePaymentConfirm": "Eliminar este pagamento?",
     "deleteDescription": "Isto ajustará os saldos como se esta despesa nunca tivesse acontecido.",
     "cancel": "Cancelar",
-    "deleting": "A eliminar…"
+    "deleting": "A eliminar…",
+    "viewGroupExpense": "View group expense"
   },
   "Groups": {
     "myGroups": "Os meus grupos",
@@ -360,6 +361,19 @@
     "noLongerInGroup": "já não faz parte deste grupo",
     "PaidByField": {
       "saveAsDefault": "Guardar como opções de pagamento padrão"
+    },
+    "decompositionBanner": {
+      "nonMemberLine": "{name} isn't in {group} — their {amount} share will be saved as a direct expense",
+      "groupHalfLine": "The group expense will be {amount}",
+      "postSaveTitle": "Expense split across group and direct records",
+      "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
+      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
+      "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
+      "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
+      "directHalfIndependentEditWarning": "This expense is part of a split that also includes a group expense. Editing or deleting it does not affect the group record.",
+      "notInGroupBadge": "Not in group",
+      "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
   "ExpenseTitleInput": {
@@ -860,6 +874,7 @@
     }
   },
   "Notifications": {
+    "settings": "Definições de notificações",
     "subscribe": "Ativar notificações",
     "unsubscribe": "Desativar notificações",
     "selectParticipant": "Notificar-me sobre alterações de outros",
@@ -881,7 +896,13 @@
     "eventUpdate": "Despesa atualizada",
     "eventDelete": "Despesa eliminada",
     "selectAtLeastOneFilter": "Selecciona pelo menos um membro ou evento.",
-    "subscribeError": "Não foi possível ativar as notificações. Por favor, tente novamente."
+    "subscribeError": "Não foi possível ativar as notificações. Por favor, tente novamente.",
+    "channelsLabel": "Canais",
+    "pushLabel": "Notificações push",
+    "pushUnavailable": "As notificações push não estão disponíveis nesta instalação.",
+    "emailLabel": "Notificações por email",
+    "enableChannelHint": "Ativa um canal para configurar de quem e do que recebes notificações.",
+    "pushSyncWarning": "Preferências guardadas, mas a sincronização do filtro de notificações push falhou."
   },
   "ProfileSettings": {
     "title": "Definições de Perfil",

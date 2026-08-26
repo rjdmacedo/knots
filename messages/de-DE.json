@@ -86,7 +86,8 @@
   },
   "ExpenseDetail": {
     "activity": "Aktivität",
-    "noActivity": "Für diese Ausgabe wurde noch keine Aktivität erfasst."
+    "noActivity": "Für diese Ausgabe wurde noch keine Aktivität erfasst.",
+    "viewGroupExpense": "View group expense"
   },
   "Groups": {
     "myGroups": "Meine Gruppen",
@@ -309,6 +310,19 @@
     "reimbursement": "Rückzahlung",
     "PaidByField": {
       "saveAsDefault": "Als Standard-Zahlungsoptionen speichern"
+    },
+    "decompositionBanner": {
+      "nonMemberLine": "{name} isn't in {group} — their {amount} share will be saved as a direct expense",
+      "groupHalfLine": "The group expense will be {amount}",
+      "postSaveTitle": "Expense split across group and direct records",
+      "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
+      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
+      "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
+      "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
+      "directHalfIndependentEditWarning": "This expense is part of a split that also includes a group expense. Editing or deleting it does not affect the group record.",
+      "notInGroupBadge": "Not in group",
+      "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
   "ExpenseDocumentsInput": {
@@ -1046,6 +1060,7 @@
     "signOut": "Abmelden"
   },
   "Notifications": {
+    "settings": "Benachrichtigungseinstellungen",
     "subscribe": "Benachrichtigungen aktivieren",
     "unsubscribe": "Benachrichtigungen deaktivieren",
     "selectParticipant": "Über Änderungen anderer benachrichtigen",
@@ -1067,7 +1082,13 @@
     "eventCreate": "Ausgabe erstellt",
     "eventUpdate": "Ausgabe bearbeitet",
     "eventDelete": "Ausgabe gelöscht",
-    "selectAtLeastOneFilter": "Wähle mindestens ein Mitglied oder ein Ereignis."
+    "selectAtLeastOneFilter": "Wähle mindestens ein Mitglied oder ein Ereignis.",
+    "channelsLabel": "Kanäle",
+    "pushLabel": "Push-Benachrichtigungen",
+    "pushUnavailable": "Push-Benachrichtigungen sind in dieser Bereitstellung nicht verfügbar.",
+    "emailLabel": "E-Mail-Benachrichtigungen",
+    "enableChannelHint": "Aktiviere einen Kanal, um festzulegen, über wen und was du benachrichtigt wirst.",
+    "pushSyncWarning": "Einstellungen gespeichert, aber die Synchronisierung des Push-Benachrichtigungsfilters ist fehlgeschlagen."
   },
   "ExpenseImport": {
     "button": "Ausgaben importieren",

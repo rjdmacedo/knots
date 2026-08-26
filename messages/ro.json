@@ -86,7 +86,8 @@
   },
   "ExpenseDetail": {
     "activity": "Activitate",
-    "noActivity": "Nu există încă nicio activitate pentru această cheltuială."
+    "noActivity": "Nu există încă nicio activitate pentru această cheltuială.",
+    "viewGroupExpense": "View group expense"
   },
   "Groups": {
     "myGroups": "Grupurile mele",
@@ -309,6 +310,19 @@
     "reimbursement": "Rambursare",
     "PaidByField": {
       "saveAsDefault": "Salvează ca opțiuni implicite de plată"
+    },
+    "decompositionBanner": {
+      "nonMemberLine": "{name} isn't in {group} — their {amount} share will be saved as a direct expense",
+      "groupHalfLine": "The group expense will be {amount}",
+      "postSaveTitle": "Expense split across group and direct records",
+      "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
+      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
+      "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
+      "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
+      "directHalfIndependentEditWarning": "This expense is part of a split that also includes a group expense. Editing or deleting it does not affect the group record.",
+      "notInGroupBadge": "Not in group",
+      "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
   "ExpenseDocumentsInput": {
@@ -1043,6 +1057,7 @@
     "signOut": "Deconectare"
   },
   "Notifications": {
+    "settings": "Setări notificări",
     "subscribe": "Activează notificările",
     "unsubscribe": "Dezactivează notificările",
     "selectParticipant": "Notifică-mă despre modificările altora",
@@ -1064,7 +1079,13 @@
     "eventCreate": "Cheltuială creată",
     "eventUpdate": "Cheltuială actualizată",
     "eventDelete": "Cheltuială ștearsă",
-    "selectAtLeastOneFilter": "Selectează cel puțin un membru sau un eveniment."
+    "selectAtLeastOneFilter": "Selectează cel puțin un membru sau un eveniment.",
+    "channelsLabel": "Canale",
+    "pushLabel": "Notificări push",
+    "pushUnavailable": "Notificările push nu sunt disponibile în această instalare.",
+    "emailLabel": "Notificări e-mail",
+    "enableChannelHint": "Activează un canal pentru a configura despre cine și ce primești notificări.",
+    "pushSyncWarning": "Preferințele au fost salvate, dar sincronizarea filtrului de notificări push a eșuat."
   },
   "ExpenseImport": {
     "button": "Importă cheltuieli",

@@ -58,6 +58,9 @@ function makeExpense(
     categoryId: 0,
     creationMethod: null,
     bundleId: null,
+    linkedExpenseId: null,
+    expenseCurrencyCode: null,
+    originalTotalAtDecomposition: null,
     _count: { documents: 0 },
     paidBy: overrides.paidBy ?? { id: CURRENT_USER_ID, name: 'Current User' },
     paidFor: overrides.paidFor ?? [

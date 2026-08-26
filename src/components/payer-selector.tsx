@@ -86,6 +86,11 @@ export interface PayerSelectorProps {
   isReimbursement?: boolean
   /** When true, prevents multiple payers (friend/hybrid flows). */
   singlePayerOnly?: boolean
+  /**
+   * When set, renders an inline note below the single-payer selector.
+   * Used to explain that non-members require a single payer (R5.8).
+   */
+  nonMemberSinglePayerNote?: string
 }
 
 function entryAmount(entry: PayerEntry): number {
@@ -109,6 +114,7 @@ export function PayerSelector({
   disabled = false,
   isReimbursement = false,
   singlePayerOnly = false,
+  nonMemberSinglePayerNote,
 }: PayerSelectorProps) {
   const t = useTranslations('Expenses')
   const idPrefix = useId()
@@ -502,6 +508,11 @@ export function PayerSelector({
                     ))}
                   </SelectContent>
                 </Select>
+                {nonMemberSinglePayerNote && (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {nonMemberSinglePayerNote}
+                  </p>
+                )}
               </div>
             )}
           </FieldContent>

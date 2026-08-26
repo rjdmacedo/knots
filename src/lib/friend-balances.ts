@@ -1,6 +1,6 @@
 import type { getGroupExpenses } from '@/lib/api'
 import { getBalances, getReimbursements, Reimbursement } from '@/lib/balances'
-import { Currency } from '@/lib/currency'
+import { Currency, getCurrency } from '@/lib/currency'
 import { getCurrencyFromGroup } from '@/lib/utils'
 
 export type GroupBalanceBreakdown = {
@@ -43,6 +43,39 @@ export function getPairwiseBalance(
     if (r.from === currentUserId && r.to === friendUserId) return net - r.amount
     return net
   }, 0)
+}
+
+/**
+ * Groups direct expenses into per-currency buckets.
+ *
+ * Expenses with a non-null `expenseCurrencyCode` are resolved via `getCurrency`
+ * and placed in the matching bucket. Expenses with `expenseCurrencyCode = null`
+ * fall into the `fallbackCurrency` bucket. Empty buckets are filtered out.
+ *
+ * _Requirements: 1.7, 14.4_
+ */
+export function buildDirectBuckets<
+  T extends { expenseCurrencyCode: string | null },
+>(
+  directExpenses: T[],
+  fallbackCurrency: Currency,
+): Array<{ currency: Currency; expenses: T[] }> {
+  const bucketMap = new Map<string, { currency: Currency; expenses: T[] }>()
+
+  for (const exp of directExpenses) {
+    const currency = exp.expenseCurrencyCode
+      ? getCurrency(exp.expenseCurrencyCode)
+      : fallbackCurrency
+    const key = currency.code || currency.symbol
+    const existing = bucketMap.get(key)
+    if (existing) {
+      existing.expenses.push(exp)
+    } else {
+      bucketMap.set(key, { currency, expenses: [exp] })
+    }
+  }
+
+  return Array.from(bucketMap.values()).filter((b) => b.expenses.length > 0)
 }
 
 /** Compute balances for one friend across shared groups and direct expenses. */

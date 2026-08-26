@@ -1,4 +1,4 @@
-import { PrismaClient, SplitMode } from '@prisma/client'
+import { CreationMethod, PrismaClient, SplitMode } from '@prisma/client'
 import { hashSync } from 'bcrypt'
 
 const prisma = new PrismaClient()
@@ -236,7 +236,100 @@ async function main() {
     rafael.id,
   )
 
-  const totalExpenses = EXPENSES_PER_GROUP * 4
+  // -----------------------------------------------------------------------
+  // Decomposed expense example: Group_Half + Direct_Half (NON_MEMBER_SPLIT)
+  //
+  // Scenario: Rafael pays a 100 € dinner in Group 1 (Rafael, Alice, Bob).
+  // Dave (not a member of Group 1) is also included — equal split among 4
+  // people → 2500 minor units each.
+  //
+  // Group_Half: Rafael + Alice + Bob → 7500 minor units total (3 × 2500)
+  // Direct_Half: Dave → 2500 minor units (groupId = null)
+  //
+  // The seed clears all data at the start so IDs are stable across re-runs
+  // and do not need upsert guards.
+  // -----------------------------------------------------------------------
+  console.log('Seed: creating decomposed expense example (NON_MEMBER_SPLIT)...')
+
+  const decompOriginalTotal = 10000 // 100,00 €
+  const decompSlotAmount = 2500 // 100,00 / 4 participants = 25,00 €
+  const groupHalfAmount = decompSlotAmount * 3 // 75,00 € (Rafael + Alice + Bob)
+  const directHalfAmount = decompSlotAmount // 25,00 € (Dave)
+
+  const groupHalfId = 'seed-expense-group-half-1'
+  const directHalfId = 'seed-expense-direct-half-1'
+
+  // Group_Half: a regular group expense covering only group-member shares
+  await prisma.expense.create({
+    data: {
+      id: groupHalfId,
+      groupId: group1.id,
+      title: 'Jantar (com Dave)',
+      categoryId: 0,
+      expenseDate: new Date(Date.UTC(2025, 0, 20)),
+      amount: groupHalfAmount,
+      paidById: rafael.id,
+      splitMode: SplitMode.BY_AMOUNT,
+      isReimbursement: false,
+      creationMethod: CreationMethod.NON_MEMBER_SPLIT,
+      linkedExpenseId: null,
+      expenseCurrencyCode: null,
+      originalTotalAtDecomposition: decompOriginalTotal,
+      paidFor: {
+        createMany: {
+          data: [
+            { userId: rafael.id, shares: decompSlotAmount },
+            { userId: alice.id, shares: decompSlotAmount },
+            { userId: bob.id, shares: decompSlotAmount },
+          ],
+        },
+      },
+      payers: {
+        createMany: {
+          data: [{ userId: rafael.id, amount: groupHalfAmount }],
+        },
+      },
+    },
+  })
+
+  // Direct_Half: a direct expense covering Dave's share (groupId = null)
+  await prisma.expense.create({
+    data: {
+      id: directHalfId,
+      groupId: null,
+      title: 'Jantar (com Dave)',
+      categoryId: 0,
+      expenseDate: new Date(Date.UTC(2025, 0, 20)),
+      amount: directHalfAmount,
+      paidById: rafael.id,
+      splitMode: SplitMode.BY_AMOUNT,
+      isReimbursement: false,
+      creationMethod: CreationMethod.NON_MEMBER_SPLIT,
+      linkedExpenseId: groupHalfId,
+      expenseCurrencyCode: 'EUR',
+      originalTotalAtDecomposition: null,
+      paidFor: {
+        createMany: {
+          data: [{ userId: dave.id, shares: directHalfAmount }],
+        },
+      },
+      payers: {
+        createMany: {
+          data: [{ userId: rafael.id, amount: directHalfAmount }],
+        },
+      },
+    },
+  })
+
+  console.log(
+    `Seed: created Group_Half (${groupHalfId}) + Direct_Half (${directHalfId})`,
+  )
+  console.log(
+    `  • Group_Half: 75,00 € (Rafael ${decompSlotAmount / 100}€ + Alice ${decompSlotAmount / 100}€ + Bob ${decompSlotAmount / 100}€)`,
+  )
+  console.log(`  • Direct_Half: Dave owes Rafael 25,00 € (direct expense)`)
+
+  const totalExpenses = EXPENSES_PER_GROUP * 4 + 2 // +2 for the decomposed pair
   const directDebt = (EXPENSES_PER_GROUP * AMOUNT_CENTS) / 2 // 50,00 €
   const groupDebt = (EXPENSES_PER_GROUP * AMOUNT_CENTS) / 3 // ~33,33 €
 

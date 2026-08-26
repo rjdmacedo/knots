@@ -6,8 +6,11 @@ import {
 } from '@/lib/activity-diff'
 import { isPaymentCategory } from '@/lib/categories'
 import { upsertCategoryMapping } from '@/lib/category-mapping'
+import { decomposeExpense } from '@/lib/decompose-expense'
+import { upsertFriendByEmail } from '@/lib/friends'
 import { assertPaymentEditable } from '@/lib/payments'
 import { prisma } from '@/lib/prisma'
+import { randomId } from '@/lib/random-id'
 import { ExpenseFormValues, GroupFormValues } from '@/lib/schemas'
 import {
   ActivityType,
@@ -16,12 +19,8 @@ import {
   RecurringExpenseLink,
 } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
-import { nanoid } from 'nanoid'
 import { RRule } from 'rrule'
-
-export function randomId() {
-  return nanoid()
-}
+export { randomId } from '@/lib/random-id'
 
 export async function createGroup(groupFormValues: GroupFormValues) {
   return prisma.group.create({
@@ -55,16 +54,6 @@ export async function createExpense(
 
   const memberIds = new Set(group.participants.map((p) => p.id))
 
-  // Validate all payer participant IDs are group members
-  for (const payer of expenseFormValues.paidBy) {
-    if (!memberIds.has(payer.participant)) {
-      throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message: `User ${payer.participant} is not a group member`,
-      })
-    }
-  }
-
   // Validate no duplicate userIds in paidBy
   const payerUserIds = expenseFormValues.paidBy.map((p) => p.participant)
   const uniquePayerIds = new Set(payerUserIds)
@@ -90,13 +79,86 @@ export async function createExpense(
     })
   }
 
-  for (const pf of expenseFormValues.paidFor) {
-    if (!memberIds.has(pf.participant)) {
+  // Determine which paidFor participants are non-members
+  const nonMemberPaidFor = expenseFormValues.paidFor.filter(
+    (pf) => !memberIds.has(pf.participant),
+  )
+  const hasNonMembers = nonMemberPaidFor.length > 0
+
+  // Guard 1: non-member payers are not allowed
+  for (const payer of expenseFormValues.paidBy) {
+    if (!memberIds.has(payer.participant)) {
       throw new TRPCError({
         code: 'BAD_REQUEST',
-        message: `User ${pf.participant} is not a group member`,
+        message: 'Non-members cannot be payers of a group expense.',
       })
     }
+  }
+
+  // Guard 2: multiple payers + any non-member in paidFor
+  if (hasNonMembers && expenseFormValues.paidBy.length > 1) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Expenses with non-members must have a single payer.',
+    })
+  }
+
+  // Guard 3: reimbursements cannot include non-members
+  if (expenseFormValues.isReimbursement && hasNonMembers) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Reimbursements cannot include non-members.',
+    })
+  }
+
+  // Guard 4: recurring expenses cannot include non-members
+  if (
+    expenseFormValues.recurrenceRule !== RecurrenceRule.NONE &&
+    hasNonMembers
+  ) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Recurring expenses cannot include non-members.',
+    })
+  }
+
+  if (hasNonMembers) {
+    // Guard 5: a group expense must include at least one group member
+    const memberPaidFor = expenseFormValues.paidFor.filter((pf) =>
+      memberIds.has(pf.participant),
+    )
+    if (memberPaidFor.length === 0) {
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: 'A group expense must include at least one group member.',
+      })
+    }
+
+    // Ensure friend records exist for each non-member (outside transaction)
+    for (const pf of nonMemberPaidFor) {
+      const u = await prisma.user.findUnique({
+        where: { id: pf.participant },
+        select: { email: true, name: true },
+      })
+      if (u) {
+        await upsertFriendByEmail({
+          userId: userId!,
+          email: u.email,
+          name: u.name ?? undefined,
+        })
+      }
+    }
+
+    // Decompose into Group_Half + Direct_Halves inside a transaction
+    const result = await prisma.$transaction(async (tx) =>
+      decomposeExpense(
+        { values: expenseFormValues, group, actorUserId: userId! },
+        undefined, // create path
+        tx,
+      ),
+    )
+    // null = all non-member slots were zero → fall through to regular path
+    if (result) return result.groupHalf as Expense
   }
 
   const expenseId = randomId()
@@ -223,9 +285,15 @@ export async function deleteExpense(
     changes,
   })
 
-  await prisma.expense.delete({
-    where: { id: expenseId },
-    include: { paidFor: true, paidBy: true },
+  await prisma.$transaction(async (tx) => {
+    await tx.expense.updateMany({
+      where: { linkedExpenseId: expenseId },
+      data: { linkedExpenseId: null },
+    })
+    await tx.expense.delete({
+      where: { id: expenseId },
+      include: { paidFor: true, paidBy: true },
+    })
   })
 }
 
@@ -287,16 +355,6 @@ export async function updateExpense(
 
   const memberIds = new Set(group.participants.map((p) => p.id))
 
-  // Validate all payer participant IDs are group members
-  for (const payer of expenseFormValues.paidBy) {
-    if (!memberIds.has(payer.participant)) {
-      throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message: `User ${payer.participant} is not a group member`,
-      })
-    }
-  }
-
   // Validate no duplicate userIds in paidBy
   const payerUserIds = expenseFormValues.paidBy.map((p) => p.participant)
   const uniquePayerIds = new Set(payerUserIds)
@@ -322,13 +380,91 @@ export async function updateExpense(
     })
   }
 
-  for (const pf of expenseFormValues.paidFor) {
-    if (!memberIds.has(pf.participant)) {
+  // Partition paidFor into members and non-members
+  const nonMemberPaidFor = expenseFormValues.paidFor.filter(
+    (pf) => !memberIds.has(pf.participant),
+  )
+  const memberPaidFor = expenseFormValues.paidFor.filter((pf) =>
+    memberIds.has(pf.participant),
+  )
+  const hasNonMembers = nonMemberPaidFor.length > 0
+
+  // Guard: non-member payers
+  for (const payer of expenseFormValues.paidBy) {
+    if (!memberIds.has(payer.participant)) {
       throw new TRPCError({
         code: 'BAD_REQUEST',
-        message: `User ${pf.participant} is not a group member`,
+        message: 'Non-members cannot be payers of a group expense.',
       })
     }
+  }
+
+  // Guard: single payer required when non-members are present
+  if (hasNonMembers && expenseFormValues.paidBy.length > 1) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Expenses with non-members must have a single payer.',
+    })
+  }
+
+  // Guard: reimbursements cannot include non-members
+  if (expenseFormValues.isReimbursement && hasNonMembers) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Reimbursements cannot include non-members.',
+    })
+  }
+
+  // Guard: recurring expenses cannot include non-members
+  if (expenseFormValues.recurrenceRule !== 'NONE' && hasNonMembers) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Recurring expenses cannot include non-members.',
+    })
+  }
+
+  // Guard: already-split expense cannot be re-decomposed with non-members
+  if (existingExpense.creationMethod === 'NON_MEMBER_SPLIT' && hasNonMembers) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message:
+        'This expense has already been split. Edit the direct expense separately.',
+    })
+  }
+
+  // Guard: group expense must include at least one group member
+  if (hasNonMembers && memberPaidFor.length === 0) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'A group expense must include at least one group member.',
+    })
+  }
+
+  // Decomposition path: when non-members are present, atomically create Group_Half + Direct_Halves
+  if (hasNonMembers) {
+    // upsertFriendByEmail outside the transaction (global prisma)
+    for (const pf of nonMemberPaidFor) {
+      const u = await prisma.user.findUnique({
+        where: { id: pf.participant },
+        select: { email: true, name: true },
+      })
+      if (u)
+        await upsertFriendByEmail({
+          userId: userId!,
+          email: u.email,
+          name: u.name ?? undefined,
+        })
+    }
+
+    const result = await prisma.$transaction(async (tx) =>
+      decomposeExpense(
+        { values: expenseFormValues, group, actorUserId: userId! },
+        expenseId, // update path — promotes existing row in place
+        tx,
+      ),
+    )
+    // null return = all non-member slots were zero → fall through to regular update path
+    if (result) return result.groupHalf as Expense
   }
 
   await logActivity(groupId, ActivityType.UPDATE_EXPENSE, {
@@ -687,6 +823,9 @@ export async function getGroupExpenses(
       recurrenceRule: true,
       title: true,
       notes: true,
+      linkedExpenseId: true,
+      expenseCurrencyCode: true,
+      originalTotalAtDecomposition: true,
       _count: { select: { documents: true } },
     },
     where: {

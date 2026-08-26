@@ -3,19 +3,6 @@ import { baseProcedure, createTRPCRouter } from '@/trpc/init'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-const preferencesSchema = z
-  .object({
-    subscriberUserId: z.string().min(1).max(200),
-    notifyAllMembers: z.boolean(),
-    includedUserIds: z.array(z.string().min(1).max(200)).max(50),
-    notifyOnCreate: z.boolean(),
-    notifyOnUpdate: z.boolean(),
-    notifyOnDelete: z.boolean(),
-  })
-  .refine((p) => p.notifyAllMembers || p.includedUserIds.length > 0, {
-    message: 'Select at least one member.',
-  })
-
 const createInputSchema = z.object({
   endpoint: z.string().url().max(2048),
   keys: z.object({
@@ -23,7 +10,7 @@ const createInputSchema = z.object({
     auth: z.string().min(1),
   }),
   groupId: z.string().min(1),
-  preferences: preferencesSchema,
+  subscriberUserId: z.string().min(1).max(200),
 })
 
 const deleteInputSchema = z.object({
@@ -48,16 +35,20 @@ export const pushSubscriptionsRouter = createTRPCRouter({
       })
     }
 
-    const { preferences } = input
-    const hasEventFilter =
-      preferences.notifyOnCreate ||
-      preferences.notifyOnUpdate ||
-      preferences.notifyOnDelete
+    // Fetch the user's GroupMembership to verify membership and get preferences
+    const membership = await prisma.groupMembership.findUnique({
+      where: {
+        userId_groupId: {
+          userId: input.subscriberUserId,
+          groupId: input.groupId,
+        },
+      },
+    })
 
-    if (!hasEventFilter) {
+    if (!membership) {
       throw new TRPCError({
-        code: 'BAD_REQUEST',
-        message: 'Select at least one event type.',
+        code: 'FORBIDDEN',
+        message: 'You are not a member of this group.',
       })
     }
 
@@ -73,22 +64,22 @@ export const pushSubscriptionsRouter = createTRPCRouter({
         p256dh: input.keys.p256dh,
         auth: input.keys.auth,
         groupId: input.groupId,
-        subscriberUserId: preferences.subscriberUserId,
-        notifyAllMembers: preferences.notifyAllMembers,
-        includedUserIds: preferences.includedUserIds,
-        notifyOnCreate: preferences.notifyOnCreate,
-        notifyOnUpdate: preferences.notifyOnUpdate,
-        notifyOnDelete: preferences.notifyOnDelete,
+        subscriberUserId: input.subscriberUserId,
+        notifyAllMembers: membership.notifyAllMembers,
+        includedUserIds: membership.includedUserIds,
+        notifyOnCreate: membership.notifyOnCreate,
+        notifyOnUpdate: membership.notifyOnUpdate,
+        notifyOnDelete: membership.notifyOnDelete,
       },
       update: {
         p256dh: input.keys.p256dh,
         auth: input.keys.auth,
-        subscriberUserId: preferences.subscriberUserId,
-        notifyAllMembers: preferences.notifyAllMembers,
-        includedUserIds: preferences.includedUserIds,
-        notifyOnCreate: preferences.notifyOnCreate,
-        notifyOnUpdate: preferences.notifyOnUpdate,
-        notifyOnDelete: preferences.notifyOnDelete,
+        subscriberUserId: input.subscriberUserId,
+        notifyAllMembers: membership.notifyAllMembers,
+        includedUserIds: membership.includedUserIds,
+        notifyOnCreate: membership.notifyOnCreate,
+        notifyOnUpdate: membership.notifyOnUpdate,
+        notifyOnDelete: membership.notifyOnDelete,
       },
     })
 

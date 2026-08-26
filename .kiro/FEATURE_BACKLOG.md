@@ -32,7 +32,9 @@ Splitwise/Knots import, CSV/JSON export, BYO OpenAI-compatible endpoint
 (`OPENAI_BASE_URL` / `OPENAI_MODEL` via `src/lib/ai-client.ts`), arithmetic
 expressions in amount fields (`src/lib/math-expression.ts`), copy expense
 (prefill create form from an existing expense), server-authoritative currency
-conversion (Frankfurter FX on create/update via `src/lib/currency-conversion.ts`).
+conversion (Frankfurter FX on create/update via `src/lib/currency-conversion.ts`),
+multi-payer expenses (`ExpensePaidBy` join table; `paidById` deprecated),
+Spliit-style Paid by Choice Cards (Single vs Multiple: evenly / shares / % / amount).
 
 ## Inspiration source
 
@@ -43,12 +45,9 @@ feature notes the upstream issue for demand signal. Import the _ideas_, not the 
 
 ## Suggested order
 
-1. `multi-payer-expenses`
-2. `paid-by-split-modes`
-3. `non-member-expense-decomposition`
-4. `itemized-expenses`
-5. `account-overview-homepage`
-6. `profile-avatars`
+1. `itemized-expenses`
+2. `account-overview-homepage`
+3. `profile-avatars`
 
 ---
 
@@ -80,58 +79,27 @@ expense currency differs from the group currency, the server fetches the rate
 and stores the converted group amount. Client rates are preview/fallback only;
 detail view and CSV export show the conversion.
 
-## 1. `multi-payer-expenses` — One expense paid by several members
+### `multi-payer-expenses` — One expense paid by several members
 
-- **Size:** Large. **Upstream:** spliit #14 (top-demand).
-- **Summary:** Support an expense funded by multiple payers, each with an amount/share,
-  instead of the current single `paidById`. This is the biggest functional gap vs Splitwise.
-- **Touch points:** `prisma/schema.prisma` (new `ExpensePaidBy` join table `{expenseId,
-userId, amount|shares}`; migrate existing single-payer rows), balance math in
-  `src/lib/settlements.ts` / balances modules (+ property tests), expense form (payer
-  section becomes multi-select with amounts), tRPC expenses router, import/export,
-  activity diff (`src/lib/activity-diff.ts`).
-- **Requirement seeds:**
-  - WHEN creating/editing an expense, THE form SHALL allow selecting one or more payers with a per-payer amount that sums to the total.
-  - THE balance calculation SHALL credit each payer by their contributed amount.
-  - WHEN migrating existing data, THE migration SHALL convert every current `paidById` into a single-payer row with the full amount (no balance change).
+Shipped. Spec: `.kiro/specs/multi-payer-expenses/`. Expenses can be funded by
+multiple payers via `ExpensePaidBy` (`userId` + `amount`); balances credit each
+payer by their contribution. Legacy `paidById` is deprecated and backfilled.
 
-## 2. `paid-by-split-modes` — Spliit-style Paid by Choice Cards
+### `paid-by-split-modes` — Spliit-style Paid by Choice Cards
 
-- **Size:** Medium. **Depends on:** `multi-payer-expenses` (`ExpensePaidBy` + `paidBy` array form field).
-- **Inspiration:** Spliit Cloud create-expense Paid by (Single vs Multiple: Evenly / Shares / % / Amount).
-- **Summary:** Redesign the Paid by section with shadcn Choice Cards. Single payer stays
-  one select; Multiple payers offers evenly / by shares / by percentage / by amount.
-  Modes are UI-only — the form still submits absolute `paidBy[]` amounts (no new DB column).
-- **Touch points:** `src/components/payer-selector.tsx`, `src/components/ui/field.tsx` +
-  `radio-group`, digit-aware helper in `src/lib/`, `expense-form` / floating create
-  `singlePayerOnly`, `messages/*.json`.
-- **Requirement seeds:**
-  - WHEN opening Paid by on a group expense, THE UI SHALL offer Single vs Multiple payers Choice Cards.
-  - WHEN Multiple + Evenly is selected, THE UI SHALL distribute the total with digit-aware minor-unit math.
-  - THE form SHALL always persist absolute payer amounts; Payer_Mode SHALL NOT be stored in the database.
-  - WHEN friends are selected in floating create, THE UI SHALL force Single payer only.
+Shipped. Spec: `.kiro/specs/paid-by-split-modes/`. Paid by section uses Choice
+Cards: Single vs Multiple (evenly / shares / % / amount). Modes are UI-only;
+the form persists absolute `paidBy[]` amounts.
 
-## 3. `non-member-expense-decomposition` — Splitwise-style non-member shares
+### `non-member-expense-decomposition` — Splitwise-style non-member shares
 
-- **Size:** Large. **Upstream:** Splitwise behaviour (confirmed via API).
-- **Depends on:** ideally after `multi-payer-expenses` (same create/update paths).
-- **Summary:** When creating a group expense that includes participants who are **not**
-  members of that group, atomically decompose into two records: (1) a group expense
-  covering only members' shares; (2) a direct expense (`groupId = null`) covering
-  non-members' shares. Both paid by the original payer, proportional to the original
-  split. UI explains the decomposition; original total stays visible for audit.
-- **Example:** Rafael creates 100€ in "Casa" (members: Rafael, Ana) including Daniel
-  (non-member), equal split → Casa gets 66.67€ (Rafael/Ana); direct 33.33€ Rafael↔Daniel.
-- **Touch points:** expense create/update tRPC + `src/lib/api.ts`, expense form
-  participant picker (allow non-members), balance/direct-expense modules, activity log,
-  i18n explanation copy, possibly link/audit fields between the two records.
-- **Requirement seeds:**
-  - WHEN an expense includes non-member participants, THE system SHALL create a group expense for members' shares and a direct expense for non-members' shares in one transaction.
-  - THE UI SHALL explain the decomposition before/after submit (e.g. "Daniel isn't in Casa — their share will be added as a direct expense").
-  - THE original total SHALL remain discoverable in both contexts for audit.
-  - THE payer and proportional split SHALL be preserved across both atomic records.
+Shipped. Spec: `.kiro/specs/non-member-expense-decomposition/`. A group expense
+that includes non-members in `paidFor` is atomically split into a Group_Half
+(members only) and one Direct_Half per non-member (`groupId = null`, Model A:
+amount = share, `BY_AMOUNT`, non-member as sole debtor). First save only;
+halves are independent afterwards.
 
-## 4. `itemized-expenses` — Split by line items (with tax & tip)
+## 1. `itemized-expenses` — Split by line items (with tax & tip)
 
 - **Size:** Large. **Upstream:** spliit #395.
 - **Summary:** Optionally break an expense into line items, assign each item to
@@ -145,7 +113,7 @@ userId, amount|shares}`; migrate existing single-payer rows), balance math in
   - THE system SHALL distribute tax and tip proportionally to each participant's item subtotal.
   - THE sum of per-person shares SHALL exactly equal the expense total (no lost cents).
 
-## 5. `account-overview-homepage` — Cross-group balance roll-up
+## 2. `account-overview-homepage` — Cross-group balance roll-up
 
 - **Size:** Medium. **Upstream:** spliit #509.
 - **Summary:** A logged-in landing page summarising the user's net position across all
@@ -158,7 +126,7 @@ userId, amount|shares}`; migrate existing single-payer rows), balance math in
   - THE overview SHALL list top balances with links to each group/friend.
   - THE aggregation SHALL run server-side via a single tRPC procedure.
 
-## 6. `profile-avatars` — Account profile photos
+## 3. `profile-avatars` — Account profile photos
 
 - **Size:** Medium.
 - **Summary:** Let users upload an avatar shown across account, group member lists, and

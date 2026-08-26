@@ -37,6 +37,7 @@ import {
 import { invalidateActivityQueries } from '@/lib/invalidate-activity-queries'
 import { isConsolidatedPayment } from '@/lib/payments'
 import { ExpenseFormValues } from '@/lib/schemas'
+import { formatCurrency, getCurrencyFromGroup } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { useIsClient } from 'foxact/use-is-client'
 import { Plus, Users } from 'lucide-react'
@@ -107,6 +108,7 @@ export function FloatingCreateExpense({
   },
 }: FloatingCreateExpenseProps) {
   const t = useTranslations('FloatingCreateExpense')
+  const tDecomp = useTranslations('ExpenseForm.decompositionBanner')
   const locale = useLocale() as Locale
   const pathname = usePathname()
   const isClient = useIsClient()
@@ -501,20 +503,53 @@ export function FloatingCreateExpense({
     try {
       if (editingExpenseId) {
         if (editingGroupId) {
-          await updateGroupExpense({
+          const updateResult = await updateGroupExpense({
             expenseId: editingExpenseId,
             groupId: editingGroupId,
             expenseFormValues: values,
           })
+          if (updateResult.decomposition && virtualGroup) {
+            const currency = getCurrencyFromGroup(virtualGroup as any)
+            const lines = updateResult.decomposition.directHalves.map((dh) =>
+              tDecomp('postSaveNonMemberLine', {
+                name: dh.nonMemberName,
+                amount: formatCurrency(currency, dh.amount, locale),
+              }),
+            )
+            const description = lines.join('\n')
+            const expenseDetailUrl = `/groups/${editingGroupId}/expenses/${updateResult.expense.id}`
+            toast(tDecomp('postSaveTitle'), {
+              description,
+              duration: Infinity,
+              action: {
+                label: t('viewGroupExpense'),
+                onClick: () => {
+                  window.location.href = expenseDetailUrl
+                },
+              },
+            })
+          } else {
+            toast.success(
+              t(
+                isPaymentMode
+                  ? 'paymentUpdateSuccessToast'
+                  : 'updateSuccessToast',
+              ),
+            )
+          }
         } else {
           await updateDirectExpense({
             expenseId: editingExpenseId,
             expenseFormValues: values,
           })
+          toast.success(
+            t(
+              isPaymentMode
+                ? 'paymentUpdateSuccessToast'
+                : 'updateSuccessToast',
+            ),
+          )
         }
-        toast.success(
-          t(isPaymentMode ? 'paymentUpdateSuccessToast' : 'updateSuccessToast'),
-        )
       } else {
         // Create mode
         if (selectedGroup) {
@@ -525,7 +560,7 @@ export function FloatingCreateExpense({
             const currencyObj = getCurrency(activeCurrency, locale)
             const amountMajor = values.amount / 10 ** currencyObj.decimal_digits
 
-            await createGlobalExpense({
+            const globalResult = await createGlobalExpense({
               title: values.title,
               amount: amountMajor,
               currency: activeCurrency,
@@ -548,22 +583,59 @@ export function FloatingCreateExpense({
                 shares: pf.shares,
               })),
             })
-            toast.success(
-              values.isReimbursement
-                ? t('paymentSuccessToast')
-                : t('successToast'),
-            )
+
+            // Decomposition path: result has { groupHalf, directHalves }
+            if ('groupHalf' in globalResult && globalResult.groupHalf) {
+              const groupHalfId = globalResult.groupHalf.id as string
+              const groupHalfGroupId = globalResult.groupHalf.groupId as string
+              toast.success(t('successToast'), {
+                action: {
+                  label: t('viewGroupExpense'),
+                  onClick: () => {
+                    window.location.href = `/groups/${groupHalfGroupId}/expenses/${groupHalfId}`
+                  },
+                },
+              })
+            } else {
+              toast.success(
+                values.isReimbursement
+                  ? t('paymentSuccessToast')
+                  : t('successToast'),
+              )
+            }
           } else {
             // Group expense
-            await createGroupExpense({
+            const createResult = await createGroupExpense({
               groupId: selectedGroup.id,
               expenseFormValues: values,
             })
-            toast.success(
-              values.isReimbursement
-                ? t('paymentSuccessToast')
-                : t('successToast'),
-            )
+            if (createResult.decomposition && virtualGroup) {
+              const currency = getCurrencyFromGroup(virtualGroup as any)
+              const lines = createResult.decomposition.directHalves.map((dh) =>
+                tDecomp('postSaveNonMemberLine', {
+                  name: dh.nonMemberName,
+                  amount: formatCurrency(currency, dh.amount, locale),
+                }),
+              )
+              const description = lines.join('\n')
+              const expenseDetailUrl = `/groups/${selectedGroup.id}/expenses/${createResult.expense.id}`
+              toast(tDecomp('postSaveTitle'), {
+                description,
+                duration: Infinity,
+                action: {
+                  label: t('viewGroupExpense'),
+                  onClick: () => {
+                    window.location.href = expenseDetailUrl
+                  },
+                },
+              })
+            } else {
+              toast.success(
+                values.isReimbursement
+                  ? t('paymentSuccessToast')
+                  : t('successToast'),
+              )
+            }
           }
         } else if (selectedFriends.length === 1 && values.isReimbursement) {
           await recordDirectPayment({

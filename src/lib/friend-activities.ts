@@ -83,6 +83,9 @@ export async function getFriendActivities(
       notes: true,
       recurrenceRule: true,
       category: true,
+      linkedExpenseId: true,
+      expenseCurrencyCode: true,
+      originalTotalAtDecomposition: true,
       paidBy: { select: { id: true, name: true } },
       paidFor: {
         select: {

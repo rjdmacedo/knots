@@ -13,19 +13,6 @@
 import fc from 'fast-check'
 import { z } from 'zod'
 
-// --- Schemas (mirroring the router's Zod schemas for validation testing) ---
-
-const preferencesSchema = z
-  .object({
-    subscriberUserId: z.string().min(1).max(200),
-    notifyAllMembers: z.boolean(),
-    includedUserIds: z.array(z.string().min(1).max(200)).max(50),
-    notifyOnCreate: z.boolean(),
-    notifyOnUpdate: z.boolean(),
-    notifyOnDelete: z.boolean(),
-  })
-  .refine((p) => p.notifyAllMembers || p.includedUserIds.length > 0)
-
 const createInputSchema = z.object({
   endpoint: z.string().url().max(2048),
   keys: z.object({
@@ -33,7 +20,7 @@ const createInputSchema = z.object({
     auth: z.string().min(1),
   }),
   groupId: z.string().min(1),
-  preferences: preferencesSchema,
+  subscriberUserId: z.string().min(1).max(200),
 })
 
 const deleteInputSchema = z.object({
@@ -51,6 +38,7 @@ const mockUpsert = jest.fn()
 const mockDeleteMany = jest.fn()
 const mockFindMany = jest.fn()
 const mockFindUnique = jest.fn()
+const mockGroupMembershipFindUnique = jest.fn()
 
 jest.mock('@/lib/prisma', () => ({
   prisma: {
@@ -61,6 +49,10 @@ jest.mock('@/lib/prisma', () => ({
     },
     group: {
       findUnique: (...args: unknown[]) => mockFindUnique(...args),
+    },
+    groupMembership: {
+      findUnique: (...args: unknown[]) =>
+        mockGroupMembershipFindUnique(...args),
     },
   },
 }))
@@ -126,7 +118,7 @@ const arbValidCreateInput = fc.record({
   endpoint: arbValidEndpoint,
   keys: arbValidKeys,
   groupId: arbGroupId,
-  preferences: arbPreferences,
+  subscriberUserId: fc.string({ minLength: 1, maxLength: 50 }),
 })
 
 // --- Helper to create a caller ---
@@ -161,6 +153,16 @@ describe('Push Subscriptions Router Property Tests', () => {
           async (input, repeatCount) => {
             jest.clearAllMocks()
             mockFindUnique.mockResolvedValue({ id: 'group-exists' })
+            mockGroupMembershipFindUnique.mockResolvedValue({
+              id: 'membership-1',
+              userId: input.subscriberUserId,
+              groupId: input.groupId,
+              notifyAllMembers: true,
+              includedUserIds: [],
+              notifyOnCreate: true,
+              notifyOnUpdate: true,
+              notifyOnDelete: true,
+            })
             mockUpsert.mockResolvedValue({ id: 'sub-1' })
 
             const caller = await createCaller()
@@ -193,7 +195,7 @@ describe('Push Subscriptions Router Property Tests', () => {
               expect(upsertArgs.update.p256dh).toBe(input.keys.p256dh)
               expect(upsertArgs.update.auth).toBe(input.keys.auth)
               expect(upsertArgs.update.subscriberUserId).toBe(
-                input.preferences.subscriberUserId,
+                input.subscriberUserId,
               )
             }
           },
@@ -214,6 +216,27 @@ describe('Push Subscriptions Router Property Tests', () => {
           async (endpoint, groupId, keys1, keys2, prefs1, prefs2) => {
             jest.clearAllMocks()
             mockFindUnique.mockResolvedValue({ id: 'group-exists' })
+            mockGroupMembershipFindUnique
+              .mockResolvedValueOnce({
+                id: 'membership-1',
+                userId: prefs1.subscriberUserId,
+                groupId,
+                notifyAllMembers: prefs1.notifyAllMembers,
+                includedUserIds: prefs1.includedUserIds,
+                notifyOnCreate: prefs1.notifyOnCreate,
+                notifyOnUpdate: prefs1.notifyOnUpdate,
+                notifyOnDelete: prefs1.notifyOnDelete,
+              })
+              .mockResolvedValueOnce({
+                id: 'membership-1',
+                userId: prefs2.subscriberUserId,
+                groupId,
+                notifyAllMembers: prefs2.notifyAllMembers,
+                includedUserIds: prefs2.includedUserIds,
+                notifyOnCreate: prefs2.notifyOnCreate,
+                notifyOnUpdate: prefs2.notifyOnUpdate,
+                notifyOnDelete: prefs2.notifyOnDelete,
+              })
             mockUpsert.mockResolvedValue({ id: 'sub-1' })
 
             const caller = await createCaller()
@@ -222,14 +245,14 @@ describe('Push Subscriptions Router Property Tests', () => {
               endpoint,
               keys: keys1,
               groupId,
-              preferences: prefs1,
+              subscriberUserId: prefs1.subscriberUserId,
             })
 
             await caller.create({
               endpoint,
               keys: keys2,
               groupId,
-              preferences: prefs2,
+              subscriberUserId: prefs2.subscriberUserId,
             })
 
             const lastCall = mockUpsert.mock.calls[1][0] as {
@@ -274,6 +297,7 @@ describe('Push Subscriptions Router Property Tests', () => {
               endpoint: invalidEndpoint,
               keys,
               groupId,
+              subscriberUserId: 'valid-user-id',
             })
             expect(result.success).toBe(false)
           },
@@ -297,6 +321,7 @@ describe('Push Subscriptions Router Property Tests', () => {
               endpoint: longEndpoint,
               keys,
               groupId,
+              subscriberUserId: 'valid-user-id',
             })
             expect(result.success).toBe(false)
           },
@@ -312,6 +337,7 @@ describe('Push Subscriptions Router Property Tests', () => {
             endpoint,
             keys: { p256dh: '', auth: 'valid-auth' },
             groupId,
+            subscriberUserId: 'valid-user-id',
           })
           expect(result.success).toBe(false)
         }),
@@ -326,6 +352,7 @@ describe('Push Subscriptions Router Property Tests', () => {
             endpoint,
             keys: { p256dh: 'valid-p256dh', auth: '' },
             groupId,
+            subscriberUserId: 'valid-user-id',
           })
           expect(result.success).toBe(false)
         }),
@@ -340,6 +367,7 @@ describe('Push Subscriptions Router Property Tests', () => {
             endpoint,
             keys,
             groupId: '',
+            subscriberUserId: 'valid-user-id',
           })
           expect(result.success).toBe(false)
         }),

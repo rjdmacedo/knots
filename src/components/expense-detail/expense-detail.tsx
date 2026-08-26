@@ -2,6 +2,7 @@
 
 import type { ActivityGroup } from '@/app/groups/[groupId]/activity/activity-item'
 import { CategoryIcon } from '@/app/groups/[groupId]/expenses/category-icon'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,7 +40,7 @@ import { isConsolidatedPayment } from '@/lib/payments'
 import { formatCurrency, formatDate, getCurrencyFromGroup } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import type { Category, SplitMode } from '@prisma/client'
-import { Camera, Copy, Loader2, Pencil, Trash2 } from 'lucide-react'
+import { Camera, Copy, Info, Loader2, Pencil, Trash2 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -258,6 +259,7 @@ function GroupExpenseDetailLoader({
       lastUpdatedBy={expenseData.lastUpdatedBy}
       lastUpdatedAt={expenseData.lastUpdatedAt}
       isLocked={isLocked}
+      linkedDirectHalvesCount={expenseData.linkedDirectHalvesCount}
       activity={{
         groupId,
         expenseId,
@@ -380,6 +382,7 @@ function DirectExpenseDetailLoader({
       addedBy={data.addedBy}
       addedAt={data.addedAt}
       isLocked={isLocked}
+      linkedGroupHalf={data.linkedGroupHalf}
     />
   )
 }
@@ -412,6 +415,8 @@ export type ExpenseDetailContentProps = {
     originalAmount?: number | null
     originalCurrency?: string | null
     conversionRate?: { toNumber(): number } | null
+    originalTotalAtDecomposition?: number | null
+    linkedExpenseId?: string | null
   }
   currency: Currency
   categories: Category[]
@@ -438,6 +443,8 @@ export type ExpenseDetailContentProps = {
   lastUpdatedBy?: { id: string; name: string } | null
   lastUpdatedAt?: Date | null
   isLocked: boolean
+  linkedDirectHalvesCount?: number
+  linkedGroupHalf?: { id: string; groupId: string } | null
   activity?: {
     groupId: string
     expenseId: string
@@ -470,10 +477,13 @@ export function ExpenseDetailContent({
   lastUpdatedBy,
   lastUpdatedAt,
   isLocked,
+  linkedDirectHalvesCount,
+  linkedGroupHalf,
   activity,
 }: ExpenseDetailContentProps) {
   const t = useTranslations('ExpenseDetail')
   const tExpenses = useTranslations('Expenses')
+  const tExpenseForm = useTranslations('ExpenseForm')
   const locale = useLocale()
   const documentsEnabled =
     process.env.NEXT_PUBLIC_ENABLE_EXPENSE_DOCUMENTS === 'true'
@@ -718,6 +728,56 @@ export function ExpenseDetailContent({
             </p>
           </CardContent>
         </Card>
+      ) : null}
+
+      {expense.creationMethod === 'NON_MEMBER_SPLIT' &&
+      receiptUpload.variant === 'group' ? (
+        <>
+          {linkedDirectHalvesCount != null && linkedDirectHalvesCount > 0 ? (
+            <Alert>
+              <AlertDescription>
+                {tExpenseForm(
+                  'decompositionBanner.groupHalfIndependentEditWarning',
+                )}
+              </AlertDescription>
+            </Alert>
+          ) : null}
+          {expense.originalTotalAtDecomposition != null ? (
+            <Alert>
+              <AlertDescription>
+                {tExpenseForm('decompositionBanner.groupHalfAuditNote', {
+                  amount: formatCurrency(
+                    currency,
+                    expense.originalTotalAtDecomposition,
+                    locale,
+                  ),
+                })}
+              </AlertDescription>
+            </Alert>
+          ) : null}
+        </>
+      ) : null}
+
+      {expense.linkedExpenseId && receiptUpload.variant === 'direct' ? (
+        <Alert>
+          <Info className="size-4" />
+          <AlertDescription>
+            {tExpenseForm(
+              'decompositionBanner.directHalfIndependentEditWarning',
+            )}
+            {linkedGroupHalf ? (
+              <>
+                {' '}
+                <Link
+                  href={`/groups/${linkedGroupHalf.groupId}/expenses/${linkedGroupHalf.id}`}
+                  className="font-medium underline underline-offset-3 hover:text-foreground"
+                >
+                  {t('viewGroupExpense')}
+                </Link>
+              </>
+            ) : null}
+          </AlertDescription>
+        </Alert>
       ) : null}
 
       {!expense.isReimbursement ? (

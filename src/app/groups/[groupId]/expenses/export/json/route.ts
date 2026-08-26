@@ -30,6 +30,7 @@ export async function GET(
           isReimbursement: true,
           splitMode: true,
           recurrenceRule: true,
+          linkedExpenseId: true,
         },
         orderBy: [{ expenseDate: 'asc' }, { createdAt: 'asc' }],
       },

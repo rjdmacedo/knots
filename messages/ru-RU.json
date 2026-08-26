@@ -86,7 +86,8 @@
   },
   "ExpenseDetail": {
     "activity": "Активность",
-    "noActivity": "Для этого расхода пока нет записей."
+    "noActivity": "Для этого расхода пока нет записей.",
+    "viewGroupExpense": "View group expense"
   },
   "Groups": {
     "myGroups": "Мои группы",
@@ -309,6 +310,19 @@
     "reimbursement": "Возмещение",
     "PaidByField": {
       "saveAsDefault": "Сохранить как параметры плательщика по умолчанию"
+    },
+    "decompositionBanner": {
+      "nonMemberLine": "{name} isn't in {group} — their {amount} share will be saved as a direct expense",
+      "groupHalfLine": "The group expense will be {amount}",
+      "postSaveTitle": "Expense split across group and direct records",
+      "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
+      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
+      "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
+      "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
+      "directHalfIndependentEditWarning": "This expense is part of a split that also includes a group expense. Editing or deleting it does not affect the group record.",
+      "notInGroupBadge": "Not in group",
+      "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
   "ExpenseDocumentsInput": {
@@ -1043,6 +1057,7 @@
     "signOut": "Выйти"
   },
   "Notifications": {
+    "settings": "Настройки уведомлений",
     "subscribe": "Включить уведомления",
     "unsubscribe": "Отключить уведомления",
     "selectParticipant": "Уведомлять меня об изменениях других",
@@ -1064,7 +1079,13 @@
     "eventCreate": "Расход добавлен",
     "eventUpdate": "Расход изменён",
     "eventDelete": "Расход удалён",
-    "selectAtLeastOneFilter": "Выберите хотя бы одного участника или событие."
+    "selectAtLeastOneFilter": "Выберите хотя бы одного участника или событие.",
+    "channelsLabel": "Каналы",
+    "pushLabel": "Push-уведомления",
+    "pushUnavailable": "Push-уведомления недоступны в этой среде.",
+    "emailLabel": "Уведомления по e-mail",
+    "enableChannelHint": "Включите канал, чтобы настроить, о ком и о чём получать уведомления.",
+    "pushSyncWarning": "Настройки сохранены, но синхронизация фильтра push-уведомлений не удалась."
   },
   "ExpenseImport": {
     "button": "Импортировать расходы",

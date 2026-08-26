@@ -7,6 +7,7 @@ import {
   CurrencySelector,
 } from '@/components/currency-selector'
 import { DatePicker } from '@/components/date-picker'
+import { DecompositionBanner } from '@/components/decomposition-banner'
 import { DeletePopup } from '@/components/delete-popup'
 import { DuplicateExpenseDialog } from '@/components/duplicate-expense-dialog'
 import { ExpenseDocumentsInput } from '@/components/expense-documents-input'
@@ -24,6 +25,7 @@ import {
   type SplitModeValue,
 } from '@/components/split-mode-selector'
 import { SubmitButton } from '@/components/submit-button'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -65,6 +67,7 @@ import {
   enforceCurrencyPattern,
   getCurrencyDisplaySymbol,
 } from '@/lib/currency-input'
+import { computeDecompositionSlots } from '@/lib/decompose-expense'
 import { distributeEqualAmounts } from '@/lib/distribute-amount'
 import type { DuplicateCheckResult } from '@/lib/duplicate-expense-detection'
 import { getGroupExpenseDetailPath } from '@/lib/expense-detail-urls'
@@ -826,6 +829,30 @@ export function ExpenseForm({
   const [isCategoryLoading, setCategoryLoading] = useState(false)
   const participantId = useGroupParticipantId(group.participants)
   const utils = trpc.useUtils()
+
+  // Query current user's friends to find non-members for the participant picker
+  const { data: friendsList } = trpc.friends.list.useQuery(undefined, {
+    // Only fetch when the picker would show non-member options
+    enabled: !expense || expense.creationMethod !== 'NON_MEMBER_SPLIT',
+  })
+
+  const recurrenceRuleValue = form.watch('recurrenceRule')
+
+  // Build non-member friends: friends with an account (friendUserId != null)
+  // who are not already group members, filtered by visibility rules:
+  //   - hidden in edit mode for an already-NON_MEMBER_SPLIT expense (R5.7)
+  //   - hidden when recurrenceRule ≠ NONE (R13.3)
+  const memberIdSet = new Set(group.participants.map((p) => p.id))
+  const showNonMemberOptions =
+    (!expense || expense.creationMethod !== 'NON_MEMBER_SPLIT') &&
+    (!recurrenceRuleValue || recurrenceRuleValue === 'NONE')
+
+  const nonMemberFriends =
+    showNonMemberOptions && friendsList
+      ? friendsList.filter(
+          (f) => f.friendUserId !== null && !memberIdSet.has(f.friendUserId),
+        )
+      : []
   const uploadPendingDocumentsRef = useRef<(() => Promise<void>) | null>(null)
   const deletePendingDocumentsRef = useRef<(() => Promise<void>) | null>(null)
 
@@ -1018,6 +1045,75 @@ export function ExpenseForm({
       })
     }
   }, [isReimbursement, form])
+
+  // When at least one non-member is in paidFor, collapse paidBy to a single entry (R5.8)
+  const hasNonMembersInPaidFor = (paidFor ?? []).some(
+    (pf) => !memberIdSet.has(pf.participant),
+  )
+  useEffect(() => {
+    if (!hasNonMembersInPaidFor) return
+    const currentPaidBy = form.getValues('paidBy')
+    if (Array.isArray(currentPaidBy) && currentPaidBy.length > 1) {
+      form.setValue('paidBy', [currentPaidBy[0]], {
+        shouldDirty: true,
+        shouldValidate: true,
+      })
+    }
+  }, [hasNonMembersInPaidFor, form])
+
+  // Recurring + non-member guard (R13.1, R13.2)
+  // When recurrenceRule ≠ NONE and at least one non-member is in paidFor,
+  // show an inline error and block form submission.
+  const hasRecurringNonMemberConflict =
+    hasNonMembersInPaidFor &&
+    !!recurrenceRuleValue &&
+    recurrenceRuleValue !== 'NONE'
+
+  // Decomposition banner: compute slots from live form state (R6.1, R6.4, R6.5)
+  // amount, splitMode, paidFor are already watched above and update reactively.
+  const bannerCurrency = getCurrency(group.currencyCode ?? group.currency)
+  const bannerFactor = 10 ** bannerCurrency.decimal_digits
+  const bannerTotalMinor = Math.round(Number(amount) * bannerFactor)
+  const bannerPaidForMinor = (paidFor ?? []).map((pf) => ({
+    ...pf,
+    shares:
+      splitMode === 'BY_AMOUNT'
+        ? Math.round(Number(pf.shares) * bannerFactor)
+        : Number(pf.shares), // EVENLY/BY_SHARES/BY_PERCENTAGE: shares are weights, pass through
+  }))
+  const bannerSlots = hasNonMembersInPaidFor
+    ? computeDecompositionSlots(
+        {
+          amount: bannerTotalMinor,
+          splitMode: splitMode as ExpenseFormValues['splitMode'],
+          paidFor: bannerPaidForMinor,
+        },
+        group,
+      )
+    : null
+
+  const groupHalfAmountMajor = bannerSlots
+    ? bannerSlots.groupHalfAmount / bannerFactor
+    : Number(amount)
+
+  // Resolve a participant name from group members or nonMemberFriends list
+  const resolveParticipantName = (userId: string): string => {
+    const groupMember = group.participants.find((p) => p.id === userId)
+    if (groupMember) return groupMember.name?.trim() || userId
+    const friend = nonMemberFriends.find((f) => f.friendUserId === userId)
+    if (friend) return friend.name
+    return userId
+  }
+
+  const bannerNonMembers = bannerSlots
+    ? bannerSlots.directHalfEntries
+        .map((e) => ({
+          userId: e.userId,
+          name: resolveParticipantName(e.userId),
+          amountMajor: e.amount / bannerFactor,
+        }))
+        .filter((e) => e.amountMajor > 0)
+    : []
 
   // Synchronize single-payer amount with the expense total.
   // When there's only one payer, their amount must always equal the expense amount.
@@ -1245,6 +1341,7 @@ export function ExpenseForm({
         form="expense-form"
         loadingContent={t(isCreate ? 'creating' : 'saving')}
         isLoading={isChecking}
+        disabled={hasRecurringNonMemberConflict}
       >
         <Save className="w-4 h-4 mr-2" />
         {t(isCreate ? 'create' : 'save')}
@@ -1439,6 +1536,11 @@ export function ExpenseForm({
                           {t(`${sExpense}.recurrenceRule.description`)}
                         </FormDescription>
                         <FormMessage />
+                        {hasRecurringNonMemberConflict && (
+                          <p className="text-sm font-medium text-destructive">
+                            {t('decompositionBanner.recurringNonMemberError')}
+                          </p>
+                        )}
                       </FormItem>
                     )}
                   />
@@ -1654,7 +1756,14 @@ export function ExpenseForm({
                           currency={groupCurrency}
                           locale={locale}
                           isReimbursement={form.watch('isReimbursement')}
-                          singlePayerOnly={singlePayerOnly}
+                          singlePayerOnly={
+                            singlePayerOnly || hasNonMembersInPaidFor
+                          }
+                          nonMemberSinglePayerNote={
+                            hasNonMembersInPaidFor
+                              ? t('decompositionBanner.singlePayerNote')
+                              : undefined
+                          }
                         />
                         <FormMessage />
                         <FormField
@@ -2193,6 +2302,343 @@ export function ExpenseForm({
                                   />
                                 ))}
 
+                                {/* Show non-member friends below group members (R5.1, R5.2, R5.5, R5.6, R5.7, R13.3) */}
+                                {nonMemberFriends.map((friend) => {
+                                  const friendId = friend.friendUserId!
+                                  const friendName = friend.name
+                                  return (
+                                    <FormField
+                                      key={friendId}
+                                      control={form.control}
+                                      name="paidFor"
+                                      render={({ field }) => {
+                                        const isChecked = field.value?.some(
+                                          ({ participant }) =>
+                                            participant === friendId,
+                                        )
+                                        return (
+                                          <div
+                                            data-id={`${friendId}/${form.getValues().splitMode}/${group.currency}`}
+                                            className={participantRowClass}
+                                          >
+                                            <FormItem
+                                              className={
+                                                participantFormItemClass
+                                              }
+                                            >
+                                              <FormControl>
+                                                <Checkbox
+                                                  checked={isChecked}
+                                                  onCheckedChange={(
+                                                    checked,
+                                                  ) => {
+                                                    const options = {
+                                                      shouldDirty: true,
+                                                      shouldTouch: true,
+                                                      shouldValidate: true,
+                                                    }
+                                                    const currentSplitMode =
+                                                      form.getValues(
+                                                        'splitMode',
+                                                      )
+                                                    let newPaidFor = checked
+                                                      ? [
+                                                          ...field.value,
+                                                          {
+                                                            participant:
+                                                              friendId,
+                                                            shares: 1,
+                                                          },
+                                                        ]
+                                                      : field.value?.filter(
+                                                          (value) =>
+                                                            value.participant !==
+                                                            friendId,
+                                                        )
+
+                                                    if (
+                                                      currentSplitMode ===
+                                                      'BY_PERCENTAGE'
+                                                    ) {
+                                                      newPaidFor =
+                                                        withEqualPercentageSplit(
+                                                          newPaidFor ?? [],
+                                                        )
+                                                      setManuallyEditedParticipants(
+                                                        new Set(),
+                                                      )
+                                                    } else if (
+                                                      currentSplitMode ===
+                                                        'EVENLY' ||
+                                                      currentSplitMode ===
+                                                        'BY_AMOUNT'
+                                                    ) {
+                                                      // Redistribute total equally among all paidFor participants
+                                                      // (R5.3 add, R5.4 remove): zero total → zero shares
+                                                      const totalAmount =
+                                                        Number(
+                                                          form.getValues(
+                                                            'amount',
+                                                          ),
+                                                        ) || 0
+                                                      const participants =
+                                                        newPaidFor ?? []
+                                                      if (
+                                                        participants.length > 0
+                                                      ) {
+                                                        const amounts =
+                                                          totalAmount === 0
+                                                            ? Array(
+                                                                participants.length,
+                                                              ).fill(0)
+                                                            : distributeEqualAmounts(
+                                                                totalAmount,
+                                                                participants.length,
+                                                                groupCurrency.decimal_digits,
+                                                              )
+                                                        newPaidFor =
+                                                          participants.map(
+                                                            (entry, index) => ({
+                                                              ...entry,
+                                                              shares:
+                                                                amounts[
+                                                                  index
+                                                                ] ?? 0,
+                                                            }),
+                                                          )
+                                                      }
+                                                      setManuallyEditedParticipants(
+                                                        new Set(),
+                                                      )
+                                                    }
+
+                                                    form.setValue(
+                                                      'paidFor',
+                                                      newPaidFor,
+                                                      options,
+                                                    )
+                                                  }}
+                                                />
+                                              </FormControl>
+                                              <FormLabel className="text-sm font-normal flex-1 flex items-center gap-2">
+                                                <span>{friendName}</span>
+                                                <Badge
+                                                  variant="secondary"
+                                                  className="text-xs shrink-0"
+                                                >
+                                                  {t(
+                                                    'decompositionBanner.notInGroupBadge',
+                                                  )}
+                                                </Badge>
+                                                {isChecked &&
+                                                  !form.watch(
+                                                    'isReimbursement',
+                                                  ) && (
+                                                    <span className="text-muted-foreground ml-0">
+                                                      (
+                                                      {formatCurrency(
+                                                        groupCurrency,
+                                                        calculateShare(
+                                                          friendId,
+                                                          {
+                                                            amount:
+                                                              amountAsMinorUnits(
+                                                                Number(
+                                                                  form.watch(
+                                                                    'amount',
+                                                                  ),
+                                                                ),
+                                                                groupCurrency,
+                                                              ),
+                                                            paidFor:
+                                                              field.value.map(
+                                                                ({
+                                                                  participant,
+                                                                  shares,
+                                                                }) => ({
+                                                                  user: {
+                                                                    id: participant,
+                                                                    name: '',
+                                                                  },
+                                                                  shares:
+                                                                    form.watch(
+                                                                      'splitMode',
+                                                                    ) ===
+                                                                    'BY_PERCENTAGE'
+                                                                      ? Number(
+                                                                          shares,
+                                                                        ) * 100
+                                                                      : form.watch(
+                                                                            'splitMode',
+                                                                          ) ===
+                                                                          'BY_AMOUNT'
+                                                                        ? amountAsMinorUnits(
+                                                                            shares,
+                                                                            groupCurrency,
+                                                                          )
+                                                                        : shares,
+                                                                }),
+                                                              ),
+                                                            splitMode:
+                                                              form.watch(
+                                                                'splitMode',
+                                                              ),
+                                                            isReimbursement:
+                                                              form.watch(
+                                                                'isReimbursement',
+                                                              ),
+                                                          },
+                                                        ),
+                                                        locale,
+                                                      )}
+                                                      )
+                                                    </span>
+                                                  )}
+                                              </FormLabel>
+                                            </FormItem>
+                                            <div
+                                              className={participantSharesClass}
+                                            >
+                                              {form.getValues().splitMode !==
+                                                'EVENLY' && (
+                                                <FormField
+                                                  name={`paidFor[${field.value.findIndex(
+                                                    ({ participant }) =>
+                                                      participant === friendId,
+                                                  )}].shares`}
+                                                  render={() => {
+                                                    const splitMode =
+                                                      form.getValues().splitMode
+                                                    return (
+                                                      <div>
+                                                        <FormControl>
+                                                          <ParticipantShareInput
+                                                            key={String(
+                                                              !isChecked,
+                                                            )}
+                                                            className={cn(
+                                                              shareInputGroupClass,
+                                                              splitMode ===
+                                                                'BY_SHARES' &&
+                                                                'w-[6.5rem]',
+                                                            )}
+                                                            disabled={
+                                                              !isChecked
+                                                            }
+                                                            splitMode={
+                                                              splitMode
+                                                            }
+                                                            groupCurrency={
+                                                              groupCurrency
+                                                            }
+                                                            locale={locale}
+                                                            sharesLabel={t(
+                                                              'shares',
+                                                            )}
+                                                            value={String(
+                                                              field.value?.find(
+                                                                ({
+                                                                  participant,
+                                                                }) =>
+                                                                  participant ===
+                                                                  friendId,
+                                                              )?.shares ?? '',
+                                                            )}
+                                                            onValueChange={(
+                                                              nextValue,
+                                                            ) => {
+                                                              const editedParticipantIds =
+                                                                new Set(
+                                                                  manuallyEditedParticipants,
+                                                                )
+                                                              editedParticipantIds.add(
+                                                                friendId,
+                                                              )
+
+                                                              if (
+                                                                splitMode ===
+                                                                'BY_PERCENTAGE'
+                                                              ) {
+                                                                const percentage =
+                                                                  Number(
+                                                                    nextValue,
+                                                                  )
+                                                                let newPaidFor =
+                                                                  field.value.map(
+                                                                    (p) =>
+                                                                      p.participant ===
+                                                                      friendId
+                                                                        ? {
+                                                                            participant:
+                                                                              friendId,
+                                                                            shares:
+                                                                              percentage,
+                                                                          }
+                                                                        : p,
+                                                                  )
+
+                                                                if (
+                                                                  !Number.isNaN(
+                                                                    percentage,
+                                                                  )
+                                                                ) {
+                                                                  newPaidFor =
+                                                                    balancePaidForPercentages(
+                                                                      newPaidFor,
+                                                                      editedParticipantIds,
+                                                                    )
+                                                                }
+
+                                                                field.onChange(
+                                                                  newPaidFor,
+                                                                )
+                                                                setManuallyEditedParticipants(
+                                                                  editedParticipantIds,
+                                                                )
+                                                                return
+                                                              }
+
+                                                              const shareValue =
+                                                                splitMode ===
+                                                                'BY_AMOUNT'
+                                                                  ? enforceCurrencyPattern(
+                                                                      nextValue,
+                                                                    )
+                                                                  : nextValue
+                                                              field.onChange(
+                                                                field.value.map(
+                                                                  (p) =>
+                                                                    p.participant ===
+                                                                    friendId
+                                                                      ? {
+                                                                          participant:
+                                                                            friendId,
+                                                                          shares:
+                                                                            shareValue,
+                                                                        }
+                                                                      : p,
+                                                                ),
+                                                              )
+                                                              setManuallyEditedParticipants(
+                                                                editedParticipantIds,
+                                                              )
+                                                            }}
+                                                          />
+                                                        </FormControl>
+                                                        <FormMessage className="float-right" />
+                                                      </div>
+                                                    )
+                                                  }}
+                                                />
+                                              )}
+                                            </div>
+                                          </div>
+                                        )
+                                      }}
+                                    />
+                                  )
+                                })}
+
                                 {/* Show former members still in this expense's paidFor (can be unchecked to remove) */}
                                 {expense &&
                                   expense.paidFor
@@ -2421,6 +2867,18 @@ export function ExpenseForm({
               </ExpenseFormSection>
             </div>
           </div>
+
+          {/* Decomposition Banner — visible above submit when non-members are present (R6.1, R6.4, R6.5) */}
+          {bannerNonMembers.length > 0 && (
+            <div className="px-0 pt-2 pb-0">
+              <DecompositionBanner
+                nonMembers={bannerNonMembers}
+                groupHalfAmountMajor={groupHalfAmountMajor}
+                currency={groupCurrency}
+                groupName={group.name}
+              />
+            </div>
+          )}
         </form>
         {formFooter}
       </div>
