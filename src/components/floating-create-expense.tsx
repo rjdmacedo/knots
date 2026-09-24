@@ -499,6 +499,40 @@ export function FloatingCreateExpense({
     setOpen(true)
   }, [clearExpenseFormState, friends, pathname, userGroups, utils])
 
+  const showDecompositionToast = ({
+    groupHalfAmount,
+    directHalves,
+    expenseDetailUrl,
+    currency,
+  }: {
+    groupHalfAmount: number
+    directHalves: Array<{ name: string; amount: number }>
+    expenseDetailUrl: string
+    currency: ReturnType<typeof getCurrencyFromGroup>
+  }) => {
+    const lines = [
+      tDecomp('postSaveGroupHalfLine', {
+        amount: formatCurrency(currency, groupHalfAmount, locale),
+      }),
+      ...directHalves.map((half) =>
+        tDecomp('postSaveNonMemberLine', {
+          name: half.name,
+          amount: formatCurrency(currency, half.amount, locale),
+        }),
+      ),
+    ]
+    toast(tDecomp('postSaveTitle'), {
+      description: lines.join('\n'),
+      duration: Infinity,
+      action: {
+        label: t('viewGroupExpense'),
+        onClick: () => {
+          window.location.href = expenseDetailUrl
+        },
+      },
+    })
+  }
+
   const handleSubmit = async (values: ExpenseFormValues) => {
     try {
       if (editingExpenseId) {
@@ -509,24 +543,16 @@ export function FloatingCreateExpense({
             expenseFormValues: values,
           })
           if (updateResult.decomposition && virtualGroup) {
-            const currency = getCurrencyFromGroup(virtualGroup as any)
-            const lines = updateResult.decomposition.directHalves.map((dh) =>
-              tDecomp('postSaveNonMemberLine', {
-                name: dh.nonMemberName,
-                amount: formatCurrency(currency, dh.amount, locale),
-              }),
-            )
-            const description = lines.join('\n')
-            const expenseDetailUrl = `/groups/${editingGroupId}/expenses/${updateResult.expense.id}`
-            toast(tDecomp('postSaveTitle'), {
-              description,
-              duration: Infinity,
-              action: {
-                label: t('viewGroupExpense'),
-                onClick: () => {
-                  window.location.href = expenseDetailUrl
-                },
-              },
+            showDecompositionToast({
+              groupHalfAmount: updateResult.decomposition.groupHalfAmount,
+              directHalves: updateResult.decomposition.directHalves.map(
+                (half) => ({
+                  name: half.nonMemberName,
+                  amount: half.amount,
+                }),
+              ),
+              expenseDetailUrl: `/groups/${editingGroupId}/expenses/${updateResult.expense.id}`,
+              currency: getCurrencyFromGroup(virtualGroup as any),
             })
           } else {
             toast.success(
@@ -586,15 +612,24 @@ export function FloatingCreateExpense({
 
             // Decomposition path: result has { groupHalf, directHalves }
             if ('groupHalf' in globalResult && globalResult.groupHalf) {
-              const groupHalfId = globalResult.groupHalf.id as string
-              const groupHalfGroupId = globalResult.groupHalf.groupId as string
-              toast.success(t('successToast'), {
-                action: {
-                  label: t('viewGroupExpense'),
-                  onClick: () => {
-                    window.location.href = `/groups/${groupHalfGroupId}/expenses/${groupHalfId}`
-                  },
-                },
+              const groupHalf = globalResult.groupHalf
+              const nameById = new Map(
+                participants.map((participant) => [
+                  participant.id,
+                  participant.name,
+                ]),
+              )
+              for (const friend of selectedFriends) {
+                nameById.set(friend.friendUserId ?? friend.id, friend.name)
+              }
+              showDecompositionToast({
+                groupHalfAmount: groupHalf.amount,
+                directHalves: (globalResult.directHalves ?? []).map((half) => ({
+                  name: nameById.get(half.nonMemberId) ?? half.nonMemberId,
+                  amount: half.amount,
+                })),
+                expenseDetailUrl: `/groups/${groupHalf.groupId}/expenses/${groupHalf.id}`,
+                currency: getCurrencyFromGroup(virtualGroup as any),
               })
             } else {
               toast.success(
@@ -610,24 +645,16 @@ export function FloatingCreateExpense({
               expenseFormValues: values,
             })
             if (createResult.decomposition && virtualGroup) {
-              const currency = getCurrencyFromGroup(virtualGroup as any)
-              const lines = createResult.decomposition.directHalves.map((dh) =>
-                tDecomp('postSaveNonMemberLine', {
-                  name: dh.nonMemberName,
-                  amount: formatCurrency(currency, dh.amount, locale),
-                }),
-              )
-              const description = lines.join('\n')
-              const expenseDetailUrl = `/groups/${selectedGroup.id}/expenses/${createResult.expense.id}`
-              toast(tDecomp('postSaveTitle'), {
-                description,
-                duration: Infinity,
-                action: {
-                  label: t('viewGroupExpense'),
-                  onClick: () => {
-                    window.location.href = expenseDetailUrl
-                  },
-                },
+              showDecompositionToast({
+                groupHalfAmount: createResult.decomposition.groupHalfAmount,
+                directHalves: createResult.decomposition.directHalves.map(
+                  (half) => ({
+                    name: half.nonMemberName,
+                    amount: half.amount,
+                  }),
+                ),
+                expenseDetailUrl: `/groups/${selectedGroup.id}/expenses/${createResult.expense.id}`,
+                currency: getCurrencyFromGroup(virtualGroup as any),
               })
             } else {
               toast.success(
