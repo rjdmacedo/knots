@@ -6,6 +6,7 @@ import { expenseFormSchema } from '@/lib/schemas'
 import { groupMemberProcedure } from '@/trpc/init'
 import { ActivityType } from '@prisma/client'
 import { z } from 'zod'
+import { applyItemizedConversion } from './apply-itemized-conversion'
 import { resolveConversion } from './resolve-conversion'
 
 export const createGroupExpenseProcedure = groupMemberProcedure
@@ -49,6 +50,16 @@ export const createGroupExpenseProcedure = groupMemberProcedure
     expenseFormValues.originalCurrency = conversion.originalCurrency
     expenseFormValues.conversionRate =
       conversion.conversionRate?.toNumber() ?? null
+
+    // For itemized expenses, re-derive per-participant shares from the converted
+    // total so their sum stays exact in the group currency (Requirement 11.4).
+    // No-op when not itemized or no conversion happened.
+    applyItemizedConversion(
+      expenseFormValues,
+      conversion.amount,
+      conversionRequired,
+      group.currencyCode,
+    )
 
     const expense = await createExpense(expenseFormValues, groupId, userId)
     notifyOnActivity(groupId, ActivityType.CREATE_EXPENSE, {

@@ -109,10 +109,19 @@ function ReceiptDialogContent() {
         console.log('Uploading image…')
         let { url } = await uploadToS3(file)
         console.log('Extracting information from receipt…')
-        const { amount, categoryId, date, title } =
+        const { amount, categoryId, date, title, items } =
           await extractExpenseInformationFromImage(url)
         const { width, height } = await getImageData(file)
-        setReceiptInfo({ amount, categoryId, date, title, url, width, height })
+        setReceiptInfo({
+          amount,
+          categoryId,
+          date,
+          title,
+          items,
+          url,
+          width,
+          height,
+        })
       } catch (err) {
         console.error(err)
         toast.error(t('ErrorToast.title'), {
@@ -262,6 +271,11 @@ function ReceiptDialogContent() {
                           },
                         ]
                       : [],
+                    // Optional itemized prefill: suggested line items, unassigned.
+                    items:
+                      receiptInfo.items && receiptInfo.items.length > 0
+                        ? receiptInfo.items
+                        : undefined,
                   },
                 },
               }),
