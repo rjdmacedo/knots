@@ -758,24 +758,21 @@ export function ExpenseDetailContent({
         </>
       ) : null}
 
-      {expense.linkedExpenseId && receiptUpload.variant === 'direct' ? (
+      {expense.linkedExpenseId &&
+      receiptUpload.variant === 'direct' &&
+      linkedGroupHalf ? (
         <Alert>
           <Info className="size-4" />
           <AlertDescription>
             {tExpenseForm(
               'decompositionBanner.directHalfIndependentEditWarning',
-            )}
-            {linkedGroupHalf ? (
-              <>
-                {' '}
-                <Link
-                  href={`/groups/${linkedGroupHalf.groupId}/expenses/${linkedGroupHalf.id}`}
-                  className="font-medium underline underline-offset-3 hover:text-foreground"
-                >
-                  {t('viewGroupExpense')}
-                </Link>
-              </>
-            ) : null}
+            )}{' '}
+            <Link
+              href={`/groups/${linkedGroupHalf.groupId}/expenses/${linkedGroupHalf.id}`}
+              className="font-medium underline underline-offset-3 hover:text-foreground"
+            >
+              {t('viewGroupExpense')}
+            </Link>
           </AlertDescription>
         </Alert>
       ) : null}

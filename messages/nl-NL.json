@@ -316,6 +316,7 @@
       "groupHalfLine": "The group expense will be {amount}",
       "postSaveTitle": "Expense split across group and direct records",
       "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
+      "postSaveGroupHalfLine": "The group expense is {amount}",
       "singlePayerNote": "Expenses with non-members can only have one payer.",
       "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
       "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
