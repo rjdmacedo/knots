@@ -31,6 +31,26 @@ export async function GET(
           splitMode: true,
           recurrenceRule: true,
           linkedExpenseId: true,
+          // Itemization detail so an itemized expense can be reconstructed
+          // (Requirement 10.2, 13.5). Entry-currency amounts; empty/null when
+          // the expense has no items. The remainder ("Other" pool) + marker
+          // round-trip alongside the items.
+          itemsAuthoritative: true,
+          remainderAmount: true,
+          remainderAllocationMode: true,
+          remainderSplitMode: true,
+          remainderShares: { select: { userId: true, shares: true } },
+          items: {
+            select: {
+              title: true,
+              amount: true,
+              unitPrice: true,
+              quantity: true,
+              position: true,
+              assignments: { select: { userId: true } },
+            },
+            orderBy: { position: 'asc' },
+          },
         },
         orderBy: [{ expenseDate: 'asc' }, { createdAt: 'asc' }],
       },

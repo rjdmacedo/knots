@@ -345,6 +345,43 @@
       "byPercentageDescription": "Split using percentages that add up to 100%",
       "byAmountDescription": "Split using fixed amounts for each participant"
     },
+    "itemized": {
+      "toggleLabel": "Split by items",
+      "toggleDescription": "Add line items, assign each to who shared it, and split tax and tip proportionally.",
+      "noItems": "No items yet. Add the lines from your receipt.",
+      "addItem": "Add item",
+      "removeItem": "Remove item",
+      "itemTitleLabel": "Item",
+      "itemTitlePlaceholder": "e.g. Burger",
+      "itemUnitPriceLabel": "Price",
+      "itemQuantityLabel": "Qty",
+      "itemLineTotalLabel": "Line",
+      "itemAmountLabel": "Amount",
+      "sectionTitle": "Items",
+      "sectionDescription": "Break the receipt into lines. Assign each to who shared it.",
+      "assignTo": "Shared by",
+      "otherLabel": "Other (tax, tip, service)",
+      "otherDerivedNote": "The gap between the total and your items, split across everyone.",
+      "itemsExceedTotal": "Your items add up to more than the expense total.",
+      "setAmountFromItems": "Set total from items",
+      "total": "Total",
+      "addItemsAction": "Add line items",
+      "documentationNote": "These items are for reference only. Assign an item to split the expense by items.",
+      "authoritativeNote": "This expense is split by its items.",
+      "leaveAction": "Use a normal split",
+      "switchDialog": {
+        "title": "Split by items?",
+        "description": "Assigning items will make them decide who owes what. Your current split will be replaced.",
+        "confirm": "Split by items",
+        "cancel": "Cancel"
+      },
+      "leaveDialog": {
+        "title": "Use a normal split?",
+        "description": "The expense will go back to a normal split. Your items are kept for reference.",
+        "confirm": "Use a normal split",
+        "cancel": "Cancel"
+      }
+    },
     "DeletePopup": {
       "label": "Delete",
       "title": "Delete this expense?",
@@ -677,7 +714,18 @@
     "reimbursementSinglePayer": "Reimbursements support only a single payer.",
     "noZeroShares": "All shares must be higher than 0.",
     "amountSum": "Sum of amounts must equal the expense amount.",
-    "percentageSum": "Sum of percentages must equal 100."
+    "percentageSum": "Sum of percentages must equal 100.",
+    "itemsRequired": "Add at least one item, or turn off splitting by items.",
+    "itemNeedsAssignment": "Assign each item to at least one person.",
+    "itemTitleRequired": "Enter a name for the item.",
+    "itemAmountNonNegative": "The item amount cannot be negative.",
+    "itemQuantityPositive": "Quantity must be a whole number of at least 1.",
+    "taxNonNegative": "Tax cannot be negative.",
+    "tipNonNegative": "Tip cannot be negative.",
+    "itemAssignmentUnknownParticipant": "An item is assigned to someone not in the split.",
+    "itemizationNotAllowedHere": "Reimbursements and recurring expenses cannot be split by items.",
+    "itemsExceedAmount": "The items add up to more than the expense total.",
+    "remainderShareUnknownParticipant": "The Other split includes someone not in the expense."
   },
   "Categories": {
     "search": "Search category...",

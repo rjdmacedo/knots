@@ -185,6 +185,79 @@ export const expenseFormSchema = z
         [RecurrenceRule, ...RecurrenceRule[]]
       >(Object.values(RecurrenceRule) as any)
       .default('NONE'),
+    // Optional itemization (v1.1). Items may exist as documentation while a
+    // legacy split is active (authoritative = false), or drive the split
+    // (authoritative = true → the form derives the BY_AMOUNT paidFor from the
+    // items + the "Other" remainder). The remainder generalises tax/tip into one
+    // signed pool, allocated PROPORTIONAL (to item subtotals) or CUSTOM (a flat
+    // split). Item/remainder amounts are entered like the main amount (major
+    // units, math expressions); they are converted to minor units once, in the
+    // form's proceedWithSubmit — NOT here.
+    itemization: z
+      .object({
+        authoritative: z.boolean(),
+        items: z
+          .array(
+            z.object({
+              title: z.string().min(1, 'itemTitleRequired'),
+              // Per-unit price (Requirement 14). When omitted (e.g. older
+              // payloads / receipt prefill), falls back to `amount` below.
+              unitPrice: z
+                .union([z.number(), z.string().transform(expressionToNumber)])
+                .refine((a) => a >= 0, 'itemAmountNonNegative')
+                .optional(),
+              // Positive integer count; defaults to 1 (Requirement 14).
+              quantity: z.coerce
+                .number()
+                .int('itemQuantityPositive')
+                .min(1, 'itemQuantityPositive')
+                .default(1),
+              // Line total (unitPrice × quantity). Kept so the splitter and
+              // legacy callers can read Item_Amount directly; the editor keeps
+              // it in sync with unitPrice × quantity.
+              amount: z
+                .union([z.number(), z.string().transform(expressionToNumber)])
+                .refine((a) => a >= 0, 'itemAmountNonNegative'),
+              assignedParticipants: z
+                .array(z.string())
+                .min(1, 'itemNeedsAssignment'),
+            })
+            .transform((item) => {
+              const quantity = item.quantity ?? 1
+              const unitPrice = item.unitPrice ?? item.amount
+              return { ...item, quantity, unitPrice }
+            }),
+          )
+          .default([]),
+        remainder: z
+          .object({
+            // Usually derived as (total − Σ items); the form supplies it.
+            // May be negative (discount). Optional; defaults to 0.
+            amount: z
+              .union([z.number(), z.string().transform(expressionToNumber)])
+              .optional(),
+            allocationMode: z
+              .enum(['PROPORTIONAL', 'CUSTOM'])
+              .default('PROPORTIONAL'),
+            // CUSTOM only: the flat split mode of the "Other" line.
+            splitMode: z
+              .enum<SplitMode, [SplitMode, ...SplitMode[]]>(
+                Object.values(SplitMode) as any,
+              )
+              .optional(),
+            // CUSTOM only: per-participant rows for the "Other" line.
+            paidFor: z
+              .array(
+                z.object({
+                  participant: z.string(),
+                  shares: z.union([z.number(), z.string()]),
+                }),
+              )
+              .optional(),
+          })
+          .default({ allocationMode: 'PROPORTIONAL' }),
+      })
+      .optional(),
   })
   .superRefine((expense, ctx) => {
     if (!expense.isReimbursement && isPaymentCategory(expense.category)) {
@@ -243,6 +316,15 @@ export const expenseFormSchema = z
       case 'BY_SHARES':
         break // noop
       case 'BY_AMOUNT': {
+        // Authoritative itemization derives the BY_AMOUNT paidFor from the pure
+        // splitter (cent-exact by construction against its own Entry_Total), and
+        // under FX the per-participant shares sum to the Entry_Total
+        // (originalAmount), not the converted group `amount` — the server
+        // re-derives group-currency shares from the converted total
+        // (Requirement 18.4). So the legacy sum-to-`amount` check does not apply
+        // to authoritative itemized expenses; the splitter + server guarantee
+        // exactness instead.
+        if (expense.itemization?.authoritative) break
         const sumMinor = expense.paidFor.reduce(
           (sum, { shares }) => sum + toAmountMinorUnitsForValidation(shares),
           0,
@@ -276,32 +358,125 @@ export const expenseFormSchema = z
         break
       }
     }
+
+    // Itemized validation (Requirements 8, 1.8, 16, 17). "Itemized" is read from
+    // the authoritative flag, never from item presence. Documentation items
+    // (authoritative = false) are not validated as a split.
+    if (expense.itemization?.authoritative) {
+      // Authoritative itemization is unavailable for reimbursements and recurring
+      // expenses (Requirement 1.8).
+      if (expense.isReimbursement || expense.recurrenceRule !== 'NONE') {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'itemizationNotAllowedHere',
+          path: ['itemization'],
+        })
+      }
+
+      const items = expense.itemization.items
+      // At least one item is required when authoritative (Requirement 8.4).
+      if (items.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'itemsRequired',
+          path: ['itemization', 'items'],
+        })
+      }
+
+      // Every item must be assigned only to current paidFor participants
+      // (Requirement 8.1 via field-level min(1); 8.5 checked here).
+      const participantIds = new Set(
+        expense.paidFor.map((pf) => pf.participant),
+      )
+      items.forEach((item, i) => {
+        for (const id of item.assignedParticipants) {
+          if (!participantIds.has(id)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: 'itemAssignmentUnknownParticipant',
+              path: ['itemization', 'items', i, 'assignedParticipants'],
+            })
+            break
+          }
+        }
+      })
+
+      // Items must not overshoot the expense total in its sign direction
+      // (Requirement 17.2). Compare in minor units.
+      const amountMinor = toAmountMinorUnitsForValidation(expense.amount)
+      const itemsSumMinor = items.reduce(
+        (sum, item) => sum + toAmountMinorUnitsForValidation(item.amount),
+        0,
+      )
+      const overshoot =
+        amountMinor < 0
+          ? itemsSumMinor < amountMinor
+          : itemsSumMinor > amountMinor
+      if (overshoot) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'itemsExceedAmount',
+          path: ['itemization', 'items'],
+        })
+      }
+
+      // CUSTOM remainder rows must reference current participants (Requirement 16.4).
+      const remainder = expense.itemization.remainder
+      if (remainder.allocationMode === 'CUSTOM') {
+        for (const row of remainder.paidFor ?? []) {
+          if (!participantIds.has(row.participant)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: 'remainderShareUnknownParticipant',
+              path: ['itemization', 'remainder', 'paidFor'],
+            })
+            break
+          }
+        }
+      }
+    }
   })
   .transform((expense) => {
-    // Format the share split as a number (if from form submission)
-    return {
-      ...expense,
-      paidFor: expense.paidFor.map((paidFor) => {
-        const shares = paidFor.shares
-        if (expense.splitMode === 'BY_PERCENTAGE') {
-          return {
-            ...paidFor,
-            shares: toPercentageBasisPoints(shares),
-          }
-        }
-        if (typeof shares === 'string' && expense.splitMode !== 'BY_AMOUNT') {
-          // For splitting not by amount, preserve the previous behaviour of multiplying the share by 100
-          return {
-            ...paidFor,
-            shares: Math.round(Number(shares) * 100),
-          }
-        }
-        // Otherwise, no need as the number will have been formatted according to currency.
+    // When itemized, the form has already written the per-participant amounts
+    // into paidFor as BY_AMOUNT shares (still in major units — the single
+    // minor-unit conversion happens in proceedWithSubmit, not here). The
+    // transform's only itemized job is to force splitMode to BY_AMOUNT and drop
+    // participants whose computed share is zero (they leave paidFor). It must
+    // NOT convert shares to minor units.
+    const itemized = expense.itemization?.authoritative === true
+    const effectiveSplitMode: SplitMode = itemized
+      ? 'BY_AMOUNT'
+      : expense.splitMode
+
+    const mappedPaidFor = expense.paidFor.map((paidFor) => {
+      const shares = paidFor.shares
+      if (effectiveSplitMode === 'BY_PERCENTAGE') {
         return {
           ...paidFor,
-          shares: Number(shares),
+          shares: toPercentageBasisPoints(shares),
         }
-      }),
+      }
+      if (typeof shares === 'string' && effectiveSplitMode !== 'BY_AMOUNT') {
+        // For splitting not by amount, preserve the previous behaviour of multiplying the share by 100
+        return {
+          ...paidFor,
+          shares: Math.round(Number(shares) * 100),
+        }
+      }
+      // Otherwise, no need as the number will have been formatted according to currency.
+      return {
+        ...paidFor,
+        shares: Number(shares),
+      }
+    })
+
+    return {
+      ...expense,
+      splitMode: effectiveSplitMode,
+      paidFor: itemized
+        ? // Drop zero-share participants: they consumed nothing (Requirement 5.5).
+          mappedPaidFor.filter((pf) => pf.shares > 0)
+        : mappedPaidFor,
     }
   })
 

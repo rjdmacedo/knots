@@ -249,8 +249,76 @@ export async function createExpense(
         },
       },
       notes: expenseFormValues.notes,
+      // Itemized expenses (regular, non-decomposed path only). By the time we
+      // get here, proceedWithSubmit has converted item/tax/tip to Entry_Currency
+      // minor units. Items carry Entry_Currency amounts; the authoritative
+      // group-currency split lives in paidFor above.
+      ...buildItemizationCreateData(expenseFormValues),
     },
   })
+}
+
+/**
+ * Build the nested Prisma create payload for itemized line items + tax/tip.
+ * Returns an empty object when the expense is not itemized, so non-itemized
+ * expenses are written exactly as before.
+ */
+function buildItemizationCreateData(expenseFormValues: ExpenseFormValues) {
+  const itemization = expenseFormValues.itemization
+  // Items are persisted whenever they exist — as documentation while a legacy
+  // split is active, or as the authoritative split. Only their absence writes
+  // the plain (non-itemized) shape.
+  if (!itemization || itemization.items.length === 0) {
+    return {}
+  }
+  return {
+    itemsAuthoritative: itemization.authoritative,
+    ...buildRemainderData(itemization.remainder),
+    items: {
+      create: itemization.items.map((item, index) => ({
+        id: randomId(),
+        title: item.title,
+        amount: Number(item.amount),
+        unitPrice: Number(item.unitPrice ?? item.amount),
+        quantity: Math.max(1, Math.trunc(Number(item.quantity)) || 1),
+        position: index,
+        assignments: {
+          createMany: {
+            data: item.assignedParticipants.map((userId) => ({ userId })),
+          },
+        },
+      })),
+    },
+  }
+}
+
+/**
+ * Persist the "Other" remainder pool. `amount` and mode are stored on the
+ * Expense; CUSTOM additionally stores the flat split mode and per-participant
+ * rows. PROPORTIONAL stores no rows (weights derive from item subtotals).
+ */
+function buildRemainderData(
+  remainder: NonNullable<ExpenseFormValues['itemization']>['remainder'],
+) {
+  const amount = Math.round(Number(remainder.amount) || 0)
+  if (remainder.allocationMode === 'CUSTOM') {
+    return {
+      remainderAmount: amount,
+      remainderAllocationMode: 'CUSTOM' as const,
+      remainderSplitMode: remainder.splitMode ?? null,
+      remainderShares: {
+        create: (remainder.paidFor ?? []).map((row) => ({
+          userId: row.participant,
+          shares: Math.round(Number(row.shares) || 0),
+        })),
+      },
+    }
+  }
+  return {
+    remainderAmount: amount,
+    remainderAllocationMode: 'PROPORTIONAL' as const,
+    remainderSplitMode: null,
+  }
 }
 
 export async function deleteExpense(
@@ -596,8 +664,84 @@ export async function updateExpense(
           })),
       },
       notes: expenseFormValues.notes,
+      // Itemization: full-replace. Delete all existing items (cascade removes
+      // their assignments) and recreate from the submitted list; set or clear
+      // tax/tip. When itemization is off/absent, items are cleared and tax/tip
+      // become null (Requirement 1.6).
+      ...buildItemizationUpdateData(expenseFormValues),
     },
   })
+}
+
+/**
+ * Build the nested Prisma update payload for itemized line items + tax/tip.
+ * Always deletes existing items first (full-replace, mirroring `payers`). When
+ * itemized, recreates items and sets tax/tip; when not, clears items and nulls
+ * tax/tip so a de-itemized expense holds no residual itemization.
+ */
+function buildItemizationUpdateData(expenseFormValues: ExpenseFormValues) {
+  const itemization = expenseFormValues.itemization
+  const hasItems = !!itemization && itemization.items.length > 0
+
+  // No items → clear all itemization state (items, remainder, marker).
+  if (!hasItems) {
+    return {
+      itemsAuthoritative: false,
+      remainderAmount: null,
+      remainderAllocationMode: null,
+      remainderSplitMode: null,
+      remainderShares: { deleteMany: {} },
+      items: { deleteMany: {} },
+    }
+  }
+
+  return {
+    itemsAuthoritative: itemization.authoritative,
+    ...buildRemainderUpdateData(itemization.remainder),
+    items: {
+      deleteMany: {},
+      create: itemization.items.map((item, index) => ({
+        id: randomId(),
+        title: item.title,
+        amount: Number(item.amount),
+        unitPrice: Number(item.unitPrice ?? item.amount),
+        quantity: Math.max(1, Math.trunc(Number(item.quantity)) || 1),
+        position: index,
+        assignments: {
+          createMany: {
+            data: item.assignedParticipants.map((userId) => ({ userId })),
+          },
+        },
+      })),
+    },
+  }
+}
+
+/** Full-replace variant of buildRemainderData for the update path. */
+function buildRemainderUpdateData(
+  remainder: NonNullable<ExpenseFormValues['itemization']>['remainder'],
+) {
+  const amount = Math.round(Number(remainder.amount) || 0)
+  if (remainder.allocationMode === 'CUSTOM') {
+    return {
+      remainderAmount: amount,
+      remainderAllocationMode: 'CUSTOM' as const,
+      remainderSplitMode: remainder.splitMode ?? null,
+      remainderShares: {
+        deleteMany: {},
+        create: (remainder.paidFor ?? []).map((row) => ({
+          userId: row.participant,
+          shares: Math.round(Number(row.shares) || 0),
+        })),
+      },
+    }
+  }
+  return {
+    remainderAmount: amount,
+    remainderAllocationMode: 'PROPORTIONAL' as const,
+    remainderSplitMode: null,
+    remainderShares: { deleteMany: {} },
+  }
 }
 
 export async function updateExpenseCategory(
@@ -864,6 +1008,16 @@ export async function getExpense(groupId: string, expenseId: string) {
       category: true,
       documents: true,
       recurringExpenseLink: true,
+      // Itemization detail for restoring the editor on edit (Requirement 1.4,
+      // 13.5) and for the JSON export (Requirement 10.2). itemsAuthoritative,
+      // remainderAmount, remainderAllocationMode, remainderSplitMode are scalar
+      // columns returned automatically. items ordered by position; the CUSTOM
+      // remainder rows come via remainderShares.
+      items: {
+        orderBy: { position: 'asc' },
+        include: { assignments: { select: { userId: true } } },
+      },
+      remainderShares: { select: { userId: true, shares: true } },
     },
   })
 }

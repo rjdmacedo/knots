@@ -1,5 +1,21 @@
 import { ExpenseConversionRateField } from '@/app/groups/[groupId]/expenses/expense-conversion-rate-field'
 import { ExpenseFormCollapsible } from '@/app/groups/[groupId]/expenses/expense-form-collapsible'
+import { ItemizedExpenseEditor } from '@/app/groups/[groupId]/expenses/itemized-expense-editor'
+import {
+  emptyDocumentationItemization,
+  leaveAuthoritative,
+  switchToAuthoritative,
+} from '@/lib/itemization-gate'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { CategorySelector } from '@/components/category-selector'
 import { CurrencyAmountInput } from '@/components/currency-amount-input'
 import {
@@ -285,6 +301,46 @@ function withEqualAmountSplit(
 }
 
 /**
+ * Rebuild the form's `itemization` value from a persisted expense for edit mode.
+ * Items, tax and tip are stored in Entry_Currency minor units; convert them back
+ * to major units so the editor shows exactly what the user typed. Returns
+ * undefined (itemized off) when the expense has no items.
+ */
+function buildItemizationDefault(
+  expense: NonNullable<
+    AppRouterOutput['groups']['expenses']['get']['expense']
+  >,
+  entryCurrency: Currency,
+): ExpenseFormValues['itemization'] {
+  const items = expense.items ?? []
+  if (items.length === 0) return undefined
+  const allocationMode =
+    expense.remainderAllocationMode === 'CUSTOM' ? 'CUSTOM' : 'PROPORTIONAL'
+  return {
+    authoritative: expense.itemsAuthoritative,
+    items: items.map((item) => ({
+      title: item.title,
+      unitPrice: amountAsDecimal(item.unitPrice || item.amount, entryCurrency),
+      quantity: item.quantity || 1,
+      amount: amountAsDecimal(item.amount, entryCurrency),
+      assignedParticipants: item.assignments.map((a) => a.userId),
+    })),
+    remainder: {
+      amount: amountAsDecimal(expense.remainderAmount ?? 0, entryCurrency),
+      allocationMode,
+      splitMode: expense.remainderSplitMode ?? undefined,
+      paidFor:
+        allocationMode === 'CUSTOM'
+          ? expense.remainderShares.map((s) => ({
+              participant: s.userId,
+              shares: s.shares,
+            }))
+          : undefined,
+    },
+  }
+}
+
+/**
  *
  * @param originalAmount - The original amount value from the ExpenseFormValues.
  * @return Returns `true` if the original amount is defined and not 0, otherwise `false`.
@@ -510,6 +566,9 @@ export type ExpenseFormCreatePrefill = {
   paidFor?: ExpenseFormValues['paidFor']
   splitMode?: ExpenseFormValues['splitMode']
   notes?: string
+  // Optional itemized prefill (e.g. from a receipt scan). Items are suggested,
+  // unassigned, and editable; amounts are in major units of the entry currency.
+  items?: Array<{ title: string; amount: number }>
 }
 
 /**
@@ -664,6 +723,12 @@ export function ExpenseForm({
           documents: expense.documents,
           notes: expense.notes ?? '',
           recurrenceRule: expense.recurrenceRule ?? undefined,
+          itemization: buildItemizationDefault(
+            expense,
+            expense.originalCurrency
+              ? getCurrency(expense.originalCurrency, locale)
+              : groupCurrency,
+          ),
         }
       : searchParams.get('reimbursement')
         ? {
@@ -739,6 +804,24 @@ export function ExpenseForm({
               documents: createPrefill.documents ?? [],
               notes: createPrefill.notes ?? '',
               recurrenceRule: RecurrenceRule.NONE,
+              // Receipt-suggested items land as Documentation_Items
+              // (authoritative = false): they do not drive the split until the
+              // user confirms "Use items as split" (Requirement 9.6, 12.2). No
+              // auto-assignment (Requirement 9.5).
+              itemization:
+                createPrefill.items && createPrefill.items.length > 0
+                  ? {
+                      authoritative: false,
+                      items: createPrefill.items.map((item) => ({
+                        title: item.title,
+                        unitPrice: item.amount,
+                        quantity: 1,
+                        amount: item.amount,
+                        assignedParticipants: [],
+                      })),
+                      remainder: { allocationMode: 'PROPORTIONAL' as const },
+                    }
+                  : undefined,
             }
           : {
               title: searchParams.get('title') ?? '',
@@ -928,6 +1011,51 @@ export function ExpenseForm({
               : shares,
     }))
 
+    // Convert itemization item amounts and the "Other" remainder to MINOR units
+    // — the single minor-unit conversion for itemized data — using the
+    // Entry_Currency digits (original currency when a conversion is required,
+    // group currency otherwise). Items and remainder stay in the Entry_Currency;
+    // the server converts the total and re-derives group-currency shares (see
+    // apply-itemized-conversion). Runs whenever items exist so documentation
+    // items are stored in minor units too.
+    if (values.itemization && values.itemization.items.length > 0) {
+      const entryCurrency = conversionRequired ? originalCurrency : groupCurrency
+      const remainder = values.itemization.remainder
+      values.itemization = {
+        ...values.itemization,
+        items: values.itemization.items.map((item) => {
+          const quantity = Math.max(1, Math.trunc(Number(item.quantity)) || 1)
+          const unitPriceMinor = amountAsMinorUnits(
+            Number(item.unitPrice ?? item.amount) || 0,
+            entryCurrency,
+          )
+          return {
+            ...item,
+            quantity,
+            unitPrice: unitPriceMinor,
+            // Item_Amount = unitPrice × quantity in minor units (Requirement 14).
+            amount: unitPriceMinor * quantity,
+          }
+        }),
+        remainder: {
+          ...remainder,
+          amount: amountAsMinorUnits(Number(remainder.amount) || 0, entryCurrency),
+          // CUSTOM BY_AMOUNT rows are entered in major units; convert them too.
+          paidFor:
+            remainder.allocationMode === 'CUSTOM' &&
+            remainder.splitMode === 'BY_AMOUNT'
+              ? (remainder.paidFor ?? []).map((row) => ({
+                  ...row,
+                  shares: amountAsMinorUnits(
+                    Number(row.shares) || 0,
+                    entryCurrency,
+                  ),
+                }))
+              : remainder.paidFor,
+        },
+      }
+    }
+
     // Currency should be blank if the same as group currency
     if (!conversionRequired) {
       delete values.originalAmount
@@ -1023,6 +1151,92 @@ export function ExpenseForm({
     group.participants,
     paidFor ?? [],
   )
+
+  // Itemization gate (v1.1). Items may exist as documentation while a legacy
+  // split is active; they only drive the split (authoritative) after the user
+  // confirms "Switch to itemised?". Unavailable for reimbursements and recurring
+  // expenses (Requirement 1.8, 12).
+  const itemizationValue = form.watch('itemization')
+  const itemsAuthoritative = itemizationValue?.authoritative === true
+  const hasItems = (itemizationValue?.items?.length ?? 0) > 0
+  const itemizedAvailable =
+    !form.watch('isReimbursement') &&
+    (!recurrenceRuleValue || recurrenceRuleValue === 'NONE')
+
+  // Whether the items section (documentation or authoritative) is shown.
+  const [itemsSectionOpen, setItemsSectionOpen] = useState(false)
+  const showItemsSection = itemizedAvailable && (itemsSectionOpen || hasItems)
+
+  // Pending "switch to itemised?" confirmation. When set, a split-affecting edit
+  // is waiting for the user to confirm turning documentation items authoritative;
+  // the callback applies that edit once confirmed.
+  const [pendingSwitchApply, setPendingSwitchApply] = useState<
+    (() => void) | null
+  >(null)
+  const [showLeaveItemizedDialog, setShowLeaveItemizedDialog] = useState(false)
+
+  // Participants selectable for item assignment: group members plus any
+  // non-member friends already available (same union used elsewhere).
+  const itemizedParticipants = [
+    ...group.participants.map(({ id, name }) => ({
+      id,
+      name: name?.trim() || id,
+    })),
+    ...nonMemberFriends
+      .filter((f) => f.friendUserId !== null)
+      .map((f) => ({ id: f.friendUserId as string, name: f.name })),
+  ]
+
+  // Open the items section, seeding an empty documentation itemization.
+  const handleAddItemsSection = () => {
+    setItemsSectionOpen(true)
+    if (!form.getValues('itemization')) {
+      form.setValue('itemization', emptyDocumentationItemization(), {
+        shouldDirty: true,
+      })
+    }
+  }
+
+  // Gate: request making items authoritative. If already authoritative, run the
+  // edit immediately; otherwise stash it and open the "Switch to itemised?"
+  // confirmation (Requirement 12.2).
+  const requestAuthoritativeEdit = (applyEdit: () => void) => {
+    if (form.getValues('itemization')?.authoritative) {
+      applyEdit()
+      return
+    }
+    setPendingSwitchApply(() => applyEdit)
+  }
+
+  const confirmSwitchToItemized = () => {
+    form.setValue(
+      'itemization',
+      switchToAuthoritative(form.getValues('itemization')),
+      { shouldDirty: true },
+    )
+    // Apply the edit that triggered the gate, then let the editor's sync effect
+    // derive the BY_AMOUNT paidFor.
+    pendingSwitchApply?.()
+    setPendingSwitchApply(null)
+  }
+
+  const cancelSwitchToItemized = () => setPendingSwitchApply(null)
+
+  // Leave authoritative itemization: keep items as documentation (Requirement
+  // 13.4), restore an even legacy split.
+  const confirmLeaveItemized = () => {
+    const next = leaveAuthoritative(
+      form.getValues('itemization'),
+      form.getValues('paidFor') ?? [],
+    )
+    form.setValue('itemization', next.itemization, { shouldDirty: true })
+    form.setValue('splitMode', next.splitMode, { shouldDirty: true })
+    form.setValue('paidFor', next.paidFor, {
+      shouldDirty: true,
+      shouldValidate: true,
+    })
+    setShowLeaveItemizedDialog(false)
+  }
 
   useEffect(() => {
     setManuallyEditedParticipants(new Set())
@@ -1129,6 +1343,11 @@ export function ExpenseForm({
 
   useEffect(() => {
     const splitMode = form.getValues().splitMode
+
+    // Skip auto-balancing when itemization is authoritative: the
+    // ItemizedExpenseEditor owns the BY_AMOUNT paidFor split and an even re-split
+    // would clobber the item-derived per-participant amounts.
+    if (form.getValues().itemization?.authoritative) return
 
     // Only auto-balance for split mode 'Unevenly - By amount'
     if (
@@ -1786,10 +2005,71 @@ export function ExpenseForm({
 
               <Separator />
 
+              {itemizedAvailable && (
+                <>
+                  <Card className="gap-4 py-0 shadow-none ring-0">
+                    <CardHeader className="px-0">
+                      <CardTitle className="flex items-center justify-between gap-2">
+                        <span>{t('itemized.sectionTitle')}</span>
+                        {itemsAuthoritative && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="shrink-0"
+                            onClick={() => setShowLeaveItemizedDialog(true)}
+                          >
+                            {t('itemized.leaveAction')}
+                          </Button>
+                        )}
+                      </CardTitle>
+                      <CardDescription>
+                        {showItemsSection
+                          ? itemsAuthoritative
+                            ? t('itemized.authoritativeNote')
+                            : t('itemized.documentationNote')
+                          : t('itemized.sectionDescription')}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="px-0">
+                      {!showItemsSection ? (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={handleAddItemsSection}
+                        >
+                          {t('itemized.addItemsAction')}
+                        </Button>
+                      ) : (
+                        <ItemizedExpenseEditor
+                          participants={itemizedParticipants}
+                          entryCurrency={
+                            conversionRequired
+                              ? originalCurrency
+                              : groupCurrency
+                          }
+                          locale={locale}
+                          authoritative={itemsAuthoritative}
+                          entryTotalField={
+                            conversionRequired ? 'originalAmount' : 'amount'
+                          }
+                          onRequestAuthoritativeEdit={
+                            requestAuthoritativeEdit
+                          }
+                        />
+                      )}
+                    </CardContent>
+                  </Card>
+                  <Separator />
+                </>
+              )}
+
               <Card className="gap-4 py-0 shadow-none ring-0">
                 <CardHeader className="px-0">
                   <CardTitle className="flex items-center justify-between gap-2">
                     <span>{t(`${sExpense}.paidFor.title`)}</span>
+                    {!itemsAuthoritative && (
                     <Button
                       variant="link"
                       type="button"
@@ -1842,16 +2122,22 @@ export function ExpenseForm({
                         <>{t('selectAll')}</>
                       )}
                     </Button>
+                    )}
                   </CardTitle>
                   <CardDescription>
-                    {t(`${sExpense}.paidFor.description`)}
+                    {itemsAuthoritative
+                      ? t('itemized.authoritativeNote')
+                      : t(`${sExpense}.paidFor.description`)}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="px-0">
                   <FormField
                     control={form.control}
                     name="splitMode"
-                    render={({ field: splitModeField }) => (
+                    render={({ field: splitModeField }) =>
+                      itemsAuthoritative ? (
+                        <></>
+                      ) : (
                       <FormItem className="space-y-3">
                         <SplitModeSelector
                           value={splitModeField.value as SplitModeValue}
@@ -2460,7 +2746,8 @@ export function ExpenseForm({
                           )}
                         />
                       </FormItem>
-                    )}
+                      )
+                    }
                   />
                 </CardContent>
               </Card>
@@ -2568,6 +2855,64 @@ export function ExpenseForm({
         cancelLabel="Stay"
         confirmLabel="Leave"
       />
+
+      {/* "Switch to itemised?" — shown when a split-affecting edit would turn
+          documentation items into the authoritative split (Requirement 12.2). */}
+      <AlertDialog
+        open={pendingSwitchApply !== null}
+        onOpenChange={(open) => {
+          if (!open) cancelSwitchToItemized()
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t('itemized.switchDialog.title')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('itemized.switchDialog.description')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={cancelSwitchToItemized}>
+              {t('itemized.switchDialog.cancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmSwitchToItemized}>
+              {t('itemized.switchDialog.confirm')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* "Leave itemised" — restore a legacy split, keep items as documentation
+          (Requirement 13). */}
+      <AlertDialog
+        open={showLeaveItemizedDialog}
+        onOpenChange={(open) => {
+          if (!open) setShowLeaveItemizedDialog(false)
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t('itemized.leaveDialog.title')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('itemized.leaveDialog.description')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={() => setShowLeaveItemizedDialog(false)}
+            >
+              {t('itemized.leaveDialog.cancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmLeaveItemized}>
+              {t('itemized.leaveDialog.confirm')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Form>
   )
 }
