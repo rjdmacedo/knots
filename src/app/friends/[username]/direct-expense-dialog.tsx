@@ -18,6 +18,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { toast } from '@/components/ui/toast'
 import { Locale } from '@/i18n'
 import { handleAltEnterKeyDown } from '@/lib/alt-enter-submit'
 import { getCurrency } from '@/lib/currency'
@@ -29,7 +30,6 @@ import { Loader2 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { toast } from 'sonner'
 
 type Props = {
   open: boolean

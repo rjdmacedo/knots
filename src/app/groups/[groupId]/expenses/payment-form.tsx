@@ -32,6 +32,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { toast } from '@/components/ui/toast'
 import { Locale } from '@/i18n'
 import { PAYMENT_CATEGORY_ID } from '@/lib/categories'
 import { getCurrencyDisplaySymbol } from '@/lib/currency-input'
@@ -56,7 +57,6 @@ import { useLocale, useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
 
 type Group = NonNullable<AppRouterOutput['groups']['get']['group']>
 
@@ -68,6 +68,8 @@ type Props = {
   onSubmit: (value: ExpenseFormValues) => Promise<void>
   onDelete?: () => Promise<void>
   scrollHeader?: ReactNode
+  /** When false, the page scroller moves the form. The dialog keeps its own scroll. */
+  containedScroll?: boolean
 }
 
 function isValidDateString(value: string): boolean {
@@ -124,6 +126,7 @@ export function PaymentForm({
   onSubmit,
   onDelete,
   scrollHeader,
+  containedScroll = true,
 }: Props) {
   const t = useTranslations('PaymentForm')
   const tExpense = useTranslations('ExpenseForm')
@@ -274,7 +277,7 @@ export function PaymentForm({
   )
 
   const formFooter = (
-    <DialogFooter className="flex shrink-0 flex-row justify-end gap-2 border-t bg-popover px-0 pt-4 pb-0">
+    <DialogFooter className="flex shrink-0 flex-row justify-end gap-2 border-t bg-popover px-4 pt-4 pb-4">
       <SubmitButton
         form="payment-form"
         loadingContent={tExpense(isCreate ? 'creating' : 'saving')}
@@ -294,7 +297,9 @@ export function PaymentForm({
           id="payment-form"
           onSubmit={form.handleSubmit(submit)}
           className={cn(
-            'min-h-0 min-w-0 flex-1 touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none overscroll-contain scrollbar-none',
+            containedScroll
+              ? 'min-h-0 min-w-0 flex-1 touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none overscroll-contain scrollbar-none'
+              : 'min-w-0',
             '[&_[data-slot=button]:focus-visible]:ring-inset [&_[data-slot=checkbox]:focus-visible]:ring-inset [&_[data-slot=input]:focus-visible]:ring-inset [&_[data-slot=input-group]:has([data-slot=input-group-control]:focus-visible)]:ring-inset',
           )}
         >

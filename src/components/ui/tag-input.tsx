@@ -32,6 +32,8 @@ interface TagInputProps<T> {
   onSelectTag?: (tag: Tag<T>) => void
   onRemoveTag?: (tag: Tag<T>) => void
   onClearTags?: () => void
+  /** When this returns false, the tag stays (no remove button, backspace skips it). */
+  isTagRemovable?: (tag: Tag<T>) => boolean
   getTagSearchValue?: (tag: Tag<T>) => string
   AllTagsLabel?: ({ value }: { value: T }) => React.ReactNode
   placeholder?: string
@@ -66,6 +68,7 @@ export function TagInput<T>({
   onSelectTag,
   onRemoveTag,
   onClearTags,
+  isTagRemovable,
   getTagSearchValue,
   AllTagsLabel,
   placeholder = 'Add tag',
@@ -110,6 +113,7 @@ export function TagInput<T>({
       event.preventDefault()
       event.stopPropagation()
       const lastTag = tags[tags.length - 1]
+      if (isTagRemovable && !isTagRemovable(lastTag)) return
       if (onRemoveTag) {
         onRemoveTag(lastTag)
       } else {
@@ -181,7 +185,11 @@ export function TagInput<T>({
                   key={tag.label}
                   label={tag.label}
                   icon={getPillIcon?.(tag)}
-                  onRemove={() => handleRemove(tag)}
+                  onRemove={
+                    isTagRemovable && !isTagRemovable(tag)
+                      ? undefined
+                      : () => handleRemove(tag)
+                  }
                   className={pillClassName}
                 />
               ))}

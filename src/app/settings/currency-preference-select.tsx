@@ -1,11 +1,11 @@
 'use client'
 
 import { CurrencySelector } from '@/components/currency-selector'
+import { toast } from '@/components/ui/toast'
 import { Locale } from '@/i18n'
 import { defaultCurrencyList } from '@/lib/currency'
 import { trpc } from '@/trpc/client'
 import { useLocale, useTranslations } from 'next-intl'
-import { toast } from 'sonner'
 
 export function CurrencyPreferenceSelect({
   currentCurrency,

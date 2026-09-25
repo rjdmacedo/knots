@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { toast } from '@/components/ui/toast'
 import { usePushNotificationSubscription } from '@/lib/push/use-push-notification-subscription'
 import { trpc } from '@/trpc/client'
 import {
@@ -49,7 +50,6 @@ import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { toast } from 'sonner'
 
 const GROUP_NAME_MIN = 1
 const GROUP_NAME_MAX = 100

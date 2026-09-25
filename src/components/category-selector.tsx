@@ -66,12 +66,16 @@ function getCategoryGroups(categories: Category[]): CategoryGroup[] {
   }))
 }
 
-function getSelectedCategory(categories: Category[], value: Category['id']) {
+function getSelectedCategory(
+  categories: Category[],
+  value: Category['id'],
+): Category | null {
   const selectableCategories = filterExpenseCategories(categories)
   return (
     categories.find((category) => category.id === value) ??
     selectableCategories[0] ??
-    categories[0]
+    categories[0] ??
+    null
   )
 }
 
@@ -160,7 +164,10 @@ function CategoryCombobox({
         }
         return ''
       }}
-      isItemEqualToValue={(a, b) => a.id === b.id}
+      isItemEqualToValue={(a, b) => {
+        if (!isCategory(a) || !isCategory(b)) return a === b
+        return a.id === b.id
+      }}
       disabled={isLoading}
       autoHighlight
     >
@@ -220,7 +227,7 @@ function CategorySelect({
     >
       <SelectTrigger className="w-full focus-visible:ring-inset">
         <SelectValue>
-          <CategoryLabel category={selectedCategory} />
+          <CategoryLabel category={selectedCategory ?? undefined} />
         </SelectValue>
       </SelectTrigger>
       <SelectContent>

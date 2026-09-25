@@ -55,8 +55,7 @@ jest.mock('@/trpc/client', () => ({
   },
 }))
 
-// sonner toast (prevent side-effects)
-jest.mock('sonner', () => ({
+jest.mock('@/components/ui/toast', () => ({
   toast: { error: jest.fn(), warning: jest.fn() },
 }))
 

@@ -18,6 +18,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel'
+import { toast } from '@/components/ui/toast'
 import { Locale } from '@/i18n'
 import { randomId } from '@/lib/api'
 import { api } from '@/lib/api-client'
@@ -29,7 +30,6 @@ import { getImageData, usePresignedUpload } from 'next-s3-upload'
 import Image from 'next/image'
 import { useCallback, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { toast } from 'sonner'
 
 type PendingDocument = {
   id: string
