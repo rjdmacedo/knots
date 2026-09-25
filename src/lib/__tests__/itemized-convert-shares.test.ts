@@ -70,7 +70,11 @@ describe('convertSharesToGroupCurrency', () => {
           minLength: 1,
           maxLength: 8,
         }),
-        fc.float({ min: Math.fround(0.01), max: Math.fround(500), noNaN: true }),
+        fc.float({
+          min: Math.fround(0.01),
+          max: Math.fround(500),
+          noNaN: true,
+        }),
         fc.constantFrom(0, 2), // group currency decimal digits (JPY vs EUR/USD)
         (entryShares, rate, groupDigits) => {
           const entryTotalMinor = entryShares.reduce((s, w) => s + w, 0)

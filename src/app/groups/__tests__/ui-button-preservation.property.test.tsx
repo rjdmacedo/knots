@@ -160,7 +160,11 @@ function createFromReceiptPreservesClickBehavior(fileContent: string): {
     hasFileUpload:
       fileContent.includes('handleFileChange') ||
       fileContent.includes('openFileDialog'),
-    opensCreateExpense: fileContent.includes('create-group-expense'),
+    // Continue now stashes the prefill and navigates to the New_Page instead of
+    // dispatching the legacy `create-group-expense` event.
+    opensCreateExpense:
+      fileContent.includes('stashExpensePrefill') &&
+      fileContent.includes('getGroupExpenseNewPath'),
   }
 }
 

@@ -23,12 +23,15 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer'
+import { toast } from '@/components/ui/toast'
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { randomId } from '@/lib/api'
+import { getGroupExpenseNewPath } from '@/lib/expense-editor-navigation'
+import { stashExpensePrefill } from '@/lib/expense-prefill-store'
 import { useMediaQuery } from '@/lib/hooks'
 import {
   formatCurrency,
@@ -41,8 +44,8 @@ import { ChevronRight, FileQuestion, Loader2, Receipt } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { getImageData, usePresignedUpload } from 'next-s3-upload'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { PropsWithChildren, ReactElement, ReactNode, useState } from 'react'
-import { toast } from 'sonner'
 import { useCurrentGroup } from '../current-group-context'
 
 const MAX_FILE_SIZE = 5 * 1024 ** 2
@@ -83,6 +86,7 @@ function ReceiptDialogContent() {
   const { data: categoriesData } = trpc.categories.list.useQuery()
   const categories = categoriesData?.categories
 
+  const router = useRouter()
   const locale = useLocale()
   const t = useTranslations('CreateFromReceipt')
   const [pending, setPending] = useState(false)
@@ -124,11 +128,16 @@ function ReceiptDialogContent() {
         })
       } catch (err) {
         console.error(err)
-        toast.error(t('ErrorToast.title'), {
+        const toastId = toast.add({
+          title: t('ErrorToast.title'),
           description: t('ErrorToast.description'),
-          action: {
-            label: t('ErrorToast.retry'),
-            onClick: () => upload(),
+          type: 'error',
+          actionProps: {
+            children: t('ErrorToast.retry'),
+            onClick: () => {
+              toast.close(toastId)
+              upload()
+            },
           },
         })
       } finally {
@@ -247,39 +256,32 @@ function ReceiptDialogContent() {
           disabled={pending || !receiptInfo}
           onClick={() => {
             if (!receiptInfo || !group) return
-            window.dispatchEvent(
-              new CustomEvent('create-group-expense', {
-                detail: {
-                  groupId: group.id,
-                  groupName: group.name,
-                  prefill: {
-                    title: receiptInfo.title ?? '',
-                    expenseDate: receiptInfo.date
-                      ? new Date(`${receiptInfo.date}T12:00:00.000Z`)
-                      : new Date(),
-                    amount: Number(receiptInfo.amount) || 0,
-                    category: receiptInfo.categoryId
-                      ? Number(receiptInfo.categoryId)
-                      : 0,
-                    documents: receiptInfo.url
-                      ? [
-                          {
-                            id: randomId(),
-                            url: receiptInfo.url,
-                            width: Number(receiptInfo.width),
-                            height: Number(receiptInfo.height),
-                          },
-                        ]
-                      : [],
-                    // Optional itemized prefill: suggested line items, unassigned.
-                    items:
-                      receiptInfo.items && receiptInfo.items.length > 0
-                        ? receiptInfo.items
-                        : undefined,
-                  },
-                },
-              }),
-            )
+            stashExpensePrefill(group.id, {
+              title: receiptInfo.title ?? '',
+              expenseDate: receiptInfo.date
+                ? new Date(`${receiptInfo.date}T12:00:00.000Z`)
+                : new Date(),
+              amount: Number(receiptInfo.amount) || 0,
+              category: receiptInfo.categoryId
+                ? Number(receiptInfo.categoryId)
+                : 0,
+              documents: receiptInfo.url
+                ? [
+                    {
+                      id: randomId(),
+                      url: receiptInfo.url,
+                      width: Number(receiptInfo.width),
+                      height: Number(receiptInfo.height),
+                    },
+                  ]
+                : [],
+              // Optional itemized prefill: suggested line items, unassigned.
+              items:
+                receiptInfo.items && receiptInfo.items.length > 0
+                  ? receiptInfo.items
+                  : undefined,
+            })
+            router.push(getGroupExpenseNewPath(group.id))
           }}
         >
           {t('Dialog.continue')}

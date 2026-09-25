@@ -44,7 +44,6 @@ import {
 import { useLocale, useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { Fragment, useRef, useState } from 'react'
-import { useCurrentGroup } from '../current-group-context'
 
 type Expense = Awaited<ReturnType<typeof getGroupExpenses>>[number]
 
@@ -123,7 +122,6 @@ export function ExpenseCard({
   const locale = useLocale()
   const router = useRouter()
   const t = useTranslations('ExpenseDetail')
-  const { group } = useCurrentGroup()
   const utils = trpc.useUtils()
   const [deleteOpen, setDeleteOpen] = useState(false)
   const ignoreCardClickRef = useRef(false)
@@ -163,7 +161,7 @@ export function ExpenseCard({
       })),
     }
     const prefill = buildCopyExpensePrefill(copyableExpense, currency)
-    openCopyGroupExpense(groupId, group?.name ?? '', prefill)
+    openCopyGroupExpense(router, groupId, prefill)
   }
 
   return (
@@ -233,7 +231,7 @@ export function ExpenseCard({
               <DropdownMenuItem
                 onClick={() => {
                   suppressCardNavigation()
-                  openEditGroupExpense(groupId, expense.id)
+                  openEditGroupExpense(router, groupId, expense.id)
                 }}
               >
                 <Pencil className="h-4 w-4" />

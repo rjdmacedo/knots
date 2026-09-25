@@ -60,8 +60,20 @@ describe('leaveAuthoritative (Requirement 13.2, 13.4)', () => {
     const current = {
       authoritative: true,
       items: [
-        { title: 'Burger', amount: 3000, unitPrice: 3000, quantity: 1, assignedParticipants: ['a'] },
-        { title: 'Salad', amount: 1000, unitPrice: 1000, quantity: 1, assignedParticipants: ['b'] },
+        {
+          title: 'Burger',
+          amount: 3000,
+          unitPrice: 3000,
+          quantity: 1,
+          assignedParticipants: ['a'],
+        },
+        {
+          title: 'Salad',
+          amount: 1000,
+          unitPrice: 1000,
+          quantity: 1,
+          assignedParticipants: ['b'],
+        },
       ],
       remainder: { amount: 600, allocationMode: 'PROPORTIONAL' as const },
     }
@@ -85,7 +97,9 @@ describe('leaveAuthoritative (Requirement 13.2, 13.4)', () => {
   })
 
   it('handles a missing itemization gracefully', () => {
-    const next = leaveAuthoritative(undefined, [{ participant: 'a', shares: 5 }])
+    const next = leaveAuthoritative(undefined, [
+      { participant: 'a', shares: 5 },
+    ])
     expect(next.itemization).toBeUndefined()
     expect(next.splitMode).toBe('EVENLY')
     expect(next.paidFor).toEqual([{ participant: 'a', shares: 1 }])

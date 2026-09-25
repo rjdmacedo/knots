@@ -100,7 +100,11 @@ describe('itemized → non-member decomposition (Requirement 7.3, 7.4)', () => {
       shares: p.amountMinor,
     }))
 
-    const group = { participants: [{ id: MEMBER_A }], currencyCode: 'EUR', currency: 'EUR' }
+    const group = {
+      participants: [{ id: MEMBER_A }],
+      currencyCode: 'EUR',
+      currency: 'EUR',
+    }
 
     const itemizedSlots = computeDecompositionSlots(
       { amount: itemized.totalMinor, splitMode: 'BY_AMOUNT', paidFor },

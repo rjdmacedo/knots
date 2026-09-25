@@ -12,6 +12,7 @@ import {
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Textarea } from '@/components/ui/textarea'
+import { toast } from '@/components/ui/toast'
 import { handleAltEnterKeyDown } from '@/lib/alt-enter-submit'
 import { Reimbursement } from '@/lib/balances'
 import { Currency } from '@/lib/currency'
@@ -19,7 +20,6 @@ import { formatCurrency } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
 
 type PaymentRequest = Reimbursement & {
   groupId?: string

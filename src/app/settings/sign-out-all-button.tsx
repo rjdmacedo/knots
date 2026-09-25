@@ -12,11 +12,11 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import { toast } from '@/components/ui/toast'
 import { trpc } from '@/trpc/client'
 import { Loader2, MonitorSmartphone } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
 
 export function SignOutAllButton() {
   const t = useTranslations('ProfileSettings.SignOutAll')

@@ -9,7 +9,7 @@ Optional itemized expenses collapsed into the existing `BY_AMOUNT` `paidFor.shar
 
 Invariants carried through every phase (integer minor units unless noted):
 
-- The `Item_Splitter` works in **minor units end to end**; it applies the *remainder policies* of `distributeEqualAmounts` / `distributeWeightedAmounts` inline (those helpers take/return major units). The one direct call is the currency conversion of shares (`convertedTotalMinor / factor` in, `× factor` back to minor).
+- The `Item_Splitter` works in **minor units end to end**; it applies the _remainder policies_ of `distributeEqualAmounts` / `distributeWeightedAmounts` inline (those helpers take/return major units). The one direct call is the currency conversion of shares (`convertedTotalMinor / factor` in, `× factor` back to minor).
 - Items and the remainder are stored in the **Entry_Currency**; `ExpensePaidFor.shares` holds the authoritative **Group_Currency** per-participant amounts.
 - "Itemized" is read from `Expense.itemsAuthoritative`, **never** from `items.length > 0`.
 - The remainder (`remainderAmount` + mode + shares) is the **single source of truth** for tax/tip/service; there are no `taxAmount` / `tipAmount` columns.
@@ -194,7 +194,7 @@ These tasks are complete in the working tree and are listed only for traceabilit
 - [ ] 12. `All_Items_Split` one-click control (Requirement 15) — DEFERRED
   - Apply one default split to every line + "mixed" indicator; the gate already treats "edit all-items split" as a switch trigger, so adding the control later does not change the gate contract
 
-**Permanently out of scope (Requirement 19.3):** per-line split *modes* (each item EVENLY/BY_SHARES/…) and Cloud's BigInt/exact-rational math. A Knots item is split equally among its assignees; the only flat split mode is the CUSTOM remainder, reusing the existing integer distributors.
+**Permanently out of scope (Requirement 19.3):** per-line split _modes_ (each item EVENLY/BY_SHARES/…) and Cloud's BigInt/exact-rational math. A Knots item is split equally among its assignees; the only flat split mode is the CUSTOM remainder, reusing the existing integer distributors.
 
 ## Task Dependency Graph
 
@@ -203,15 +203,60 @@ Waves group tasks that can proceed once the previous wave is complete. Within a 
 ```json
 {
   "waves": [
-    { "wave": 1, "tasks": [1], "dependsOn": [], "note": "Schema migration: marker + remainder columns/enum/relation; drop tax/tip." },
-    { "wave": 2, "tasks": [2], "dependsOn": [1], "note": "Generalise the pure splitter to (items, remainder); needs the enum/types from task 1." },
-    { "wave": 3, "tasks": [3], "dependsOn": [1, 2], "note": "Reshape the form schema (marker + remainder) using the new types and splitter shape." },
-    { "wave": 4, "tasks": [4], "dependsOn": [3], "note": "Documentation/authoritative gate, confirmation dialogs, and the Other remainder editor." },
-    { "wave": 5, "tasks": [5, 6], "dependsOn": [2, 4], "note": "Editable total + overshoot guard (5) and the FX bugfix binding Entry_Total to originalAmount (6)." },
-    { "wave": 6, "tasks": [7], "dependsOn": [1, 3, 6], "note": "Persistence of items + remainder + marker; procedures; getExpense reload." },
-    { "wave": 7, "tasks": [8, 9], "dependsOn": [4, 7], "note": "JSON export of the remainder model (8) and i18n keys (9); parallel." },
-    { "wave": 8, "tasks": [10], "dependsOn": [1, 2, 3, 4, 5, 6, 7, 8, 9], "note": "Integration tests and the full check suite." },
-    { "wave": 9, "tasks": [11, 12], "dependsOn": [10], "note": "Deferred upgrades (unit×qty, all-items split); independent of each other." }
+    {
+      "wave": 1,
+      "tasks": [1],
+      "dependsOn": [],
+      "note": "Schema migration: marker + remainder columns/enum/relation; drop tax/tip."
+    },
+    {
+      "wave": 2,
+      "tasks": [2],
+      "dependsOn": [1],
+      "note": "Generalise the pure splitter to (items, remainder); needs the enum/types from task 1."
+    },
+    {
+      "wave": 3,
+      "tasks": [3],
+      "dependsOn": [1, 2],
+      "note": "Reshape the form schema (marker + remainder) using the new types and splitter shape."
+    },
+    {
+      "wave": 4,
+      "tasks": [4],
+      "dependsOn": [3],
+      "note": "Documentation/authoritative gate, confirmation dialogs, and the Other remainder editor."
+    },
+    {
+      "wave": 5,
+      "tasks": [5, 6],
+      "dependsOn": [2, 4],
+      "note": "Editable total + overshoot guard (5) and the FX bugfix binding Entry_Total to originalAmount (6)."
+    },
+    {
+      "wave": 6,
+      "tasks": [7],
+      "dependsOn": [1, 3, 6],
+      "note": "Persistence of items + remainder + marker; procedures; getExpense reload."
+    },
+    {
+      "wave": 7,
+      "tasks": [8, 9],
+      "dependsOn": [4, 7],
+      "note": "JSON export of the remainder model (8) and i18n keys (9); parallel."
+    },
+    {
+      "wave": 8,
+      "tasks": [10],
+      "dependsOn": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      "note": "Integration tests and the full check suite."
+    },
+    {
+      "wave": 9,
+      "tasks": [11, 12],
+      "dependsOn": [10],
+      "note": "Deferred upgrades (unit×qty, all-items split); independent of each other."
+    }
   ],
   "criticalPath": [1, 2, 3, 4, 6, 7, 10]
 }

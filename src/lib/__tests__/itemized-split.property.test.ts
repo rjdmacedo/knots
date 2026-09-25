@@ -77,10 +77,7 @@ describe('Property 1: cent-exactness', () => {
     fc.assert(
       fc.property(arbInput, (input) => {
         const result = computeItemizedShares(input)
-        const sum = result.perParticipant.reduce(
-          (s, p) => s + p.amountMinor,
-          0,
-        )
+        const sum = result.perParticipant.reduce((s, p) => s + p.amountMinor, 0)
         expect(sum).toBe(result.totalMinor)
       }),
       { numRuns: PBT_NUM_RUNS },

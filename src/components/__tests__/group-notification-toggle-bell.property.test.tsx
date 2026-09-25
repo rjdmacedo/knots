@@ -42,7 +42,7 @@ jest.mock('@/trpc/client', () => ({
   },
 }))
 
-jest.mock('sonner', () => ({
+jest.mock('@/components/ui/toast', () => ({
   toast: { error: jest.fn(), warning: jest.fn() },
 }))
 

@@ -101,7 +101,6 @@ describe('expenseFormSchema – paidBy validation', () => {
   })
 })
 
-
 describe('expenseFormSchema – itemization (v1.1)', () => {
   /**
    * Build a valid authoritative itemized input. Mirrors what the form submits:
@@ -109,7 +108,10 @@ describe('expenseFormSchema – itemization (v1.1)', () => {
    * remainder 600 = amount 4600), and the itemization object carries the raw
    * items + the "Other" remainder.
    */
-  function itemizedInput(itemizationOverrides: Record<string, unknown> = {}, rest: Record<string, unknown> = {}) {
+  function itemizedInput(
+    itemizationOverrides: Record<string, unknown> = {},
+    rest: Record<string, unknown> = {},
+  ) {
     return {
       expenseDate: new Date('2024-06-01'),
       title: 'Dinner',
@@ -147,11 +149,16 @@ describe('expenseFormSchema – itemization (v1.1)', () => {
 
   it('rejects an authoritative itemized expense with no items', () => {
     const result = expenseFormSchema.safeParse(
-      itemizedInput({ items: [], remainder: { amount: 0, allocationMode: 'PROPORTIONAL' } }),
+      itemizedInput({
+        items: [],
+        remainder: { amount: 0, allocationMode: 'PROPORTIONAL' },
+      }),
     )
     expect(result.success).toBe(false)
     if (!result.success) {
-      expect(result.error.issues.map((i) => i.message)).toContain('itemsRequired')
+      expect(result.error.issues.map((i) => i.message)).toContain(
+        'itemsRequired',
+      )
     }
   })
 
@@ -174,7 +181,11 @@ describe('expenseFormSchema – itemization (v1.1)', () => {
     const result = expenseFormSchema.safeParse(
       itemizedInput({
         items: [
-          { title: 'Burger', amount: 4600, assignedParticipants: ['ghost-user'] },
+          {
+            title: 'Burger',
+            amount: 4600,
+            assignedParticipants: ['ghost-user'],
+          },
         ],
         remainder: { amount: 0, allocationMode: 'PROPORTIONAL' },
       }),
@@ -311,9 +322,7 @@ describe('expenseFormSchema – itemization (v1.1)', () => {
       itemizedInput(
         {
           authoritative: false,
-          items: [
-            { title: 'Big', amount: 9999, assignedParticipants: [] },
-          ],
+          items: [{ title: 'Big', amount: 9999, assignedParticipants: [] }],
           remainder: { amount: 0, allocationMode: 'PROPORTIONAL' },
         },
         {

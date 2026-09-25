@@ -485,36 +485,9 @@ export function PayerSelector({
           <ModeIcon mode="single" />
           <FieldContent>
             <FieldTitle>{t('paidBy.singleTitle')}</FieldTitle>
-            <FieldDescription>{t('paidBy.singleDescription')}</FieldDescription>
-            {mode === 'single' && (
-              <div className="pt-2" onClick={(e) => e.stopPropagation()}>
-                <Select
-                  value={value[0]?.participant ?? ''}
-                  items={participants.map((p) => ({
-                    value: p.id,
-                    label: p.name.trim() || p.id,
-                  }))}
-                  onValueChange={(val) => handleSingleParticipant(val ?? '')}
-                  disabled={disabled}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {participants.map((p) => (
-                      <SelectItem key={p.id} value={p.id}>
-                        {p.name.trim() || p.id}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {nonMemberSinglePayerNote && (
-                  <p className="mt-2 text-xs text-muted-foreground">
-                    {nonMemberSinglePayerNote}
-                  </p>
-                )}
-              </div>
-            )}
+            <FieldDescription className="max-md:text-xs">
+              {t('paidBy.singleDescription')}
+            </FieldDescription>
           </FieldContent>
           <RadioGroupItem
             value="single"
@@ -522,6 +495,41 @@ export function PayerSelector({
             disabled={disabled}
           />
         </Field>
+        {mode === 'single' && (
+          <div
+            className="w-full min-w-0 self-stretch px-3 pb-3"
+            onClick={(event) => {
+              event.preventDefault()
+              event.stopPropagation()
+            }}
+          >
+            <Select
+              value={value[0]?.participant ?? ''}
+              items={participants.map((p) => ({
+                value: p.id,
+                label: p.name.trim() || p.id,
+              }))}
+              onValueChange={(val) => handleSingleParticipant(val ?? '')}
+              disabled={disabled}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {participants.map((p) => (
+                  <SelectItem key={p.id} value={p.id}>
+                    {p.name.trim() || p.id}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {nonMemberSinglePayerNote && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                {nonMemberSinglePayerNote}
+              </p>
+            )}
+          </div>
+        )}
       </FieldLabel>
 
       {!forceSingle && (
@@ -535,12 +543,9 @@ export function PayerSelector({
                 <ModeIcon mode={m} />
                 <FieldContent>
                   <FieldTitle>{title}</FieldTitle>
-                  <FieldDescription>{description}</FieldDescription>
-                  {mode === m && (
-                    <div onClick={(e) => e.stopPropagation()}>
-                      {renderParticipantControls()}
-                    </div>
-                  )}
+                  <FieldDescription className="max-md:text-xs">
+                    {description}
+                  </FieldDescription>
                 </FieldContent>
                 <RadioGroupItem
                   value={m}
@@ -548,6 +553,17 @@ export function PayerSelector({
                   disabled={disabled}
                 />
               </Field>
+              {mode === m && (
+                <div
+                  className="w-full min-w-0 self-stretch px-3 pb-3"
+                  onClick={(event) => {
+                    event.preventDefault()
+                    event.stopPropagation()
+                  }}
+                >
+                  {renderParticipantControls()}
+                </div>
+              )}
             </FieldLabel>
           ))}
         </>

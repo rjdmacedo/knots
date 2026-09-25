@@ -8,9 +8,9 @@
 
 import {
   computeItemizedShares,
-  itemsExceedExpenseAmount,
   ItemizedInput,
   ItemizedRemainder,
+  itemsExceedExpenseAmount,
 } from '../itemized-split'
 
 const NO_REMAINDER: ItemizedRemainder = {

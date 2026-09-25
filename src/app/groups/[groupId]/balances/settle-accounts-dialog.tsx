@@ -13,6 +13,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { toast } from '@/components/ui/toast'
 import { handleAltEnterKeyDown } from '@/lib/alt-enter-submit'
 import { Currency } from '@/lib/currency'
 import {
@@ -24,7 +25,6 @@ import { trpc } from '@/trpc/client'
 import { Loader2 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
 
 type Creditor = {
   from: string

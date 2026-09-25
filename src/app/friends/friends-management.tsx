@@ -26,6 +26,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
+import { toast } from '@/components/ui/toast'
 import type { CurrencyBalance } from '@/lib/friend-balances'
 import { trpc } from '@/trpc/client'
 import {
@@ -40,7 +41,6 @@ import {
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useState } from 'react'
-import { toast } from 'sonner'
 
 export function FriendsManagement() {
   const t = useTranslations('Friends')

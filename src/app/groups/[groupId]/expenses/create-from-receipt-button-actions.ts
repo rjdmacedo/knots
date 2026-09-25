@@ -11,7 +11,9 @@ export type ReceiptExtractedItem = { title: string; amount: number }
  * (missing line, invalid JSON, wrong shape) yields an empty list — item prefill
  * is strictly optional and never required (Requirement 9.4).
  */
-function parseReceiptItems(itemsLine: string | undefined): ReceiptExtractedItem[] {
+function parseReceiptItems(
+  itemsLine: string | undefined,
+): ReceiptExtractedItem[] {
   if (!itemsLine || !itemsLine.trim()) return []
   try {
     const parsed = JSON.parse(itemsLine.trim())
@@ -21,7 +23,9 @@ function parseReceiptItems(itemsLine: string | undefined): ReceiptExtractedItem[
         title: typeof entry?.title === 'string' ? entry.title : '',
         amount: Number(entry?.amount),
       }))
-      .filter((item) => item.title.trim().length > 0 && !Number.isNaN(item.amount))
+      .filter(
+        (item) => item.title.trim().length > 0 && !Number.isNaN(item.amount),
+      )
   } catch {
     return []
   }

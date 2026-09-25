@@ -92,29 +92,39 @@ export function SplitModeSelector({
       className={cn('flex flex-col gap-3', className)}
     >
       {modes.map(({ mode, title, description }) => (
-        <FieldLabel key={mode} htmlFor={`${idPrefix}-${mode}`}>
-          <Field orientation="horizontal">
-            <ModeIcon mode={mode} />
-            <FieldContent>
-              <FieldTitle>{title}</FieldTitle>
-              <FieldDescription>{description}</FieldDescription>
-              {value === mode && children ? (
-                <div
-                  className="pt-2"
-                  onClick={(e) => e.stopPropagation()}
-                  onKeyDown={(e) => e.stopPropagation()}
-                >
-                  {children}
-                </div>
-              ) : null}
-            </FieldContent>
-            <RadioGroupItem
-              value={mode}
-              id={`${idPrefix}-${mode}`}
-              disabled={disabled}
-            />
-          </Field>
-        </FieldLabel>
+        <div
+          key={mode}
+          className="flex w-full flex-col overflow-hidden rounded-md border border-border has-data-checked:border-primary/30 has-data-checked:bg-primary/5 dark:has-data-checked:border-primary/20 dark:has-data-checked:bg-primary/10"
+        >
+          <FieldLabel
+            htmlFor={`${idPrefix}-${mode}`}
+            className="rounded-none border-0 bg-transparent has-[>[data-slot=field]]:rounded-none has-[>[data-slot=field]]:border-0 has-data-checked:border-transparent has-data-checked:bg-transparent dark:has-data-checked:border-transparent dark:has-data-checked:bg-transparent"
+          >
+            <Field orientation="horizontal">
+              <ModeIcon mode={mode} />
+              <FieldContent>
+                <FieldTitle>{title}</FieldTitle>
+                <FieldDescription className="max-md:text-xs">
+                  {description}
+                </FieldDescription>
+              </FieldContent>
+              <RadioGroupItem
+                value={mode}
+                id={`${idPrefix}-${mode}`}
+                disabled={disabled}
+              />
+            </Field>
+          </FieldLabel>
+          {value === mode && children ? (
+            <div
+              className="w-full min-w-0 px-3 pb-3"
+              onClick={(event) => event.stopPropagation()}
+              onKeyDown={(event) => event.stopPropagation()}
+            >
+              {children}
+            </div>
+          ) : null}
+        </div>
       ))}
     </RadioGroup>
   )

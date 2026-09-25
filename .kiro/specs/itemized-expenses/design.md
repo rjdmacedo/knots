@@ -125,12 +125,12 @@ A pure, dependency-light module next to `distribute-amount.ts`, covered by prope
 
 ```ts
 export interface ItemizedItem {
-  amountMinor: number          // Item_Amount in minor units (Entry_Currency)
+  amountMinor: number // Item_Amount in minor units (Entry_Currency)
   assignedParticipantIds: string[]
 }
 
 export interface ItemizedInput {
-  participantIdsInOrder: string[]   // the paidFor order; defines remainder recipients
+  participantIdsInOrder: string[] // the paidFor order; defines remainder recipients
   items: ItemizedItem[]
   taxMinor: number
   tipMinor: number
@@ -139,7 +139,7 @@ export interface ItemizedInput {
 export interface ItemizedResult {
   // one entry per participant, in participantIdsInOrder; minor units
   perParticipant: Array<{ participantId: string; amountMinor: number }>
-  totalMinor: number                // sum(items) + tax + tip
+  totalMinor: number // sum(items) + tax + tip
 }
 
 export function computeItemizedShares(input: ItemizedInput): ItemizedResult
@@ -147,13 +147,13 @@ export function computeItemizedShares(input: ItemizedInput): ItemizedResult
 
 Algorithm (all integer minor-unit arithmetic; the splitter's inputs and outputs are minor units throughout):
 
-1. **Per-item split.** For each item, divide `amountMinor` equally among its `assignedParticipantIds`, computed directly in minor units: `base = floor(amountMinor / k)`, and the first `amountMinor - base*k` participants (in `participantIdsInOrder`) get one extra minor unit. This is the `distributeEqualAmounts` *policy* (remainder to earliest indices) done inline in minor units — the helper itself takes a major-unit total and returns major units, so it is not called here directly. Accumulate into each participant's `Item_Subtotal`. Sum of per-item allocations equals the item amount exactly (Requirement 3.3).
+1. **Per-item split.** For each item, divide `amountMinor` equally among its `assignedParticipantIds`, computed directly in minor units: `base = floor(amountMinor / k)`, and the first `amountMinor - base*k` participants (in `participantIdsInOrder`) get one extra minor unit. This is the `distributeEqualAmounts` _policy_ (remainder to earliest indices) done inline in minor units — the helper itself takes a major-unit total and returns major units, so it is not called here directly. Accumulate into each participant's `Item_Subtotal`. Sum of per-item allocations equals the item amount exactly (Requirement 3.3).
 2. **Item_Subtotal.** Each participant's subtotal is the sum of their allocations across all items (Requirement 3.4).
 3. **Tax and tip distribution.** Distribute `taxMinor` and `tipMinor` **separately**, each proportional to `Item_Subtotal`, using the remainder policy described in "Tax and tip remainder policy" — computed directly in minor units. Distributing them separately (rather than as one combined pool) means each of tax and tip individually sums exactly to its input, which the requirements state as two distinct guarantees (Requirement 4.2, 4.3, 4.5).
 4. **Participant_Share.** `Item_Subtotal + taxSlice + tipSlice` (Requirement 4.6).
 5. **Zero-subtotal fallback.** If every `Item_Subtotal` is 0 but tax or tip is > 0, distribute that charge **equally** across the assigned participants (equal-split policy, minor units) instead of dividing by zero (Requirement 4.4). "Assigned participants" here means the union of everyone assigned to at least one item; if no item has any assignment the editor is invalid and never reaches the splitter (Requirement 8.1).
 
-Units note: `distributeEqualAmounts` and `distributeWeightedAmounts` in `distribute-amount.ts` accept a **major-unit** total and return **major-unit** values (each result is `minor / factor`). The `Item_Splitter` works in minor units end to end, so it applies their *remainder policies* inline rather than calling them on minor-unit inputs. The one place a distributor helper is called directly is the currency conversion of shares (Section 3), where the total is genuinely in major units and the result is re-multiplied by the factor back to minor units.
+Units note: `distributeEqualAmounts` and `distributeWeightedAmounts` in `distribute-amount.ts` accept a **major-unit** total and return **major-unit** values (each result is `minor / factor`). The `Item_Splitter` works in minor units end to end, so it applies their _remainder policies_ inline rather than calling them on minor-unit inputs. The one place a distributor helper is called directly is the currency conversion of shares (Section 3), where the total is genuinely in major units and the result is re-multiplied by the factor back to minor units.
 
 The function asserts (in tests, and defensively) that `sum(perParticipant.amountMinor) === totalMinor` (Requirement 5.1).
 
@@ -196,7 +196,7 @@ Conversion is server-side and total-first, exactly as today. The itemized path a
   const convertedSharesMinor = convertedSharesMajor.map((m) => Math.round(m * factor))
   ```
 
-  Because `distributeWeightedAmounts` distributes the *given total* by weights and assigns leftover minor units deterministically, `sum(convertedSharesMinor) === convertedTotalMinor` by construction — no cent is lost or gained through per-participant rounding (Requirement 11.4). The weights are the participants' Entry_Currency shares (weights are unitless, so passing them in minor units is fine — only their ratios matter), so each person's converted amount is proportional to what they consumed. The `convertedSharesMinor` values are what get written to `paidFor[].shares`.
+  Because `distributeWeightedAmounts` distributes the _given total_ by weights and assigns leftover minor units deterministically, `sum(convertedSharesMinor) === convertedTotalMinor` by construction — no cent is lost or gained through per-participant rounding (Requirement 11.4). The weights are the participants' Entry_Currency shares (weights are unitless, so passing them in minor units is fine — only their ratios matter), so each person's converted amount is proportional to what they consumed. The `convertedSharesMinor` values are what get written to `paidFor[].shares`.
 
   These `convertedShares` replace `paidFor[].shares` before `createExpense` / `updateExpense` persists them, so the persisted `BY_AMOUNT` split is in the Group_Currency (Requirement 11.3). `ExpenseItem.amount` stays in the Entry_Currency (Requirement 11.1, 11.6). The existing `originalAmount` / `originalCurrency` / `conversionRate` columns continue to describe the total (Requirement 11.5), unchanged.
 
@@ -207,23 +207,26 @@ This mirrors the existing server-authoritative model: the client's per-participa
 Extend `expenseFormSchema` with an optional `itemization` object:
 
 ```ts
-itemization: z
-  .object({
-    enabled: z.boolean(),
-    items: z.array(
-      z.object({
-        title: z.string().min(1, 'itemTitleRequired'),
-        amount: z.union([z.number(), z.string().transform(expressionToNumber)])
-          .refine((a) => a >= 0, 'itemAmountNonNegative'),
-        assignedParticipants: z.array(z.string()).min(1, 'itemNeedsAssignment'),
-      }),
-    ),
-    taxAmount: z.union([z.number(), z.string().transform(expressionToNumber)])
-      .refine((a) => a >= 0, 'taxNonNegative').default(0),
-    tipAmount: z.union([z.number(), z.string().transform(expressionToNumber)])
-      .refine((a) => a >= 0, 'tipNonNegative').default(0),
-  })
-  .optional()
+itemization: z.object({
+  enabled: z.boolean(),
+  items: z.array(
+    z.object({
+      title: z.string().min(1, 'itemTitleRequired'),
+      amount: z
+        .union([z.number(), z.string().transform(expressionToNumber)])
+        .refine((a) => a >= 0, 'itemAmountNonNegative'),
+      assignedParticipants: z.array(z.string()).min(1, 'itemNeedsAssignment'),
+    }),
+  ),
+  taxAmount: z
+    .union([z.number(), z.string().transform(expressionToNumber)])
+    .refine((a) => a >= 0, 'taxNonNegative')
+    .default(0),
+  tipAmount: z
+    .union([z.number(), z.string().transform(expressionToNumber)])
+    .refine((a) => a >= 0, 'tipNonNegative')
+    .default(0),
+}).optional()
 ```
 
 Reuses `expressionToNumber` so item/tax/tip fields accept arithmetic expressions like the main amount (Requirement 2.2). The existing `.superRefine` gains itemized rules; the existing `BY_AMOUNT` `amountSum` check already guarantees the shares sum to the total, so cent-exactness is validated by machinery already present.
@@ -238,9 +241,9 @@ The `.transform` step, when `itemization.enabled`, sets `splitMode = 'BY_AMOUNT'
 **Single-conversion rule (avoids double-multiplying by the factor).** The itemized `paidFor` shares are converted to minor units in exactly **one** place: `proceedWithSubmit` in the form component (Section 5), matching how `BY_AMOUNT` works today (the schema `.transform` leaves `BY_AMOUNT` shares as major-unit `Number(shares)`, and only `proceedWithSubmit` calls `amountAsMinorUnits`). Therefore:
 
 - The schema `.transform` does **not** compute or write per-participant amounts and does **not** convert to minor units. It only flips `splitMode` to `BY_AMOUNT` and removes zero-share participants (defensive backstop), leaving `paidFor` in the same major-unit shape the rest of the form expects.
-- **Where zero-share participants actually leave `paidFor`:** the legacy `paidFor` field validation rejects `shares <= 0` (`noZeroShares`), and that runs before the top-level `.transform`. So a zero-share participant must never be *submitted*. `proceedWithSubmit` builds `paidFor` from the splitter output and omits any participant whose computed Participant_Share is 0. The transform's zero-filter is therefore a backstop, not the primary mechanism — the primary drop happens in the form component when it constructs `paidFor`.
+- **Where zero-share participants actually leave `paidFor`:** the legacy `paidFor` field validation rejects `shares <= 0` (`noZeroShares`), and that runs before the top-level `.transform`. So a zero-share participant must never be _submitted_. `proceedWithSubmit` builds `paidFor` from the splitter output and omits any participant whose computed Participant_Share is 0. The transform's zero-filter is therefore a backstop, not the primary mechanism — the primary drop happens in the form component when it constructs `paidFor`.
 - `proceedWithSubmit` runs `computeItemizedShares` once on minor-unit inputs and writes the resulting per-participant **minor-unit** amounts into `paidFor[].shares`, using the **Entry_Currency** decimal digits — the original currency's digits when a conversion is required, the group currency's digits when it is not. This is the single minor-unit conversion for itemized shares.
-- The server (Section 3 / Task 5.1) only *re-distributes* those already-minor shares across the converted total, and only when a conversion actually happens. It never multiplies by the factor again.
+- The server (Section 3 / Task 5.1) only _re-distributes_ those already-minor shares across the converted total, and only when a conversion actually happens. It never multiplies by the factor again.
 
 ### 5. Expense form component — `src/app/groups/[groupId]/expenses/expense-form.tsx`
 
@@ -265,7 +268,7 @@ When the top-level expense has items **and** includes non-members in `paidFor`, 
 
 1. The form collapses items into `BY_AMOUNT` `paidFor` shares (per-participant Group_Currency minor amounts), including any non-member's computed share.
 2. `createExpense` / `updateExpense` detect non-members and route into `decomposeExpense` exactly as today. `computeDecompositionSlots` reads the `BY_AMOUNT` shares directly, so the non-member's line-derived share becomes their Direct_Half amount, and members' shares become the Group_Half (Requirement 7.3, 7.4).
-3. **Items are not persisted on decomposed expenses** in this first version: the Group_Half and Direct_Halves are computed `BY_AMOUNT` artifacts. The itemization detail is only meaningful on a non-decomposed expense. This is a conscious first-version scope limit consistent with the requirements (which require the *decomposition to still happen and the shares to be exact*, not that items be reattached to each half). The single-payer / no-recurrence / no-reimbursement preconditions of `decomposeExpense` already hold because itemization is unavailable for reimbursements and recurrence, and the existing "non-members ⇒ single payer" guard remains in force.
+3. **Items are not persisted on decomposed expenses** in this first version: the Group*Half and Direct_Halves are computed `BY_AMOUNT` artifacts. The itemization detail is only meaningful on a non-decomposed expense. This is a conscious first-version scope limit consistent with the requirements (which require the \_decomposition to still happen and the shares to be exact*, not that items be reattached to each half). The single-payer / no-recurrence / no-reimbursement preconditions of `decomposeExpense` already hold because itemization is unavailable for reimbursements and recurrence, and the existing "non-members ⇒ single payer" guard remains in force.
 
 Payers are never derived from items: `ExpensePaidBy` continues to be set independently from the form's "Paid by" section (Requirement 7.1, 7.2, 7.5).
 
@@ -273,7 +276,7 @@ Payers are never derived from items: `ExpensePaidBy` continues to be set indepen
 
 Optional and additive (Requirement 9):
 
-- Extend `extractExpenseInformationFromImage` to *optionally* return a `items?: Array<{ title: string; amount: number }>` field in addition to today's amount/category/date/title. The prompt asks the model to also list line items when clearly present.
+- Extend `extractExpenseInformationFromImage` to _optionally_ return a `items?: Array<{ title: string; amount: number }>` field in addition to today's amount/category/date/title. The prompt asks the model to also list line items when clearly present.
 - The form, when it receives suggested items, enables itemization and prefills the items editor with them as **editable** rows (Requirement 9.3). It does **not** auto-assign participants (Requirement 9.5).
 - If the extractor is not configured, errors, or returns no items, the form silently continues to work for manual itemization (Requirement 9.1, 9.4). Manual itemization never requires a scan.
 
@@ -320,6 +323,7 @@ These follow from the requirements and are noted for the task breakdown, not re-
 - Participants with a zero Participant_Share are dropped from `paidFor` (leave the split) — implemented in the schema transform.
 - The main amount field is read-only while itemized — implemented in the form component.
 - Copying an expense (existing copy-expense feature) does not copy items in this first version; the copy opens with itemization off. This keeps the copy flow unchanged and avoids re-deriving items across currencies.
+
 ---
 
 # v1.1 Design Amendment (Requirements 12–19)
@@ -360,18 +364,18 @@ The requirements explicitly left three things to design. Decided:
      `ExpensePaidFor` (a row is just a participant + polymorphic `shares`). For
      `PROPORTIONAL` this relation is empty (weights are the item subtotals,
      derived at compute time — nothing to store).
-   The `remainderAmount` is the **source of truth** for the "Other" pool; it is
-   what the JSON export emits and what the editor restores on reload
-   (Requirement 16 glossary, R10.2).
+     The `remainderAmount` is the **source of truth** for the "Other" pool; it is
+     what the JSON export emits and what the editor restores on reload
+     (Requirement 16 glossary, R10.2).
 
 3. **Tax/tip UI.** The two separate tax and tip fields are **removed in favour
    of a single "Other" line** (Cloud's model). There is one remainder pool with
-   one allocation control. Tax and tip survive only as optional *quick-add*
+   one allocation control. Tax and tip survive only as optional _quick-add_
    affordances inside the "Other" editor (two convenience inputs that sum into
    `remainderAmount`); they are never stored as independent columns. This
    retires `Expense.taxAmount` / `Expense.tipAmount` (see migration below).
    Rationale: R16 made the remainder the source of truth, and keeping two
-   authoritative columns *and* a remainder would reintroduce exactly the
+   authoritative columns _and_ a remainder would reintroduce exactly the
    dual-source ambiguity the reconciliation pass removed.
 
 ## B. Schema delta (supersedes Section 1 / Data Models)
@@ -516,7 +520,7 @@ deleted (Requirement 13.4). Deleting items remains a separate explicit action.
 
 ```ts
 export interface ItemizedRemainder {
-  amountMinor: number                       // signed; Expense_Total − Σ Item_Amount
+  amountMinor: number // signed; Expense_Total − Σ Item_Amount
   allocationMode: 'PROPORTIONAL' | 'CUSTOM'
   // CUSTOM only:
   splitMode?: SplitMode
@@ -537,7 +541,7 @@ Algorithm changes:
 2. **Remainder distribution:**
    - `PROPORTIONAL`: distribute `remainder.amountMinor` in proportion to
      `Item_Subtotal` using the existing weighted-remainder policy (v1.0's
-     "tax/tip remainder policy" — largest fractional part first). This *is* the
+     "tax/tip remainder policy" — largest fractional part first). This _is_ the
      old proportional tax+tip path, now over one pool. Zero-subtotal fallback
      (equal split across assigned participants) is unchanged (Requirement 16.3).
    - `CUSTOM`: distribute `remainder.amountMinor` by the flat split in
@@ -629,7 +633,7 @@ dropped):
   are deferred. The gate already covers "editing the all-items split" as a
   trigger, so adding the control later does not change the gate contract.
 
-**Out of scope (permanently, per Requirement 19.3):** per-line split *modes*
+**Out of scope (permanently, per Requirement 19.3):** per-line split _modes_
 (each item EVENLY/BY_SHARES/…); Cloud's BigInt/exact-rational math. A Knots item
 is split equally among its assignees; the remainder is the only place a flat
 split mode applies (CUSTOM), and it reuses the existing integer distributors.
@@ -637,7 +641,7 @@ split mode applies (CUSTOM), and it reuses the existing integer distributors.
 ## H. Updated data-model summary (supersedes the v1.0 "Data Models" section)
 
 - `ExpenseItem` — `{ id, expenseId, title, amount (Entry_Currency minor units),
-  position }`, cascade-deleted with the expense. (Gains `unitPrice`/`quantity`
+position }`, cascade-deleted with the expense. (Gains `unitPrice`/`quantity`
   only when Requirement 14 is implemented.)
 - `ExpenseItemAssignment` — `{ itemId, userId }`, composite PK, cascade-deleted.
 - `Expense.itemsAuthoritative Boolean` — the source of truth for "is itemized".
@@ -648,7 +652,7 @@ split mode applies (CUSTOM), and it reuses the existing integer distributors.
 - `Expense.remainderSplitMode SplitMode?` — CUSTOM-only flat split mode of the
   "Other" line (one per remainder, on the Expense); `null` otherwise.
 - `ExpenseRemainderShare` — CUSTOM-only per-participant rows `{ expenseId, userId,
-  shares }` for the remainder, same shape as `ExpensePaidFor`.
+shares }` for the remainder, same shape as `ExpensePaidFor`.
 - `Expense.taxAmount` / `tipAmount` — **removed** (folded into `remainderAmount`).
 - `ExpensePaidFor.shares` — unchanged: holds the authoritative Group_Currency
   per-participant amount (item subtotal + remainder slice) under

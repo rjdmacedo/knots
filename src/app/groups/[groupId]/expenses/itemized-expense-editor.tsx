@@ -124,7 +124,11 @@ export function ItemizedExpenseEditor({
   const itemsKey = JSON.stringify(items)
   const participantIdsKey = JSON.stringify(participants.map((p) => p.id))
 
-  const syncLineAmount = (index: number, unitPrice: number, quantity: number) => {
+  const syncLineAmount = (
+    index: number,
+    unitPrice: number,
+    quantity: number,
+  ) => {
     form.setValue(
       `itemization.items.${index}.amount`,
       lineAmountMajor(unitPrice, quantity, entryCurrency) as unknown as number,
@@ -157,9 +161,7 @@ export function ItemizedExpenseEditor({
     // Mid-edit rows often have empty assignees; calling compute with those
     // amounts would drop them from shares while still counting them in the
     // total and throw the exactness invariant.
-    if (
-      items.some((item) => (item.assignedParticipants ?? []).length === 0)
-    ) {
+    if (items.some((item) => (item.assignedParticipants ?? []).length === 0)) {
       return
     }
     const participantIdsInOrder = participants.map((p) => p.id)
@@ -223,8 +225,12 @@ export function ItemizedExpenseEditor({
       )}
 
       {fields.map((field, index) => {
-        const unitPrice = Number(items[index]?.unitPrice ?? items[index]?.amount) || 0
-        const quantity = Math.max(1, Math.trunc(Number(items[index]?.quantity)) || 1)
+        const unitPrice =
+          Number(items[index]?.unitPrice ?? items[index]?.amount) || 0
+        const quantity = Math.max(
+          1,
+          Math.trunc(Number(items[index]?.quantity)) || 1,
+        )
         const lineMinor =
           amountAsMinorUnits(unitPrice, entryCurrency) * quantity
 
@@ -233,120 +239,127 @@ export function ItemizedExpenseEditor({
             key={field.id}
             className="flex flex-col gap-2 rounded-md border border-border p-3"
           >
-            <div className="flex items-start gap-2">
-              <FormItem className="min-w-0 flex-1">
-                <FormLabel className="text-xs">{t('itemTitleLabel')}</FormLabel>
-                <FormControl>
-                  <Input
-                    className="text-sm"
-                    value={items[index]?.title ?? ''}
-                    onChange={(e) =>
-                      form.setValue(
-                        `itemization.items.${index}.title`,
-                        e.target.value,
-                        { shouldDirty: true, shouldValidate: true },
-                      )
-                    }
-                    placeholder={t('itemTitlePlaceholder')}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+            <div className="flex flex-col gap-3 md:flex-row md:items-end md:gap-2">
+              <div className="flex min-w-0 flex-1 items-start gap-2">
+                <FormItem className="min-w-0 flex-1">
+                  <FormLabel className="text-xs">
+                    {t('itemTitleLabel')}
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      className="text-sm"
+                      value={items[index]?.title ?? ''}
+                      onChange={(e) =>
+                        form.setValue(
+                          `itemization.items.${index}.title`,
+                          e.target.value,
+                          { shouldDirty: true, shouldValidate: true },
+                        )
+                      }
+                      placeholder={t('itemTitlePlaceholder')}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              </div>
 
+              <div className="flex flex-col gap-3 md:flex-row md:flex-nowrap md:items-end md:gap-2">
+                <FormItem className="w-full md:w-28 md:shrink-0">
+                  <FormLabel className="text-xs">
+                    {t('itemUnitPriceLabel')}
+                  </FormLabel>
+                  <FormControl>
+                    <InputGroup>
+                      <InputGroupAddon align="inline-start">
+                        <InputGroupText className="font-medium text-foreground tabular-nums">
+                          {getCurrencyDisplaySymbol(entryCurrency)}
+                        </InputGroupText>
+                      </InputGroupAddon>
+                      <CurrencyAmountInput
+                        currency={entryCurrency}
+                        locale={locale}
+                        value={
+                          items[index]?.unitPrice ?? items[index]?.amount ?? ''
+                        }
+                        onValueChange={(v) => {
+                          const nextUnit = v as unknown as number
+                          form.setValue(
+                            `itemization.items.${index}.unitPrice`,
+                            nextUnit,
+                            { shouldDirty: true, shouldValidate: true },
+                          )
+                          syncLineAmount(
+                            index,
+                            Number(v) || 0,
+                            items[index]?.quantity ?? 1,
+                          )
+                        }}
+                        className="text-sm"
+                      />
+                    </InputGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+
+                <span className="hidden text-sm text-muted-foreground md:mb-2 md:inline">
+                  ×
+                </span>
+
+                <FormItem className="w-full md:w-16 md:shrink-0">
+                  <FormLabel className="text-xs">
+                    {t('itemQuantityLabel')}
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      inputMode="numeric"
+                      min={1}
+                      step={1}
+                      className="text-sm tabular-nums"
+                      value={items[index]?.quantity ?? 1}
+                      onChange={(e) => {
+                        const raw = e.target.value
+                        const nextQty = Math.max(
+                          1,
+                          Math.trunc(Number(raw)) || 1,
+                        )
+                        form.setValue(
+                          `itemization.items.${index}.quantity`,
+                          nextQty,
+                          { shouldDirty: true, shouldValidate: true },
+                        )
+                        syncLineAmount(
+                          index,
+                          Number(
+                            items[index]?.unitPrice ?? items[index]?.amount,
+                          ) || 0,
+                          nextQty,
+                        )
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+
+                <div className="flex min-w-22 flex-col gap-1 md:mb-2">
+                  <span className="text-xs text-muted-foreground">
+                    {t('itemLineTotalLabel')}
+                  </span>
+                  <span className="text-sm font-medium tabular-nums">
+                    {formatCurrency(entryCurrency, lineMinor, locale)}
+                  </span>
+                </div>
+              </div>
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="mt-6 shrink-0"
+                className="shrink-0 self-end"
                 aria-label={t('removeItem')}
                 onClick={() => remove(index)}
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
-            </div>
-
-            <div className="flex flex-wrap items-end gap-2">
-              <FormItem className="w-28 grow sm:grow-0">
-                <FormLabel className="text-xs">
-                  {t('itemUnitPriceLabel')}
-                </FormLabel>
-                <FormControl>
-                  <InputGroup>
-                    <InputGroupAddon align="inline-start">
-                      <InputGroupText className="font-medium text-foreground tabular-nums">
-                        {getCurrencyDisplaySymbol(entryCurrency)}
-                      </InputGroupText>
-                    </InputGroupAddon>
-                    <CurrencyAmountInput
-                      currency={entryCurrency}
-                      locale={locale}
-                      value={items[index]?.unitPrice ?? items[index]?.amount ?? ''}
-                      onValueChange={(v) => {
-                        const nextUnit = v as unknown as number
-                        form.setValue(
-                          `itemization.items.${index}.unitPrice`,
-                          nextUnit,
-                          { shouldDirty: true, shouldValidate: true },
-                        )
-                        syncLineAmount(
-                          index,
-                          Number(v) || 0,
-                          items[index]?.quantity ?? 1,
-                        )
-                      }}
-                      className="text-sm"
-                    />
-                  </InputGroup>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-
-              <span className="mb-2 text-sm text-muted-foreground">×</span>
-
-              <FormItem className="w-16">
-                <FormLabel className="text-xs">
-                  {t('itemQuantityLabel')}
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    inputMode="numeric"
-                    min={1}
-                    step={1}
-                    className="text-sm tabular-nums"
-                    value={items[index]?.quantity ?? 1}
-                    onChange={(e) => {
-                      const raw = e.target.value
-                      const nextQty = Math.max(
-                        1,
-                        Math.trunc(Number(raw)) || 1,
-                      )
-                      form.setValue(
-                        `itemization.items.${index}.quantity`,
-                        nextQty,
-                        { shouldDirty: true, shouldValidate: true },
-                      )
-                      syncLineAmount(
-                        index,
-                        Number(
-                          items[index]?.unitPrice ?? items[index]?.amount,
-                        ) || 0,
-                        nextQty,
-                      )
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-
-              <div className="mb-2 flex min-w-22 flex-col gap-1">
-                <span className="text-xs text-muted-foreground">
-                  {t('itemLineTotalLabel')}
-                </span>
-                <span className="text-sm font-medium tabular-nums">
-                  {formatCurrency(entryCurrency, lineMinor, locale)}
-                </span>
-              </div>
             </div>
 
             <div className="flex flex-col gap-1">

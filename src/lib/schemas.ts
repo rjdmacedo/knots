@@ -198,35 +198,36 @@ export const expenseFormSchema = z
         authoritative: z.boolean(),
         items: z
           .array(
-            z.object({
-              title: z.string().min(1, 'itemTitleRequired'),
-              // Per-unit price (Requirement 14). When omitted (e.g. older
-              // payloads / receipt prefill), falls back to `amount` below.
-              unitPrice: z
-                .union([z.number(), z.string().transform(expressionToNumber)])
-                .refine((a) => a >= 0, 'itemAmountNonNegative')
-                .optional(),
-              // Positive integer count; defaults to 1 (Requirement 14).
-              quantity: z.coerce
-                .number()
-                .int('itemQuantityPositive')
-                .min(1, 'itemQuantityPositive')
-                .default(1),
-              // Line total (unitPrice × quantity). Kept so the splitter and
-              // legacy callers can read Item_Amount directly; the editor keeps
-              // it in sync with unitPrice × quantity.
-              amount: z
-                .union([z.number(), z.string().transform(expressionToNumber)])
-                .refine((a) => a >= 0, 'itemAmountNonNegative'),
-              assignedParticipants: z
-                .array(z.string())
-                .min(1, 'itemNeedsAssignment'),
-            })
-            .transform((item) => {
-              const quantity = item.quantity ?? 1
-              const unitPrice = item.unitPrice ?? item.amount
-              return { ...item, quantity, unitPrice }
-            }),
+            z
+              .object({
+                title: z.string().min(1, 'itemTitleRequired'),
+                // Per-unit price (Requirement 14). When omitted (e.g. older
+                // payloads / receipt prefill), falls back to `amount` below.
+                unitPrice: z
+                  .union([z.number(), z.string().transform(expressionToNumber)])
+                  .refine((a) => a >= 0, 'itemAmountNonNegative')
+                  .optional(),
+                // Positive integer count; defaults to 1 (Requirement 14).
+                quantity: z.coerce
+                  .number()
+                  .int('itemQuantityPositive')
+                  .min(1, 'itemQuantityPositive')
+                  .default(1),
+                // Line total (unitPrice × quantity). Kept so the splitter and
+                // legacy callers can read Item_Amount directly; the editor keeps
+                // it in sync with unitPrice × quantity.
+                amount: z
+                  .union([z.number(), z.string().transform(expressionToNumber)])
+                  .refine((a) => a >= 0, 'itemAmountNonNegative'),
+                assignedParticipants: z
+                  .array(z.string())
+                  .min(1, 'itemNeedsAssignment'),
+              })
+              .transform((item) => {
+                const quantity = item.quantity ?? 1
+                const unitPrice = item.unitPrice ?? item.amount
+                return { ...item, quantity, unitPrice }
+              }),
           )
           .default([]),
         remainder: z
@@ -241,9 +242,10 @@ export const expenseFormSchema = z
               .default('PROPORTIONAL'),
             // CUSTOM only: the flat split mode of the "Other" line.
             splitMode: z
-              .enum<SplitMode, [SplitMode, ...SplitMode[]]>(
-                Object.values(SplitMode) as any,
-              )
+              .enum<
+                SplitMode,
+                [SplitMode, ...SplitMode[]]
+              >(Object.values(SplitMode) as any)
               .optional(),
             // CUSTOM only: per-participant rows for the "Other" line.
             paidFor: z

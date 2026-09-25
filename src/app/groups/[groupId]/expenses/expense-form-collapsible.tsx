@@ -2,6 +2,13 @@
 
 import { Button } from '@/components/ui/button'
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
@@ -19,16 +26,7 @@ type ExpenseFormCollapsibleProps = {
 }
 
 /**
- * A collapsible component for wrapping an expense form with a title and description.
- * Allows toggling visibility of the content and accepts child components.
- *
- * @param {Object} props - The property object.
- * @param props.title - The title of the collapsible section, displayed in the trigger button.
- * @param props.children - The content to be displayed inside the collapsible when expanded.
- * @param props.className - Additional CSS class names for styling the collapsible container.
- * @param props.description - An optional description for the collapsible content.
- * @param props.defaultOpen=false - Determines whether the collapsible is open by default.
- * @return Returns a collapsible UI component containing the provided title, description, and children.
+ * Compact bordered collapsible used for Notes / Attach documents.
  */
 export function ExpenseFormCollapsible({
   title,
@@ -60,6 +58,89 @@ export function ExpenseFormCollapsible({
         ) : null}
         <div className="w-full min-w-0">{children}</div>
       </CollapsibleContent>
+    </Collapsible>
+  )
+}
+
+type ExpenseFormCardCollapsibleProps = {
+  title: ReactNode
+  description?: ReactNode
+  /** Controlled open state. Ignored when `disabled`. */
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  /** Optional controls rendered next to the title (outside the expand trigger). */
+  headerAction?: ReactNode
+  /** When true, the section stays collapsed and the expand trigger is inert. */
+  disabled?: boolean
+  children: ReactNode
+  className?: string
+}
+
+/**
+ * Card-styled collapsible for Paid by / Items / Split between sections.
+ * Header action (e.g. Select none, Leave itemized) stays outside the trigger
+ * so clicks don't toggle expand/collapse.
+ */
+export function ExpenseFormCardCollapsible({
+  title,
+  description,
+  open,
+  onOpenChange,
+  headerAction,
+  disabled = false,
+  children,
+  className,
+}: ExpenseFormCardCollapsibleProps) {
+  const isOpen = disabled ? false : open
+
+  return (
+    <Collapsible
+      open={isOpen}
+      onOpenChange={disabled ? undefined : onOpenChange}
+    >
+      <Card
+        className={cn('gap-4 py-0 shadow-none ring-0', className)}
+        data-state={isOpen ? 'open' : 'closed'}
+        data-disabled={disabled ? '' : undefined}
+      >
+        <CardHeader className="px-4 pt-4 group-data-[state=closed]/card:pb-4">
+          <div className="flex items-start gap-2">
+            <CollapsibleTrigger
+              type="button"
+              disabled={disabled}
+              className={cn(
+                'group/section-trigger flex min-w-0 flex-1 flex-col items-stretch gap-1 rounded-md text-left outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                disabled && 'cursor-not-allowed opacity-60',
+              )}
+            >
+              <CardTitle className="flex items-center gap-2 text-sm md:text-base">
+                <span className="min-w-0 flex-1">{title}</span>
+                {!disabled ? (
+                  <ChevronDown
+                    className={cn(
+                      'size-4 shrink-0 text-muted-foreground transition-transform',
+                      isOpen && 'rotate-180',
+                    )}
+                  />
+                ) : null}
+              </CardTitle>
+              {description ? (
+                <CardDescription className="text-xs md:text-sm">
+                  {description}
+                </CardDescription>
+              ) : null}
+            </CollapsibleTrigger>
+            {headerAction ? (
+              <div className="flex shrink-0 items-center pt-0.5">
+                {headerAction}
+              </div>
+            ) : null}
+          </div>
+        </CardHeader>
+        <CollapsibleContent>
+          <CardContent className="px-4 pb-4">{children}</CardContent>
+        </CollapsibleContent>
+      </Card>
     </Collapsible>
   )
 }

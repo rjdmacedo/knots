@@ -28,8 +28,8 @@
  * (totalMinor = Σ item amounts + remainder, signed).
  */
 
-import { SplitMode } from '@prisma/client'
 import { distributeWeightedAmounts } from '@/lib/distribute-amount'
+import { SplitMode } from '@prisma/client'
 
 export interface ItemizedItem {
   /** Item_Amount in minor units, in the currency the expense was entered in. */
@@ -118,8 +118,9 @@ function distributeByWeights(chargeMinor: number, weights: number[]): number[] {
   if (weightSum <= 0) {
     const base = Math.floor(magnitude / count)
     const rem = magnitude - base * count
-    return Array.from({ length: count }, (_, i) =>
-      sign * (i < rem ? base + 1 : base),
+    return Array.from(
+      { length: count },
+      (_, i) => sign * (i < rem ? base + 1 : base),
     )
   }
 

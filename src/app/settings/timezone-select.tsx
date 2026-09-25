@@ -13,12 +13,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { toast } from '@/components/ui/toast'
 import { cn } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { Check, ChevronsUpDown } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import { toast } from 'sonner'
 
 const COMMON_TIMEZONES = Intl.supportedValuesOf('timeZone')
 

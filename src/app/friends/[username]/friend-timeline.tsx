@@ -14,6 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { toast } from '@/components/ui/toast'
 import { getFriendExpenseDetailPath } from '@/lib/expense-detail-urls'
 import type { TimelineEntry, TimelinePayment } from '@/lib/friend-timeline'
 import {
@@ -35,7 +36,6 @@ import {
 import { useLocale, useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
-import { toast } from 'sonner'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
