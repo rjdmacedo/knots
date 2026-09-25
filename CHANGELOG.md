@@ -1,3 +1,10 @@
+# [1.57.0](https://github.com/rjdmacedo/knots/compare/v1.56.1...v1.57.0) (2026-09-25)
+
+
+### Features
+
+* itemized expenses and page-based expense editor ([#44](https://github.com/rjdmacedo/knots/issues/44)) ([c3b8085](https://github.com/rjdmacedo/knots/commit/c3b80859f64379399a9dc4361b45ced6609a6a32))
+
 ## [1.56.1](https://github.com/rjdmacedo/knots/compare/v1.56.0...v1.56.1) (2026-09-24)
 
 
