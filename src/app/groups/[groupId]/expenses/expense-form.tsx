@@ -1,5 +1,9 @@
 import { ExpenseConversionRateField } from '@/app/groups/[groupId]/expenses/expense-conversion-rate-field'
-import { ExpenseFormCollapsible } from '@/app/groups/[groupId]/expenses/expense-form-collapsible'
+import {
+  ExpenseFormCardCollapsible,
+  ExpenseFormCollapsible,
+} from '@/app/groups/[groupId]/expenses/expense-form-collapsible'
+import { ItemizedExpenseEditor } from '@/app/groups/[groupId]/expenses/itemized-expense-editor'
 import { CategorySelector } from '@/components/category-selector'
 import { CurrencyAmountInput } from '@/components/currency-amount-input'
 import {
@@ -25,14 +29,18 @@ import {
   type SplitModeValue,
 } from '@/components/split-mode-selector'
 import { SubmitButton } from '@/components/submit-button'
-import { Button } from '@/components/ui/button'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DialogFooter } from '@/components/ui/dialog'
 import {
@@ -57,8 +65,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
+import { toast } from '@/components/ui/toast'
 import { Locale } from '@/i18n'
 import { randomId } from '@/lib/api'
 import { defaultCurrencyList, getCurrency, type Currency } from '@/lib/currency'
@@ -72,6 +80,11 @@ import type { DuplicateCheckResult } from '@/lib/duplicate-expense-detection'
 import { getGroupExpenseDetailPath } from '@/lib/expense-detail-urls'
 import { RuntimeFeatureFlags } from '@/lib/featureFlags'
 import { useCurrencyRate, useGroupParticipantId } from '@/lib/hooks'
+import {
+  emptyDocumentationItemization,
+  leaveAuthoritative,
+  switchToAuthoritative,
+} from '@/lib/itemization-gate'
 import {
   ExpenseFormValues,
   PaidByOptions,
@@ -91,12 +104,11 @@ import { trpc } from '@/trpc/client'
 import { AppRouterOutput } from '@/trpc/routers/_app'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { RecurrenceRule } from '@prisma/client'
-import { ChevronRight, Save } from 'lucide-react'
+import { Check, ChevronRight, Minus, Plus, Save } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
 
 /**
  * Distributes 100% equally among a given number of participants and ensures the sum of percentages is exactly 100%.
@@ -186,7 +198,6 @@ function ParticipantShareInput({
   splitMode,
   groupCurrency,
   locale,
-  sharesLabel,
 }: {
   disabled: boolean
   value: string
@@ -195,7 +206,6 @@ function ParticipantShareInput({
   splitMode: ExpenseFormValues['splitMode']
   groupCurrency: Currency
   locale: Locale
-  sharesLabel: string
 }) {
   const addonClassName = cn(
     'font-medium text-foreground tabular-nums',
@@ -238,14 +248,120 @@ function ParticipantShareInput({
           <InputGroupText className={addonClassName}>%</InputGroupText>
         </InputGroupAddon>
       )}
-      {splitMode === 'BY_SHARES' && (
-        <InputGroupAddon align="inline-end">
-          <InputGroupText className={addonClassName}>
-            {sharesLabel}
-          </InputGroupText>
-        </InputGroupAddon>
-      )}
     </InputGroup>
+  )
+}
+
+function ShareStepper({
+  disabled,
+  value,
+  onValueChange,
+  decreaseLabel,
+  increaseLabel,
+}: {
+  disabled: boolean
+  value: string
+  onValueChange: (value: string) => void
+  decreaseLabel: string
+  increaseLabel: string
+}) {
+  const current = Number(value)
+  const count = Number.isFinite(current) ? current : 0
+  const step = (delta: number) => {
+    onValueChange(String(Math.max(0, count + delta)))
+  }
+
+  return (
+    <div className="flex shrink-0 items-center gap-1">
+      <Button
+        type="button"
+        variant="outline"
+        size="icon-xs"
+        disabled={disabled || count <= 0}
+        aria-label={decreaseLabel}
+        onClick={() => step(-1)}
+      >
+        <Minus />
+      </Button>
+      <span className="w-6 text-center text-sm font-medium tabular-nums">
+        {count}
+      </span>
+      <Button
+        type="button"
+        variant="outline"
+        size="icon-xs"
+        disabled={disabled}
+        aria-label={increaseLabel}
+        onClick={() => step(1)}
+      >
+        <Plus />
+      </Button>
+    </div>
+  )
+}
+
+function SplitAllocationSummary({
+  splitMode,
+  paidFor,
+  amount,
+  currency,
+  locale,
+  evenlyLabel,
+  totalWeightLabel,
+  matchesPercentLabel,
+  matchesAmountLabel,
+}: {
+  splitMode: ExpenseFormValues['splitMode']
+  paidFor: ExpenseFormValues['paidFor']
+  amount: number
+  currency: Currency
+  locale: Locale
+  evenlyLabel: (amount: string, count: number) => string
+  totalWeightLabel: (count: number) => string
+  matchesPercentLabel: string
+  matchesAmountLabel: (amount: string) => string
+}) {
+  const selected = paidFor ?? []
+  const count = selected.length
+  let text = ''
+  let matches = false
+
+  if (splitMode === 'EVENLY') {
+    if (count === 0) return null
+    const each = amount / count
+    text = evenlyLabel(
+      formatCurrency(currency, amountAsMinorUnits(each, currency), locale),
+      count,
+    )
+  } else if (splitMode === 'BY_SHARES') {
+    const weight = selected.reduce(
+      (sum, entry) => sum + (Number(entry.shares) || 0),
+      0,
+    )
+    text = totalWeightLabel(weight)
+  } else if (splitMode === 'BY_PERCENTAGE') {
+    const total = selected.reduce(
+      (sum, entry) => sum + (Number(entry.shares) || 0),
+      0,
+    )
+    matches = Math.abs(total - 100) < 0.05
+    text = matchesPercentLabel
+  } else {
+    const totalMinor = selected.reduce(
+      (sum, entry) =>
+        sum + amountAsMinorUnits(Number(entry.shares) || 0, currency),
+      0,
+    )
+    const targetMinor = amountAsMinorUnits(amount, currency)
+    matches = Math.abs(totalMinor - targetMinor) <= 1
+    text = matchesAmountLabel(formatCurrency(currency, targetMinor, locale))
+  }
+
+  return (
+    <p className="mt-2 flex items-center gap-1.5 rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground md:text-sm">
+      {matches ? <Check className="size-4 text-primary" /> : null}
+      {text}
+    </p>
   )
 }
 
@@ -282,6 +398,44 @@ function withEqualAmountSplit(
     ...entry,
     shares: amounts[index] ?? 0,
   }))
+}
+
+/**
+ * Rebuild the form's `itemization` value from a persisted expense for edit mode.
+ * Items, tax and tip are stored in Entry_Currency minor units; convert them back
+ * to major units so the editor shows exactly what the user typed. Returns
+ * undefined (itemized off) when the expense has no items.
+ */
+function buildItemizationDefault(
+  expense: NonNullable<AppRouterOutput['groups']['expenses']['get']['expense']>,
+  entryCurrency: Currency,
+): ExpenseFormValues['itemization'] {
+  const items = expense.items ?? []
+  if (items.length === 0) return undefined
+  const allocationMode =
+    expense.remainderAllocationMode === 'CUSTOM' ? 'CUSTOM' : 'PROPORTIONAL'
+  return {
+    authoritative: expense.itemsAuthoritative,
+    items: items.map((item) => ({
+      title: item.title,
+      unitPrice: amountAsDecimal(item.unitPrice || item.amount, entryCurrency),
+      quantity: item.quantity || 1,
+      amount: amountAsDecimal(item.amount, entryCurrency),
+      assignedParticipants: item.assignments.map((a) => a.userId),
+    })),
+    remainder: {
+      amount: amountAsDecimal(expense.remainderAmount ?? 0, entryCurrency),
+      allocationMode,
+      splitMode: expense.remainderSplitMode ?? undefined,
+      paidFor:
+        allocationMode === 'CUSTOM'
+          ? expense.remainderShares.map((s) => ({
+              participant: s.userId,
+              shares: s.shares,
+            }))
+          : undefined,
+    },
+  }
 }
 
 /**
@@ -510,6 +664,9 @@ export type ExpenseFormCreatePrefill = {
   paidFor?: ExpenseFormValues['paidFor']
   splitMode?: ExpenseFormValues['splitMode']
   notes?: string
+  // Optional itemized prefill (e.g. from a receipt scan). Items are suggested,
+  // unassigned, and editable; amounts are in major units of the entry currency.
+  items?: Array<{ title: string; amount: number }>
 }
 
 /**
@@ -541,6 +698,7 @@ export function ExpenseForm({
   isDesktop = false,
   scrollHeader,
   singlePayerOnly = false,
+  containedScroll = true,
 }: {
   group: NonNullable<AppRouterOutput['groups']['get']['group']>
   expense?: AppRouterOutput['groups']['expenses']['get']['expense']
@@ -554,6 +712,8 @@ export function ExpenseForm({
   isDesktop?: boolean
   scrollHeader?: ReactNode
   singlePayerOnly?: boolean
+  /** When false, the page scroller moves the form. The dialog keeps its own scroll. */
+  containedScroll?: boolean
 }) {
   const t = useTranslations('ExpenseForm')
   const tDocuments = useTranslations('ExpenseDocumentsInput')
@@ -567,7 +727,7 @@ export function ExpenseForm({
     ? 'grid min-w-0 grid-cols-1 items-start gap-4'
     : 'grid min-w-0 grid-cols-2 items-start gap-4 sm:gap-6'
   const participantRowClass =
-    'border-t flex items-center justify-between gap-3 py-2'
+    'flex min-w-0 items-center justify-between gap-3 border-t py-2'
   const participantFormItemClass =
     'flex min-w-0 flex-1 flex-row items-center space-x-3 space-y-0'
   const participantSharesClass = 'flex shrink-0 items-center justify-end gap-1'
@@ -664,6 +824,12 @@ export function ExpenseForm({
           documents: expense.documents,
           notes: expense.notes ?? '',
           recurrenceRule: expense.recurrenceRule ?? undefined,
+          itemization: buildItemizationDefault(
+            expense,
+            expense.originalCurrency
+              ? getCurrency(expense.originalCurrency, locale)
+              : groupCurrency,
+          ),
         }
       : searchParams.get('reimbursement')
         ? {
@@ -739,6 +905,24 @@ export function ExpenseForm({
               documents: createPrefill.documents ?? [],
               notes: createPrefill.notes ?? '',
               recurrenceRule: RecurrenceRule.NONE,
+              // Receipt-suggested items land as Documentation_Items
+              // (authoritative = false): they do not drive the split until the
+              // user confirms "Use items as split" (Requirement 9.6, 12.2). No
+              // auto-assignment (Requirement 9.5).
+              itemization:
+                createPrefill.items && createPrefill.items.length > 0
+                  ? {
+                      authoritative: false,
+                      items: createPrefill.items.map((item) => ({
+                        title: item.title,
+                        unitPrice: item.amount,
+                        quantity: 1,
+                        amount: item.amount,
+                        assignedParticipants: [],
+                      })),
+                      remainder: { allocationMode: 'PROPORTIONAL' as const },
+                    }
+                  : undefined,
             }
           : {
               title: searchParams.get('title') ?? '',
@@ -928,6 +1112,56 @@ export function ExpenseForm({
               : shares,
     }))
 
+    // Convert itemization item amounts and the "Other" remainder to MINOR units
+    // — the single minor-unit conversion for itemized data — using the
+    // Entry_Currency digits (original currency when a conversion is required,
+    // group currency otherwise). Items and remainder stay in the Entry_Currency;
+    // the server converts the total and re-derives group-currency shares (see
+    // apply-itemized-conversion). Runs whenever items exist so documentation
+    // items are stored in minor units too.
+    if (values.itemization && values.itemization.items.length > 0) {
+      const entryCurrency = conversionRequired
+        ? originalCurrency
+        : groupCurrency
+      const remainder = values.itemization.remainder
+      values.itemization = {
+        ...values.itemization,
+        items: values.itemization.items.map((item) => {
+          const quantity = Math.max(1, Math.trunc(Number(item.quantity)) || 1)
+          const unitPriceMinor = amountAsMinorUnits(
+            Number(item.unitPrice ?? item.amount) || 0,
+            entryCurrency,
+          )
+          return {
+            ...item,
+            quantity,
+            unitPrice: unitPriceMinor,
+            // Item_Amount = unitPrice × quantity in minor units (Requirement 14).
+            amount: unitPriceMinor * quantity,
+          }
+        }),
+        remainder: {
+          ...remainder,
+          amount: amountAsMinorUnits(
+            Number(remainder.amount) || 0,
+            entryCurrency,
+          ),
+          // CUSTOM BY_AMOUNT rows are entered in major units; convert them too.
+          paidFor:
+            remainder.allocationMode === 'CUSTOM' &&
+            remainder.splitMode === 'BY_AMOUNT'
+              ? (remainder.paidFor ?? []).map((row) => ({
+                  ...row,
+                  shares: amountAsMinorUnits(
+                    Number(row.shares) || 0,
+                    entryCurrency,
+                  ),
+                }))
+              : remainder.paidFor,
+        },
+      }
+    }
+
     // Currency should be blank if the same as group currency
     if (!conversionRequired) {
       delete values.originalAmount
@@ -1023,6 +1257,215 @@ export function ExpenseForm({
     group.participants,
     paidFor ?? [],
   )
+
+  const applyPaidFor = (nextPaidFor: ExpenseFormValues['paidFor']) => {
+    form.setValue('paidFor', nextPaidFor, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true,
+    })
+  }
+
+  const toggleAllParticipants = () => {
+    const currentPaidFor = form.getValues().paidFor
+    const newPaidFor = allParticipantsSelected
+      ? []
+      : group.participants.map((participant) => ({
+          participant: participant.id,
+          shares:
+            currentPaidFor.find((entry) => entry.participant === participant.id)
+              ?.shares ?? 1,
+        }))
+    const paidForToSet = (() => {
+      if (allParticipantsSelected) return newPaidFor
+      const currentSplitMode = form.getValues('splitMode')
+      if (currentSplitMode === 'BY_PERCENTAGE') {
+        return withEqualPercentageSplit(newPaidFor)
+      }
+      if (currentSplitMode === 'BY_AMOUNT') {
+        return withEqualAmountSplit(
+          newPaidFor,
+          Number(form.getValues('amount')) || 0,
+          groupCurrency.decimal_digits,
+        )
+      }
+      return newPaidFor
+    })()
+
+    if (
+      !allParticipantsSelected &&
+      (form.getValues('splitMode') === 'BY_PERCENTAGE' ||
+        form.getValues('splitMode') === 'BY_AMOUNT')
+    ) {
+      setManuallyEditedParticipants(new Set())
+    }
+
+    applyPaidFor(paidForToSet)
+  }
+
+  const resetSplitWeights = () => {
+    const currentSplitMode = form.getValues('splitMode')
+    const currentPaidFor = form.getValues('paidFor') ?? []
+    if (currentSplitMode === 'EVENLY') {
+      applyPaidFor(
+        group.participants.map((participant) => ({
+          participant: participant.id,
+          shares: 1,
+        })),
+      )
+      return
+    }
+    if (currentSplitMode === 'BY_PERCENTAGE') {
+      setManuallyEditedParticipants(new Set())
+      applyPaidFor(withEqualPercentageSplit(currentPaidFor))
+      return
+    }
+    if (currentSplitMode === 'BY_AMOUNT') {
+      setManuallyEditedParticipants(new Set())
+      applyPaidFor(
+        withEqualAmountSplit(
+          currentPaidFor,
+          Number(form.getValues('amount')) || 0,
+          groupCurrency.decimal_digits,
+        ),
+      )
+      return
+    }
+    applyPaidFor(
+      currentPaidFor.map((entry) => ({
+        ...entry,
+        shares: 1,
+      })),
+    )
+  }
+
+  // Itemization gate (v1.1). Items may exist as documentation while a legacy
+  // split is active; they only drive the split (authoritative) after the user
+  // confirms "Switch to itemised?". Unavailable for reimbursements and recurring
+  // expenses (Requirement 1.8, 12).
+  const itemizationValue = form.watch('itemization')
+  const itemsAuthoritative = itemizationValue?.authoritative === true
+  const hasItems = (itemizationValue?.items?.length ?? 0) > 0
+  const itemizedAvailable =
+    !form.watch('isReimbursement') &&
+    (!recurrenceRuleValue || recurrenceRuleValue === 'NONE')
+
+  // Whether the items section (documentation or authoritative) is shown.
+  const [itemsSectionOpen, setItemsSectionOpen] = useState(false)
+  const showItemsSection = itemizedAvailable && (itemsSectionOpen || hasItems)
+
+  // Paid by is independently collapsible. Items vs Split between are mutually
+  // exclusive: opening one collapses the other (they are antithetical ways to
+  // decide who owes what).
+  const [paidByOpen, setPaidByOpen] = useState(true)
+  // 'none' = both collapsed (allowed); never both expanded.
+  const [itemsOrSplit, setItemsOrSplit] = useState<'items' | 'split' | 'none'>(
+    () => (expense?.itemsAuthoritative ? 'items' : 'split'),
+  )
+  const itemsExpanded = itemizedAvailable && itemsOrSplit === 'items'
+  const splitExpanded = itemsOrSplit === 'split'
+
+  // Keep focus on Items while authoritative; opening Split asks to leave first.
+  useEffect(() => {
+    if (itemsAuthoritative) setItemsOrSplit('items')
+  }, [itemsAuthoritative])
+
+  // Pending "switch to itemised?" confirmation. When set, a split-affecting edit
+  // is waiting for the user to confirm turning documentation items authoritative;
+  // the callback applies that edit once confirmed.
+  const [pendingSwitchApply, setPendingSwitchApply] = useState<
+    (() => void) | null
+  >(null)
+  const [showLeaveItemizedDialog, setShowLeaveItemizedDialog] = useState(false)
+  // After confirming leave-itemized, open the Split section.
+  const [openSplitAfterLeave, setOpenSplitAfterLeave] = useState(false)
+
+  // Item assignment follows the participant picker: the selected group's
+  // members, plus any friends chosen there. Other friends stay out.
+  const itemizedParticipants = group.participants.map(({ id, name }) => ({
+    id,
+    name: name?.trim() || id,
+  }))
+
+  // Open the items section, seeding an empty documentation itemization.
+  const handleAddItemsSection = () => {
+    setItemsSectionOpen(true)
+    setItemsOrSplit('items')
+    if (!form.getValues('itemization')) {
+      form.setValue('itemization', emptyDocumentationItemization(), {
+        shouldDirty: true,
+      })
+    }
+  }
+
+  const requestOpenItems = (open: boolean) => {
+    if (!open) {
+      // Collapsing Items is fine; switch focus to Split so one side stays usable.
+      setItemsOrSplit('split')
+      return
+    }
+    setItemsOrSplit('items')
+  }
+
+  const requestOpenSplit = (open: boolean) => {
+    if (!open) {
+      // Collapsing Split while Items exist → focus Items; otherwise both closed.
+      setItemsOrSplit(showItemsSection ? 'items' : 'none')
+      return
+    }
+    if (itemsAuthoritative) {
+      setOpenSplitAfterLeave(true)
+      setShowLeaveItemizedDialog(true)
+      return
+    }
+    setItemsOrSplit('split')
+  }
+
+  // Gate: request making items authoritative. If already authoritative, run the
+  // edit immediately; otherwise stash it and open the "Switch to itemised?"
+  // confirmation (Requirement 12.2).
+  const requestAuthoritativeEdit = (applyEdit: () => void) => {
+    if (form.getValues('itemization')?.authoritative) {
+      applyEdit()
+      return
+    }
+    setPendingSwitchApply(() => applyEdit)
+  }
+
+  const confirmSwitchToItemized = () => {
+    form.setValue(
+      'itemization',
+      switchToAuthoritative(form.getValues('itemization')),
+      { shouldDirty: true },
+    )
+    // Apply the edit that triggered the gate, then let the editor's sync effect
+    // derive the BY_AMOUNT paidFor.
+    pendingSwitchApply?.()
+    setPendingSwitchApply(null)
+    setItemsOrSplit('items')
+  }
+
+  const cancelSwitchToItemized = () => setPendingSwitchApply(null)
+
+  // Leave authoritative itemization: keep items as documentation (Requirement
+  // 13.4), restore an even legacy split.
+  const confirmLeaveItemized = () => {
+    const next = leaveAuthoritative(
+      form.getValues('itemization'),
+      form.getValues('paidFor') ?? [],
+    )
+    form.setValue('itemization', next.itemization, { shouldDirty: true })
+    form.setValue('splitMode', next.splitMode, { shouldDirty: true })
+    form.setValue('paidFor', next.paidFor, {
+      shouldDirty: true,
+      shouldValidate: true,
+    })
+    setShowLeaveItemizedDialog(false)
+    if (openSplitAfterLeave) {
+      setItemsOrSplit('split')
+      setOpenSplitAfterLeave(false)
+    }
+  }
 
   useEffect(() => {
     setManuallyEditedParticipants(new Set())
@@ -1129,6 +1572,11 @@ export function ExpenseForm({
 
   useEffect(() => {
     const splitMode = form.getValues().splitMode
+
+    // Skip auto-balancing when itemization is authoritative: the
+    // ItemizedExpenseEditor owns the BY_AMOUNT paidFor split and an even re-split
+    // would clobber the item-derived per-participant amounts.
+    if (form.getValues().itemization?.authoritative) return
 
     // Only auto-balance for split mode 'Unevenly - By amount'
     if (
@@ -1331,7 +1779,7 @@ export function ExpenseForm({
   ])
 
   const formFooter = (
-    <DialogFooter className="flex shrink-0 flex-row justify-end gap-2 border-t bg-popover px-0 pt-4 pb-0">
+    <DialogFooter className="flex shrink-0 flex-row justify-end gap-2 border-t bg-popover px-4 pt-4 pb-4">
       <SubmitButton
         form="expense-form"
         loadingContent={t(isCreate ? 'creating' : 'saving')}
@@ -1354,504 +1802,447 @@ export function ExpenseForm({
           id="expense-form"
           onSubmit={form.handleSubmit(submit)}
           className={cn(
-            'min-h-0 min-w-0 flex-1 touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none overscroll-contain scrollbar-none',
+            containedScroll
+              ? 'min-h-0 min-w-0 flex-1 touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none overscroll-contain scrollbar-none'
+              : 'min-w-0',
             '[&_[data-slot=button]:focus-visible]:ring-inset [&_[data-slot=checkbox]:focus-visible]:ring-inset [&_[data-slot=input]:focus-visible]:ring-inset [&_[data-slot=input-group]:has([data-slot=input-group-control]:focus-visible)]:ring-inset',
           )}
         >
           <div className="min-w-0 py-2">
             {scrollHeader}
             <div className={cn('space-y-4', scrollHeader && 'border-t pt-4')}>
-              <ExpenseFormSection>
-                <ExpenseFormSectionContent className={fieldsGridClass}>
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem className="col-span-full">
-                        <FormLabel>
-                          {t(`${sExpense}.TitleField.label`)}
-                        </FormLabel>
-                        <FormControl>
-                          <ExpenseTitleInput
-                            groupId={group.id}
-                            value={field.value}
-                            onChange={(val) => {
-                              field.onChange(val)
-                            }}
-                            onSuggestionSelected={(
-                              suggestion: ExpenseTitleSuggestion,
-                            ) => {
-                              form.setValue('category', suggestion.categoryId)
-                            }}
-                            onBlur={async () => {
-                              field.onBlur()
-
-                              // 1. Try lookup from category mapping (has priority over AI)
-                              try {
-                                if (field.value.trim().length > 0) {
-                                  const { categoryId: mappedCategoryId } =
-                                    await utils.groups.expenses.lookupCategory.fetch(
-                                      {
-                                        groupId: group.id,
-                                        title: field.value,
-                                      },
-                                    )
-
-                                  if (mappedCategoryId !== null) {
-                                    form.setValue('category', mappedCategoryId)
-                                    return
-                                  }
-                                }
-                              } catch {
-                                // Silently fall through to existing behavior
-                              }
-
-                              // 2. Fallback to AI extraction (if enabled)
-                              if (runtimeFeatureFlags.enableCategoryExtract) {
-                                setCategoryLoading(true)
-                                const { categoryId } =
-                                  await extractCategoryFromTitle(field.value)
-                                form.setValue('category', categoryId)
-                                setCategoryLoading(false)
-                              }
-                            }}
-                            placeholder={t(
-                              `${sExpense}.TitleField.placeholder`,
-                            )}
-                            className="text-base"
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          {t(`${sExpense}.TitleField.description`)}
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="category"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t('categoryField.label')}</FormLabel>
-                        <CategorySelector
-                          categories={categories}
-                          defaultValue={
-                            form.watch(field.name) // may be overwritten externally
-                          }
-                          onValueChange={field.onChange}
-                          isLoading={isCategoryLoading}
-                        />
-                        <FormDescription>
-                          {t(`${sExpense}.categoryFieldDescription`)}
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="expenseDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {t(`${sExpense}.DateField.label`)}
-                        </FormLabel>
-                        <FormControl>
-                          <DatePicker
-                            value={field.value}
-                            onChange={field.onChange}
-                            onBlur={field.onBlur}
-                          />
-                        </FormControl>
-                        <FormDescription>
-                          {t(`${sExpense}.DateField.description`)}
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="recurrenceRule"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {t(`${sExpense}.recurrenceRule.label`)}
-                        </FormLabel>
-                        <Select
-                          items={[
-                            {
-                              value: 'NONE',
-                              label: t(`${sExpense}.recurrenceRule.none`),
-                            },
-                            {
-                              value: 'DAILY',
-                              label: t(`${sExpense}.recurrenceRule.daily`),
-                            },
-                            {
-                              value: 'WEEKLY',
-                              label: t(`${sExpense}.recurrenceRule.weekly`),
-                            },
-                            {
-                              value: 'MONTHLY',
-                              label: t(`${sExpense}.recurrenceRule.monthly`),
-                            },
-                          ]}
-                          onValueChange={(value) => {
-                            form.setValue(
-                              'recurrenceRule',
-                              value as RecurrenceRule,
-                            )
-                          }}
-                          value={getSelectedRecurrenceRule(field)}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="NONE" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="NONE">
-                              {t(`${sExpense}.recurrenceRule.none`)}
-                            </SelectItem>
-                            <SelectItem value="DAILY">
-                              {t(`${sExpense}.recurrenceRule.daily`)}
-                            </SelectItem>
-                            <SelectItem value="WEEKLY">
-                              {t(`${sExpense}.recurrenceRule.weekly`)}
-                            </SelectItem>
-                            <SelectItem value="MONTHLY">
-                              {t(`${sExpense}.recurrenceRule.monthly`)}
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormDescription>
-                          {t(`${sExpense}.recurrenceRule.description`)}
-                        </FormDescription>
-                        <FormMessage />
-                        {hasRecurringNonMemberConflict && (
-                          <p className="text-sm font-medium text-destructive">
-                            {t('decompositionBanner.recurringNonMemberError')}
-                          </p>
-                        )}
-                      </FormItem>
-                    )}
-                  />
-
-                  {conversionRequired ? (
-                    <FormField
-                      control={form.control}
-                      name="originalAmount"
-                      render={({
-                        field: { onChange, onBlur, ref, name, value },
-                      }) => (
-                        <FormItem>
-                          <FormLabel>
-                            {t('originalAmountField.label')}
-                          </FormLabel>
-                          <FormControl>
-                            <InputGroup>
-                              <InputGroupAddon align="inline-start">
-                                <InputGroupText className="font-medium text-foreground tabular-nums">
-                                  {getCurrencyDisplaySymbol(originalCurrency)}
-                                </InputGroupText>
-                              </InputGroupAddon>
-                              <CurrencyAmountInput
-                                ref={ref}
-                                name={name}
-                                onBlur={onBlur}
-                                currency={originalCurrency}
-                                locale={locale}
-                                value={value}
-                                onValueChange={onChange}
-                              />
-                              <InputGroupAddon align="inline-end">
-                                <CurrencySelector
-                                  variant="inline"
-                                  currencies={defaultCurrencyList(locale, '')}
-                                  defaultValue={watchedOriginalCurrency}
-                                  isLoading={false}
-                                  onValueChange={handleOriginalCurrencyChange}
-                                />
-                              </InputGroupAddon>
-                            </InputGroup>
-                          </FormControl>
-                          <FormDescription>
-                            {t('originalAmountField.description')}
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  ) : (
-                    <FormField
-                      control={form.control}
-                      name="amount"
-                      render={({
-                        field: { onChange, onBlur, ref, name, value },
-                      }) => (
-                        <FormItem>
-                          <FormLabel>{t('amountField.label')}</FormLabel>
-                          <FormControl>
-                            <InputGroup>
-                              <InputGroupAddon align="inline-start">
-                                <InputGroupText className="font-medium text-foreground tabular-nums">
-                                  {getCurrencyDisplaySymbol(originalCurrency)}
-                                </InputGroupText>
-                              </InputGroupAddon>
-                              <CurrencyAmountInput
-                                ref={ref}
-                                name={name}
-                                onBlur={onBlur}
-                                currency={originalCurrency}
-                                locale={locale}
-                                value={value}
-                                onValueChange={(v) => {
-                                  const income = Number(v) < 0
-                                  setIsIncome(income)
-                                  if (income)
-                                    form.setValue('isReimbursement', false)
-                                  onChange(v)
-                                }}
-                              />
-                              {group.currencyCode ? (
-                                <InputGroupAddon align="inline-end">
-                                  <CurrencySelector
-                                    variant="inline"
-                                    currencies={defaultCurrencyList(locale, '')}
-                                    defaultValue={watchedOriginalCurrency}
-                                    isLoading={false}
-                                    onValueChange={handleOriginalCurrencyChange}
-                                  />
-                                </InputGroupAddon>
-                              ) : (
-                                <InputGroupAddon align="inline-end">
-                                  <InputGroupText>
-                                    <CurrencyFlagName
-                                      currency={originalCurrency}
-                                    />
-                                  </InputGroupText>
-                                </InputGroupAddon>
-                              )}
-                            </InputGroup>
-                          </FormControl>
-                          <FormDescription>
-                            {t('amountField.description')}
-                          </FormDescription>
-                          {!group.currencyCode && (
-                            <FormDescription>
-                              {t('conversionUnavailable')}
-                            </FormDescription>
-                          )}
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  )}
-
-                  {conversionRequired && (
-                    <FormField
-                      control={form.control}
-                      name="amount"
-                      render={({
-                        field: { onChange, onBlur, ref, name, value },
-                      }) => (
-                        <FormItem>
-                          <FormLabel>{t('amountField.label')}</FormLabel>
-                          <FormControl>
-                            <InputGroup>
-                              <InputGroupAddon align="inline-start">
-                                <InputGroupText className="font-medium text-foreground tabular-nums">
-                                  {getCurrencyDisplaySymbol(groupCurrency)}
-                                </InputGroupText>
-                              </InputGroupAddon>
-                              <CurrencyAmountInput
-                                ref={ref}
-                                name={name}
-                                onBlur={onBlur}
-                                currency={groupCurrency}
-                                locale={locale}
-                                value={value}
-                                onValueChange={(v) => {
-                                  const income = Number(v) < 0
-                                  setIsIncome(income)
-                                  if (income)
-                                    form.setValue('isReimbursement', false)
-                                  onChange(v)
-                                }}
-                              />
-                              <InputGroupAddon align="inline-end">
-                                <InputGroupText>
-                                  <CurrencyFlagName currency={groupCurrency} />
-                                </InputGroupText>
-                              </InputGroupAddon>
-                            </InputGroup>
-                          </FormControl>
-                          <FormDescription>
-                            {t('amountField.convertedDescription')}
-                          </FormDescription>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  )}
-
-                  {conversionRequired && (
-                    <ExpenseConversionRateField
-                      control={form.control}
-                      originalCurrency={originalCurrency}
-                      groupCurrency={groupCurrency}
-                      exchangeRate={exchangeRate.data}
-                      usingCustomRate={usingCustomConversionRate}
-                      onUsingCustomRateChange={handleCustomConversionRateChange}
-                      onCustomRateChange={(value) => {
-                        savedCustomConversionRateRef.current =
-                          Number(value) || undefined
-                      }}
-                      isLoading={exchangeRate.isLoading}
-                      exchangeError={exchangeRate.error}
-                      onRefresh={() => exchangeRate.refresh()}
-                      className={cn(
-                        group.id === 'direct' &&
-                          !isMobileLayout &&
-                          'col-start-2',
-                      )}
-                    />
-                  )}
-                </ExpenseFormSectionContent>
-              </ExpenseFormSection>
-
-              <Separator />
-
               <Card className="gap-4 py-0 shadow-none ring-0">
-                <CardHeader className="px-0">
-                  <CardTitle>{t(`${sExpense}.paidByField.label`)}</CardTitle>
-                  <CardDescription>
-                    {t(`${sExpense}.paidByField.description`)}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="px-0">
-                  <FormField
-                    control={form.control}
-                    name="paidBy"
-                    render={({ field }) => (
-                      <FormItem className="space-y-0">
-                        <PayerSelector
-                          participants={group.participants.map(
-                            ({ id, name }) => ({
-                              id,
-                              name: name?.trim() || id,
-                            }),
-                          )}
-                          value={(field.value ?? []) as PayerEntry[]}
-                          onChange={field.onChange}
-                          expenseTotal={Number(form.watch('amount')) || 0}
-                          currency={groupCurrency}
-                          locale={locale}
-                          isReimbursement={form.watch('isReimbursement')}
-                          singlePayerOnly={
-                            singlePayerOnly || hasNonMembersInPaidFor
-                          }
-                          nonMemberSinglePayerNote={
-                            hasNonMembersInPaidFor
-                              ? t('decompositionBanner.singlePayerNote')
-                              : undefined
-                          }
-                        />
-                        <FormMessage />
+                <CardContent className="px-4 py-4">
+                  <ExpenseFormSection>
+                    <ExpenseFormSectionContent className={fieldsGridClass}>
+                      <FormField
+                        control={form.control}
+                        name="title"
+                        render={({ field }) => (
+                          <FormItem className="col-span-full">
+                            <FormLabel>
+                              {t(`${sExpense}.TitleField.label`)}
+                            </FormLabel>
+                            <FormControl>
+                              <ExpenseTitleInput
+                                groupId={group.id}
+                                value={field.value}
+                                onChange={(val) => {
+                                  field.onChange(val)
+                                }}
+                                onSuggestionSelected={(
+                                  suggestion: ExpenseTitleSuggestion,
+                                ) => {
+                                  form.setValue(
+                                    'category',
+                                    suggestion.categoryId,
+                                  )
+                                }}
+                                onBlur={async () => {
+                                  field.onBlur()
+
+                                  // 1. Try lookup from category mapping (has priority over AI)
+                                  try {
+                                    if (field.value.trim().length > 0) {
+                                      const { categoryId: mappedCategoryId } =
+                                        await utils.groups.expenses.lookupCategory.fetch(
+                                          {
+                                            groupId: group.id,
+                                            title: field.value,
+                                          },
+                                        )
+
+                                      if (mappedCategoryId !== null) {
+                                        form.setValue(
+                                          'category',
+                                          mappedCategoryId,
+                                        )
+                                        return
+                                      }
+                                    }
+                                  } catch {
+                                    // Silently fall through to existing behavior
+                                  }
+
+                                  // 2. Fallback to AI extraction (if enabled)
+                                  if (
+                                    runtimeFeatureFlags.enableCategoryExtract
+                                  ) {
+                                    setCategoryLoading(true)
+                                    const { categoryId } =
+                                      await extractCategoryFromTitle(
+                                        field.value,
+                                      )
+                                    form.setValue('category', categoryId)
+                                    setCategoryLoading(false)
+                                  }
+                                }}
+                                placeholder={t(
+                                  `${sExpense}.TitleField.placeholder`,
+                                )}
+                                className="text-base"
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              {t(`${sExpense}.TitleField.description`)}
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="category"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t('categoryField.label')}</FormLabel>
+                            <CategorySelector
+                              categories={categories}
+                              defaultValue={
+                                form.watch(field.name) // may be overwritten externally
+                              }
+                              onValueChange={field.onChange}
+                              isLoading={isCategoryLoading}
+                            />
+                            <FormDescription>
+                              {t(`${sExpense}.categoryFieldDescription`)}
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="expenseDate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {t(`${sExpense}.DateField.label`)}
+                            </FormLabel>
+                            <FormControl>
+                              <DatePicker
+                                value={field.value}
+                                onChange={field.onChange}
+                                onBlur={field.onBlur}
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              {t(`${sExpense}.DateField.description`)}
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="recurrenceRule"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>
+                              {t(`${sExpense}.recurrenceRule.label`)}
+                            </FormLabel>
+                            <Select
+                              items={[
+                                {
+                                  value: 'NONE',
+                                  label: t(`${sExpense}.recurrenceRule.none`),
+                                },
+                                {
+                                  value: 'DAILY',
+                                  label: t(`${sExpense}.recurrenceRule.daily`),
+                                },
+                                {
+                                  value: 'WEEKLY',
+                                  label: t(`${sExpense}.recurrenceRule.weekly`),
+                                },
+                                {
+                                  value: 'MONTHLY',
+                                  label: t(
+                                    `${sExpense}.recurrenceRule.monthly`,
+                                  ),
+                                },
+                              ]}
+                              onValueChange={(value) => {
+                                form.setValue(
+                                  'recurrenceRule',
+                                  value as RecurrenceRule,
+                                )
+                              }}
+                              value={getSelectedRecurrenceRule(field)}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="NONE" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="NONE">
+                                  {t(`${sExpense}.recurrenceRule.none`)}
+                                </SelectItem>
+                                <SelectItem value="DAILY">
+                                  {t(`${sExpense}.recurrenceRule.daily`)}
+                                </SelectItem>
+                                <SelectItem value="WEEKLY">
+                                  {t(`${sExpense}.recurrenceRule.weekly`)}
+                                </SelectItem>
+                                <SelectItem value="MONTHLY">
+                                  {t(`${sExpense}.recurrenceRule.monthly`)}
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormDescription>
+                              {t(`${sExpense}.recurrenceRule.description`)}
+                            </FormDescription>
+                            <FormMessage />
+                            {hasRecurringNonMemberConflict && (
+                              <p className="text-sm font-medium text-destructive">
+                                {t(
+                                  'decompositionBanner.recurringNonMemberError',
+                                )}
+                              </p>
+                            )}
+                          </FormItem>
+                        )}
+                      />
+
+                      {conversionRequired ? (
                         <FormField
                           control={form.control}
-                          name="saveDefaultPaidByOptions"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-row items-start gap-2 space-y-0 pt-1">
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value}
-                                  onCheckedChange={field.onChange}
-                                />
-                              </FormControl>
-                              <FormLabel className="font-normal">
-                                {t('PaidByField.saveAsDefault')}
+                          name="originalAmount"
+                          render={({
+                            field: { onChange, onBlur, ref, name, value },
+                          }) => (
+                            <FormItem>
+                              <FormLabel>
+                                {t('originalAmountField.label')}
                               </FormLabel>
+                              <FormControl>
+                                <InputGroup>
+                                  <InputGroupAddon align="inline-start">
+                                    <InputGroupText className="font-medium text-foreground tabular-nums">
+                                      {getCurrencyDisplaySymbol(
+                                        originalCurrency,
+                                      )}
+                                    </InputGroupText>
+                                  </InputGroupAddon>
+                                  <CurrencyAmountInput
+                                    ref={ref}
+                                    name={name}
+                                    onBlur={onBlur}
+                                    currency={originalCurrency}
+                                    locale={locale}
+                                    value={value}
+                                    onValueChange={onChange}
+                                  />
+                                  <InputGroupAddon align="inline-end">
+                                    <CurrencySelector
+                                      variant="inline"
+                                      currencies={defaultCurrencyList(
+                                        locale,
+                                        '',
+                                      )}
+                                      defaultValue={watchedOriginalCurrency}
+                                      isLoading={false}
+                                      onValueChange={
+                                        handleOriginalCurrencyChange
+                                      }
+                                    />
+                                  </InputGroupAddon>
+                                </InputGroup>
+                              </FormControl>
+                              <FormDescription>
+                                {t('originalAmountField.description')}
+                              </FormDescription>
+                              <FormMessage />
                             </FormItem>
                           )}
                         />
-                      </FormItem>
-                    )}
-                  />
+                      ) : (
+                        <FormField
+                          control={form.control}
+                          name="amount"
+                          render={({
+                            field: { onChange, onBlur, ref, name, value },
+                          }) => (
+                            <FormItem>
+                              <FormLabel>{t('amountField.label')}</FormLabel>
+                              <FormControl>
+                                <InputGroup>
+                                  <InputGroupAddon align="inline-start">
+                                    <InputGroupText className="font-medium text-foreground tabular-nums">
+                                      {getCurrencyDisplaySymbol(
+                                        originalCurrency,
+                                      )}
+                                    </InputGroupText>
+                                  </InputGroupAddon>
+                                  <CurrencyAmountInput
+                                    ref={ref}
+                                    name={name}
+                                    onBlur={onBlur}
+                                    currency={originalCurrency}
+                                    locale={locale}
+                                    value={value}
+                                    onValueChange={(v) => {
+                                      const income = Number(v) < 0
+                                      setIsIncome(income)
+                                      if (income)
+                                        form.setValue('isReimbursement', false)
+                                      onChange(v)
+                                    }}
+                                  />
+                                  {group.currencyCode ? (
+                                    <InputGroupAddon align="inline-end">
+                                      <CurrencySelector
+                                        variant="inline"
+                                        currencies={defaultCurrencyList(
+                                          locale,
+                                          '',
+                                        )}
+                                        defaultValue={watchedOriginalCurrency}
+                                        isLoading={false}
+                                        onValueChange={
+                                          handleOriginalCurrencyChange
+                                        }
+                                      />
+                                    </InputGroupAddon>
+                                  ) : (
+                                    <InputGroupAddon align="inline-end">
+                                      <InputGroupText>
+                                        <CurrencyFlagName
+                                          currency={originalCurrency}
+                                        />
+                                      </InputGroupText>
+                                    </InputGroupAddon>
+                                  )}
+                                </InputGroup>
+                              </FormControl>
+                              <FormDescription>
+                                {t('amountField.description')}
+                              </FormDescription>
+                              {!group.currencyCode && (
+                                <FormDescription>
+                                  {t('conversionUnavailable')}
+                                </FormDescription>
+                              )}
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
+
+                      {conversionRequired && (
+                        <FormField
+                          control={form.control}
+                          name="amount"
+                          render={({
+                            field: { onChange, onBlur, ref, name, value },
+                          }) => (
+                            <FormItem>
+                              <FormLabel>{t('amountField.label')}</FormLabel>
+                              <FormControl>
+                                <InputGroup>
+                                  <InputGroupAddon align="inline-start">
+                                    <InputGroupText className="font-medium text-foreground tabular-nums">
+                                      {getCurrencyDisplaySymbol(groupCurrency)}
+                                    </InputGroupText>
+                                  </InputGroupAddon>
+                                  <CurrencyAmountInput
+                                    ref={ref}
+                                    name={name}
+                                    onBlur={onBlur}
+                                    currency={groupCurrency}
+                                    locale={locale}
+                                    value={value}
+                                    onValueChange={(v) => {
+                                      const income = Number(v) < 0
+                                      setIsIncome(income)
+                                      if (income)
+                                        form.setValue('isReimbursement', false)
+                                      onChange(v)
+                                    }}
+                                  />
+                                  <InputGroupAddon align="inline-end">
+                                    <InputGroupText>
+                                      <CurrencyFlagName
+                                        currency={groupCurrency}
+                                      />
+                                    </InputGroupText>
+                                  </InputGroupAddon>
+                                </InputGroup>
+                              </FormControl>
+                              <FormDescription>
+                                {t('amountField.convertedDescription')}
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
+
+                      {conversionRequired && (
+                        <ExpenseConversionRateField
+                          control={form.control}
+                          originalCurrency={originalCurrency}
+                          groupCurrency={groupCurrency}
+                          exchangeRate={exchangeRate.data}
+                          usingCustomRate={usingCustomConversionRate}
+                          onUsingCustomRateChange={
+                            handleCustomConversionRateChange
+                          }
+                          onCustomRateChange={(value) => {
+                            savedCustomConversionRateRef.current =
+                              Number(value) || undefined
+                          }}
+                          isLoading={exchangeRate.isLoading}
+                          exchangeError={exchangeRate.error}
+                          onRefresh={() => exchangeRate.refresh()}
+                          className={cn(
+                            group.id === 'direct' &&
+                              !isMobileLayout &&
+                              'col-start-2',
+                          )}
+                        />
+                      )}
+                    </ExpenseFormSectionContent>
+                  </ExpenseFormSection>
                 </CardContent>
               </Card>
 
-              <Separator />
-
-              <Card className="gap-4 py-0 shadow-none ring-0">
-                <CardHeader className="px-0">
-                  <CardTitle className="flex items-center justify-between gap-2">
-                    <span>{t(`${sExpense}.paidFor.title`)}</span>
+              <ExpenseFormCardCollapsible
+                title={t(`${sExpense}.paidFor.title`)}
+                description={
+                  itemsAuthoritative
+                    ? t('itemized.authoritativeNote')
+                    : t(`${sExpense}.paidFor.description`)
+                }
+                open={splitExpanded}
+                onOpenChange={requestOpenSplit}
+                disabled={itemsAuthoritative}
+                headerAction={
+                  itemsAuthoritative ? (
                     <Button
-                      variant="link"
                       type="button"
-                      className="-my-2 focus-visible:ring-inset"
+                      variant="ghost"
+                      size="sm"
+                      className="shrink-0"
                       onClick={() => {
-                        const currentPaidFor = form.getValues().paidFor
-                        const newPaidFor = allParticipantsSelected
-                          ? []
-                          : group.participants.map((p) => ({
-                              participant: p.id,
-                              shares:
-                                currentPaidFor.find(
-                                  (pfor) => pfor.participant === p.id,
-                                )?.shares ?? 1,
-                            }))
-                        const paidForToSet = (() => {
-                          if (allParticipantsSelected) return newPaidFor
-                          const currentSplitMode = form.getValues('splitMode')
-                          if (currentSplitMode === 'BY_PERCENTAGE') {
-                            return withEqualPercentageSplit(newPaidFor)
-                          }
-                          if (currentSplitMode === 'BY_AMOUNT') {
-                            return withEqualAmountSplit(
-                              newPaidFor,
-                              Number(form.getValues('amount')) || 0,
-                              groupCurrency.decimal_digits,
-                            )
-                          }
-                          return newPaidFor
-                        })()
-
-                        if (
-                          !allParticipantsSelected &&
-                          (form.getValues('splitMode') === 'BY_PERCENTAGE' ||
-                            form.getValues('splitMode') === 'BY_AMOUNT')
-                        ) {
-                          setManuallyEditedParticipants(new Set())
-                        }
-
-                        form.setValue('paidFor', paidForToSet, {
-                          shouldDirty: true,
-                          shouldTouch: true,
-                          shouldValidate: true,
-                        })
+                        setOpenSplitAfterLeave(true)
+                        setShowLeaveItemizedDialog(true)
                       }}
                     >
-                      {allParticipantsSelected ? (
-                        <>{t('selectNone')}</>
-                      ) : (
-                        <>{t('selectAll')}</>
-                      )}
+                      {t('itemized.leaveAction')}
                     </Button>
-                  </CardTitle>
-                  <CardDescription>
-                    {t(`${sExpense}.paidFor.description`)}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="px-0">
-                  <FormField
-                    control={form.control}
-                    name="splitMode"
-                    render={({ field: splitModeField }) => (
+                  ) : undefined
+                }
+              >
+                <FormField
+                  control={form.control}
+                  name="splitMode"
+                  render={({ field: splitModeField }) =>
+                    itemsAuthoritative ? (
+                      <></>
+                    ) : (
                       <FormItem className="space-y-3">
                         <SplitModeSelector
                           value={splitModeField.value as SplitModeValue}
@@ -1867,6 +2258,21 @@ export function ExpenseForm({
                                 },
                               )
                               setManuallyEditedParticipants(new Set())
+                            }
+
+                            if (splitMode === 'BY_SHARES') {
+                              const paidFor = form.getValues('paidFor') ?? []
+                              form.setValue(
+                                'paidFor',
+                                paidFor.map((entry) => ({
+                                  ...entry,
+                                  shares: 1,
+                                })),
+                                {
+                                  shouldDirty: true,
+                                  shouldTouch: true,
+                                },
+                              )
                             }
 
                             if (splitMode === 'BY_AMOUNT') {
@@ -1898,6 +2304,26 @@ export function ExpenseForm({
                             name="paidFor"
                             render={() => (
                               <FormItem className="space-y-0">
+                                <div className="mb-1 flex items-center justify-end gap-3">
+                                  <Button
+                                    variant="link"
+                                    type="button"
+                                    className="h-auto p-0"
+                                    onClick={resetSplitWeights}
+                                  >
+                                    {t('resetSplit')}
+                                  </Button>
+                                  <Button
+                                    variant="link"
+                                    type="button"
+                                    className="h-auto p-0"
+                                    onClick={toggleAllParticipants}
+                                  >
+                                    {allParticipantsSelected
+                                      ? t('selectNone')
+                                      : t('selectAll')}
+                                  </Button>
+                                </div>
                                 {group.participants.map(({ id, name }) => (
                                   <FormField
                                     key={id}
@@ -1962,8 +2388,10 @@ export function ExpenseForm({
                                                 }}
                                               />
                                             </FormControl>
-                                            <FormLabel className="text-sm font-normal flex-1">
-                                              {name}
+                                            <FormLabel className="flex min-w-0 flex-1 flex-col items-start gap-0 text-sm font-normal">
+                                              <span className="w-full min-w-0 truncate">
+                                                {name}
+                                              </span>
                                               {field.value?.some(
                                                 ({ participant }) =>
                                                   participant === id,
@@ -1971,7 +2399,7 @@ export function ExpenseForm({
                                                 !form.watch(
                                                   'isReimbursement',
                                                 ) && (
-                                                  <span className="text-muted-foreground ml-2">
+                                                  <span className="text-muted-foreground">
                                                     (
                                                     {formatCurrency(
                                                       groupCurrency,
@@ -2154,75 +2582,153 @@ export function ExpenseForm({
                                                   }}
                                                 />
                                               )}
+                                            {form.getValues().splitMode ===
+                                              'BY_SHARES' && (
+                                              <ShareStepper
+                                                disabled={
+                                                  !field.value?.some(
+                                                    ({ participant }) =>
+                                                      participant === id,
+                                                  )
+                                                }
+                                                decreaseLabel={t(
+                                                  'decreaseShares',
+                                                )}
+                                                increaseLabel={t(
+                                                  'increaseShares',
+                                                )}
+                                                value={String(
+                                                  field.value?.find(
+                                                    ({ participant }) =>
+                                                      participant === id,
+                                                  )?.shares ?? 0,
+                                                )}
+                                                onValueChange={(nextValue) => {
+                                                  field.onChange(
+                                                    field.value.map((entry) =>
+                                                      entry.participant === id
+                                                        ? {
+                                                            participant: id,
+                                                            shares: nextValue,
+                                                          }
+                                                        : entry,
+                                                    ),
+                                                  )
+                                                }}
+                                              />
+                                            )}
                                             {form.getValues().splitMode !==
-                                              'EVENLY' && (
-                                              <FormField
-                                                name={`paidFor[${field.value.findIndex(
-                                                  ({ participant }) =>
-                                                    participant === id,
-                                                )}].shares`}
-                                                render={() => {
-                                                  const splitMode =
-                                                    form.getValues().splitMode
-                                                  const isParticipantSelected =
-                                                    field.value?.some(
-                                                      ({ participant }) =>
-                                                        participant === id,
-                                                    )
+                                              'EVENLY' &&
+                                              form.getValues().splitMode !==
+                                                'BY_SHARES' && (
+                                                <FormField
+                                                  name={`paidFor[${field.value.findIndex(
+                                                    ({ participant }) =>
+                                                      participant === id,
+                                                  )}].shares`}
+                                                  render={() => {
+                                                    const splitMode =
+                                                      form.getValues().splitMode
+                                                    const isParticipantSelected =
+                                                      field.value?.some(
+                                                        ({ participant }) =>
+                                                          participant === id,
+                                                      )
 
-                                                  return (
-                                                    <div>
-                                                      <FormControl>
-                                                        <ParticipantShareInput
-                                                          key={String(
-                                                            !isParticipantSelected,
-                                                          )}
-                                                          className={cn(
-                                                            shareInputGroupClass,
-                                                            splitMode ===
-                                                              'BY_SHARES' &&
-                                                              'w-[6.5rem]',
-                                                          )}
-                                                          disabled={
-                                                            !isParticipantSelected
-                                                          }
-                                                          splitMode={splitMode}
-                                                          groupCurrency={
-                                                            groupCurrency
-                                                          }
-                                                          locale={locale}
-                                                          sharesLabel={t(
-                                                            'shares',
-                                                          )}
-                                                          value={String(
-                                                            field.value?.find(
-                                                              ({
-                                                                participant,
-                                                              }) =>
-                                                                participant ===
-                                                                id,
-                                                            )?.shares ?? '',
-                                                          )}
-                                                          onValueChange={(
-                                                            nextValue,
-                                                          ) => {
-                                                            const editedParticipantIds =
-                                                              new Set(
-                                                                manuallyEditedParticipants,
-                                                              )
-                                                            editedParticipantIds.add(
-                                                              id,
-                                                            )
-
-                                                            if (
+                                                    return (
+                                                      <div>
+                                                        <FormControl>
+                                                          <ParticipantShareInput
+                                                            key={String(
+                                                              !isParticipantSelected,
+                                                            )}
+                                                            className={cn(
+                                                              shareInputGroupClass,
                                                               splitMode ===
-                                                              'BY_PERCENTAGE'
-                                                            ) {
-                                                              const percentage =
-                                                                Number(
-                                                                  nextValue,
+                                                                'BY_SHARES' &&
+                                                                'w-[6.5rem]',
+                                                            )}
+                                                            disabled={
+                                                              !isParticipantSelected
+                                                            }
+                                                            splitMode={
+                                                              splitMode
+                                                            }
+                                                            groupCurrency={
+                                                              groupCurrency
+                                                            }
+                                                            locale={locale}
+                                                            value={String(
+                                                              field.value?.find(
+                                                                ({
+                                                                  participant,
+                                                                }) =>
+                                                                  participant ===
+                                                                  id,
+                                                              )?.shares ?? '',
+                                                            )}
+                                                            onValueChange={(
+                                                              nextValue,
+                                                            ) => {
+                                                              const editedParticipantIds =
+                                                                new Set(
+                                                                  manuallyEditedParticipants,
                                                                 )
-                                                              let newPaidFor =
+                                                              editedParticipantIds.add(
+                                                                id,
+                                                              )
+
+                                                              if (
+                                                                splitMode ===
+                                                                'BY_PERCENTAGE'
+                                                              ) {
+                                                                const percentage =
+                                                                  Number(
+                                                                    nextValue,
+                                                                  )
+                                                                let newPaidFor =
+                                                                  field.value.map(
+                                                                    (p) =>
+                                                                      p.participant ===
+                                                                      id
+                                                                        ? {
+                                                                            participant:
+                                                                              id,
+                                                                            shares:
+                                                                              percentage,
+                                                                          }
+                                                                        : p,
+                                                                  )
+
+                                                                if (
+                                                                  !Number.isNaN(
+                                                                    percentage,
+                                                                  )
+                                                                ) {
+                                                                  newPaidFor =
+                                                                    balancePaidForPercentages(
+                                                                      newPaidFor,
+                                                                      editedParticipantIds,
+                                                                    )
+                                                                }
+
+                                                                field.onChange(
+                                                                  newPaidFor,
+                                                                )
+                                                                setManuallyEditedParticipants(
+                                                                  editedParticipantIds,
+                                                                )
+                                                                return
+                                                              }
+
+                                                              const shareValue =
+                                                                splitMode ===
+                                                                'BY_AMOUNT'
+                                                                  ? enforceCurrencyPattern(
+                                                                      nextValue,
+                                                                    )
+                                                                  : nextValue
+                                                              field.onChange(
                                                                 field.value.map(
                                                                   (p) =>
                                                                     p.participant ===
@@ -2231,65 +2737,23 @@ export function ExpenseForm({
                                                                           participant:
                                                                             id,
                                                                           shares:
-                                                                            percentage,
+                                                                            shareValue,
                                                                         }
                                                                       : p,
-                                                                )
-
-                                                              if (
-                                                                !Number.isNaN(
-                                                                  percentage,
-                                                                )
-                                                              ) {
-                                                                newPaidFor =
-                                                                  balancePaidForPercentages(
-                                                                    newPaidFor,
-                                                                    editedParticipantIds,
-                                                                  )
-                                                              }
-
-                                                              field.onChange(
-                                                                newPaidFor,
+                                                                ),
                                                               )
                                                               setManuallyEditedParticipants(
                                                                 editedParticipantIds,
                                                               )
-                                                              return
-                                                            }
-
-                                                            const shareValue =
-                                                              splitMode ===
-                                                              'BY_AMOUNT'
-                                                                ? enforceCurrencyPattern(
-                                                                    nextValue,
-                                                                  )
-                                                                : nextValue
-                                                            field.onChange(
-                                                              field.value.map(
-                                                                (p) =>
-                                                                  p.participant ===
-                                                                  id
-                                                                    ? {
-                                                                        participant:
-                                                                          id,
-                                                                        shares:
-                                                                          shareValue,
-                                                                      }
-                                                                    : p,
-                                                              ),
-                                                            )
-                                                            setManuallyEditedParticipants(
-                                                              editedParticipantIds,
-                                                            )
-                                                          }}
-                                                        />
-                                                      </FormControl>
-                                                      <FormMessage className="float-right" />
-                                                    </div>
-                                                  )
-                                                }}
-                                              />
-                                            )}
+                                                            }}
+                                                          />
+                                                        </FormControl>
+                                                        <FormMessage className="float-right" />
+                                                      </div>
+                                                    )
+                                                  }}
+                                                />
+                                              )}
                                           </div>
                                         </div>
                                       )
@@ -2357,9 +2821,11 @@ export function ExpenseForm({
                                                   }}
                                                 />
                                               </FormControl>
-                                              <FormLabel className="text-sm font-normal flex-1">
-                                                {pf.user?.name ??
-                                                  'Unknown user'}
+                                              <FormLabel className="flex min-w-0 flex-1 flex-col items-start gap-0 text-sm font-normal">
+                                                <span className="w-full min-w-0 truncate">
+                                                  {pf.user?.name ??
+                                                    'Unknown user'}
+                                                </span>
                                                 {field.value?.some(
                                                   ({ participant }) =>
                                                     participant === pf.userId,
@@ -2367,7 +2833,7 @@ export function ExpenseForm({
                                                   !form.watch(
                                                     'isReimbursement',
                                                   ) && (
-                                                    <span className="text-muted-foreground ml-2">
+                                                    <span className="text-muted-foreground">
                                                       (
                                                       {formatCurrency(
                                                         groupCurrency,
@@ -2437,6 +2903,24 @@ export function ExpenseForm({
                                       />
                                     ))}
 
+                                <SplitAllocationSummary
+                                  splitMode={form.getValues('splitMode')}
+                                  paidFor={form.getValues('paidFor') ?? []}
+                                  amount={Number(form.getValues('amount')) || 0}
+                                  currency={groupCurrency}
+                                  locale={locale}
+                                  evenlyLabel={(amount, count) =>
+                                    t('evenlySplit', { amount, count })
+                                  }
+                                  totalWeightLabel={(count) =>
+                                    t('totalWeight', { count })
+                                  }
+                                  matchesPercentLabel={t('matchesPercent')}
+                                  matchesAmountLabel={(amount) =>
+                                    t('matchesAmount', { amount })
+                                  }
+                                />
+
                                 <FormMessage />
                               </FormItem>
                             )}
@@ -2460,12 +2944,107 @@ export function ExpenseForm({
                           )}
                         />
                       </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
+                    )
+                  }
+                />
+              </ExpenseFormCardCollapsible>
 
-              <Separator />
+              {itemizedAvailable && (
+                <>
+                  <ExpenseFormCardCollapsible
+                    title={t('itemized.sectionTitle')}
+                    description={
+                      showItemsSection
+                        ? itemsAuthoritative
+                          ? t('itemized.authoritativeNote')
+                          : t('itemized.documentationNote')
+                        : t('itemized.sectionDescription')
+                    }
+                    open={itemsExpanded}
+                    onOpenChange={requestOpenItems}
+                  >
+                    {!showItemsSection ? (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleAddItemsSection}
+                      >
+                        {t('itemized.addItemsAction')}
+                      </Button>
+                    ) : (
+                      <ItemizedExpenseEditor
+                        participants={itemizedParticipants}
+                        entryCurrency={
+                          conversionRequired ? originalCurrency : groupCurrency
+                        }
+                        locale={locale}
+                        authoritative={itemsAuthoritative}
+                        entryTotalField={
+                          conversionRequired ? 'originalAmount' : 'amount'
+                        }
+                        onRequestAuthoritativeEdit={requestAuthoritativeEdit}
+                      />
+                    )}
+                  </ExpenseFormCardCollapsible>
+                </>
+              )}
+
+              <ExpenseFormCardCollapsible
+                title={t(`${sExpense}.paidByField.label`)}
+                description={t(`${sExpense}.paidByField.description`)}
+                open={paidByOpen}
+                onOpenChange={setPaidByOpen}
+              >
+                <FormField
+                  control={form.control}
+                  name="paidBy"
+                  render={({ field }) => (
+                    <FormItem className="space-y-0">
+                      <PayerSelector
+                        participants={group.participants.map(
+                          ({ id, name }) => ({
+                            id,
+                            name: name?.trim() || id,
+                          }),
+                        )}
+                        value={(field.value ?? []) as PayerEntry[]}
+                        onChange={field.onChange}
+                        expenseTotal={Number(form.watch('amount')) || 0}
+                        currency={groupCurrency}
+                        locale={locale}
+                        isReimbursement={form.watch('isReimbursement')}
+                        singlePayerOnly={
+                          singlePayerOnly || hasNonMembersInPaidFor
+                        }
+                        nonMemberSinglePayerNote={
+                          hasNonMembersInPaidFor
+                            ? t('decompositionBanner.singlePayerNote')
+                            : undefined
+                        }
+                      />
+                      <FormMessage />
+                      <FormField
+                        control={form.control}
+                        name="saveDefaultPaidByOptions"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-start gap-2 space-y-0 pt-1">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              {t('PaidByField.saveAsDefault')}
+                            </FormLabel>
+                          </FormItem>
+                        )}
+                      />
+                    </FormItem>
+                  )}
+                />
+              </ExpenseFormCardCollapsible>
 
               <ExpenseFormSection>
                 <div className="flex flex-col gap-2">
@@ -2568,6 +3147,70 @@ export function ExpenseForm({
         cancelLabel="Stay"
         confirmLabel="Leave"
       />
+
+      {/* "Switch to itemised?" — shown when a split-affecting edit would turn
+          documentation items into the authoritative split (Requirement 12.2). */}
+      <AlertDialog
+        open={pendingSwitchApply !== null}
+        onOpenChange={(open) => {
+          if (!open) cancelSwitchToItemized()
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t('itemized.switchDialog.title')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('itemized.switchDialog.description')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={cancelSwitchToItemized}>
+              {t('itemized.switchDialog.cancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmSwitchToItemized}>
+              {t('itemized.switchDialog.confirm')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* "Leave itemised" — restore a legacy split, keep items as documentation
+          (Requirement 13). */}
+      <AlertDialog
+        open={showLeaveItemizedDialog}
+        onOpenChange={(open) => {
+          if (!open) {
+            setShowLeaveItemizedDialog(false)
+            setOpenSplitAfterLeave(false)
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t('itemized.leaveDialog.title')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('itemized.leaveDialog.description')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={() => {
+                setShowLeaveItemizedDialog(false)
+                setOpenSplitAfterLeave(false)
+              }}
+            >
+              {t('itemized.leaveDialog.cancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmLeaveItemized}>
+              {t('itemized.leaveDialog.confirm')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Form>
   )
 }

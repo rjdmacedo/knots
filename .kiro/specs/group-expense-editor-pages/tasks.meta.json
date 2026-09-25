@@ -1,0 +1,343 @@
+{
+  "pbtResults": {},
+  "executionHistory": {
+    "1.1 Create route path builders and Editor mode/return-path helpers": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328659981
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328667975
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329107750
+      }
+    ],
+    "1.5 Create the transient prefill store": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328660031
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328670927
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329108933
+      }
+    ],
+    "2.1 Add pure payment-mode and participant-derivation helpers": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328660083
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328671096
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329109739
+      }
+    ],
+    "3. Checkpoint - pure helpers": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328660135
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329119707
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329371900
+      }
+    ],
+    "4.1 Implement the Outside_Participant_Control": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328660189
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329120538
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329372937
+      }
+    ],
+    "4.2 Implement the ExpenseEditor component": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328660239
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329389104
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329629838
+      }
+    ],
+    "4.3 Wire Editor save/delete/decomposition and return navigation": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328660308
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329633338
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329770639
+      }
+    ],
+    "5.1 Create the New_Page beside the dynamic expense route": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328660357
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329774841
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329897494
+      }
+    ],
+    "5.2 Create the Edit_Page under the expense route": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328660432
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329775787
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329898323
+      }
+    ],
+    "6. Checkpoint - Editor renders on both pages": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328660483
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329904356
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790330063099
+      }
+    ],
+    "7.1 Convert the group open helpers to navigation": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328660536
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329904624
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790330177914
+      }
+    ],
+    "7.2 Repoint expense-detail and expense-card entries": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328660578
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790330181569
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790330368788
+      }
+    ],
+    "7.3 Repoint create-from-receipt and update its preservation test": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328660617
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790330182803
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790330369698
+      }
+    ],
+    "7.4 Repoint reimbursement-list entry": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328660672
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790330183662
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790330370724
+      }
+    ],
+    "8.1 Drop group event listeners and route the FAB": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328660729
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790330375181
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790330540006
+      }
+    ],
+    "9.1 Verify Edit_Page load and CRUD parity via integration tests": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328660784
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790330547125
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790331461310
+      }
+    ],
+    "9.2 Checkpoint": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790328660848
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790331461477
+      },
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790331777099
+      }
+    ],
+    "1. Add pure navigation and prefill helpers": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329109022
+      }
+    ],
+    "2. Extract Editor logic helpers (payment mode + participants)": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329109824
+      }
+    ],
+    "4. Build the shared ExpenseEditor": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329770739
+      }
+    ],
+    "5. Create the New_Page and Edit_Page route shells": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790329898431
+      }
+    ],
+    "7. Repoint group entries from dialog events to navigation": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790330370837
+      }
+    ],
+    "8. Trim FloatingCreateExpense to friend-only and route the FAB": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790330540056
+      }
+    ],
+    "9. Final checkpoint - integration and full verification": [
+      {
+        "executionId": "caafb372-1f49-4744-a0a2-e003609ab266",
+        "chatSessionId": "sess_ce1d9fb4-287f-4309-9d19-e8849ee26f06",
+        "timestamp": 1790331777223
+      }
+    ]
+  }
+}

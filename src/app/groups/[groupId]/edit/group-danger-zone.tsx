@@ -18,12 +18,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { toast } from '@/components/ui/toast'
 import { trpc } from '@/trpc/client'
 import { Archive, ArchiveRestore, Loader2, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { toast } from 'sonner'
 
 export function GroupDangerZone({
   groupId,

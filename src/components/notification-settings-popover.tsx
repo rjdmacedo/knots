@@ -4,6 +4,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
+import { toast } from '@/components/ui/toast'
 import { type PushSubscriptionPreferences } from '@/lib/push/subscription-filters'
 import {
   isPushSupported,
@@ -14,7 +15,6 @@ import { trpc } from '@/trpc/client'
 import { AlertCircle, Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useId, useMemo, useState } from 'react'
-import { toast } from 'sonner'
 import { useSpinDelay } from 'spin-delay'
 
 // ---------------------------------------------------------------------------

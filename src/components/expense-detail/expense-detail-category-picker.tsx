@@ -8,6 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import { toast } from '@/components/ui/toast'
 import { useMediaQuery } from '@/lib/hooks'
 import { invalidateActivityQueries } from '@/lib/invalidate-activity-queries'
 import { cn } from '@/lib/utils'
@@ -17,7 +18,6 @@ import { useIsClient } from 'foxact/use-is-client'
 import { Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import { toast } from 'sonner'
 
 type Props = {
   expenseId: string

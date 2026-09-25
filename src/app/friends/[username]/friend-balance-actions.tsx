@@ -14,13 +14,13 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import { toast } from '@/components/ui/toast'
 import type { Currency } from '@/lib/currency'
 import type { CurrencyBalance, FriendSettlement } from '@/lib/friend-balances'
 import { trpc } from '@/trpc/client'
 import { Banknote, Layers, Loader2, Mail } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useMemo, useState } from 'react'
-import { toast } from 'sonner'
 
 type Props = {
   friendId: string

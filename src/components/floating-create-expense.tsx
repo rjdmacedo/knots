@@ -24,9 +24,12 @@ import {
   EmptyMedia,
 } from '@/components/ui/empty'
 import { Label } from '@/components/ui/label'
+import { toast } from '@/components/ui/toast'
 import { Locale } from '@/i18n'
 import { getCurrency } from '@/lib/currency'
 import { parseExpenseCreateContext } from '@/lib/expense-create-context'
+import { resolveAddExpenseTarget } from '@/lib/expense-editor-navigation'
+import { stashStandaloneExpenseCreate } from '@/lib/expense-prefill-store'
 import { RuntimeFeatureFlags } from '@/lib/featureFlags'
 import { FriendListItem } from '@/lib/friends'
 import {
@@ -40,12 +43,11 @@ import { ExpenseFormValues } from '@/lib/schemas'
 import { formatCurrency, getCurrencyFromGroup } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { useIsClient } from 'foxact/use-is-client'
-import { Plus, Users } from 'lucide-react'
+import { ExternalLink, Plus, Users } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useLocale, useTranslations } from 'next-intl'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { toast } from 'sonner'
 
 type FloatingCreateExpenseProps = {
   runtimeFeatureFlags?: RuntimeFeatureFlags
@@ -111,6 +113,7 @@ export function FloatingCreateExpense({
   const tDecomp = useTranslations('ExpenseForm.decompositionBanner')
   const locale = useLocale() as Locale
   const pathname = usePathname()
+  const router = useRouter()
   const isClient = useIsClient()
   const isDesktop = useMediaQuery('(min-width: 768px)')
   const utils = trpc.useUtils()
@@ -184,25 +187,6 @@ export function FloatingCreateExpense({
   )
 
   useEffect(() => {
-    const handleCreateGroupExpense = (e: Event) => {
-      const customEvent = e as CustomEvent<{
-        groupId: string
-        groupName: string
-        prefill?: ExpenseFormCreatePrefill
-      }>
-      const { groupId, groupName, prefill } = customEvent.detail
-
-      setEditingExpenseId(null)
-      setEditingGroupId(null)
-      setEditingExpense(null)
-      setSelectedFriends([])
-      setSelectedGroup({ id: groupId, name: groupName })
-      setCreatePrefill(prefill ?? null)
-      setFormInstanceKey((key) => key + 1)
-      setPickerOpen(false)
-      setOpen(true)
-    }
-
     const handleCreateDirectExpense = async (e: Event) => {
       const customEvent = e as CustomEvent<{
         friendId: string
@@ -210,60 +194,21 @@ export function FloatingCreateExpense({
       }>
       const { friendId, prefill } = customEvent.detail
 
-      setEditingExpenseId(null)
-      setEditingGroupId(null)
-      setEditingExpense(null)
-      setSelectedGroup(null)
-      setCreatePrefill(prefill ?? null)
-      setFormInstanceKey((key) => key + 1)
-      setPickerOpen(false)
-
-      // Resolve the friend from the cached list or fetch by ID
-      const cachedFriend = friends.find((f) => f.id === friendId)
-      if (cachedFriend) {
-        setSelectedFriends([cachedFriend])
-      } else {
-        try {
-          const friend = await utils.friends.getFriend.fetch({ friendId })
-          setSelectedFriends([
-            {
-              id: friend.id,
-              email: friend.email,
-              name: friend.name,
-              friendUserId: friend.friendUserId,
-              friendUsername: null,
-              hasAccount: friend.isConnected,
-              status: friend.isConnected ? 'connected' : 'pending',
-            },
-          ])
-        } catch {
-          // Friend not found — open without selection (user can pick manually)
-          setSelectedFriends([])
-        }
-      }
-
-      setOpen(true)
+      stashStandaloneExpenseCreate({ friendId, prefill })
+      router.push(resolveAddExpenseTarget(pathname).path)
     }
 
-    window.addEventListener(
-      'create-group-expense',
-      handleCreateGroupExpense as EventListener,
-    )
     window.addEventListener(
       'create-direct-expense',
       handleCreateDirectExpense as EventListener,
     )
     return () => {
       window.removeEventListener(
-        'create-group-expense',
-        handleCreateGroupExpense as EventListener,
-      )
-      window.removeEventListener(
         'create-direct-expense',
         handleCreateDirectExpense as EventListener,
       )
     }
-  }, [friends, utils])
+  }, [pathname, router])
 
   // Derive unique participants list for virtual group
   const participants = useMemo(() => {
@@ -399,105 +344,13 @@ export function FloatingCreateExpense({
     }
   }, [utils, clearExpenseFormState, resetForm, t])
 
-  useEffect(() => {
-    const handleEditGroupEvent = async (e: Event) => {
-      const customEvent = e as CustomEvent<{
-        groupId: string
-        expenseId: string
-      }>
-      const { groupId, expenseId } = customEvent.detail
-
-      try {
-        clearExpenseFormState()
-        setOpen(true)
-        setEditingExpenseId(expenseId)
-        setEditingGroupId(groupId)
-        setFormInstanceKey((key) => key + 1)
-
-        const [groupData, expenseData] = await Promise.all([
-          utils.groups.get.fetch({ groupId }),
-          utils.groups.expenses.get.fetch({ groupId, expenseId }),
-        ])
-
-        if (groupData?.group && expenseData?.expense) {
-          if (isConsolidatedPayment(expenseData.expense)) {
-            toast.error(t('lockedPaymentToast'))
-            resetForm()
-            return
-          }
-          setSelectedGroup({ id: groupId, name: groupData.group.name })
-          setEditingExpense(expenseData.expense)
-        }
-      } catch (err) {
-        console.error('Failed to fetch group expense for editing:', err)
-        toast.error('Failed to load expense details')
-        resetForm()
-      }
-    }
-
-    window.addEventListener('edit-group-expense', handleEditGroupEvent as any)
-    return () => {
-      window.removeEventListener(
-        'edit-group-expense',
-        handleEditGroupEvent as any,
-      )
-    }
-  }, [utils, clearExpenseFormState, resetForm, t])
-
-  const openForCreate = useCallback(async () => {
-    clearExpenseFormState()
-    setFormInstanceKey((key) => key + 1)
-
+  const openForCreate = useCallback(() => {
     const context = parseExpenseCreateContext(pathname)
-
-    if (context?.type === 'group') {
-      const cachedGroup = userGroups.find(
-        (group) => group.id === context.groupId,
-      )
-      if (cachedGroup) {
-        setSelectedGroup({ id: cachedGroup.id, name: cachedGroup.name })
-      } else {
-        try {
-          const data = await utils.groups.get.fetch({
-            groupId: context.groupId,
-          })
-          if (data?.group) {
-            setSelectedGroup({ id: data.group.id, name: data.group.name })
-          }
-        } catch {
-          // User may not have access — leave unselected.
-        }
-      }
-    } else if (context?.type === 'friend') {
-      const cachedFriend = friends.find(
-        (friend) => friend.friendUsername === context.username,
-      )
-      if (cachedFriend) {
-        setSelectedFriends([cachedFriend])
-      } else {
-        try {
-          const friend = await utils.friends.getFriendByUsername.fetch({
-            username: context.username,
-          })
-          setSelectedFriends([
-            {
-              id: friend.id,
-              email: friend.email,
-              name: friend.name,
-              friendUserId: friend.friendUserId,
-              friendUsername: context.username,
-              hasAccount: friend.isConnected,
-              status: friend.isConnected ? 'connected' : 'pending',
-            },
-          ])
-        } catch {
-          // Friend not found — leave unselected.
-        }
-      }
+    if (context?.type === 'friend') {
+      stashStandaloneExpenseCreate({ friendUsername: context.username })
     }
-
-    setOpen(true)
-  }, [clearExpenseFormState, friends, pathname, userGroups, utils])
+    router.push(resolveAddExpenseTarget(pathname).path)
+  }, [pathname, router])
 
   const showDecompositionToast = ({
     groupHalfAmount,
@@ -521,15 +374,21 @@ export function FloatingCreateExpense({
         }),
       ),
     ]
-    toast(tDecomp('postSaveTitle'), {
+    const alreadyOnExpensePage = pathname === expenseDetailUrl
+    const toastId = toast.add({
+      title: tDecomp('postSaveTitle'),
       description: lines.join('\n'),
-      duration: Infinity,
-      action: {
-        label: t('viewGroupExpense'),
-        onClick: () => {
-          window.location.href = expenseDetailUrl
-        },
-      },
+      timeout: 0,
+      actionProps: alreadyOnExpensePage
+        ? undefined
+        : {
+            children: <ExternalLink />,
+            'aria-label': t('viewGroupExpense'),
+            onClick: () => {
+              router.push(expenseDetailUrl)
+              toast.close(toastId)
+            },
+          },
     })
   }
 
@@ -794,6 +653,9 @@ export function FloatingCreateExpense({
       invalidateActivityQueries(utils)
 
       resetForm()
+      if (groupId) {
+        router.push(`/groups/${groupId}/expenses`)
+      }
     } catch (err) {
       console.error(err)
       toast.error('Failed to delete expense')

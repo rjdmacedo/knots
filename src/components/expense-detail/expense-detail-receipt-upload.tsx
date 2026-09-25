@@ -1,6 +1,7 @@
 'use client'
 
 import { DocumentThumbnail } from '@/components/expense-documents-input'
+import { toast } from '@/components/ui/toast'
 import { randomId } from '@/lib/api'
 import { invalidateActivityQueries } from '@/lib/invalidate-activity-queries'
 import { cn, formatFileSize } from '@/lib/utils'
@@ -9,7 +10,6 @@ import { Camera, Loader2 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { getImageData, usePresignedUpload } from 'next-s3-upload'
 import { useState } from 'react'
-import { toast } from 'sonner'
 
 const MAX_FILE_SIZE = 5 * 1024 ** 2
 

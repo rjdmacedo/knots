@@ -244,13 +244,13 @@ function GroupExpenseDetailLoader({
       canEdit={!isLocked}
       canDelete={!isLocked}
       isDeleting={isDeleting}
-      onEdit={() => openEditGroupExpense(groupId, expenseId)}
+      onEdit={() => openEditGroupExpense(router, groupId, expenseId)}
       onDelete={() => deleteExpense({ groupId, expenseId })}
       onCopy={
         !isLocked
           ? () => {
               const prefill = buildCopyExpensePrefill(expense, currency)
-              openCopyGroupExpense(groupId, group.name, prefill)
+              openCopyGroupExpense(router, groupId, prefill)
             }
           : undefined
       }

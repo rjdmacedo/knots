@@ -19,22 +19,22 @@ enum CreationMethod {
 }
 
 model Group {
-  id                String                   @id
-  name              String
-  information       String?                  @db.Text
-  currency          String                   @default("$")
-  currencyCode      String?
+  id                 String                   @id
+  name               String
+  information        String?                  @db.Text
+  currency           String                   @default("$")
+  currencyCode       String?
   /// When true, balances are simplified to the minimum number of payments (Splitwise-style).
   /// When false, each person owes whoever actually paid for their share.
-  simplifyDebts     Boolean                  @default(true)
-  expenses          Expense[]
-  activities        Activity[]
-  pushSubscriptions PushSubscription[]
-  categoryMappings  ExpenseCategoryMapping[]
-  memberships       GroupMembership[]
-  invitations       Invitation[]
+  simplifyDebts      Boolean                  @default(true)
+  expenses           Expense[]
+  activities         Activity[]
+  pushSubscriptions  PushSubscription[]
+  categoryMappings   ExpenseCategoryMapping[]
+  memberships        GroupMembership[]
+  invitations        Invitation[]
   emailDigestPending GroupEmailDigestPending?
-  createdAt         DateTime                 @default(now())
+  createdAt          DateTime                 @default(now())
 }
 
 model Category {
@@ -73,6 +73,19 @@ model Expense {
   expenseCurrencyCode          String?
   originalTotalAtDecomposition Int?
 
+  // Itemized expenses (v1.1). "Itemized" is read from itemsAuthoritative, never
+  // from items.length. Items may exist as documentation while a legacy split is
+  // active (itemsAuthoritative = false). The "Other" remainder (tax/tip/service)
+  // is a single signed pool in Entry_Currency minor units and is the source of
+  // truth; remainderSplitMode + remainderShares apply only when allocation is
+  // CUSTOM (PROPORTIONAL derives weights from item subtotals at compute time).
+  items                   ExpenseItem[]
+  itemsAuthoritative      Boolean                  @default(false)
+  remainderAmount         Int? // Entry_Currency minor units, signed; null when no items
+  remainderAllocationMode RemainderAllocationMode? // null when no items
+  remainderSplitMode      SplitMode? // CUSTOM only: flat split mode of the "Other" line; null otherwise
+  remainderShares         ExpenseRemainderShare[] // CUSTOM only
+
   recurrenceRule         RecurrenceRule?       @default(NONE)
   recurringExpenseLink   RecurringExpenseLink?
   recurringExpenseLinkId String?
@@ -87,6 +100,61 @@ model ExpenseDocument {
   height    Int
   Expense   Expense? @relation(fields: [expenseId], references: [id])
   expenseId String?
+}
+
+/// A single line item of an itemized expense. `amount` is in Entry_Currency
+/// minor units (the currency the expense was entered in) and equals
+/// `unitPrice × quantity`. `position` preserves display order and the
+/// deterministic remainder order used by the splitter.
+model ExpenseItem {
+  id          String                  @id
+  expense     Expense                 @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  expenseId   String
+  title       String
+  /// Line total in Entry_Currency minor units (= unitPrice × quantity).
+  amount      Int
+  /// Per-unit price in Entry_Currency minor units (Requirement 14).
+  unitPrice   Int                     @default(0)
+  /// Positive integer count; defaults to 1 (Requirement 14).
+  quantity    Int                     @default(1)
+  position    Int
+  assignments ExpenseItemAssignment[]
+
+  @@index([expenseId])
+}
+
+/// Links a line item to a participant it is assigned to (one item → one or more
+/// participants). Cascade-deleted with either the item or the user.
+model ExpenseItemAssignment {
+  item   ExpenseItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId String
+  user   User        @relation("UserExpenseItemAssignments", fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  @@id([itemId, userId])
+  @@index([userId])
+}
+
+/// How the "Other" remainder of an itemized expense is allocated.
+enum RemainderAllocationMode {
+  PROPORTIONAL // in proportion to each participant's item subtotal (no rows stored)
+  CUSTOM // a flat split (Expense.remainderSplitMode over ExpenseRemainderShare rows)
+}
+
+/// Per-participant rows for the "Other" remainder when allocation is CUSTOM.
+/// Empty for PROPORTIONAL (weights are the item subtotals, computed on the fly).
+/// Same shape as ExpensePaidFor: a participant + polymorphic `shares` whose
+/// meaning follows Expense.remainderSplitMode. The split mode lives on the
+/// Expense, not on each row.
+model ExpenseRemainderShare {
+  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  expenseId String
+  user      User    @relation("UserExpenseRemainderShares", fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  shares    Int
+
+  @@id([expenseId, userId])
+  @@index([userId])
 }
 
 enum SplitMode {
@@ -134,7 +202,7 @@ model ExpensePaidBy {
   user      User    @relation("UserExpensesPaidBy", fields: [userId], references: [id], onDelete: Cascade)
   expenseId String
   userId    String
-  amount    Int     // minor currency units
+  amount    Int // minor currency units
 
   @@id([expenseId, userId])
 }
@@ -221,18 +289,20 @@ model User {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
-  sessions        Session[]
-  accounts        Account[]
-  tokens          Token[]
-  memberships     GroupMembership[]
-  invitationsSent Invitation[]      @relation("InvitedBy")
-  expensesPaidBy  Expense[]         @relation("ExpensesPaidBy")
-  paidByExpenses  ExpensePaidBy[]   @relation("UserExpensesPaidBy")
-  expensesPaidFor ExpensePaidFor[]  @relation("ExpensesPaidFor")
-  friendsOwned    Friend[]          @relation("FriendsOwned")
-  friendsLinked   Friend[]          @relation("FriendsLinked")
-  blockedUsers    BlockedUser[]     @relation("BlockedByUser")
-  blockedBy       BlockedUser[]     @relation("BlockedTargetUser")
+  sessions               Session[]
+  accounts               Account[]
+  tokens                 Token[]
+  memberships            GroupMembership[]
+  invitationsSent        Invitation[]            @relation("InvitedBy")
+  expensesPaidBy         Expense[]               @relation("ExpensesPaidBy")
+  paidByExpenses         ExpensePaidBy[]         @relation("UserExpensesPaidBy")
+  expenseItemAssignments ExpenseItemAssignment[] @relation("UserExpenseItemAssignments")
+  expenseRemainderShares ExpenseRemainderShare[] @relation("UserExpenseRemainderShares")
+  expensesPaidFor        ExpensePaidFor[]        @relation("ExpensesPaidFor")
+  friendsOwned           Friend[]                @relation("FriendsOwned")
+  friendsLinked          Friend[]                @relation("FriendsLinked")
+  blockedUsers           BlockedUser[]           @relation("BlockedByUser")
+  blockedBy              BlockedUser[]           @relation("BlockedTargetUser")
 }
 
 model BlockedUser {
@@ -314,15 +384,15 @@ model GroupMembership {
 
   // --- New shared notification filter fields ---
   /// When true, notify about activity by any member (excluding self).
-  notifyAllMembers          Boolean  @default(true)
+  notifyAllMembers Boolean  @default(true)
   /// Used when notifyAllMembers = false. Only notify about activity by these user IDs.
-  includedUserIds           String[] @default([])
+  includedUserIds  String[] @default([])
   /// Notify when an expense is created.
-  notifyOnCreate            Boolean  @default(true)
+  notifyOnCreate   Boolean  @default(true)
   /// Notify when an expense or group settings are updated.
-  notifyOnUpdate            Boolean  @default(true)
+  notifyOnUpdate   Boolean  @default(true)
   /// Notify when an expense is deleted.
-  notifyOnDelete            Boolean  @default(true)
+  notifyOnDelete   Boolean  @default(true)
 
   @@unique([userId, groupId])
   @@index([userId])

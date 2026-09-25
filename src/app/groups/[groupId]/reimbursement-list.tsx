@@ -11,6 +11,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import { toast } from '@/components/ui/toast'
 import {
   Tooltip,
   TooltipContent,
@@ -18,13 +19,15 @@ import {
 } from '@/components/ui/tooltip'
 import { Reimbursement } from '@/lib/balances'
 import { Currency } from '@/lib/currency'
+import { getGroupExpenseNewPath } from '@/lib/expense-editor-navigation'
+import { stashExpensePrefill } from '@/lib/expense-prefill-store'
 import { buildPaymentCreatePrefill } from '@/lib/settlements'
 import { formatCurrency } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { Banknote, Loader2, Mail } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { toast } from 'sonner'
 
 type Props = {
   reimbursements: Reimbursement[]
@@ -88,11 +91,11 @@ function ReimbursementRow({
   currency,
   locale,
   groupId,
-  groupName,
   currentUserId,
   t,
 }: ReimbursementRowProps) {
   const tActions = useTranslations('Balances.Actions')
+  const router = useRouter()
   const [requestConfirmOpen, setRequestConfirmOpen] = useState(false)
 
   const { mutate: requestPayment, isPending: isRequesting } =
@@ -121,20 +124,16 @@ function ReimbursementRow({
   }
 
   const openSettlementExpense = () => {
-    window.dispatchEvent(
-      new CustomEvent('create-group-expense', {
-        detail: {
-          groupId,
-          groupName,
-          prefill: buildPaymentCreatePrefill(
-            reimbursement.amount,
-            reimbursement.from,
-            reimbursement.to,
-            currency,
-          ),
-        },
-      }),
+    stashExpensePrefill(
+      groupId,
+      buildPaymentCreatePrefill(
+        reimbursement.amount,
+        reimbursement.from,
+        reimbursement.to,
+        currency,
+      ),
     )
+    router.push(getGroupExpenseNewPath(groupId))
   }
 
   return (

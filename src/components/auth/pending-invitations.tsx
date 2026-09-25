@@ -1,9 +1,9 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { toast } from '@/components/ui/toast'
 import { trpc } from '@/trpc/client'
 import { Loader2, X } from 'lucide-react'
-import { toast } from 'sonner'
 
 interface PendingInvitationsProps {
   groupId: string

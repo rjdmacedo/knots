@@ -30,6 +30,8 @@ type ExpenseParticipantPickerProps = {
   onSelectFriend: (friend: FriendListItem) => void
   onRemoveGroup: () => void
   onRemoveFriend: (friendId: string) => void
+  /** When true, the selected group cannot be removed or replaced. */
+  groupLocked?: boolean
 }
 
 function ParticipantTagInput({
@@ -37,6 +39,7 @@ function ParticipantTagInput({
   availableGroups,
   availableFriends,
   groupsLocked,
+  groupLocked = false,
   selectedGroup,
   selectedFriends,
   onSelectGroup,
@@ -48,6 +51,7 @@ function ParticipantTagInput({
   availableGroups: { id: string; name: string }[]
   availableFriends: FriendListItem[]
   groupsLocked: boolean
+  groupLocked?: boolean
   selectedGroup: { id: string; name: string } | null
   selectedFriends: FriendListItem[]
   onSelectGroup: (group: { id: string; name: string }) => void
@@ -126,8 +130,9 @@ function ParticipantTagInput({
           onRemoveFriend(tag.value.friend.id)
         }
       }}
+      isTagRemovable={(tag) => !(groupLocked && tag.value.kind === 'group')}
       onClearTags={() => {
-        if (selectedGroup) {
+        if (selectedGroup && !groupLocked) {
           onRemoveGroup()
         }
         for (const friend of selectedFriends) {
@@ -170,6 +175,7 @@ export function ExpenseParticipantPicker({
   onSelectFriend,
   onRemoveGroup,
   onRemoveFriend,
+  groupLocked = false,
 }: ExpenseParticipantPickerProps) {
   const t = useTranslations('FloatingCreateExpense')
 
@@ -179,16 +185,17 @@ export function ExpenseParticipantPicker({
   }, [friends, selectedFriends])
 
   const availableGroups = useMemo(() => {
-    if (!selectedGroup) return userGroups
-    return userGroups.filter((g) => g.id !== selectedGroup.id)
-  }, [userGroups, selectedGroup])
+    if (groupLocked || selectedGroup) return []
+    return userGroups
+  }, [groupLocked, selectedGroup, userGroups])
 
   const tagInput = (
     <ParticipantTagInput
       userGroups={userGroups}
       availableGroups={availableGroups}
       availableFriends={availableFriends}
-      groupsLocked={!!selectedGroup}
+      groupsLocked={groupLocked || !!selectedGroup}
+      groupLocked={groupLocked}
       selectedGroup={selectedGroup}
       selectedFriends={selectedFriends}
       onSelectGroup={onSelectGroup}
@@ -199,7 +206,14 @@ export function ExpenseParticipantPicker({
   )
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      disablePointerDismissal
+      onOpenChange={(next, eventDetails) => {
+        if (!next && eventDetails.reason !== 'close-press') return
+        onOpenChange(next)
+      }}
+    >
       <DialogContent className="flex max-h-[85dvh] flex-col gap-0 overflow-x-hidden p-0 sm:max-w-md">
         <DialogHeader className="border-b px-6 py-4">
           <DialogTitle>{t('pickerTitle')}</DialogTitle>

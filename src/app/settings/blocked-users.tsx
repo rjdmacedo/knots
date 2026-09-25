@@ -21,11 +21,11 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { toast } from '@/components/ui/toast'
 import { trpc } from '@/trpc/client'
 import { Loader2, ShieldBan, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import { toast } from 'sonner'
 
 type BlockedUserEntry = {
   id: string
