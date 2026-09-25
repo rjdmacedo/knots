@@ -1,3 +1,10 @@
+## [1.56.1](https://github.com/rjdmacedo/knots/compare/v1.56.0...v1.56.1) (2026-09-24)
+
+
+### Bug Fixes
+
+* finish non-member split confirmation and participant list ([#42](https://github.com/rjdmacedo/knots/issues/42)) ([d73a0d7](https://github.com/rjdmacedo/knots/commit/d73a0d70c09a6a39cd27a6f7687dcab336940dc6)), closes [#41](https://github.com/rjdmacedo/knots/issues/41)
+
 # [1.56.0](https://github.com/rjdmacedo/knots/compare/v1.55.0...v1.56.0) (2026-08-26)
 
 
