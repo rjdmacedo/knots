@@ -203,6 +203,9 @@ function createAuthService(emailService: EmailService): AuthService {
       // Reject unverified accounts
       if (!user.emailVerified) return null
 
+      // Accounts with no password (passkey-only) cannot sign in with credentials
+      if (!user.passwordHash) return null
+
       const isValid = await verifyPassword(password, user.passwordHash)
       if (!isValid) return null
 

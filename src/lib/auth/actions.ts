@@ -72,6 +72,44 @@ export async function loginAction(formData: {
 }
 
 /**
+ * Server action for passkey login.
+ * Exchanges a single-use token (minted server-side by
+ * `passkey.verifyAuthentication` after a verified WebAuthn ceremony) for a real
+ * NextAuth session via the `passkey` provider. The session shape and
+ * session-limit enforcement match a password login. Never accepts a raw userId.
+ */
+export async function passkeyLoginAction(formData: {
+  token: string
+  redirectTo?: string
+}): Promise<LoginResult> {
+  const { token, redirectTo } = formData
+
+  try {
+    await signIn('passkey', {
+      token,
+      redirectTo: redirectTo || '/groups',
+    })
+
+    return { ok: true }
+  } catch (error) {
+    // Next.js redirect throws a special error that must be re-thrown
+    if (
+      error instanceof Error &&
+      'digest' in error &&
+      typeof (error as { digest?: string }).digest === 'string' &&
+      (error as { digest: string }).digest.startsWith('NEXT_REDIRECT')
+    ) {
+      throw error
+    }
+
+    return {
+      ok: false,
+      error: 'We could not sign you in with that passkey. Try again.',
+    }
+  }
+}
+
+/**
  * Server action for user logout.
  * Invalidates the current session and redirects to the login page.
  */

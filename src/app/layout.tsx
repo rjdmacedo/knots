@@ -1,3 +1,4 @@
+import { AccountPreferencesSync } from '@/app/account/settings/account-preferences-sync'
 import { ApplePwaSplash } from '@/app/apple-pwa-splash'
 import { AppHeader } from '@/components/app-header'
 import { FloatingCreateExpense } from '@/components/floating-create-expense'
@@ -6,9 +7,11 @@ import { ProgressBar } from '@/components/progress-bar'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/toast'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { Locale } from '@/i18n'
 import { auth } from '@/lib/auth/auth'
 import { env } from '@/lib/env'
 import { getRuntimeFeatureFlags, RuntimeFeatureFlags } from '@/lib/featureFlags'
+import { prisma } from '@/lib/prisma'
 import { cn } from '@/lib/utils'
 import { TRPCProvider } from '@/trpc/client'
 import type { Metadata, Viewport } from 'next'
@@ -73,17 +76,27 @@ function Content({
   isAuthenticated,
   userName,
   userEmail,
+  userLocale,
+  userTheme,
   runtimeFeatureFlags,
 }: {
   children: React.ReactNode
   isAuthenticated: boolean
   userName?: string | null
   userEmail?: string | null
+  userLocale?: Locale | null
+  userTheme?: string | null
   runtimeFeatureFlags: RuntimeFeatureFlags
 }) {
   return (
     <TRPCProvider>
       <TooltipProvider>
+        {isAuthenticated && (
+          <AccountPreferencesSync
+            locale={userLocale ?? null}
+            theme={userTheme ?? null}
+          />
+        )}
         <AppHeader
           isAuthenticated={isAuthenticated}
           userName={userName}
@@ -116,6 +129,16 @@ export default async function RootLayout({
   const session = await auth()
   const runtimeFeatureFlags = await getRuntimeFeatureFlags()
 
+  // Stored account preferences that a client sync applies once on mount so a
+  // second device follows the account (req 8.6). Server only reads; the client
+  // compares and writes, so the server render never loops.
+  const userPreferences = session?.user?.id
+    ? await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { locale: true, theme: true },
+      })
+    : null
+
   return (
     <html
       lang={locale}
@@ -138,6 +161,8 @@ export default async function RootLayout({
               isAuthenticated={!!session?.user?.id}
               userName={session?.user?.name}
               userEmail={session?.user?.email}
+              userLocale={(userPreferences?.locale as Locale | null) ?? null}
+              userTheme={userPreferences?.theme ?? null}
               runtimeFeatureFlags={runtimeFeatureFlags}
             >
               {children}

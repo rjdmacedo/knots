@@ -24,6 +24,10 @@ jest.mock('@/lib/prisma', () => ({
     },
     user: {
       findUnique: jest.fn(),
+      findMany: jest.fn(),
+    },
+    userNotificationPreference: {
+      findMany: jest.fn(),
     },
   },
 }))
@@ -43,6 +47,9 @@ const mockUpsert = prisma.groupEmailDigestPending.upsert as jest.Mock
 const mockFindManyPending = prisma.groupEmailDigestPending.findMany as jest.Mock
 const mockDeletePending = prisma.groupEmailDigestPending.delete as jest.Mock
 const mockFindUser = prisma.user.findUnique as jest.Mock
+const mockFindManyUsers = prisma.user.findMany as jest.Mock
+const mockFindManyPrefs = prisma.userNotificationPreference
+  .findMany as jest.Mock
 const mockFindManyActivities = prisma.activity.findMany as jest.Mock
 const mockSend = emailService.sendGroupActivityDigestEmail as jest.Mock
 
@@ -136,6 +143,10 @@ describe('processDueGroupEmailDigests', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     process.env.NEXTAUTH_URL = 'http://localhost:3000'
+    // Account preferences default to enabled with design defaults (no rows),
+    // so the account-preference gate does not filter recipients out here.
+    mockFindManyUsers.mockResolvedValue([])
+    mockFindManyPrefs.mockResolvedValue([])
   })
 
   it('sends digest emails and clears the pending row', async () => {

@@ -1,6 +1,6 @@
 'use client'
 
-import { CurrencyPreferenceSelect } from '@/app/settings/currency-preference-select'
+import { CurrencyPreferenceSelect } from '@/app/account/settings/currency-preference-select'
 import {
   Card,
   CardContent,

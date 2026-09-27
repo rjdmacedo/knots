@@ -1056,7 +1056,7 @@
     "deleteGroupConfirmAction": "Poista pysyvästi"
   },
   "UserMenu": {
-    "profileSettings": "Profiilin asetukset",
+    "profileSettings": "Tilin asetukset",
     "signingOut": "Kirjaudutaan ulos…",
     "signOut": "Kirjaudu ulos"
   },

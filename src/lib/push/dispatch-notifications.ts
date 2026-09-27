@@ -1,4 +1,9 @@
+import { activityTypeToNotificationCategory } from '@/app/account/settings/notification-category-metadata'
 import { env } from '@/lib/env'
+import {
+  getNotificationPreferencesForUsers,
+  isCategoryChannelAllowed,
+} from '@/lib/notifications/notification-preferences-service'
 import { prisma } from '@/lib/prisma'
 import { ActivityType } from '@prisma/client'
 import webpush, { WebPushError } from 'web-push'
@@ -42,12 +47,37 @@ export async function dispatchNotifications(
     return
   }
 
-  const eligible = subscriptions.filter((sub) =>
+  const groupEligible = subscriptions.filter((sub) =>
     isPushSubscriptionEligible(sub, activityType, extra.userId),
   )
 
-  if (eligible.length === 0) {
+  if (groupEligible.length === 0) {
     console.log('[push] No eligible subscriptions after filtering')
+    return
+  }
+
+  // Account-level preference gate, in front of the per-group filters above.
+  // The recipient of a push is the subscription's subscriber user. When the
+  // activity maps to an account category, skip the recipient if their master
+  // switch is off, or skip PUSH when that category's push flag is false.
+  // Unmapped activity types (category === null) keep the current behavior.
+  const category = activityTypeToNotificationCategory(activityType)
+  let eligible = groupEligible
+  if (category !== null) {
+    const prefsByUser = await getNotificationPreferencesForUsers(
+      groupEligible.map((sub) => sub.subscriberUserId),
+    )
+    eligible = groupEligible.filter((sub) =>
+      isCategoryChannelAllowed(
+        prefsByUser.get(sub.subscriberUserId),
+        category,
+        'push',
+      ),
+    )
+  }
+
+  if (eligible.length === 0) {
+    console.log('[push] No eligible subscriptions after account preferences')
     return
   }
 

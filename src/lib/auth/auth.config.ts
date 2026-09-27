@@ -30,6 +30,13 @@ export default {
       },
       // authorize is handled in auth.ts (full config), not here
     }),
+    Credentials({
+      id: 'passkey',
+      credentials: {
+        token: { type: 'text' },
+      },
+      // authorize is handled in auth.ts (full config), not here
+    }),
   ],
   pages: {
     signIn: '/login',

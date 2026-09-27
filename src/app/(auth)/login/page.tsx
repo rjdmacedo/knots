@@ -13,11 +13,17 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { PasswordInput } from '@/components/ui/password-input'
-import { loginAction, type LoginResult } from '@/lib/auth/actions'
-import { AlertCircle, Loader2 } from 'lucide-react'
+import {
+  loginAction,
+  passkeyLoginAction,
+  type LoginResult,
+} from '@/lib/auth/actions'
+import { trpc } from '@/trpc/client'
+import { startAuthentication } from '@simplewebauthn/browser'
+import { AlertCircle, Fingerprint, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { useState, useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 
 export default function LoginPage() {
   const searchParams = useSearchParams()
@@ -27,6 +33,19 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
+  const [isPasskeyPending, startPasskeyTransition] = useTransition()
+  const [passkeySupported, setPasskeySupported] = useState(false)
+
+  const generateOptions =
+    trpc.passkey.generateAuthenticationOptions.useMutation()
+  const verifyAuthentication = trpc.passkey.verifyAuthentication.useMutation()
+
+  // WebAuthn is only usable when the browser exposes PublicKeyCredential.
+  useEffect(() => {
+    setPasskeySupported(
+      typeof window !== 'undefined' && !!window.PublicKeyCredential,
+    )
+  }, [])
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -44,6 +63,42 @@ export default function LoginPage() {
       }
     })
   }
+
+  function handlePasskeySignIn() {
+    setError(null)
+
+    startPasskeyTransition(async () => {
+      try {
+        const options = await generateOptions.mutateAsync()
+        const authResponse = await startAuthentication({ optionsJSON: options })
+        const { loginToken } = await verifyAuthentication.mutateAsync({
+          // The router accepts the WebAuthn response as an opaque record and
+          // validates it server-side; the browser type has no index signature.
+          response: authResponse as unknown as Record<string, unknown> & {
+            id: string
+          },
+        })
+
+        const result = await passkeyLoginAction({
+          token: loginToken,
+          redirectTo: callbackUrl,
+        })
+
+        if (!result.ok) {
+          setError(result.error)
+        }
+      } catch (err) {
+        // A user who dismisses the browser prompt aborts the ceremony; treat
+        // that as a no-op rather than an error message.
+        if (err instanceof Error && err.name === 'NotAllowedError') {
+          return
+        }
+        setError('We could not sign you in with that passkey. Try again.')
+      }
+    })
+  }
+
+  const busy = isPending || isPasskeyPending
 
   return (
     <Card>
@@ -72,7 +127,7 @@ export default function LoginPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              disabled={isPending}
+              disabled={busy}
             />
           </div>
 
@@ -85,14 +140,41 @@ export default function LoginPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              disabled={isPending}
+              disabled={busy}
             />
           </div>
 
-          <Button type="submit" className="w-full" disabled={isPending}>
+          <Button type="submit" className="w-full" disabled={busy}>
             {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
             Sign in
           </Button>
+
+          {passkeySupported && (
+            <>
+              <div className="flex items-center gap-3">
+                <span className="h-px flex-1 bg-border" />
+                <span className="text-xs uppercase text-muted-foreground">
+                  or
+                </span>
+                <span className="h-px flex-1 bg-border" />
+              </div>
+
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={handlePasskeySignIn}
+                disabled={busy}
+              >
+                {isPasskeyPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Fingerprint className="h-4 w-4" />
+                )}
+                Use a passkey
+              </Button>
+            </>
+          )}
         </form>
       </CardContent>
       <CardFooter className="flex flex-col items-center gap-2">

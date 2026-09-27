@@ -19,9 +19,9 @@ export function SignOutButton() {
   return (
     <Button
       variant="outline"
+      size="sm"
       onClick={handleLogout}
       disabled={isPending}
-      className="w-full sm:w-auto"
     >
       <LogOut className="size-4" />
       {isPending ? t('signingOut') : t('signOut')}

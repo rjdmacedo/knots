@@ -1053,7 +1053,7 @@
     "deleteGroupConfirmAction": "Удалить навсегда"
   },
   "UserMenu": {
-    "profileSettings": "Настройки профиля",
+    "profileSettings": "Настройки аккаунта",
     "signingOut": "Выход…",
     "signOut": "Выйти"
   },

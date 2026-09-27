@@ -88,7 +88,7 @@ export function UserMenu({ name, email }: UserMenuProps) {
             </DropdownMenuRadioGroup>
           </DropdownMenuSubContent>
         </DropdownMenuSub>
-        <DropdownMenuItem render={<Link href="/settings" />}>
+        <DropdownMenuItem render={<Link href="/account/settings" />}>
           <Settings className="h-4 w-4 mr-2" />
           {t('profileSettings')}
         </DropdownMenuItem>

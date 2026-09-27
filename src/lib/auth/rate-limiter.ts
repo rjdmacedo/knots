@@ -89,3 +89,15 @@ export const EMAIL_RESEND_RATE_LIMIT: RateLimitConfig = {
   maxAttempts: 5,
   windowMs: 60 * 60 * 1000,
 }
+
+/** Rate limit config for email-change code sends: 5 attempts per 1 hour */
+export const EMAIL_CHANGE_SEND_RATE_LIMIT: RateLimitConfig = {
+  maxAttempts: 5,
+  windowMs: 60 * 60 * 1000,
+}
+
+/** Rate limit config for email-change code confirmations: 10 attempts per 15 minutes */
+export const EMAIL_CHANGE_CONFIRM_RATE_LIMIT: RateLimitConfig = {
+  maxAttempts: 10,
+  windowMs: 15 * 60 * 1000,
+}
