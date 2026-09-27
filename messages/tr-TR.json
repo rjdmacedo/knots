@@ -953,7 +953,7 @@
       "namePlaceholder": "Adınız",
       "nameError": "Geçerli bir ad girin.",
       "nameUpdatedToast": "Görünen ad güncellendi.",
-      "saveChanges": "Değişiklikleri kaydet",
+      "saveChanges": "Kaydet",
       "saving": "Kaydediliyor…"
     },
     "profileTitle": "Profil",
@@ -1000,14 +1000,17 @@
       "categories": {
         "added-to-group": "Gruba eklendi",
         "friend-added": "Arkadaş eklendi",
-        "budget-alert": "Bütçe uyarısı",
         "expense-created": "Harcama oluşturuldu",
         "recurring-expense-created": "Yinelenen harcama oluşturuldu",
         "expense-changed": "Harcama değiştirildi veya silindi",
-        "expense-comment": "Harcama yorumu",
         "weekly-summary": "Haftalık özet"
       },
       "categoryDescriptions": {
+        "added-to-group": "Birisi sizi bir gruba eklediğinde.",
+        "friend-added": "Birisi sizinle bir arkadaş kaydı başlattığında.",
+        "expense-created": "Birisi bir gruba harcama eklediğinde.",
+        "recurring-expense-created": "Planlanmış yinelenen bir harcama bir grupta oluşturulduğunda.",
+        "expense-changed": "Bir harcama güncellendiğinde veya silindiğinde.",
         "weekly-summary": "Harcamalarınız ve bakiyeleriniz hakkında haftalık genel bakış."
       }
     },
@@ -1181,7 +1184,7 @@
       "placeholder": "kullanici-adiniz",
       "description": "Profil bağlantınızda kullanılır. Yalnızca küçük harfler, rakamlar ve tire.",
       "saving": "Kaydediliyor…",
-      "submit": "Kullanıcı adını kaydet"
+      "submit": "Kaydet"
     },
     "PasswordForm": {
       "currentPasswordRequired": "Mevcut şifre gereklidir.",

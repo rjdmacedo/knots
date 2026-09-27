@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input'
 import { toast } from '@/components/ui/toast'
 import { trpc } from '@/trpc/client'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2, Save } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -98,12 +98,10 @@ export function UsernameChangeForm({
                   </FormItem>
                 )}
               />
-              <Button type="submit" size="sm" disabled={!isDirty || isPending}>
+              <Button type="submit" disabled={!isDirty || isPending}>
                 {isPending ? (
                   <Loader2 className="size-4 animate-spin" aria-hidden />
-                ) : (
-                  <Save className="size-4" aria-hidden />
-                )}
+                ) : null}
                 {isPending ? t('saving') : t('submit')}
               </Button>
             </div>

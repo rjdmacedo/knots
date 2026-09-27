@@ -3,7 +3,6 @@
 import { Button } from '@/components/ui/button'
 import { logoutAction } from '@/lib/auth/actions'
 import { disconnectPushSubscription } from '@/lib/push/use-push-notification-subscription'
-import { LogOut } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useTransition } from 'react'
 
@@ -19,13 +18,7 @@ export function SignOutButton() {
   }
 
   return (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={handleLogout}
-      disabled={isPending}
-    >
-      <LogOut className="size-4" />
+    <Button variant="outline" onClick={handleLogout} disabled={isPending}>
       {isPending ? t('signingOut') : t('signOut')}
     </Button>
   )

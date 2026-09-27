@@ -6,10 +6,8 @@
  * switch. The effective state for a category is the stored row merged over the
  * design defaults (see `defaultChannelsFor`).
  *
- * Channels are persisted per user + category (requirement 9.11). Categories the
- * app does not emit yet (budget alerts, comments) are still stored and returned
- * (requirement 9.12); the recurring-expense preference is likewise just stored
- * (requirement 9.13).
+ * Channels are persisted per user + category. The recurring-expense preference
+ * is stored even though that path does not emit its own notification yet.
  */
 
 import {

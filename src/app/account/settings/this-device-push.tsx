@@ -1,10 +1,11 @@
 'use client'
 
-import { Alert } from '@/components/ui/alert'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { toast } from '@/components/ui/toast'
 import { usePushNotificationSubscription } from '@/lib/push/use-push-notification-subscription'
 import { trpc } from '@/trpc/client'
+import { TriangleAlert } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { SettingsGroup, SettingsRow } from './settings-ui'
 
@@ -48,8 +49,11 @@ export function ThisDevicePush() {
     <SettingsGroup title={t('notifications.thisDevice.title')}>
       {showPushSelectedWarning ? (
         <div className="px-4 pt-4 sm:px-6">
-          <Alert variant="destructive" className="border-destructive/50">
-            {t('notifications.thisDevice.pushSelectedWarning')}
+          <Alert variant="warning">
+            <TriangleAlert />
+            <AlertDescription>
+              {t('notifications.thisDevice.pushSelectedWarning')}
+            </AlertDescription>
           </Alert>
         </div>
       ) : null}
@@ -62,7 +66,6 @@ export function ThisDevicePush() {
             <Button
               type="button"
               variant="destructive"
-              size="sm"
               disabled={push.isUpdating}
               onClick={() => void handleToggle('unsubscribe')}
             >
@@ -71,7 +74,6 @@ export function ThisDevicePush() {
           ) : (
             <Button
               type="button"
-              size="sm"
               disabled={push.isUpdating}
               onClick={() => void handleToggle('subscribe')}
             >

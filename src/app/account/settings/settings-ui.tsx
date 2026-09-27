@@ -67,7 +67,7 @@ export function SettingsSection({
       </div>
       {children ? <CardContent className="px-0">{children}</CardContent> : null}
       {footer ? (
-        <CardFooter className="flex-col items-end gap-3 border-t px-4 py-4 sm:px-6">
+        <CardFooter className="flex-col items-stretch gap-3 border-t px-4 py-4 sm:items-end sm:px-6 [&_button]:w-full sm:[&_button]:w-auto">
           {footer}
         </CardFooter>
       ) : null}
@@ -93,12 +93,9 @@ export function SettingsGroup({
 }: SettingsGroupProps) {
   return (
     <div className={className}>
-      <div className="flex items-center gap-2 bg-muted/30 px-4 py-2 sm:px-6">
-        <span
-          aria-hidden="true"
-          className="h-4 w-1 rounded-full bg-primary/60"
-        />
-        <h3 className="text-sm font-medium">{title}</h3>
+      <div className="flex items-center gap-2.5 bg-muted px-4 py-2.5 sm:px-6">
+        <span aria-hidden="true" className="h-4 w-1 rounded-full bg-primary" />
+        <h3 className="text-sm font-semibold">{title}</h3>
       </div>
       {children}
     </div>
@@ -151,7 +148,11 @@ export function SettingsRow({
           <p className="text-sm text-muted-foreground">{description}</p>
         ) : null}
       </div>
-      {control ? <div className="shrink-0">{control}</div> : null}
+      {control ? (
+        <div className="w-full sm:w-auto sm:shrink-0 [&_button]:w-full sm:[&_button]:w-auto">
+          {control}
+        </div>
+      ) : null}
     </>
   )
 

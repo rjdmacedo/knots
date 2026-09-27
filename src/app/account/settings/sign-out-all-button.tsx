@@ -16,7 +16,7 @@ import { toast } from '@/components/ui/toast'
 import { logoutAction } from '@/lib/auth/actions'
 import { disconnectPushSubscription } from '@/lib/push/use-push-notification-subscription'
 import { trpc } from '@/trpc/client'
-import { Loader2, MonitorSmartphone } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useTransition } from 'react'
 
@@ -42,8 +42,7 @@ export function SignOutAllButton() {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger render={<Button variant="destructive" size="sm" />}>
-        <MonitorSmartphone className="size-4" />
+      <AlertDialogTrigger render={<Button variant="destructive" />}>
         {t('button')}
       </AlertDialogTrigger>
       <AlertDialogContent>

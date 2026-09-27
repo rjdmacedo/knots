@@ -953,7 +953,7 @@
       "namePlaceholder": "Enter your display name",
       "nameError": "Enter a name between 2 and 50 characters.",
       "nameUpdatedToast": "Display name updated.",
-      "saveChanges": "Save changes",
+      "saveChanges": "Save",
       "saving": "Saving…"
     },
     "profileTitle": "Profile",
@@ -1000,14 +1000,17 @@
       "categories": {
         "added-to-group": "Added to a group",
         "friend-added": "Friend ledger",
-        "budget-alert": "Budget alerts",
         "expense-created": "New expense",
         "recurring-expense-created": "Recurring expense",
         "expense-changed": "Expense edited or deleted",
-        "expense-comment": "New comment",
         "weekly-summary": "Weekly activity summary"
       },
       "categoryDescriptions": {
+        "added-to-group": "When someone adds you to a group.",
+        "friend-added": "When someone starts a friend ledger with you.",
+        "expense-created": "When someone adds an expense to a group.",
+        "recurring-expense-created": "When a scheduled recurring expense is created in a group.",
+        "expense-changed": "When an expense is updated or deleted.",
         "weekly-summary": "A weekly summary of activity across your groups."
       }
     },
@@ -1181,7 +1184,7 @@
       "placeholder": "your-username",
       "description": "Used in your profile URL. Only lowercase letters, numbers, and hyphens.",
       "saving": "Saving...",
-      "submit": "Save Username"
+      "submit": "Save"
     },
     "PasswordForm": {
       "currentPasswordRequired": "Current password is required",

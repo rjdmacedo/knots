@@ -953,7 +953,7 @@
       "namePlaceholder": "Ваше имя",
       "nameError": "Введите корректное имя.",
       "nameUpdatedToast": "Отображаемое имя обновлено.",
-      "saveChanges": "Сохранить изменения",
+      "saveChanges": "Сохранить",
       "saving": "Сохранение…"
     },
     "profileTitle": "Профиль",
@@ -1000,14 +1000,17 @@
       "categories": {
         "added-to-group": "Добавление в группу",
         "friend-added": "Добавление друга",
-        "budget-alert": "Оповещение о бюджете",
         "expense-created": "Создание расхода",
         "recurring-expense-created": "Создание регулярного расхода",
         "expense-changed": "Изменение или удаление расхода",
-        "expense-comment": "Комментарий к расходу",
         "weekly-summary": "Еженедельная сводка"
       },
       "categoryDescriptions": {
+        "added-to-group": "Когда кто-то добавляет вас в группу.",
+        "friend-added": "Когда кто-то начинает с вами учёт с другом.",
+        "expense-created": "Когда кто-то добавляет расход в группу.",
+        "recurring-expense-created": "Когда в группе создаётся запланированный повторяющийся расход.",
+        "expense-changed": "Когда расход обновляется или удаляется.",
         "weekly-summary": "Еженедельный отчет о ваших расходах и балансах."
       }
     },
@@ -1181,7 +1184,7 @@
       "placeholder": "vashe-imya-polzovatelya",
       "description": "Используется в URL вашего профиля. Только строчные буквы, цифры и дефисы.",
       "saving": "Сохранение…",
-      "submit": "Сохранить имя пользователя"
+      "submit": "Сохранить"
     },
     "PasswordForm": {
       "currentPasswordRequired": "Необходимо ввести текущий пароль.",

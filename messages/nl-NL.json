@@ -953,7 +953,7 @@
       "namePlaceholder": "Jouw naam",
       "nameError": "Voer een geldige weergavenaam in.",
       "nameUpdatedToast": "Weergavenaam bijgewerkt.",
-      "saveChanges": "Wijzigingen opslaan",
+      "saveChanges": "Opslaan",
       "saving": "Opslaan…"
     },
     "profileTitle": "Profiel",
@@ -1000,14 +1000,17 @@
       "categories": {
         "added-to-group": "Toegevoegd aan een groep",
         "friend-added": "Vriend toegevoegd",
-        "budget-alert": "Budgetwaarschuwing",
         "expense-created": "Uitgave aangemaakt",
         "recurring-expense-created": "Terugkerende uitgave aangemaakt",
         "expense-changed": "Uitgave gewijzigd of verwijderd",
-        "expense-comment": "Reactie op uitgave",
         "weekly-summary": "Wekelijks overzicht"
       },
       "categoryDescriptions": {
+        "added-to-group": "Wanneer iemand je aan een groep toevoegt.",
+        "friend-added": "Wanneer iemand een vriendenoverzicht met je start.",
+        "expense-created": "Wanneer iemand een uitgave aan een groep toevoegt.",
+        "recurring-expense-created": "Wanneer een geplande terugkerende uitgave in een groep wordt aangemaakt.",
+        "expense-changed": "Wanneer een uitgave wordt bijgewerkt of verwijderd.",
         "weekly-summary": "Een wekelijkse samenvatting van je uitgaven en saldi."
       }
     },
@@ -1181,7 +1184,7 @@
       "placeholder": "jouw-gebruikersnaam",
       "description": "Gebruikt in je profiel-URL. Alleen kleine letters, cijfers en koppeltekens.",
       "saving": "Opslaan…",
-      "submit": "Gebruikersnaam opslaan"
+      "submit": "Opslaan"
     },
     "PasswordForm": {
       "currentPasswordRequired": "Huidig wachtwoord is verplicht.",

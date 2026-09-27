@@ -34,11 +34,9 @@ describe('notification-category-metadata', () => {
     ).toEqual([
       ['added-to-group', 'groups-and-friends', false],
       ['friend-added', 'groups-and-friends', false],
-      ['budget-alert', 'groups-and-friends', false],
       ['expense-created', 'expenses', false],
       ['recurring-expense-created', 'expenses', false],
       ['expense-changed', 'expenses', false],
-      ['expense-comment', 'expenses', false],
       ['weekly-summary', 'summaries', true],
     ])
   })
@@ -52,24 +50,22 @@ describe('notification-category-metadata', () => {
   it('excludes coming-soon categories from the live list', () => {
     const liveIds = LIVE_NOTIFICATION_CATEGORIES.map((c) => c.id)
     expect(liveIds).not.toContain('weekly-summary')
-    expect(liveIds).toHaveLength(7)
+    expect(liveIds).not.toContain('budget-alert')
+    expect(liveIds).not.toContain('expense-comment')
+    expect(liveIds).toHaveLength(5)
   })
 
   it('recognizes live categories only', () => {
     expect(isLiveCategory('added-to-group')).toBe(true)
     expect(isLiveCategory('weekly-summary')).toBe(false)
+    expect(isLiveCategory('budget-alert')).toBe(false)
+    expect(isLiveCategory('expense-comment')).toBe(false)
     expect(isLiveCategory('made-up')).toBe(false)
   })
 
   describe('defaultChannelsFor', () => {
-    it('defaults email + push for added-to-group, friend, new expense, comment, budget', () => {
-      for (const id of [
-        'added-to-group',
-        'friend-added',
-        'expense-created',
-        'expense-comment',
-        'budget-alert',
-      ]) {
+    it('defaults email + push for added-to-group, friend, and new expense', () => {
+      for (const id of ['added-to-group', 'friend-added', 'expense-created']) {
         expect(defaultChannelsFor(id)).toEqual({ email: true, push: true })
       }
     })

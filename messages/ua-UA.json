@@ -953,7 +953,7 @@
       "namePlaceholder": "Ваше ім'я",
       "nameError": "Введіть коректне ім'я.",
       "nameUpdatedToast": "Відображуване ім'я оновлено.",
-      "saveChanges": "Зберегти зміни",
+      "saveChanges": "Зберегти",
       "saving": "Збереження…"
     },
     "profileTitle": "Профіль",
@@ -1000,14 +1000,17 @@
       "categories": {
         "added-to-group": "Додавання до групи",
         "friend-added": "Додавання друга",
-        "budget-alert": "Сповіщення про бюджет",
         "expense-created": "Створення витрати",
         "recurring-expense-created": "Створення регулярної витрати",
         "expense-changed": "Зміна або видалення витрати",
-        "expense-comment": "Коментар до витрати",
         "weekly-summary": "Щотижневий підсумок"
       },
       "categoryDescriptions": {
+        "added-to-group": "Коли хтось додає вас до групи.",
+        "friend-added": "Коли хтось починає з вами облік з другом.",
+        "expense-created": "Коли хтось додає витрату до групи.",
+        "recurring-expense-created": "Коли в групі створюється запланована повторювана витрата.",
+        "expense-changed": "Коли витрату оновлено або видалено.",
         "weekly-summary": "Щотижневий звіт про ваші витрати та баланси."
       }
     },
@@ -1181,7 +1184,7 @@
       "placeholder": "vashe-imya-korystuvacha",
       "description": "Використовується в URL вашого профілю. Тільки малі літери, цифри та дефіси.",
       "saving": "Збереження…",
-      "submit": "Зберегти ім'я користувача"
+      "submit": "Зберегти"
     },
     "PasswordForm": {
       "currentPasswordRequired": "Необхідно ввести поточний пароль.",

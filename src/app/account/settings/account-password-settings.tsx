@@ -140,11 +140,10 @@ export function AccountPasswordSettings({
           hasPassword ? tp('description') : tp('noPasswordDescription')
         }
         control={
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
             <Button
               type="button"
               variant="outline"
-              size="sm"
               onClick={() => setChangeOpen(true)}
             >
               {hasPassword ? tp('changeButton') : tp('setButton')}
@@ -153,7 +152,6 @@ export function AccountPasswordSettings({
               <Button
                 type="button"
                 variant="destructive"
-                size="sm"
                 onClick={() => setRemoveOpen(true)}
               >
                 {tp('removeButton')}
