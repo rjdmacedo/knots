@@ -413,18 +413,18 @@
       "saveAsDefault": "Guardar como opções de pagamento padrão"
     },
     "decompositionBanner": {
-      "nonMemberLine": "{name} isn't in {group} — their {amount} share will be saved as a direct expense",
-      "groupHalfLine": "The group expense will be {amount}",
-      "postSaveTitle": "Expense split across group and direct records",
-      "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
-      "postSaveGroupHalfLine": "The group expense is {amount}",
+      "nonMemberLine": "{name} não faz parte de {group} — a sua parte de {amount} será guardada como uma despesa direta",
+      "groupHalfLine": "A despesa do grupo será de {amount}",
+      "postSaveTitle": "Despesa dividida entre o grupo e registos diretos",
+      "postSaveNonMemberLine": "{name}: {amount} guardado como despesa direta",
+      "postSaveGroupHalfLine": "A despesa do grupo é de {amount}",
       "singlePayerNote": "Quando adicionamos pessoas de fora (p.ex.: {names}), a despesa é dividida em duas e, como tal, apenas uma pessoa pode pagar.",
-      "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
-      "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
-      "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
-      "directHalfIndependentEditWarning": "This expense is part of a split that also includes a group expense. Editing or deleting it does not affect the group record.",
-      "notInGroupBadge": "Not in group",
-      "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
+      "groupHalfAuditNote": "Total original aquando da criação: {amount}. Isto representa o estado no momento da divisão e pode diferir dos valores atuais se alguma das partes tiver sido editada independentemente.",
+      "directHalfAuditNote": "Esta despesa faz parte de uma divisão que também inclui uma despesa do grupo.",
+      "groupHalfIndependentEditWarning": "Editar ou eliminar esta despesa não atualiza automaticamente as despesas diretas associadas.",
+      "directHalfIndependentEditWarning": "Esta despesa faz parte de uma divisão que também inclui uma despesa do grupo. Editá-la ou eliminá-la não afeta o registo do grupo.",
+      "notInGroupBadge": "Não faz parte do grupo",
+      "recurringNonMemberError": "As despesas recorrentes não podem incluir participantes que não sejam membros do grupo."
     }
   },
   "ExpenseTitleInput": {
