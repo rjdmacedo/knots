@@ -1,3 +1,10 @@
+## [1.58.1](https://github.com/rjdmacedo/knots/compare/v1.58.0...v1.58.1) (2026-09-27)
+
+
+### Bug Fixes
+
+* install the pinned pnpm in the Docker image ([d310aee](https://github.com/rjdmacedo/knots/commit/d310aeeb0183bbf10555a4cff634904f92922f73))
+
 # [1.58.0](https://github.com/rjdmacedo/knots/compare/v1.57.0...v1.58.0) (2026-09-27)
 
 

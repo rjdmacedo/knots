@@ -1,6 +1,6 @@
 {
   "name": "knots",
-  "version": "1.58.0",
+  "version": "1.58.1",
   "private": true,
   "packageManager": "pnpm@11.13.1",
   "engines": {
