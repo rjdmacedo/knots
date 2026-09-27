@@ -1,3 +1,11 @@
+# [1.61.0](https://github.com/rjdmacedo/knots/compare/v1.60.0...v1.61.0) (2026-09-27)
+
+
+### Features
+
+* add magic link auth, set default user currency to USD, and improve session management ([beda2dc](https://github.com/rjdmacedo/knots/commit/beda2dcc9555e22b17d4653baeb803611be70ac2))
+* add magic link login functionality and update user currency defaults ([53a5e9c](https://github.com/rjdmacedo/knots/commit/53a5e9c3c1f52050ae1db2701a134f3fc98ad5a2))
+
 # [1.60.0](https://github.com/rjdmacedo/knots/compare/v1.59.0...v1.60.0) (2026-09-27)
 
 
