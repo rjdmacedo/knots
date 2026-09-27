@@ -1,4 +1,9 @@
-import { isPushSupported, registerServiceWorker } from '../register-sw'
+import {
+  getOrCreatePushSubscription,
+  isPushSupported,
+  registerServiceWorker,
+  urlBase64ToUint8Array,
+} from '../register-sw'
 
 describe('register-sw', () => {
   const originalNavigator = global.navigator
@@ -166,6 +171,74 @@ describe('register-sw', () => {
       expect(warnSpy).toHaveBeenCalledWith(
         '[push] Service worker registration failed:',
         expect.any(Error),
+      )
+    })
+  })
+
+  describe('urlBase64ToUint8Array', () => {
+    it('decodes URL-safe base64 without padding', () => {
+      // "Hi" in base64url
+      const bytes = urlBase64ToUint8Array('SGk')
+      expect(Array.from(bytes)).toEqual([72, 105])
+    })
+  })
+
+  describe('getOrCreatePushSubscription', () => {
+    it('returns the existing subscription when present', async () => {
+      const existing = {
+        endpoint: 'https://push.example/1',
+      } as PushSubscription
+      const registration = {
+        pushManager: {
+          getSubscription: jest.fn().mockResolvedValue(existing),
+          subscribe: jest.fn(),
+        },
+      } as unknown as ServiceWorkerRegistration
+
+      const result = await getOrCreatePushSubscription(registration, 'SGk')
+
+      expect(result).toBe(existing)
+      expect(registration.pushManager.subscribe).not.toHaveBeenCalled()
+    })
+
+    it('returns null when vapid key is missing', async () => {
+      const registration = {
+        pushManager: {
+          getSubscription: jest.fn().mockResolvedValue(null),
+          subscribe: jest.fn(),
+        },
+      } as unknown as ServiceWorkerRegistration
+
+      const result = await getOrCreatePushSubscription(registration, undefined)
+
+      expect(result).toBeNull()
+      expect(registration.pushManager.subscribe).not.toHaveBeenCalled()
+    })
+
+    it('returns null and warns when push service rejects subscribe', async () => {
+      const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+      const abort = new DOMException(
+        'Registration failed - push service not available',
+        'AbortError',
+      )
+      const subscribe = jest.fn().mockRejectedValue(abort)
+      const registration = {
+        pushManager: {
+          getSubscription: jest.fn().mockResolvedValue(null),
+          subscribe,
+        },
+      } as unknown as ServiceWorkerRegistration
+
+      const result = await getOrCreatePushSubscription(registration, 'SGk')
+
+      expect(result).toBeNull()
+      expect(subscribe).toHaveBeenCalledWith({
+        userVisibleOnly: true,
+        applicationServerKey: expect.any(Uint8Array),
+      })
+      expect(warnSpy).toHaveBeenCalledWith(
+        '[push] Push subscription failed:',
+        abort,
       )
     })
   })

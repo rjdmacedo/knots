@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { toast } from '@/components/ui/toast'
 import { usePushNotificationSubscription } from '@/lib/push/use-push-notification-subscription'
 import { useTranslations } from 'next-intl'
 import { SettingsGroup, SettingsRow } from './settings-ui'
@@ -23,6 +24,18 @@ export function ThisDevicePush() {
           ? 'denied'
           : null
 
+  async function handleToggle(action: 'subscribe' | 'unsubscribe') {
+    const errorCode =
+      action === 'subscribe' ? await push.subscribe() : await push.unsubscribe()
+    if (!errorCode) return
+
+    toast.error(
+      errorCode === 'permissionDenied'
+        ? t('notifications.pushDisabled.denied')
+        : t('notifications.thisDevice.error'),
+    )
+  }
+
   return (
     <SettingsGroup title={t('notifications.thisDevice.title')}>
       <SettingsRow
@@ -36,7 +49,7 @@ export function ThisDevicePush() {
               variant="outline"
               size="sm"
               disabled={push.isUpdating}
-              onClick={() => void push.unsubscribe()}
+              onClick={() => void handleToggle('unsubscribe')}
             >
               {t('notifications.thisDevice.disable')}
             </Button>
@@ -45,7 +58,7 @@ export function ThisDevicePush() {
               type="button"
               size="sm"
               disabled={push.isUpdating}
-              onClick={() => void push.subscribe()}
+              onClick={() => void handleToggle('subscribe')}
             >
               {t('notifications.thisDevice.enable')}
             </Button>

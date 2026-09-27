@@ -46,7 +46,27 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 }
 
 /**
+ * Decode a VAPID public key (URL-safe base64) into the BufferSource
+ * `PushManager.subscribe` expects.
+ */
+export function urlBase64ToUint8Array(
+  base64String: string,
+): Uint8Array<ArrayBuffer> {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+  const raw = atob(base64)
+  const output = new Uint8Array(raw.length)
+  for (let i = 0; i < raw.length; i += 1) {
+    output[i] = raw.charCodeAt(i)
+  }
+  return output
+}
+
+/**
  * Returns the existing push subscription for this registration, or creates one.
+ *
+ * Returns `null` when the key is missing or the browser push service rejects
+ * the subscribe call (e.g. AbortError: push service not available).
  */
 export async function getOrCreatePushSubscription(
   registration: ServiceWorkerRegistration,
@@ -56,8 +76,13 @@ export async function getOrCreatePushSubscription(
   if (existing) return existing
   if (!vapidPublicKey) return null
 
-  return registration.pushManager.subscribe({
-    userVisibleOnly: true,
-    applicationServerKey: vapidPublicKey,
-  })
+  try {
+    return await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+    })
+  } catch (error) {
+    console.warn('[push] Push subscription failed:', error)
+    return null
+  }
 }
