@@ -24,7 +24,7 @@ import {
 } from '@/lib/push/push-availability'
 import { cn } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
-import { Bell, Check } from 'lucide-react'
+import { Bell, Check, ChevronsUpDown } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import * as React from 'react'
 import {
@@ -103,13 +103,14 @@ function ChannelSelector({
     <Button
       type="button"
       variant="outline"
-      size="sm"
       disabled={disabled}
+      className="w-full justify-between sm:w-auto sm:justify-center"
       aria-label={t('notifications.channelSelectorAria', {
         category: categoryLabel,
       })}
     >
       <span>{closedLabel}</span>
+      <ChevronsUpDown className="size-4 opacity-50 sm:hidden" />
     </Button>
   )
 
@@ -164,9 +165,7 @@ function ChannelSelector({
         <div className="px-4 pb-2">{body}</div>
         <DrawerFooter>
           <DrawerClose asChild>
-            <Button type="button" size="sm">
-              {t('notifications.done')}
-            </Button>
+            <Button type="button">{t('notifications.done')}</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
@@ -357,7 +356,7 @@ export function NotificationsPreferences({
                 key={groupId}
                 title={t(`notifications.${GROUP_TITLE_KEY[groupId]}`)}
               >
-                <SettingsList>
+                <SettingsList className="divide-y-0">
                   {categories.map((category) => (
                     <CategoryRow
                       key={category.id}
@@ -431,6 +430,7 @@ function CategoryRow({
   return (
     <SettingsRow
       label={label}
+      description={description}
       control={
         <ChannelSelector
           categoryLabel={label}

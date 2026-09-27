@@ -55,8 +55,10 @@ describe('getNotificationPreferences', () => {
     })
     // Coming-soon categories are not returned.
     expect(result.categories['weekly-summary']).toBeUndefined()
-    // All seven live categories present.
-    expect(Object.keys(result.categories)).toHaveLength(7)
+    // All five live categories present.
+    expect(Object.keys(result.categories)).toHaveLength(5)
+    expect(result.categories['budget-alert']).toBeUndefined()
+    expect(result.categories['expense-comment']).toBeUndefined()
   })
 
   it('merges stored rows over the defaults', async () => {

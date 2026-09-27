@@ -953,7 +953,7 @@
       "namePlaceholder": "Oma nimesi",
       "nameError": "Anna kelvollinen nimi.",
       "nameUpdatedToast": "Näyttönimi päivitetty.",
-      "saveChanges": "Tallenna muutokset",
+      "saveChanges": "Tallenna",
       "saving": "Tallennetaan…"
     },
     "profileTitle": "Profiili",
@@ -1000,14 +1000,17 @@
       "categories": {
         "added-to-group": "Lisätty ryhmään",
         "friend-added": "Kaveri lisätty",
-        "budget-alert": "Budjettivaroitus",
         "expense-created": "Kulu luotu",
         "recurring-expense-created": "Toistuva kulu luotu",
         "expense-changed": "Kulu muuttunut tai poistettu",
-        "expense-comment": "Kulun kommentti",
         "weekly-summary": "Viikoittainen yhteenveto"
       },
       "categoryDescriptions": {
+        "added-to-group": "Kun joku lisää sinut ryhmään.",
+        "friend-added": "Kun joku aloittaa kaverikirjanpidon kanssasi.",
+        "expense-created": "Kun joku lisää kulun ryhmään.",
+        "recurring-expense-created": "Kun ajoitettu toistuva kulu luodaan ryhmässä.",
+        "expense-changed": "Kun kulu päivitetään tai poistetaan.",
         "weekly-summary": "Viikoittainen katsaus kuluihisi ja saldoihisi."
       }
     },
@@ -1181,7 +1184,7 @@
       "placeholder": "oma-kayttajatunnus",
       "description": "Käytetään profiilisi osoitteessa. Vain pieniä kirjaimia, numeroita ja yhdysmerkkejä.",
       "saving": "Tallennetaan…",
-      "submit": "Tallenna käyttäjätunnus"
+      "submit": "Tallenna"
     },
     "PasswordForm": {
       "currentPasswordRequired": "Nykyinen salasana vaaditaan.",

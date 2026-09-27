@@ -953,7 +953,7 @@
       "namePlaceholder": "Twoje imię",
       "nameError": "Wprowadź prawidłową nazwę.",
       "nameUpdatedToast": "Wyświetlana nazwa zaktualizowana.",
-      "saveChanges": "Zapisz zmiany",
+      "saveChanges": "Zapisz",
       "saving": "Zapisywanie…"
     },
     "profileTitle": "Profil",
@@ -1000,14 +1000,17 @@
       "categories": {
         "added-to-group": "Dodano do grupy",
         "friend-added": "Dodano znajomego",
-        "budget-alert": "Alert budżetowy",
         "expense-created": "Utworzono wydatek",
         "recurring-expense-created": "Utworzono wydatek cykliczny",
         "expense-changed": "Zmieniono lub usunięto wydatek",
-        "expense-comment": "Komentarz do wydatku",
         "weekly-summary": "Podsumowanie tygodniowe"
       },
       "categoryDescriptions": {
+        "added-to-group": "Gdy ktoś doda Cię do grupy.",
+        "friend-added": "Gdy ktoś rozpocznie z Tobą rejestr znajomego.",
+        "expense-created": "Gdy ktoś doda wydatek do grupy.",
+        "recurring-expense-created": "Gdy w grupie zostanie utworzony zaplanowany wydatek cykliczny.",
+        "expense-changed": "Gdy wydatek zostanie zaktualizowany lub usunięty.",
         "weekly-summary": "Cotygodniowe podsumowanie Twoich wydatków i sald."
       }
     },
@@ -1181,7 +1184,7 @@
       "placeholder": "twoja-nazwa-uzytkownika",
       "description": "Używana w adresie URL profilu. Tylko małe litery, cyfry i łączniki.",
       "saving": "Zapisywanie…",
-      "submit": "Zapisz nazwę użytkownika"
+      "submit": "Zapisz"
     },
     "PasswordForm": {
       "currentPasswordRequired": "Obecne hasło jest wymagane.",

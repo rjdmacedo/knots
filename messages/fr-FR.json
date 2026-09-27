@@ -953,7 +953,7 @@
       "namePlaceholder": "Votre nom",
       "nameError": "Veuillez entrer un nom valide.",
       "nameUpdatedToast": "Nom affiché mis à jour.",
-      "saveChanges": "Enregistrer les modifications",
+      "saveChanges": "Enregistrer",
       "saving": "Enregistrement…"
     },
     "profileTitle": "Profil",
@@ -1000,14 +1000,17 @@
       "categories": {
         "added-to-group": "Ajouté à un groupe",
         "friend-added": "Ami ajouté",
-        "budget-alert": "Alerte budget",
         "expense-created": "Dépense créée",
         "recurring-expense-created": "Dépense récurrente créée",
         "expense-changed": "Dépense modifiée ou supprimée",
-        "expense-comment": "Commentaire sur une dépense",
         "weekly-summary": "Résumé hebdomadaire"
       },
       "categoryDescriptions": {
+        "added-to-group": "Lorsque quelqu'un vous ajoute à un groupe.",
+        "friend-added": "Lorsque quelqu'un ouvre un registre d'ami avec vous.",
+        "expense-created": "Lorsque quelqu'un ajoute une dépense à un groupe.",
+        "recurring-expense-created": "Lorsqu'une dépense récurrente planifiée est créée dans un groupe.",
+        "expense-changed": "Lorsqu'une dépense est modifiée ou supprimée.",
         "weekly-summary": "Un récapitulatif hebdomadaire de vos dépenses et soldes."
       }
     },
@@ -1181,7 +1184,7 @@
       "placeholder": "votre-nom-d-utilisateur",
       "description": "Utilisé dans l'URL de votre profil. Lettres minuscules, chiffres et tirets uniquement.",
       "saving": "Enregistrement…",
-      "submit": "Enregistrer le nom d'utilisateur"
+      "submit": "Enregistrer"
     },
     "PasswordForm": {
       "currentPasswordRequired": "Le mot de passe actuel est requis.",

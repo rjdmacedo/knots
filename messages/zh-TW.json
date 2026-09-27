@@ -953,7 +953,7 @@
       "namePlaceholder": "你的姓名",
       "nameError": "請輸入有效的姓名。",
       "nameUpdatedToast": "顯示名稱已更新。",
-      "saveChanges": "儲存變更",
+      "saveChanges": "儲存",
       "saving": "正在儲存…"
     },
     "profileTitle": "個人資料",
@@ -1000,14 +1000,17 @@
       "categories": {
         "added-to-group": "被新增到群組",
         "friend-added": "新增了好友",
-        "budget-alert": "預算提醒",
         "expense-created": "支出已建立",
         "recurring-expense-created": "定期支出已建立",
         "expense-changed": "支出已修改或刪除",
-        "expense-comment": "支出留言",
         "weekly-summary": "每週摘要"
       },
       "categoryDescriptions": {
+        "added-to-group": "當有人將你加入群組時。",
+        "friend-added": "當有人與你開始好友帳本時。",
+        "expense-created": "當有人向群組新增支出時。",
+        "recurring-expense-created": "當群組中建立了排程的週期性支出時。",
+        "expense-changed": "當支出被更新或刪除時。",
         "weekly-summary": "每週支出與餘額概覽。"
       }
     },
@@ -1181,7 +1184,7 @@
       "placeholder": "your-username",
       "description": "用於你的個人檔案連結。僅限小寫字母、數字與連字號。",
       "saving": "正在儲存…",
-      "submit": "儲存使用者名稱"
+      "submit": "儲存"
     },
     "PasswordForm": {
       "currentPasswordRequired": "必須輸入目前密碼。",

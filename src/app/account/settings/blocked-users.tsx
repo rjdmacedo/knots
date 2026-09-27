@@ -23,7 +23,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { toast } from '@/components/ui/toast'
 import { trpc } from '@/trpc/client'
-import { Loader2, ShieldBan, Trash2 } from 'lucide-react'
+import { Loader2, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 
@@ -101,8 +101,7 @@ export function BlockedUsers() {
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger render={<Button variant="outline" size="sm" />}>
-          <ShieldBan className="size-4" />
+        <DialogTrigger render={<Button variant="outline" />}>
           {t('manage')}
         </DialogTrigger>
         <DialogContent className="sm:max-w-md">

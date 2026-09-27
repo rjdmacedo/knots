@@ -13,7 +13,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { toast } from '@/components/ui/toast'
 import { trpc } from '@/trpc/client'
-import { Loader2, Pencil } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -189,17 +189,16 @@ export function AccountEmailSettings({ email }: { email: string }) {
         label={t('emailTitle')}
         description={te('description')}
       >
-        <div className="flex min-w-0 items-center gap-2">
+        <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
           <span className="min-w-0 flex-1 truncate text-sm" title={email}>
             {email}
           </span>
           <Button
             type="button"
             variant="outline"
-            size="sm"
+            className="w-full sm:w-auto"
             onClick={() => setOpen(true)}
           >
-            <Pencil className="size-4" aria-hidden />
             {te('changeButton')}
           </Button>
         </div>

@@ -953,7 +953,7 @@
       "namePlaceholder": "Digite o seu nome de apresentação",
       "nameError": "Digite um nome entre 2 e 50 caracteres.",
       "nameUpdatedToast": "Nome de apresentação atualizado.",
-      "saveChanges": "Salvar altereções",
+      "saveChanges": "Salvar",
       "saving": "A salvar…"
     },
     "profileTitle": "Perfil",
@@ -1000,14 +1000,17 @@
       "categories": {
         "added-to-group": "Adicionado a um grupo",
         "friend-added": "Registo de amigo",
-        "budget-alert": "Alertas de orçamento",
         "expense-created": "Nova despesa",
         "recurring-expense-created": "Despesa recorrente",
         "expense-changed": "Despesa editada ou excluída",
-        "expense-comment": "Novo comentário",
         "weekly-summary": "Resumo semanal de atividade"
       },
       "categoryDescriptions": {
+        "added-to-group": "Quando alguém te adiciona a um grupo.",
+        "friend-added": "Quando alguém inicia um registro de amigo com você.",
+        "expense-created": "Quando alguém adiciona uma despesa a um grupo.",
+        "recurring-expense-created": "Quando uma despesa recorrente agendada é criada em um grupo.",
+        "expense-changed": "Quando uma despesa é atualizada ou excluída.",
         "weekly-summary": "Um resumo semanal da atividade nos seus grupos."
       }
     },
@@ -1181,7 +1184,7 @@
       "placeholder": "o-seu-nome-de-usuário",
       "description": "Usado no URL do seu perfil. Apenas letras minúsculas, números e hífenes.",
       "saving": "A salvar...",
-      "submit": "Salvar nome de usuário"
+      "submit": "Salvar"
     },
     "PasswordForm": {
       "currentPasswordRequired": "A senha atual é obrigatória",

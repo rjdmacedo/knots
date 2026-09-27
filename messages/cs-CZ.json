@@ -953,7 +953,7 @@
       "namePlaceholder": "Vaše jméno",
       "nameError": "Zadejte platné zobrazované jméno.",
       "nameUpdatedToast": "Zobrazované jméno aktualizováno.",
-      "saveChanges": "Uložit změny",
+      "saveChanges": "Uložit",
       "saving": "Ukládání…"
     },
     "profileTitle": "Profil",
@@ -1000,14 +1000,17 @@
       "categories": {
         "added-to-group": "Přidán(a) do skupiny",
         "friend-added": "Přítel přidán",
-        "budget-alert": "Upozornění na rozpočet",
         "expense-created": "Výdaj vytvořen",
         "recurring-expense-created": "Opakovaný výdaj vytvořen",
         "expense-changed": "Výdaj změněn nebo smazán",
-        "expense-comment": "Komentář k výdaji",
         "weekly-summary": "Týdenní přehled"
       },
       "categoryDescriptions": {
+        "added-to-group": "Když vás někdo přidá do skupiny.",
+        "friend-added": "Když s vámi někdo založí přehled s přítelem.",
+        "expense-created": "Když někdo přidá výdaj do skupiny.",
+        "recurring-expense-created": "Když se ve skupině vytvoří naplánovaný opakující se výdaj.",
+        "expense-changed": "Když je výdaj upraven nebo smazán.",
         "weekly-summary": "Týdenní rekapitulace vašich výdajů a zůstatků."
       }
     },
@@ -1181,7 +1184,7 @@
       "placeholder": "vase-uzivatelske-jmeno",
       "description": "Používá se v URL vašeho profilu. Pouze malá písmena, čísla a pomlčky.",
       "saving": "Ukládání…",
-      "submit": "Uložit uživatelské jméno"
+      "submit": "Uložit"
     },
     "PasswordForm": {
       "currentPasswordRequired": "Stávající heslo je povinné.",

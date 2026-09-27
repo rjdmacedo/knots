@@ -953,7 +953,7 @@
       "namePlaceholder": "Tu nombre",
       "nameError": "Introduce un nombre visible válido.",
       "nameUpdatedToast": "Nombre visible actualizado.",
-      "saveChanges": "Guardar cambios",
+      "saveChanges": "Guardar",
       "saving": "Guardando…"
     },
     "profileTitle": "Perfil",
@@ -1000,14 +1000,17 @@
       "categories": {
         "added-to-group": "Añadido a un grupo",
         "friend-added": "Amigo añadido",
-        "budget-alert": "Alerta de presupuesto",
         "expense-created": "Gasto creado",
         "recurring-expense-created": "Gasto periódico creado",
         "expense-changed": "Gasto modificado o eliminado",
-        "expense-comment": "Comentario en gasto",
         "weekly-summary": "Resumen semanal"
       },
       "categoryDescriptions": {
+        "added-to-group": "Cuando alguien te añade a un grupo.",
+        "friend-added": "Cuando alguien empieza un registro de amigo contigo.",
+        "expense-created": "Cuando alguien añade un gasto a un grupo.",
+        "recurring-expense-created": "Cuando se crea un gasto recurrente programado en un grupo.",
+        "expense-changed": "Cuando un gasto se actualiza o se elimina.",
         "weekly-summary": "Un resumen semanal de tus gastos y saldos."
       }
     },
@@ -1181,7 +1184,7 @@
       "placeholder": "tu-nombre-de-usuario",
       "description": "Se utiliza en la URL de tu perfil. Solo letras minúsculas, números y guiones.",
       "saving": "Guardando…",
-      "submit": "Guardar nombre de usuario"
+      "submit": "Guardar"
     },
     "PasswordForm": {
       "currentPasswordRequired": "La contraseña actual es obligatoria.",

@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input'
 import { toast } from '@/components/ui/toast'
 import { cn } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
-import { ImageUp, Loader2, Save, Trash2, UserRound } from 'lucide-react'
+import { Loader2, UserRound } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useRouter } from 'next/navigation'
 import { useRef, useState } from 'react'
@@ -262,14 +262,11 @@ export function ProfileSection({
           <Button
             type="submit"
             form="account-profile-form"
-            size="sm"
             disabled={saveDisabled}
           >
             {savePending ? (
               <Loader2 className="size-4 animate-spin" aria-hidden />
-            ) : (
-              <Save className="size-4" aria-hidden />
-            )}
+            ) : null}
             {savePending ? tp('saving') : tp('saveChanges')}
           </Button>
         </>
@@ -288,10 +285,10 @@ export function ProfileSection({
             label={tp('photoLabel')}
             description={tp('photoDescription')}
             control={
-              <div className="flex max-w-full flex-wrap items-center gap-3">
+              <div className="flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row sm:items-center">
                 <span
                   className={cn(
-                    'flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-base font-medium text-primary',
+                    'flex size-50 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-7xl font-medium text-primary',
                   )}
                 >
                   {currentImage ? (
@@ -305,30 +302,25 @@ export function ProfileSection({
                     <span aria-hidden>{initials}</span>
                   )}
                 </span>
-                <div className="flex min-w-0 flex-wrap items-center gap-2">
+                <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
                   <Button
                     type="button"
                     variant="outline"
-                    size="sm"
                     onClick={handleChoosePhoto}
                     disabled={photoBusy}
                   >
                     {photoBusy ? (
                       <Loader2 className="size-4 animate-spin" aria-hidden />
-                    ) : (
-                      <ImageUp className="size-4" aria-hidden />
-                    )}
+                    ) : null}
                     {tp('choosePhoto')}
                   </Button>
                   {currentImage ? (
                     <Button
                       type="button"
                       variant="destructive"
-                      size="sm"
                       onClick={handleRemovePhoto}
                       disabled={photoBusy}
                     >
-                      <Trash2 className="size-4" aria-hidden />
                       {tp('removePhoto')}
                     </Button>
                   ) : null}

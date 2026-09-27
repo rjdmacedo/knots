@@ -16,7 +16,7 @@ import { reauthenticateAction } from '@/lib/auth/actions'
 import { trpc } from '@/trpc/client'
 import { startRegistration } from '@simplewebauthn/browser'
 import type { PublicKeyCredentialCreationOptionsJSON } from '@simplewebauthn/server'
-import { Fingerprint, Loader2, Plus, Trash2 } from 'lucide-react'
+import { Fingerprint, Loader2, Trash2 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { SettingsBadge, SettingsRow } from './settings-ui'
@@ -160,11 +160,9 @@ export function AccountPasskeySettings() {
           <Button
             type="button"
             variant="outline"
-            size="sm"
             disabled={!supported}
             onClick={() => void handleAddClick()}
           >
-            <Plus className="size-4" aria-hidden />
             {tk('addButton')}
           </Button>
         }

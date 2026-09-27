@@ -953,7 +953,7 @@
       "namePlaceholder": "El teu nom",
       "nameError": "Introdueix un nom visible vàlid.",
       "nameUpdatedToast": "Nom visible actualitzat.",
-      "saveChanges": "Desa els canvis",
+      "saveChanges": "Desa",
       "saving": "Desant…"
     },
     "profileTitle": "Perfil",
@@ -1000,14 +1000,17 @@
       "categories": {
         "added-to-group": "Afegit a un grup",
         "friend-added": "Amic afegit",
-        "budget-alert": "Alerta de pressupost",
         "expense-created": "Despesa creada",
         "recurring-expense-created": "Despesa recurrent creada",
         "expense-changed": "Despesa modificada o suprimida",
-        "expense-comment": "Comentari en despesa",
         "weekly-summary": "Resum setmanal"
       },
       "categoryDescriptions": {
+        "added-to-group": "Quan algú t'afegeix a un grup.",
+        "friend-added": "Quan algú comença un registre d'amic amb tu.",
+        "expense-created": "Quan algú afegeix una despesa a un grup.",
+        "recurring-expense-created": "Quan es crea una despesa recurrent programada en un grup.",
+        "expense-changed": "Quan una despesa s'actualitza o s'elimina.",
         "weekly-summary": "Un resum setmanal de les teves despeses i balanços."
       }
     },
@@ -1181,7 +1184,7 @@
       "placeholder": "el-teu-nom-d-usuari",
       "description": "S'utilitza a l'URL del teu perfil. Només lletres minúscules, números i guions.",
       "saving": "Desant…",
-      "submit": "Desa el nom d'usuari"
+      "submit": "Desa"
     },
     "PasswordForm": {
       "currentPasswordRequired": "La contrasenya actual és obligatòria.",

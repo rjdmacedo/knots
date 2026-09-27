@@ -953,7 +953,7 @@
       "namePlaceholder": "Numele tău",
       "nameError": "Introdu un nume afișat valid.",
       "nameUpdatedToast": "Numele afișat a fost actualizat.",
-      "saveChanges": "Salvează modificările",
+      "saveChanges": "Salvează",
       "saving": "Se salvează…"
     },
     "profileTitle": "Profil",
@@ -1000,14 +1000,17 @@
       "categories": {
         "added-to-group": "Adăugat într-un grup",
         "friend-added": "Prieten adăugat",
-        "budget-alert": "Alertă de buget",
         "expense-created": "Cheltuială creată",
         "recurring-expense-created": "Cheltuială recurentă creată",
         "expense-changed": "Cheltuială modificată sau ștearsă",
-        "expense-comment": "Comentariu la cheltuială",
         "weekly-summary": "Rezumat săptămânal"
       },
       "categoryDescriptions": {
+        "added-to-group": "Când cineva te adaugă într-un grup.",
+        "friend-added": "Când cineva începe un registru de prieten cu tine.",
+        "expense-created": "Când cineva adaugă o cheltuială într-un grup.",
+        "recurring-expense-created": "Când o cheltuială recurentă programată este creată într-un grup.",
+        "expense-changed": "Când o cheltuială este actualizată sau ștearsă.",
         "weekly-summary": "O recapitulare săptămânală a cheltuielilor și soldurilor tale."
       }
     },
@@ -1181,7 +1184,7 @@
       "placeholder": "numele-tau-de-utilizator",
       "description": "Folosit în adresa URL a profilului. Doar litere mici, cifre și cratime.",
       "saving": "Se salvează…",
-      "submit": "Salvează numele de utilizator"
+      "submit": "Salvează"
     },
     "PasswordForm": {
       "currentPasswordRequired": "Parola actuală este obligatorie.",

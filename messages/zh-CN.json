@@ -953,7 +953,7 @@
       "namePlaceholder": "你的姓名",
       "nameError": "请输入有效的姓名。",
       "nameUpdatedToast": "显示名称已更新。",
-      "saveChanges": "保存更改",
+      "saveChanges": "保存",
       "saving": "正在保存…"
     },
     "profileTitle": "个人资料",
@@ -1000,14 +1000,17 @@
       "categories": {
         "added-to-group": "被添加到群组",
         "friend-added": "添加了好友",
-        "budget-alert": "预算预警",
         "expense-created": "支出已创建",
         "recurring-expense-created": "定期支出已创建",
         "expense-changed": "支出已修改或删除",
-        "expense-comment": "支出留言",
         "weekly-summary": "每周摘要"
       },
       "categoryDescriptions": {
+        "added-to-group": "当有人将你加入群组时。",
+        "friend-added": "当有人与你开始好友账本时。",
+        "expense-created": "当有人向群组添加支出时。",
+        "recurring-expense-created": "当群组中创建了计划的周期性支出时。",
+        "expense-changed": "当支出被更新或删除时。",
         "weekly-summary": "每周支出与余额概览。"
       }
     },
@@ -1181,7 +1184,7 @@
       "placeholder": "your-username",
       "description": "用于你的个人资料链接。仅限小写字母、数字和连字符。",
       "saving": "正在保存…",
-      "submit": "保存用户名"
+      "submit": "保存"
     },
     "PasswordForm": {
       "currentPasswordRequired": "必须输入当前密码。",

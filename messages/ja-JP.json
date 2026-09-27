@@ -953,7 +953,7 @@
       "namePlaceholder": "お名前",
       "nameError": "有効な名前を入力してください。",
       "nameUpdatedToast": "表示名を更新しました。",
-      "saveChanges": "変更を保存",
+      "saveChanges": "保存",
       "saving": "保存中…"
     },
     "profileTitle": "プロフィール",
@@ -1000,14 +1000,17 @@
       "categories": {
         "added-to-group": "グループへの追加",
         "friend-added": "友達の追加",
-        "budget-alert": "予算アラート",
         "expense-created": "支出の作成",
         "recurring-expense-created": "定期的な支出の作成",
         "expense-changed": "支出の変更または削除",
-        "expense-comment": "支出へのコメント",
         "weekly-summary": "週間サマリー"
       },
       "categoryDescriptions": {
+        "added-to-group": "誰かがあなたをグループに追加したとき。",
+        "friend-added": "誰かがあなたとの友達台帳を始めたとき。",
+        "expense-created": "誰かがグループに支出を追加したとき。",
+        "recurring-expense-created": "予定された定期的な支出がグループに作成されたとき。",
+        "expense-changed": "支出が更新または削除されたとき。",
         "weekly-summary": "支出と残高の週次概要。"
       }
     },
@@ -1181,7 +1184,7 @@
       "placeholder": "your-username",
       "description": "プロフィールURLに使用されます。英小文字、数字、ハイフンのみ。",
       "saving": "保存中…",
-      "submit": "ユーザー名を保存"
+      "submit": "保存"
     },
     "PasswordForm": {
       "currentPasswordRequired": "現在のパスワードが必要です。",

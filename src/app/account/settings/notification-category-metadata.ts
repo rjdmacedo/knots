@@ -48,13 +48,11 @@ export const NOTIFICATION_CATEGORIES: readonly NotificationCategory[] = [
   // Groups and friends
   { id: 'added-to-group', group: 'groups-and-friends' },
   { id: 'friend-added', group: 'groups-and-friends' },
-  { id: 'budget-alert', group: 'groups-and-friends' },
 
   // Expenses
   { id: 'expense-created', group: 'expenses' },
   { id: 'recurring-expense-created', group: 'expenses' },
   { id: 'expense-changed', group: 'expenses' },
-  { id: 'expense-comment', group: 'expenses' },
 
   // Summaries (coming soon, no channel control)
   { id: 'weekly-summary', group: 'summaries', comingSoon: true },
@@ -77,9 +75,7 @@ const DEFAULT_CHANNELS: Record<string, NotificationChannels> = {
   'added-to-group': { email: true, push: true },
   'friend-added': { email: true, push: true },
   'expense-created': { email: true, push: true },
-  'expense-comment': { email: true, push: true },
   'recurring-expense-created': { email: true, push: false },
-  'budget-alert': { email: true, push: true },
 }
 
 /** Categories that are rendered but not yet emitted/controllable. */
