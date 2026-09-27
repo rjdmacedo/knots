@@ -327,9 +327,10 @@ export async function changePreferences(
  * Signs out all devices by deleting all sessions for this user.
  */
 export async function signOutAllDevices(userId: string): Promise<void> {
-  await prisma.session.deleteMany({
-    where: { userId },
-  })
+  await prisma.$transaction([
+    prisma.session.deleteMany({ where: { userId } }),
+    prisma.pushSubscription.deleteMany({ where: { userId } }),
+  ])
 }
 
 /**

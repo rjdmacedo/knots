@@ -1,173 +1,117 @@
+import { env } from '@/lib/env'
 import { prisma } from '@/lib/prisma'
-import { baseProcedure, createTRPCRouter } from '@/trpc/init'
+import { createTRPCRouter, protectedProcedure } from '@/trpc/init'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-const createInputSchema = z.object({
-  endpoint: z.string().url().max(2048),
+const subscriptionSchema = z.object({
+  endpoint: z.string().url().max(4096),
   keys: z.object({
     p256dh: z.string().min(1),
     auth: z.string().min(1),
   }),
-  groupId: z.string().min(1),
-  subscriberUserId: z.string().min(1).max(200),
 })
 
-const deleteInputSchema = z.object({
-  endpoint: z.string().max(2048),
-  groupId: z.string().min(1),
-})
-
-const listInputSchema = z.object({
-  endpoint: z.string().max(2048),
-})
-
-// This device: a user-scoped subscription with no group (`groupId: null`),
-// meaning "this browser, all groups". No group-membership check applies.
-const createDeviceInputSchema = z.object({
-  endpoint: z.string().url().max(2048),
-  keys: z.object({
-    p256dh: z.string().min(1),
-    auth: z.string().min(1),
-  }),
-  subscriberUserId: z.string().min(1).max(200),
-})
-
-const deleteDeviceInputSchema = z.object({
-  endpoint: z.string().max(2048),
-})
+function isUniqueConstraint(error: unknown): boolean {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    (error as { code: string }).code === 'P2002'
+  )
+}
 
 export const pushSubscriptionsRouter = createTRPCRouter({
-  create: baseProcedure.input(createInputSchema).mutation(async ({ input }) => {
-    const group = await prisma.group.findUnique({
-      where: { id: input.groupId },
-    })
+  getConfig: protectedProcedure.query(() => ({
+    configured: Boolean(
+      env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY,
+    ),
+    vapidPublicKey: env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? null,
+  })),
 
-    if (!group) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Group not found.',
+  register: protectedProcedure
+    .input(
+      subscriptionSchema.extend({
+        userAgent: z.string().max(512).nullish(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.user.id
+      const existing = await prisma.pushSubscription.findUnique({
+        where: { endpoint: input.endpoint },
+        select: { id: true, userId: true },
       })
-    }
+      if (existing && existing.userId !== userId) {
+        throw new TRPCError({
+          code: 'CONFLICT',
+          message: 'This browser subscription belongs to another account',
+        })
+      }
 
-    // Fetch the user's GroupMembership to verify membership and get preferences
-    const membership = await prisma.groupMembership.findUnique({
-      where: {
-        userId_groupId: {
-          userId: input.subscriberUserId,
-          groupId: input.groupId,
-        },
-      },
-    })
-
-    if (!membership) {
-      throw new TRPCError({
-        code: 'FORBIDDEN',
-        message: 'You are not a member of this group.',
-      })
-    }
-
-    const subscription = await prisma.pushSubscription.upsert({
-      where: {
-        endpoint_groupId: {
-          endpoint: input.endpoint,
-          groupId: input.groupId,
-        },
-      },
-      create: {
-        endpoint: input.endpoint,
-        p256dh: input.keys.p256dh,
-        auth: input.keys.auth,
-        groupId: input.groupId,
-        subscriberUserId: input.subscriberUserId,
-        notifyAllMembers: membership.notifyAllMembers,
-        includedUserIds: membership.includedUserIds,
-        notifyOnCreate: membership.notifyOnCreate,
-        notifyOnUpdate: membership.notifyOnUpdate,
-        notifyOnDelete: membership.notifyOnDelete,
-      },
-      update: {
-        p256dh: input.keys.p256dh,
-        auth: input.keys.auth,
-        subscriberUserId: input.subscriberUserId,
-        notifyAllMembers: membership.notifyAllMembers,
-        includedUserIds: membership.includedUserIds,
-        notifyOnCreate: membership.notifyOnCreate,
-        notifyOnUpdate: membership.notifyOnUpdate,
-        notifyOnDelete: membership.notifyOnDelete,
-      },
-    })
-
-    return { id: subscription.id }
-  }),
-
-  delete: baseProcedure.input(deleteInputSchema).mutation(async ({ input }) => {
-    await prisma.pushSubscription.deleteMany({
-      where: {
-        endpoint: input.endpoint,
-        groupId: input.groupId,
-      },
-    })
-
-    return { success: true }
-  }),
-
-  // This device — enable push for this browser across all groups.
-  createDevice: baseProcedure
-    .input(createDeviceInputSchema)
-    .mutation(async ({ input }) => {
-      // Prisma's composite `@@unique([endpoint, groupId])` treats null groupId
-      // as distinct, so `upsert` cannot target the null-group row. Clear any
-      // existing null-group row for this endpoint, then create a fresh one to
-      // enforce a single "this browser, all groups" subscription per endpoint.
-      await prisma.pushSubscription.deleteMany({
-        where: {
-          endpoint: input.endpoint,
-          groupId: null,
-        },
-      })
-
-      const subscription = await prisma.pushSubscription.create({
-        data: {
-          endpoint: input.endpoint,
-          p256dh: input.keys.p256dh,
-          auth: input.keys.auth,
-          groupId: null,
-          subscriberUserId: input.subscriberUserId,
-        },
-      })
-
-      return { id: subscription.id }
+      try {
+        const row = existing
+          ? await prisma.pushSubscription.update({
+              where: { id: existing.id },
+              data: {
+                p256dh: input.keys.p256dh,
+                auth: input.keys.auth,
+                userAgent: input.userAgent ?? null,
+              },
+              select: { id: true, endpoint: true },
+            })
+          : await prisma.pushSubscription.create({
+              data: {
+                userId,
+                endpoint: input.endpoint,
+                p256dh: input.keys.p256dh,
+                auth: input.keys.auth,
+                userAgent: input.userAgent ?? null,
+              },
+              select: { id: true, endpoint: true },
+            })
+        return { subscription: row }
+      } catch (error) {
+        if (!isUniqueConstraint(error)) throw error
+        const raced = await prisma.pushSubscription.findUnique({
+          where: { endpoint: input.endpoint },
+          select: { id: true, userId: true },
+        })
+        if (!raced || raced.userId !== userId) {
+          throw new TRPCError({
+            code: 'CONFLICT',
+            message: 'This browser subscription belongs to another account',
+            cause: error,
+          })
+        }
+        const row = await prisma.pushSubscription.update({
+          where: { id: raced.id },
+          data: {
+            p256dh: input.keys.p256dh,
+            auth: input.keys.auth,
+            userAgent: input.userAgent ?? null,
+          },
+          select: { id: true, endpoint: true },
+        })
+        return { subscription: row }
+      }
     }),
 
-  // This device — disable push for this browser only.
-  deleteDevice: baseProcedure
-    .input(deleteDeviceInputSchema)
-    .mutation(async ({ input }) => {
+  remove: protectedProcedure
+    .input(z.object({ endpoint: z.string().url().max(4096) }))
+    .mutation(async ({ ctx, input }) => {
       await prisma.pushSubscription.deleteMany({
-        where: {
-          endpoint: input.endpoint,
-          groupId: null,
-        },
+        where: { endpoint: input.endpoint, userId: ctx.user.id },
       })
-
-      return { success: true }
+      return { removed: true }
     }),
 
-  list: baseProcedure.input(listInputSchema).query(async ({ input }) => {
-    const subscriptions = await prisma.pushSubscription.findMany({
-      where: { endpoint: input.endpoint },
-      select: {
-        groupId: true,
-        subscriberUserId: true,
-        notifyAllMembers: true,
-        includedUserIds: true,
-        notifyOnCreate: true,
-        notifyOnUpdate: true,
-        notifyOnDelete: true,
-      },
-    })
-
-    return subscriptions
-  }),
+  status: protectedProcedure
+    .input(z.object({ endpoint: z.string().url().max(4096) }))
+    .query(async ({ ctx, input }) => {
+      const row = await prisma.pushSubscription.findUnique({
+        where: { endpoint: input.endpoint },
+        select: { userId: true },
+      })
+      return { subscribed: row?.userId === ctx.user.id }
+    }),
 })

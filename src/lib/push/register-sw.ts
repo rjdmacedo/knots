@@ -14,6 +14,10 @@
  * - `Notification` in window
  */
 export function isPushSupported(): boolean {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') {
+    return false
+  }
+  if (!window.isSecureContext) return false
   return (
     'serviceWorker' in navigator &&
     'PushManager' in window &&

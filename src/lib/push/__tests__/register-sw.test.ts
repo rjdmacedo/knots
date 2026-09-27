@@ -9,6 +9,34 @@ describe('register-sw', () => {
   })
 
   describe('isPushSupported', () => {
+    beforeEach(() => {
+      Object.defineProperty(window, 'isSecureContext', {
+        value: true,
+        configurable: true,
+      })
+    })
+
+    it('returns false outside a secure context', () => {
+      Object.defineProperty(window, 'isSecureContext', {
+        value: false,
+        configurable: true,
+      })
+      Object.defineProperty(navigator, 'serviceWorker', {
+        value: {},
+        configurable: true,
+      })
+      Object.defineProperty(window, 'PushManager', {
+        value: {},
+        configurable: true,
+      })
+      Object.defineProperty(window, 'Notification', {
+        value: {},
+        configurable: true,
+      })
+
+      expect(isPushSupported()).toBe(false)
+    })
+
     it('returns true when serviceWorker, PushManager, and Notification are available', () => {
       Object.defineProperty(navigator, 'serviceWorker', {
         value: {},
@@ -76,6 +104,13 @@ describe('register-sw', () => {
   })
 
   describe('registerServiceWorker', () => {
+    beforeEach(() => {
+      Object.defineProperty(window, 'isSecureContext', {
+        value: true,
+        configurable: true,
+      })
+    })
+
     it('returns null when push is not supported', async () => {
       delete (navigator as any).serviceWorker
 

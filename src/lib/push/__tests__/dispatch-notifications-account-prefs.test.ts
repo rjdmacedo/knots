@@ -58,22 +58,30 @@ import { ActivityType } from '@prisma/client'
 
 import { dispatchNotifications } from '../dispatch-notifications'
 
-function makeSub(id: string, subscriberUserId: string) {
-  return {
-    id,
-    endpoint: `https://push.example.com/${id}`,
-    p256dh: 'p256dh',
-    auth: 'auth',
-    groupId: 'group-1',
-    subscriberUserId,
-    notifyAllMembers: true,
-    includedUserIds: [],
-    notifyOnCreate: true,
-    notifyOnUpdate: true,
-    notifyOnDelete: true,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  }
+function stageMember(id: string, subscriberUserId: string) {
+  mockFindUniqueGroup.mockResolvedValue({
+    name: 'Trip',
+    memberships: [
+      {
+        userId: subscriberUserId,
+        notifyAllMembers: true,
+        includedUserIds: [],
+        notifyOnCreate: true,
+        notifyOnUpdate: true,
+        notifyOnDelete: true,
+        user: { id: subscriberUserId, name: 'Bob' },
+      },
+    ],
+  })
+  mockFindMany.mockResolvedValue([
+    {
+      id,
+      endpoint: `https://push.example.com/${id}`,
+      p256dh: 'p256dh',
+      auth: 'auth',
+      userId: subscriberUserId,
+    },
+  ])
 }
 
 beforeEach(() => {
@@ -91,7 +99,7 @@ afterEach(() => {
 
 describe('push dispatch honors account preferences', () => {
   it('skips a recipient whose master switch is off', async () => {
-    mockFindMany.mockResolvedValue([makeSub('sub-1', 'bob')])
+    stageMember('sub-1', 'bob')
     mockGetPrefsForUsers.mockResolvedValue(
       new Map([
         [
@@ -113,7 +121,7 @@ describe('push dispatch honors account preferences', () => {
   })
 
   it('skips push when the category push flag is false', async () => {
-    mockFindMany.mockResolvedValue([makeSub('sub-1', 'bob')])
+    stageMember('sub-1', 'bob')
     mockGetPrefsForUsers.mockResolvedValue(
       new Map([
         [
@@ -135,7 +143,7 @@ describe('push dispatch honors account preferences', () => {
   })
 
   it('delivers when the category push flag is true and master is on', async () => {
-    mockFindMany.mockResolvedValue([makeSub('sub-1', 'bob')])
+    stageMember('sub-1', 'bob')
     mockGetPrefsForUsers.mockResolvedValue(
       new Map([
         [
@@ -157,7 +165,7 @@ describe('push dispatch honors account preferences', () => {
   })
 
   it('preserves current behavior for unmapped activity types (UPDATE_GROUP)', async () => {
-    mockFindMany.mockResolvedValue([makeSub('sub-1', 'bob')])
+    stageMember('sub-1', 'bob')
 
     await dispatchNotifications('group-1', ActivityType.UPDATE_GROUP, {
       userId: 'alice',

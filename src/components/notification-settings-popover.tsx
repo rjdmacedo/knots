@@ -51,6 +51,8 @@ interface PushChannelRowProps {
   pushEnabled: boolean
   pushLoading: boolean
   pushError: PushNotificationErrorCode | null
+  iosHomeScreenRequired?: boolean
+  configured?: boolean
   subscribe: () => Promise<PushNotificationErrorCode | null>
   unsubscribe: () => Promise<PushNotificationErrorCode | null>
   clearError: () => void
@@ -61,12 +63,17 @@ function PushChannelRow({
   pushEnabled,
   pushLoading,
   pushError,
+  iosHomeScreenRequired = false,
+  configured,
   subscribe,
   unsubscribe,
   clearError,
 }: PushChannelRowProps) {
   const t = useTranslations('Notifications')
-  const vapidKeyMissing = !process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+  const tPush = useTranslations('ProfileSettings')
+  const vapidKeyMissing =
+    configured === false ||
+    (configured === undefined && !process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY)
   const browserSupported = isPushSupported()
 
   const showPushLoading = useSpinDelay(pushLoading, {
@@ -76,7 +83,9 @@ function PushChannelRow({
 
   // Determine disabled reason
   let disabledReason: string | null = null
-  if (vapidKeyMissing) {
+  if (iosHomeScreenRequired) {
+    disabledReason = tPush('notifications.pushDisabled.iosInstall')
+  } else if (vapidKeyMissing) {
     disabledReason = t('pushUnavailable')
   } else if (!browserSupported) {
     disabledReason = t('notSupported')
@@ -96,7 +105,12 @@ function PushChannelRow({
           </div>
         ) : (
           <Switch
-            checked={pushEnabled && !vapidKeyMissing && browserSupported}
+            checked={
+              pushEnabled &&
+              !vapidKeyMissing &&
+              browserSupported &&
+              !iosHomeScreenRequired
+            }
             disabled={isDisabled}
             aria-label={t('pushLabel')}
             onCheckedChange={async (checked) => {
@@ -199,6 +213,8 @@ interface ChannelsSectionProps {
   pushEnabled: boolean
   pushLoading: boolean
   pushError: PushNotificationErrorCode | null
+  iosHomeScreenRequired?: boolean
+  configured?: boolean
   subscribe: () => Promise<PushNotificationErrorCode | null>
   unsubscribe: () => Promise<PushNotificationErrorCode | null>
   clearError: () => void
@@ -215,6 +231,8 @@ function ChannelsSection({
   pushEnabled,
   pushLoading,
   pushError,
+  iosHomeScreenRequired,
+  configured,
   subscribe,
   unsubscribe,
   clearError,
@@ -229,6 +247,8 @@ function ChannelsSection({
         pushEnabled={pushEnabled}
         pushLoading={pushLoading}
         pushError={pushError}
+        iosHomeScreenRequired={iosHomeScreenRequired}
+        configured={configured}
         subscribe={subscribe}
         unsubscribe={unsubscribe}
         clearError={clearError}
@@ -414,6 +434,8 @@ export function NotificationSettingsPopover({
     isSubscribed: pushEnabled,
     isLoading: pushLoading,
     error: pushError,
+    iosHomeScreenRequired,
+    configured,
     subscribe,
     unsubscribe,
     clearError,
@@ -654,6 +676,8 @@ export function NotificationSettingsPopover({
           pushEnabled={pushEnabled}
           pushLoading={pushLoading}
           pushError={pushError}
+          iosHomeScreenRequired={iosHomeScreenRequired}
+          configured={configured}
           subscribe={subscribe}
           unsubscribe={unsubscribe}
           clearError={clearError}
