@@ -80,6 +80,49 @@ jest.mock('@/lib/notifications/notification-preferences-service', () => {
 import { dispatchNotifications } from '../dispatch-notifications'
 import { isPushSubscriptionEligible } from '../subscription-filters'
 
+type StagedSubscription = {
+  id: string
+  endpoint: string
+  p256dh: string
+  auth: string
+  subscriberUserId: string
+  notifyAllMembers: boolean
+  includedUserIds: string[]
+  notifyOnCreate: boolean
+  notifyOnUpdate: boolean
+  notifyOnDelete: boolean
+}
+
+/** Membership filters live on the group; device rows are returned only for eligible users. */
+function stageDevices(subscriptions: StagedSubscription[]) {
+  mockFindUniqueGroup.mockResolvedValue({
+    name: 'Test Group',
+    memberships: subscriptions.map((sub) => ({
+      userId: sub.subscriberUserId,
+      notifyAllMembers: sub.notifyAllMembers,
+      includedUserIds: sub.includedUserIds,
+      notifyOnCreate: sub.notifyOnCreate,
+      notifyOnUpdate: sub.notifyOnUpdate,
+      notifyOnDelete: sub.notifyOnDelete,
+      user: { id: sub.subscriberUserId, name: 'Member' },
+    })),
+  })
+  mockFindMany.mockImplementation(
+    async (args: { where?: { userId?: { in?: string[] } } }) => {
+      const ids = new Set(args?.where?.userId?.in ?? [])
+      return subscriptions
+        .filter((sub) => ids.has(sub.subscriberUserId))
+        .map((sub) => ({
+          id: sub.id,
+          endpoint: sub.endpoint,
+          p256dh: sub.p256dh,
+          auth: sub.auth,
+          userId: sub.subscriberUserId,
+        }))
+    },
+  )
+}
+
 const MockWebPushError = jest.requireMock('web-push').WebPushError as new (
   message: string,
   statusCode: number,
@@ -108,7 +151,7 @@ const arbSubscription = (groupId: string) =>
     p256dh: fc.base64String({ minLength: 10, maxLength: 50 }),
     auth: fc.base64String({ minLength: 10, maxLength: 20 }),
     groupId: fc.constant(groupId),
-    subscriberUserId: fc.string({ minLength: 1, maxLength: 50 }),
+    subscriberUserId: fc.uuid(),
     notifyAllMembers: fc.boolean(),
     includedUserIds: fc.array(fc.string({ minLength: 1, maxLength: 50 }), {
       maxLength: 5,
@@ -172,8 +215,7 @@ describe('Dispatch Notifications Property Tests', () => {
           }),
           async (activityType, groupId, subscriptions, userId) => {
             jest.clearAllMocks()
-            mockFindMany.mockResolvedValue(subscriptions)
-            mockFindUniqueGroup.mockResolvedValue({ name: 'Test Group' })
+            stageDevices(subscriptions)
             mockFindUniqueExpense.mockResolvedValue({ title: 'Test Expense' })
             mockSendNotification.mockResolvedValue({})
 
@@ -227,8 +269,7 @@ describe('Dispatch Notifications Property Tests', () => {
               },
             ]
 
-            mockFindMany.mockResolvedValue(subscriptions)
-            mockFindUniqueGroup.mockResolvedValue({ name: 'Test Group' })
+            stageDevices(subscriptions)
             mockFindUniqueExpense.mockResolvedValue({ title: 'Test Expense' })
             mockSendNotification.mockResolvedValue({})
 
@@ -264,8 +305,7 @@ describe('Dispatch Notifications Property Tests', () => {
           }),
           async (activityType, groupId, subscriptions, userId) => {
             jest.clearAllMocks()
-            mockFindMany.mockResolvedValue(subscriptions)
-            mockFindUniqueGroup.mockResolvedValue({ name: 'Test Group' })
+            stageDevices(subscriptions)
             mockFindUniqueExpense.mockResolvedValue({ title: 'Test Expense' })
             mockSendNotification.mockResolvedValue({})
 
@@ -293,8 +333,7 @@ describe('Dispatch Notifications Property Tests', () => {
           async (activityType, subscriptions) => {
             jest.clearAllMocks()
             // Use no participantId so all subscriptions are eligible
-            mockFindMany.mockResolvedValue(subscriptions)
-            mockFindUniqueGroup.mockResolvedValue({ name: 'Test Group' })
+            stageDevices(subscriptions)
             mockFindUniqueExpense.mockResolvedValue({ title: 'Test Expense' })
             mockSendNotification.mockResolvedValue({})
 
@@ -335,8 +374,7 @@ describe('Dispatch Notifications Property Tests', () => {
           arbStatusCode,
           async (activityType, subscriptions, statusCode) => {
             jest.clearAllMocks()
-            mockFindMany.mockResolvedValue(subscriptions)
-            mockFindUniqueGroup.mockResolvedValue({ name: 'Test Group' })
+            stageDevices(subscriptions)
             mockFindUniqueExpense.mockResolvedValue({ title: 'Test Expense' })
             mockDelete.mockResolvedValue({})
 
@@ -394,8 +432,7 @@ describe('Dispatch Notifications Property Tests', () => {
           arbNonDeleteStatusCode,
           async (activityType, subscriptions, statusCode) => {
             jest.clearAllMocks()
-            mockFindMany.mockResolvedValue(subscriptions)
-            mockFindUniqueGroup.mockResolvedValue({ name: 'Test Group' })
+            stageDevices(subscriptions)
             mockFindUniqueExpense.mockResolvedValue({ title: 'Test Expense' })
 
             // Make all push sends fail with a non-410/404 status code
@@ -423,8 +460,7 @@ describe('Dispatch Notifications Property Tests', () => {
           fc.string({ minLength: 1, maxLength: 100 }),
           async (activityType, subscriptions, errorMessage) => {
             jest.clearAllMocks()
-            mockFindMany.mockResolvedValue(subscriptions)
-            mockFindUniqueGroup.mockResolvedValue({ name: 'Test Group' })
+            stageDevices(subscriptions)
             mockFindUniqueExpense.mockResolvedValue({ title: 'Test Expense' })
 
             // Make all push sends fail with a generic error (no statusCode)

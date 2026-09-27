@@ -117,7 +117,7 @@ export function SettingsPage({ profile }: { profile: SettingsPageProfile }) {
       <NotificationsPreferences
         notificationsEnabled={profile.notificationsEnabled}
         emailVerified={profile.emailVerified}
-        deviceSlot={<ThisDevicePush currentUserId={profile.id} />}
+        deviceSlot={<ThisDevicePush />}
       />
 
       {/* Username: a field row that keeps `profile.changeUsername`. */}

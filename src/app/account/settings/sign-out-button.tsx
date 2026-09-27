@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { logoutAction } from '@/lib/auth/actions'
+import { disconnectPushSubscription } from '@/lib/push/use-push-notification-subscription'
 import { LogOut } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useTransition } from 'react'
@@ -12,6 +13,7 @@ export function SignOutButton() {
 
   function handleLogout() {
     startTransition(async () => {
+      await disconnectPushSubscription()
       await logoutAction()
     })
   }

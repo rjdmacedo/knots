@@ -34,69 +34,91 @@ export async function dispatchNotifications(
     return
   }
 
-  // Query all subscriptions for the group
-  const subscriptions = await prisma.pushSubscription.findMany({
-    where: { groupId },
+  // Group filters live on the membership. The browser subscription is one
+  // row per device and is shared across groups.
+  const group = await prisma.group.findUnique({
+    where: { id: groupId },
+    select: {
+      name: true,
+      memberships: {
+        where: { archivedAt: null },
+        select: {
+          userId: true,
+          notifyAllMembers: true,
+          includedUserIds: true,
+          notifyOnCreate: true,
+          notifyOnUpdate: true,
+          notifyOnDelete: true,
+          user: { select: { id: true, name: true } },
+        },
+      },
+    },
   })
 
-  console.log(
-    `[push] Found ${subscriptions.length} subscription(s) for group ${groupId}`,
-  )
-
-  if (subscriptions.length === 0) {
-    return
-  }
-
-  const groupEligible = subscriptions.filter((sub) =>
-    isPushSubscriptionEligible(sub, activityType, extra.userId),
+  const memberships = group?.memberships ?? []
+  const groupEligible = memberships.filter((membership) =>
+    isPushSubscriptionEligible(
+      {
+        subscriberUserId: membership.userId,
+        notifyAllMembers: membership.notifyAllMembers,
+        includedUserIds: membership.includedUserIds,
+        notifyOnCreate: membership.notifyOnCreate,
+        notifyOnUpdate: membership.notifyOnUpdate,
+        notifyOnDelete: membership.notifyOnDelete,
+      },
+      activityType,
+      extra.userId,
+    ),
   )
 
   if (groupEligible.length === 0) {
-    console.log('[push] No eligible subscriptions after filtering')
+    console.log('[push] No eligible members after filtering')
     return
   }
 
-  // Account-level preference gate, in front of the per-group filters above.
-  // The recipient of a push is the subscription's subscriber user. When the
-  // activity maps to an account category, skip the recipient if their master
-  // switch is off, or skip PUSH when that category's push flag is false.
-  // Unmapped activity types (category === null) keep the current behavior.
+  // Account-level preference gate. When the activity maps to an account
+  // category, skip the member if their master switch is off, or skip PUSH
+  // when that category's push flag is false. Unmapped activity types keep
+  // the membership filter only.
   const category = activityTypeToNotificationCategory(activityType)
-  let eligible = groupEligible
+  let eligibleMembers = groupEligible
   if (category !== null) {
     const prefsByUser = await getNotificationPreferencesForUsers(
-      groupEligible.map((sub) => sub.subscriberUserId),
+      groupEligible.map((membership) => membership.userId),
     )
-    eligible = groupEligible.filter((sub) =>
+    eligibleMembers = groupEligible.filter((membership) =>
       isCategoryChannelAllowed(
-        prefsByUser.get(sub.subscriberUserId),
+        prefsByUser.get(membership.userId),
         category,
         'push',
       ),
     )
   }
 
-  if (eligible.length === 0) {
-    console.log('[push] No eligible subscriptions after account preferences')
+  if (eligibleMembers.length === 0) {
+    console.log('[push] No eligible members after account preferences')
     return
   }
 
-  // Fetch group name and expense title for the payload
-  const group = await prisma.group.findUnique({
-    where: { id: groupId },
-    select: {
-      name: true,
-      memberships: {
-        include: { user: { select: { id: true, name: true } } },
-      },
+  const subscriptions = await prisma.pushSubscription.findMany({
+    where: {
+      userId: { in: eligibleMembers.map((membership) => membership.userId) },
     },
   })
 
+  console.log(
+    `[push] Found ${subscriptions.length} device subscription(s) for group ${groupId}`,
+  )
+
+  if (subscriptions.length === 0) {
+    return
+  }
+
   const groupName = group?.name ?? ''
 
-  // Resolve actor name from userId
   const actorName = extra.userId
-    ? group?.memberships?.find((m) => m.user.id === extra.userId)?.user.name
+    ? memberships.find((membership) => membership.user.id === extra.userId)
+        ?.user.name
     : undefined
 
   let expenseTitle: string | undefined
@@ -127,7 +149,7 @@ export async function dispatchNotifications(
 
   webpush.setVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey)
 
-  const sendPromises = eligible.map(async (sub) => {
+  const sendPromises = subscriptions.map(async (sub) => {
     const pushSubscription = {
       endpoint: sub.endpoint,
       keys: {

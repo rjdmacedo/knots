@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { logoutAction } from '@/lib/auth/actions'
+import { disconnectPushSubscription } from '@/lib/push/use-push-notification-subscription'
 import { LogOut, Monitor, Moon, Settings, Sun, User } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useTheme } from 'next-themes'
@@ -36,6 +37,7 @@ export function UserMenu({ name, email }: UserMenuProps) {
 
   function handleLogout() {
     startTransition(async () => {
+      await disconnectPushSubscription()
       await logoutAction()
     })
   }

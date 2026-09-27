@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { toast } from '@/components/ui/toast'
+import { disconnectPushSubscription } from '@/lib/push/use-push-notification-subscription'
 import { trpc } from '@/trpc/client'
 import { Loader2, MonitorSmartphone } from 'lucide-react'
 import { useTranslations } from 'next-intl'
@@ -50,7 +51,11 @@ export function SignOutAllButton() {
           <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
           <AlertDialogAction
             variant="destructive"
-            onClick={() => signOutAll.mutate()}
+            onClick={() => {
+              void disconnectPushSubscription().finally(() => {
+                signOutAll.mutate()
+              })
+            }}
             disabled={signOutAll.isPending}
           >
             {signOutAll.isPending ? (

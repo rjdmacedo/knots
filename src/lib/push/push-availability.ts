@@ -37,8 +37,10 @@ export function isIosNeedsInstall(): boolean {
 export function detectPushDisabledReason(): PushDisabledReason {
   if (typeof window === 'undefined') return null
   if (!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY) return 'unconfigured'
-  if (!isPushSupported()) return 'unsupported'
+  // On iOS the push APIs are missing until the app is installed, so the
+  // home-screen check has to win over "unsupported".
   if (isIosNeedsInstall()) return 'iosInstall'
+  if (!isPushSupported()) return 'unsupported'
   if (
     typeof Notification !== 'undefined' &&
     Notification.permission === 'denied'
