@@ -1,3 +1,10 @@
+# [1.58.0](https://github.com/rjdmacedo/knots/compare/v1.57.0...v1.58.0) (2026-09-27)
+
+
+### Features
+
+* add the account settings page ([81ed3a3](https://github.com/rjdmacedo/knots/commit/81ed3a3f7cffa1a376ba7d8275e47cd8d3c40694))
+
 # [1.57.0](https://github.com/rjdmacedo/knots/compare/v1.56.1...v1.57.0) (2026-09-25)
 
 
