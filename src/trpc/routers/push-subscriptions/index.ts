@@ -22,6 +22,21 @@ const listInputSchema = z.object({
   endpoint: z.string().max(2048),
 })
 
+// This device: a user-scoped subscription with no group (`groupId: null`),
+// meaning "this browser, all groups". No group-membership check applies.
+const createDeviceInputSchema = z.object({
+  endpoint: z.string().url().max(2048),
+  keys: z.object({
+    p256dh: z.string().min(1),
+    auth: z.string().min(1),
+  }),
+  subscriberUserId: z.string().min(1).max(200),
+})
+
+const deleteDeviceInputSchema = z.object({
+  endpoint: z.string().max(2048),
+})
+
 export const pushSubscriptionsRouter = createTRPCRouter({
   create: baseProcedure.input(createInputSchema).mutation(async ({ input }) => {
     const group = await prisma.group.findUnique({
@@ -96,6 +111,48 @@ export const pushSubscriptionsRouter = createTRPCRouter({
 
     return { success: true }
   }),
+
+  // This device — enable push for this browser across all groups.
+  createDevice: baseProcedure
+    .input(createDeviceInputSchema)
+    .mutation(async ({ input }) => {
+      // Prisma's composite `@@unique([endpoint, groupId])` treats null groupId
+      // as distinct, so `upsert` cannot target the null-group row. Clear any
+      // existing null-group row for this endpoint, then create a fresh one to
+      // enforce a single "this browser, all groups" subscription per endpoint.
+      await prisma.pushSubscription.deleteMany({
+        where: {
+          endpoint: input.endpoint,
+          groupId: null,
+        },
+      })
+
+      const subscription = await prisma.pushSubscription.create({
+        data: {
+          endpoint: input.endpoint,
+          p256dh: input.keys.p256dh,
+          auth: input.keys.auth,
+          groupId: null,
+          subscriberUserId: input.subscriberUserId,
+        },
+      })
+
+      return { id: subscription.id }
+    }),
+
+  // This device — disable push for this browser only.
+  deleteDevice: baseProcedure
+    .input(deleteDeviceInputSchema)
+    .mutation(async ({ input }) => {
+      await prisma.pushSubscription.deleteMany({
+        where: {
+          endpoint: input.endpoint,
+          groupId: null,
+        },
+      })
+
+      return { success: true }
+    }),
 
   list: baseProcedure.input(listInputSchema).query(async ({ input }) => {
     const subscriptions = await prisma.pushSubscription.findMany({

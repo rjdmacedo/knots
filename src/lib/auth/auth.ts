@@ -6,6 +6,7 @@
  * The authorized callback is defined here (not in auth.config.ts)
  * because it requires Node.js modules that can't run in Edge Runtime.
  */
+import { consumePasskeyLoginToken } from '@/lib/passkey'
 import { prisma } from '@/lib/prisma'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import NextAuth from 'next-auth'
@@ -42,6 +43,9 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
         // Reject unverified accounts
         if (!user.emailVerified) return null
 
+        // Accounts with no password (passkey-only) cannot sign in with credentials
+        if (!user.passwordHash) return null
+
         const isValid = await verifyPassword(password, user.passwordHash)
         if (!isValid) return null
 
@@ -50,6 +54,30 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
           name: user.name,
           email: user.email,
           emailVerified: user.emailVerified,
+        }
+      },
+    }),
+    // Passkey sign-in: `authorize` never trusts a client-supplied userId. It
+    // exchanges a single-use, short-lived token that `passkey.verifyAuthentication`
+    // minted only after a completed, server-verified WebAuthn ceremony, so the
+    // resulting session shape matches a password login exactly.
+    Credentials({
+      id: 'passkey',
+      credentials: {
+        token: { type: 'text' },
+      },
+      async authorize(credentials) {
+        const token = credentials?.token as string | undefined
+        if (!token) return null
+
+        const result = await consumePasskeyLoginToken(token)
+        if (!result.ok) return null
+
+        return {
+          id: result.value.id,
+          name: result.value.name,
+          email: result.value.email,
+          emailVerified: result.value.emailVerified,
         }
       },
     }),

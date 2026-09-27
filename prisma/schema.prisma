@@ -244,8 +244,8 @@ model PushSubscription {
   endpoint         String   @db.VarChar(2048)
   p256dh           String   @db.VarChar(256)
   auth             String   @db.VarChar(256)
-  groupId          String
-  group            Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId          String?
+  group            Group?   @relation(fields: [groupId], references: [id], onDelete: Cascade)
   subscriberUserId String   @db.VarChar(200)
   notifyAllMembers Boolean  @default(true)
   /// Used when notifyAllMembers is false: only notify for these actors (never the subscriber).
@@ -278,31 +278,100 @@ model ExpenseCategoryMapping {
 // ─── Authentication Models ───────────────────────────────────────────────────
 
 model User {
-  id                String    @id @default(cuid())
-  name              String
-  username          String    @unique
-  email             String    @unique
-  emailVerified     DateTime?
-  passwordHash      String
-  timezone          String?
-  preferredCurrency String?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  id                   String    @id @default(cuid())
+  name                 String
+  username             String    @unique
+  email                String    @unique
+  emailVerified        DateTime?
+  passwordHash         String? // null only after Remove password
+  image                String?
+  locale               String?
+  theme                String? // "light" | "dark" | "system"
+  notificationsEnabled Boolean   @default(true)
+  timezone             String?
+  preferredCurrency    String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
-  sessions               Session[]
-  accounts               Account[]
-  tokens                 Token[]
-  memberships            GroupMembership[]
-  invitationsSent        Invitation[]            @relation("InvitedBy")
-  expensesPaidBy         Expense[]               @relation("ExpensesPaidBy")
-  paidByExpenses         ExpensePaidBy[]         @relation("UserExpensesPaidBy")
-  expenseItemAssignments ExpenseItemAssignment[] @relation("UserExpenseItemAssignments")
-  expenseRemainderShares ExpenseRemainderShare[] @relation("UserExpenseRemainderShares")
-  expensesPaidFor        ExpensePaidFor[]        @relation("ExpensesPaidFor")
-  friendsOwned           Friend[]                @relation("FriendsOwned")
-  friendsLinked          Friend[]                @relation("FriendsLinked")
-  blockedUsers           BlockedUser[]           @relation("BlockedByUser")
-  blockedBy              BlockedUser[]           @relation("BlockedTargetUser")
+  sessions                Session[]
+  accounts                Account[]
+  tokens                  Token[]
+  passkeys                Passkey[]
+  passkeyChallenges       PasskeyChallenge[]
+  emailChangeChallenges   EmailChangeChallenge[]
+  notificationPreferences UserNotificationPreference[]
+  memberships             GroupMembership[]
+  invitationsSent         Invitation[]                 @relation("InvitedBy")
+  expensesPaidBy          Expense[]                    @relation("ExpensesPaidBy")
+  paidByExpenses          ExpensePaidBy[]              @relation("UserExpensesPaidBy")
+  expenseItemAssignments  ExpenseItemAssignment[]      @relation("UserExpenseItemAssignments")
+  expenseRemainderShares  ExpenseRemainderShare[]      @relation("UserExpenseRemainderShares")
+  expensesPaidFor         ExpensePaidFor[]             @relation("ExpensesPaidFor")
+  friendsOwned            Friend[]                     @relation("FriendsOwned")
+  friendsLinked           Friend[]                     @relation("FriendsLinked")
+  blockedUsers            BlockedUser[]                @relation("BlockedByUser")
+  blockedBy               BlockedUser[]                @relation("BlockedTargetUser")
+}
+
+model Passkey {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credentialId String   @unique
+  publicKey    Bytes
+  counter      Int
+  deviceType   String // "singleDevice" | "multiDevice"
+  backedUp     Boolean  @default(false)
+  name         String
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+}
+
+/// Short-lived, single-use WebAuthn challenges plus the "recent password"
+/// marker used by the 5-minute add-passkey gate.
+///
+/// - "registration" / "authentication": store the base64url challenge the
+///   server issued; `verify*` consumes (deletes) the row so a challenge can
+///   only be used once. Discoverable authentication has a null `userId`.
+/// - "recent-auth": no meaningful challenge; the row's existence (and unexpired
+///   `expiresAt`) is the "the user confirmed their password recently" flag.
+model PasskeyChallenge {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  challenge String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId, type])
+  @@index([challenge])
+  @@index([expiresAt])
+}
+
+model EmailChangeChallenge {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  newEmail  String
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model UserNotificationPreference {
+  id       String  @id @default(cuid())
+  userId   String
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category String
+  email    Boolean @default(false)
+  push     Boolean @default(false)
+
+  @@unique([userId, category])
 }
 
 model BlockedUser {

@@ -54,6 +54,10 @@ export interface EmailService {
     groupName: string,
     activityLink: string,
   ): Promise<{ ok: true } | { ok: false; error: string }>
+  sendEmailChangeCodeEmail(
+    to: string,
+    code: string,
+  ): Promise<{ ok: true } | { ok: false; error: string }>
 }
 
 const APP_NAME = 'Knots'
@@ -460,6 +464,32 @@ export function buildGroupActivityDigestEmailText(
   ].join('\n')
 }
 
+export function buildEmailChangeCodeEmailHtml(code: string): string {
+  const safeCode = escapeHtml(code)
+
+  return `
+    <h1>Confirm your new email for ${APP_NAME}</h1>
+    <p>Use the code below to confirm this address as the new email for your ${APP_NAME} account.</p>
+    <p style="font-size:24px;font-weight:bold;letter-spacing:4px;">${safeCode}</p>
+    <p>This code will expire in 15 minutes.</p>
+    <p>If you did not request an email change, you can safely ignore this email and your address will stay the same.</p>
+  `.trim()
+}
+
+export function buildEmailChangeCodeEmailText(code: string): string {
+  return [
+    `Confirm your new email for ${APP_NAME}`,
+    '',
+    `Use the code below to confirm this address as the new email for your ${APP_NAME} account.`,
+    '',
+    code,
+    '',
+    `This code will expire in 15 minutes.`,
+    '',
+    `If you did not request an email change, you can safely ignore this email and your address will stay the same.`,
+  ].join('\n')
+}
+
 function createEmailService(): EmailService {
   return {
     async sendVerificationEmail(to, token) {
@@ -764,6 +794,40 @@ function createEmailService(): EmailService {
           err instanceof Error ? err.message : 'Unknown email delivery error'
         console.error(
           `[EmailService] Failed to send group activity digest email to ${to}:`,
+          message,
+        )
+        return { ok: false, error: message }
+      }
+    },
+
+    async sendEmailChangeCodeEmail(to, code) {
+      const resend = await getResendClient()
+      const from = getFromAddress()
+      const subject = `Confirm your new email for ${APP_NAME}`
+      const html = buildEmailChangeCodeEmailHtml(code)
+      const text = buildEmailChangeCodeEmailText(code)
+
+      try {
+        const { error } = await resend.emails.send({
+          from,
+          to,
+          subject,
+          html,
+          text,
+        })
+        if (error) {
+          console.error(
+            `[EmailService] Failed to send email change code email to ${to}:`,
+            error,
+          )
+          return { ok: false, error: error.message }
+        }
+        return { ok: true }
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : 'Unknown email delivery error'
+        console.error(
+          `[EmailService] Failed to send email change code email to ${to}:`,
           message,
         )
         return { ok: false, error: message }

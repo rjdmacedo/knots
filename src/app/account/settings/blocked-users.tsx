@@ -101,9 +101,7 @@ export function BlockedUsers() {
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger
-          render={<Button variant="outline" className="w-full sm:w-auto" />}
-        >
+        <DialogTrigger render={<Button variant="outline" size="sm" />}>
           <ShieldBan className="size-4" />
           {t('manage')}
         </DialogTrigger>
@@ -146,6 +144,7 @@ export function BlockedUsers() {
               />
               <Button
                 type="submit"
+                variant="destructive"
                 size="sm"
                 disabled={blockUser.isPending || !email.trim()}
               >
@@ -183,9 +182,8 @@ export function BlockedUsers() {
                   </p>
                 </div>
                 <Button
-                  variant="ghost"
-                  size="icon"
-                  className="shrink-0 text-destructive hover:text-destructive"
+                  variant="destructive"
+                  size="icon-sm"
                   onClick={() =>
                     unblockUser.mutate({ blockedEmail: blocked.blockedEmail })
                   }
@@ -220,9 +218,9 @@ export function BlockedUsers() {
               {t('confirmBlockCancel')}
             </AlertDialogCancel>
             <AlertDialogAction
+              variant="destructive"
               onClick={confirmBlockFriend}
               disabled={blockUser.isPending}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {blockUser.isPending ? (
                 <Loader2 className="size-4 animate-spin" />

@@ -29,6 +29,21 @@ jest.mock('@/lib/prisma', () => ({
   },
 }))
 
+// These properties assert only the per-group member/event filters. The
+// account-preference gate (task 7.5) sits in front of them; here we make it
+// transparent (every user enabled, every channel allowed) so the group-level
+// invariants are what is exercised.
+jest.mock('@/lib/notifications/notification-preferences-service', () => {
+  const actual = jest.requireActual(
+    '@/lib/notifications/notification-preferences-service',
+  )
+  return {
+    ...actual,
+    getNotificationPreferencesForUsers: jest.fn(async () => new Map()),
+    isCategoryChannelAllowed: jest.fn(() => true),
+  }
+})
+
 import { emailService } from '@/lib/auth/email-service'
 import {
   processDueGroupEmailDigests,

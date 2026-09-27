@@ -30,6 +30,28 @@ export type Locale = keyof typeof localeLabels
 export type Locales = ReadonlyArray<Locale>
 export const defaultLocale: Locale = 'en-US'
 
+/** flagcdn country code for each locale. Catalan uses the Catalan flag. */
+export const localeFlagCodes: Record<Locale, string> = {
+  'en-US': 'us',
+  fi: 'fi',
+  'fr-FR': 'fr',
+  es: 'es',
+  'de-DE': 'de',
+  'zh-CN': 'cn',
+  'zh-TW': 'tw',
+  'ja-JP': 'jp',
+  'pl-PL': 'pl',
+  'ru-RU': 'ru',
+  'it-IT': 'it',
+  'ua-UA': 'ua',
+  ro: 'ro',
+  'tr-TR': 'tr',
+  'pt-PT': 'pt',
+  'nl-NL': 'nl',
+  ca: 'es-ct',
+  'cs-CZ': 'cz',
+}
+
 export default getRequestConfig(async () => {
   const locale = await getUserLocale()
   const localeMessages = (await import(`../messages/${locale}.json`)).default

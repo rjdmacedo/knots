@@ -1053,7 +1053,7 @@
     "deleteGroupConfirmAction": "永久刪除"
   },
   "UserMenu": {
-    "profileSettings": "個人資料設定",
+    "profileSettings": "帳戶設定",
     "signingOut": "正在登出…",
     "signOut": "登出"
   },

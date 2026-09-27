@@ -1053,7 +1053,7 @@
     "deleteGroupConfirmAction": "完全に削除"
   },
   "UserMenu": {
-    "profileSettings": "プロフィール設定",
+    "profileSettings": "アカウント設定",
     "signingOut": "サインアウト中…",
     "signOut": "サインアウト"
   },

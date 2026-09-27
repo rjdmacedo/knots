@@ -4,6 +4,7 @@ import { categoriesRouter } from '@/trpc/routers/categories'
 import { friendsRouter } from '@/trpc/routers/friends'
 import { groupMembershipRouter } from '@/trpc/routers/group-membership'
 import { groupsRouter } from '@/trpc/routers/groups'
+import { passkeyRouter } from '@/trpc/routers/passkey'
 import { profileRouter } from '@/trpc/routers/profile'
 import { pushSubscriptionsRouter } from '@/trpc/routers/push-subscriptions'
 import { inferRouterOutputs } from '@trpc/server'
@@ -17,6 +18,7 @@ export const appRouter = createTRPCRouter({
   categories: categoriesRouter,
   profile: profileRouter,
   friends: friendsRouter,
+  passkey: passkeyRouter,
   pushSubscriptions: pushSubscriptionsRouter,
 })
 

@@ -62,6 +62,21 @@ jest.mock('../../env', () => ({
   },
 }))
 
+// These properties assert only the per-group eligibility filter. The
+// account-preference gate (task 7.5) sits in front of it; here we make it
+// transparent (every user enabled, every channel allowed) so the group-level
+// invariants are what is exercised.
+jest.mock('@/lib/notifications/notification-preferences-service', () => {
+  const actual = jest.requireActual(
+    '@/lib/notifications/notification-preferences-service',
+  )
+  return {
+    ...actual,
+    getNotificationPreferencesForUsers: jest.fn(async () => new Map()),
+    isCategoryChannelAllowed: jest.fn(() => true),
+  }
+})
+
 import { dispatchNotifications } from '../dispatch-notifications'
 import { isPushSubscriptionEligible } from '../subscription-filters'
 

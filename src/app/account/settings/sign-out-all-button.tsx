@@ -35,9 +35,7 @@ export function SignOutAllButton() {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger
-        render={<Button variant="outline" className="w-full sm:w-auto" />}
-      >
+      <AlertDialogTrigger render={<Button variant="destructive" size="sm" />}>
         <MonitorSmartphone className="size-4" />
         {t('button')}
       </AlertDialogTrigger>
@@ -51,6 +49,7 @@ export function SignOutAllButton() {
         <AlertDialogFooter>
           <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
           <AlertDialogAction
+            variant="destructive"
             onClick={() => signOutAll.mutate()}
             disabled={signOutAll.isPending}
           >

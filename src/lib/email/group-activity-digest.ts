@@ -2,7 +2,12 @@ import 'server-only'
 
 import { ActivityType } from '@prisma/client'
 
+import { activityTypeToNotificationCategory } from '@/app/account/settings/notification-category-metadata'
 import { emailService } from '@/lib/auth/email-service'
+import {
+  getNotificationPreferencesForUsers,
+  isCategoryChannelAllowed,
+} from '@/lib/notifications/notification-preferences-service'
 import { prisma } from '@/lib/prisma'
 import { isActivityTypeEnabled } from '@/lib/push/subscription-filters'
 
@@ -165,11 +170,39 @@ export async function processDueGroupEmailDigests(
         return true
       })
 
+      // Account-level preference gate, in front of the per-group filters above.
+      // Skip a recipient whose master switch is off, and skip email when none of
+      // the window's mapped categories has the EMAIL channel enabled. A digest
+      // can span several activity types, so a recipient is kept when AT LEAST
+      // ONE mapped category allows email. Activity types with no account
+      // category (mapped to null) do not gate email — they preserve today's
+      // behavior via `isCategoryChannelAllowed` returning true.
+      const windowCategories = new Set<string | null>(
+        Array.from(windowEventTypes).map((activityType) =>
+          activityTypeToNotificationCategory(activityType),
+        ),
+      )
+
+      const prefsByUser = await getNotificationPreferencesForUsers(
+        recipients.map((membership) => membership.userId),
+      )
+
+      const accountEligible = recipients.filter((membership) => {
+        const prefs = prefsByUser.get(membership.userId)
+        // Master switch off skips the user entirely.
+        if (prefs && !prefs.notificationsEnabled) {
+          return false
+        }
+        return Array.from(windowCategories).some((category) =>
+          isCategoryChannelAllowed(prefs, category, 'email'),
+        )
+      })
+
       const actorName = actor?.name?.trim() || 'Someone'
       const groupName = pending.group.name
       const activityLink = `${getBaseUrl()}/groups/${pending.groupId}/activity`
 
-      const deliverable = recipients.filter(
+      const deliverable = accountEligible.filter(
         (membership) =>
           membership.user.emailVerified != null &&
           membership.user.email.trim().length > 0,
