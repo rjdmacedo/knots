@@ -1,6 +1,6 @@
 FROM node:26-alpine AS base
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN npm install -g pnpm@11.13.1
 
 WORKDIR /usr/app
 COPY ./package.json \
@@ -32,7 +32,7 @@ RUN rm -r .next/cache
 
 FROM node:26-alpine AS runtime-deps
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN npm install -g pnpm@11.13.1
 
 WORKDIR /usr/app
 COPY --from=base /usr/app/package.json /usr/app/pnpm-lock.yaml /usr/app/next.config.mjs ./
