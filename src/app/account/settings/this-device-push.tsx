@@ -1,8 +1,10 @@
 'use client'
 
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { toast } from '@/components/ui/toast'
 import { usePushNotificationSubscription } from '@/lib/push/use-push-notification-subscription'
+import { trpc } from '@/trpc/client'
 import { useTranslations } from 'next-intl'
 import { SettingsGroup, SettingsRow } from './settings-ui'
 
@@ -13,6 +15,12 @@ import { SettingsGroup, SettingsRow } from './settings-ui'
 export function ThisDevicePush() {
   const t = useTranslations('ProfileSettings')
   const push = usePushNotificationSubscription()
+  const prefs = trpc.profile.notificationPreferences.useQuery()
+  const accountWantsPush =
+    !!prefs.data?.notificationsEnabled &&
+    Object.values(prefs.data.categories).some((channels) => channels.push)
+  const showPushSelectedWarning =
+    accountWantsPush && !push.isLoading && !push.isSubscribed
 
   const unavailableReason = push.iosHomeScreenRequired
     ? 'iosInstall'
@@ -38,6 +46,13 @@ export function ThisDevicePush() {
 
   return (
     <SettingsGroup title={t('notifications.thisDevice.title')}>
+      {showPushSelectedWarning ? (
+        <div className="px-4 pt-4 sm:px-6">
+          <Alert variant="destructive" className="border-destructive/50">
+            {t('notifications.thisDevice.pushSelectedWarning')}
+          </Alert>
+        </div>
+      ) : null}
       <SettingsRow
         label={
           <DeviceLabel unavailableReason={unavailableReason} push={push} />
@@ -46,7 +61,7 @@ export function ThisDevicePush() {
           unavailableReason || push.isLoading ? null : push.isSubscribed ? (
             <Button
               type="button"
-              variant="outline"
+              variant="destructive"
               size="sm"
               disabled={push.isUpdating}
               onClick={() => void handleToggle('unsubscribe')}

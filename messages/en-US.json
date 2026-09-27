@@ -981,6 +981,7 @@
         "checking": "Checking this device…",
         "enabledLabel": "Push notifications are enabled on this device.",
         "disabledLabel": "Push notifications are disabled on this device.",
+        "pushSelectedWarning": "Push is selected, but push notifications are not enabled on this device.",
         "enable": "Enable push notifications",
         "disable": "Disable push notifications",
         "error": "Could not update push notifications for this device. Please try again."

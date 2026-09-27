@@ -964,6 +964,7 @@
         "checking": "A verificar este dispositivo…",
         "enabledLabel": "As notificações push estão ativadas neste dispositivo.",
         "disabledLabel": "As notificações push estão desativadas neste dispositivo.",
+        "pushSelectedWarning": "O push está selecionado, mas as notificações push não estão ativas neste dispositivo.",
         "enable": "Ativar notificações push",
         "disable": "Desativar notificações push",
         "error": "Não foi possível atualizar as notificações push deste dispositivo. Tenta novamente."
