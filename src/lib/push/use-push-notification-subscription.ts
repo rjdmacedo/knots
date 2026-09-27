@@ -174,7 +174,11 @@ export function usePushNotificationSubscription(
         })
         return null
       } catch (err) {
-        console.error('[push] Subscribe failed:', err)
+        // Avoid console.error(Error): Next.js treats it as a recoverable overlay.
+        console.warn(
+          '[push] Subscribe failed:',
+          err instanceof Error ? err.message : err,
+        )
         setError('subscribeError')
         return 'subscribeError'
       }
@@ -196,7 +200,10 @@ export function usePushNotificationSubscription(
         setSubscription(null)
         return null
       } catch (err) {
-        console.error('[push] Unsubscribe failed:', err)
+        console.warn(
+          '[push] Unsubscribe failed:',
+          err instanceof Error ? err.message : err,
+        )
         setError('subscribeError')
         return 'subscribeError'
       }
