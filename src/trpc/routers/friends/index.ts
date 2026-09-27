@@ -1025,6 +1025,84 @@ export const friendsRouter = createTRPCRouter({
         )
 
         if (group && nonMemberIds.size > 0) {
+          // The payer is not in the group. A group expense would credit someone
+          // the group does not know, so balances show them as "Unknown".
+          // Each other person's share is a direct expense paid by the outsider.
+          if (!groupMemberUserIds.has(paidByUserId)) {
+            for (const nonMemberId of Array.from(nonMemberIds)) {
+              const u = await prisma.user.findUnique({
+                where: { id: nonMemberId },
+                select: { email: true, name: true },
+              })
+              if (u) {
+                await upsertFriendByEmail({
+                  userId: ctx.user.id,
+                  email: u.email,
+                  name: u.name ?? undefined,
+                })
+              }
+            }
+
+            let documentsAttached = false
+            for (const participantId of participantIds) {
+              if (participantId === paidByUserId) continue
+              const share = sharesMap.get(participantId) ?? 0
+              if (share <= 0) continue
+
+              const includeDocuments =
+                !documentsAttached && input.documents.length > 0
+              if (includeDocuments) documentsAttached = true
+
+              const expenseId = randomId()
+              await prisma.expense.create({
+                data: {
+                  id: expenseId,
+                  groupId: null,
+                  expenseDate,
+                  title: input.title,
+                  amount: share,
+                  paidById: paidByUserId,
+                  isReimbursement: false,
+                  splitMode: 'BY_AMOUNT',
+                  categoryId: input.category,
+                  notes: input.notes ?? null,
+                  recurrenceRule: input.recurrenceRule,
+                  expenseCurrencyCode: group.currencyCode ?? group.currency,
+                  recurringExpenseLink: buildRecurringExpenseLinkCreate(
+                    input.recurrenceRule,
+                    expenseDate,
+                    null,
+                  ),
+                  paidFor: {
+                    createMany: {
+                      data: [{ userId: participantId, shares: share }],
+                    },
+                  },
+                  payers: {
+                    create: [{ userId: paidByUserId, amount: share }],
+                  },
+                  ...(includeDocuments
+                    ? {
+                        documents: {
+                          createMany: {
+                            data: input.documents.map((doc) => ({
+                              id: doc.id,
+                              url: doc.url,
+                              width: doc.width,
+                              height: doc.height,
+                            })),
+                          },
+                        },
+                      }
+                    : {}),
+                },
+              })
+              createdExpenseIds.push(expenseId)
+            }
+
+            return { success: true, expenseIds: createdExpenseIds }
+          }
+
           // Build the resolvedGroup shape expected by decomposeExpense
           const resolvedGroup = {
             id: group.id,

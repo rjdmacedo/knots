@@ -68,6 +68,9 @@ const nextConfig = {
       allowedOrigins: ['localhost:3000'],
     },
   },
+  outputFileTracingIncludes: {
+    '/**': ['./src/lib/auth/email-logo.png'],
+  },
 }
 
 export default withNextIntl(nextConfig)

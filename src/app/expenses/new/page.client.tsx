@@ -17,13 +17,18 @@ import {
 import { toast } from '@/components/ui/toast'
 import { Locale } from '@/i18n'
 import { getCurrency } from '@/lib/currency'
+import { outsideFriendDisplayNames } from '@/lib/expense-editor-participants'
 import { consumeStandaloneExpenseCreate } from '@/lib/expense-prefill-store'
 import { RuntimeFeatureFlags } from '@/lib/featureFlags'
 import { FriendListItem } from '@/lib/friends'
 import { useMediaQuery } from '@/lib/hooks'
 import { invalidateActivityQueries } from '@/lib/invalidate-activity-queries'
 import { ExpenseFormValues } from '@/lib/schemas'
-import { formatCurrency, getCurrencyFromGroup } from '@/lib/utils'
+import {
+  formatCurrency,
+  getCurrencyFromGroup,
+  sharesForGlobalExpense,
+} from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { ExternalLink, Users } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
@@ -314,7 +319,11 @@ export function StandaloneExpenseCreate({
             })),
             paidFor: values.paidFor.map((entry) => ({
               participant: entry.participant,
-              shares: entry.shares,
+              shares: sharesForGlobalExpense(
+                values.splitMode,
+                entry.shares,
+                currencyObj.decimal_digits,
+              ),
             })),
           })
           if ('groupHalf' in globalResult && globalResult.groupHalf) {
@@ -422,7 +431,11 @@ export function StandaloneExpenseCreate({
           })),
           paidFor: values.paidFor.map((entry) => ({
             participant: entry.participant,
-            shares: entry.shares,
+            shares: sharesForGlobalExpense(
+              values.splitMode,
+              entry.shares,
+              currencyObj.decimal_digits,
+            ),
           })),
         })
         toast.success(t('successToast'))
@@ -505,6 +518,14 @@ export function StandaloneExpenseCreate({
               runtimeFeatureFlags={runtimeFeatureFlags}
               isDesktop={isDesktop}
               singlePayerOnly={selectedFriends.length > 0}
+              outsideFriendNames={
+                selectedGroup
+                  ? outsideFriendDisplayNames(
+                      selectedFriends,
+                      groupParticipants,
+                    )
+                  : []
+              }
               containedScroll={false}
             />
           )}

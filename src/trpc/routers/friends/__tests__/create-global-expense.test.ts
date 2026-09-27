@@ -226,6 +226,92 @@ describe('createGlobalExpense procedure', () => {
     expect(mockExpenseCreate).not.toHaveBeenCalled()
   })
 
+  it('records a direct expense when the payer is outside the group', async () => {
+    mockFriendFindUnique.mockImplementation(
+      ({ where }: { where: { id: string } }) => {
+        if (where.id === 'friend-id-dave') {
+          return Promise.resolve({
+            id: 'friend-id-dave',
+            friendUserId: 'friend-user-dave',
+            email: 'dave@example.com',
+          })
+        }
+        return Promise.resolve(null)
+      },
+    )
+
+    mockGroupFindUnique.mockResolvedValue({
+      id: 'group-1',
+      currency: '€',
+      currencyCode: 'EUR',
+    })
+
+    mockGroupMembershipFindMany.mockResolvedValue([
+      { userId: 'current-user-id' },
+      { userId: 'friend-user-alice' },
+    ])
+
+    mockUserFindUnique.mockResolvedValue({
+      email: 'dave@example.com',
+      name: 'Dave',
+    })
+
+    const caller = friendsRouter.createCaller({} as any)
+
+    const result = await caller.createGlobalExpense({
+      title: 'Test',
+      amount: 75,
+      currency: 'EUR',
+      paidById: 'friend-id-dave',
+      groupId: 'group-1',
+      friendIds: ['friend-id-dave'],
+      splitMode: 'BY_AMOUNT',
+      paidFor: [
+        { participant: 'current-user-id', shares: 25 },
+        { participant: 'friend-user-alice', shares: 25 },
+        { participant: 'friend-id-dave', shares: 25 },
+      ],
+      documents: [],
+    })
+
+    expect(result).toEqual({
+      success: true,
+      expenseIds: ['mocked-random-id', 'mocked-random-id'],
+    })
+    expect(mockTransaction).not.toHaveBeenCalled()
+    expect(mockExpenseCreate).toHaveBeenCalledTimes(2)
+    expect(mockExpenseCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          groupId: null,
+          amount: 2500,
+          paidById: 'friend-user-dave',
+          splitMode: 'BY_AMOUNT',
+          expenseCurrencyCode: 'EUR',
+          paidFor: {
+            createMany: {
+              data: [{ userId: 'current-user-id', shares: 2500 }],
+            },
+          },
+        }),
+      }),
+    )
+    expect(mockExpenseCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          groupId: null,
+          amount: 2500,
+          paidById: 'friend-user-dave',
+          paidFor: {
+            createMany: {
+              data: [{ userId: 'friend-user-alice', shares: 2500 }],
+            },
+          },
+        }),
+      }),
+    )
+  })
+
   it('creates a soft user account if a selected friend does not have one', async () => {
     // Friend Carol is email-only and does not have an account.
     // We expect a user account to be fetched (not found), then created, friend updated, and expense created.

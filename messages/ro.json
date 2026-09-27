@@ -20,6 +20,9 @@
     "create": "Adaugă o cheltuială",
     "createFirst": "Adaug-o pe prima",
     "noExpenses": "Grupul tău nu conține nicio cheltuială încă.",
+    "noSearchResults": "Nicio cheltuială nu corespunde căutării tale.",
+    "loadError": "Nu s-au putut încărca cheltuielile.",
+    "retry": "Reîncearcă",
     "export": "Export",
     "exportJson": "Salvează în JSON",
     "exportCsv": "Salvează în CSV",
@@ -75,19 +78,60 @@
   },
   "ExpenseCard": {
     "paidBy": "Plătit de <strong>{paidBy}</strong> pentru <paidFor></paidFor>",
+    "paidByMultiple": "Plătit de <strong>{paidBy}</strong> pentru <paidFor></paidFor>",
     "everyone": "everyone",
     "receivedBy": "Primit de <strong>{paidBy}</strong> pentru <paidFor></paidFor>",
     "yourBalance": "Soldul tău:",
     "notInvolved": "You are not involved",
     "close": "Închide",
-    "paidByMultiple": "Plătit de <strong>{paidBy}</strong> pentru <paidFor></paidFor>",
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
   "ExpenseDetail": {
+    "backToExpenses": "Înapoi la cheltuieli",
+    "backToFriend": "Înapoi la {name}",
+    "copy": "Copiază cheltuiala",
+    "delete": "Șterge",
+    "edit": "Editează",
+    "payment": "Plată",
+    "expense": "Cheltuială",
+    "onDate": "Pe {date}",
+    "addedBy": "Adăugat de {name} pe {date}",
+    "addedByYou": "Adăugat de tine pe {date}",
+    "lastUpdatedBy": "Ultima actualizare de {name} pe {date}",
+    "lastUpdatedByYou": "Ultima actualizare de tine pe {date}",
+    "trendsTitle": "Tendințe de cheltuieli în {contextName} :: {categoryName}",
+    "trendsSeeMore": "Vezi mai multe detalii",
+    "generalCategory": "General",
+    "editCategory": "Editează categoria",
+    "categoryUpdateError": "Nu s-a putut actualiza categoria.",
+    "attachReceipt": "Atașează chitanță",
+    "receiptUploadSuccess": "Chitanță atașată.",
+    "paidAmount": "{name} a plătit {amount}",
+    "youPaidAmount": "Ai plătit {amount}",
+    "paidAmountMultiple": "{name} a plătit {amount}",
+    "youPaidAmountMultiple": "Ai plătit {amount}",
+    "multiPayerSeparator": ", ",
+    "paidYou": "{name} ți-a plătit {amount}",
+    "youPaidRecipient": "I-ai plătit lui {name} {amount}",
+    "payerPaidPayee": "{payer} i-a plătit lui {payee} {amount}",
+    "someone": "Cineva",
+    "youOwe": "Datorezi {amount}",
+    "participantOwes": "{name} datorează {amount}",
+    "yourShare": "Partea ta {amount}",
+    "participantShare": "Partea lui {name} {amount}",
+    "notes": "Note",
     "activity": "Activitate",
-    "noActivity": "Nu există încă nicio activitate pentru această cheltuială.",
-    "viewGroupExpense": "View group expense"
+    "noActivity": "Nicio modificare înregistrată încă.",
+    "paymentDisclaimer": "Această plată a fost înregistrată folosind \"Înregistrează o plată\". Nu s-au transferat bani reali.",
+    "consolidationDisclaimer": "Această plată face parte dintr-o decontare combinată.",
+    "readOnlyNotice": "Această plată nu poate fi editată sau ștearsă individual deoarece face parte dintr-o decontare de sold.",
+    "deleteConfirm": "Ștergi această cheltuială?",
+    "deletePaymentConfirm": "Ștergi această plată?",
+    "deleteDescription": "Aceasta va șterge cheltuiala pentru toți membrii grupului. Acțiunea este ireversibilă.",
+    "cancel": "Anulează",
+    "deleting": "Se șterge…",
+    "viewGroupExpense": "Vezi cheltuiala grupului"
   },
   "Groups": {
     "myGroups": "Grupurile mele",
@@ -151,6 +195,12 @@
       "label": "Simplifică datoriile",
       "description": "Reduce numărul de plăți combinând soldurile între membri (ca Splitwise Pro). Dezactivat, fiecare persoană datorează doar celui care a plătit partea ei."
     },
+    "FriendsField": {
+      "label": "Prieteni",
+      "description": "Alege persoane care sunt deja prieteni sau invită pe cineva nou.",
+      "placeholder": "Selectează un prieten…",
+      "remove": "Elimină {name}"
+    },
     "Participants": {
       "title": "Membri",
       "description": "Adaugă numele fiecărui membru.",
@@ -205,6 +255,7 @@
         "description": "Selectează pentru cine a fost primit venitul."
       },
       "splitModeDescription": "Selectează cum să fie împărțit venitul.",
+      "notesDescription": "Adaugă detalii opționale despre acest venit.",
       "attachDescription": "Vizualizează și atașează bonul pentru venit."
     },
     "Expense": {
@@ -227,7 +278,7 @@
       "paidByField": {
         "label": "Plătit de către",
         "placeholder": "Select a participant",
-        "description": "Select who provided the money and how much each payer contributed."
+        "description": "Selectează cine a plătit banii și cât a contribuit fiecare plătitor."
       },
       "recurrenceRule": {
         "label": "Expense Recurrence",
@@ -238,23 +289,29 @@
         "monthly": "Monthly"
       },
       "paidFor": {
-        "title": "Plătit pentru",
-        "description": "Selectează pentru cine a fost platită cheltuiala."
+        "title": "Împărțit între",
+        "description": "Alege cum se împarte cheltuiala și cine este inclus."
       },
       "splitModeDescription": "Selectează cum să fie împărțită cheltuiala.",
+      "notesDescription": "Adaugă detalii opționale despre această cheltuială.",
       "attachDescription": "Vizualizează și atașează bonul pentru cheltuială."
     },
     "amountField": {
-      "label": "Sumă"
+      "label": "Sumă",
+      "description": "Introdu suma totală a cheltuielii.",
+      "convertedDescription": "Introdu suma în moneda grupului."
     },
     "conversionUnavailable": "Pentru a seta o monedă diferită per cheltuială și a converti sumele, selectează o monedă nepersonalizată pentru grup.",
     "originalAmountField": {
-      "label": "Sumă de convertit"
+      "label": "Sumă de convertit",
+      "description": "Introdu suma în moneda originală."
     },
     "conversionRateField": {
       "useApi": "Folosește cursurile Frankfurter",
       "useCustom": "Folosește curs personalizat",
-      "label": "Curs de schimb"
+      "label": "Curs de schimb",
+      "description": "Cursul folosit pentru a converti suma originală în moneda grupului.",
+      "collapsibleDescription": "Suprascrie cursul automat Frankfurter"
     },
     "conversionRateState": {
       "loading": "Se obțin cursurile de schimb…",
@@ -279,6 +336,13 @@
     },
     "selectNone": "Nu selectez nimic",
     "selectAll": "Selectez tot",
+    "resetSplit": "Resetează",
+    "evenlySplit": "Împărțit egal: {amount} × {count}",
+    "totalWeight": "Pondere totală: {count, plural, one {# parte} few {# părți} other {# de părți}}",
+    "matchesPercent": "Corespunde cu 100%",
+    "matchesAmount": "Corespunde cu {amount}",
+    "decreaseShares": "Scade părțile",
+    "increaseShares": "Crește părțile",
     "noLongerInGroup": "nu mai face parte din acest grup",
     "shares": "distribuiri",
     "advancedOptions": "Opțiuni avansate de împărțire…",
@@ -294,6 +358,43 @@
       "byPercentageDescription": "Split using percentages that add up to 100%",
       "byAmountDescription": "Split using fixed amounts for each participant"
     },
+    "itemized": {
+      "toggleLabel": "Împarte pe articole",
+      "toggleDescription": "Adaugă articole, atribuie fiecare linie și împarte taxele și bacșișul proporțional.",
+      "noItems": "Niciun articol încă. Adaugă liniile de pe bon.",
+      "addItem": "Adaugă articol",
+      "removeItem": "Elimină articolul",
+      "itemTitleLabel": "Articol",
+      "itemTitlePlaceholder": "ex. Burger",
+      "itemUnitPriceLabel": "Preț",
+      "itemQuantityLabel": "Cant.",
+      "itemLineTotalLabel": "Total linie",
+      "itemAmountLabel": "Sumă",
+      "sectionTitle": "Articole",
+      "sectionDescription": "Împarte bonul în linii. Atribuie fiecare linie celor care au consumat.",
+      "assignTo": "Împărțit de",
+      "otherLabel": "Altele (taxe, bacșiș, servicii)",
+      "otherDerivedNote": "Diferența dintre total și articole, împărțită între toți.",
+      "itemsExceedTotal": "Articolele depășesc suma totală a cheltuielii.",
+      "setAmountFromItems": "Setează totalul din articole",
+      "total": "Total",
+      "addItemsAction": "Adaugă articole",
+      "documentationNote": "Aceste articole sunt doar de referință. Atribuie un articol pentru a împărți cheltuiala după articole.",
+      "authoritativeNote": "Această cheltuială este împărțită după articolele sale.",
+      "leaveAction": "Folosește împărțire normală",
+      "switchDialog": {
+        "title": "Împarți pe articole?",
+        "description": "Atribuirea articolelor va decide cine ce datorează. Împărțirea curentă va fi înlocuită.",
+        "confirm": "Împarte pe articole",
+        "cancel": "Anulează"
+      },
+      "leaveDialog": {
+        "title": "Folosești împărțirea normală?",
+        "description": "Cheltuiala va reveni la o împărțire normală. Articolele tale vor fi păstrate ca referință.",
+        "confirm": "Folosește împărțire normală",
+        "cancel": "Anulează"
+      }
+    },
     "DeletePopup": {
       "label": "Șterge",
       "title": "Ștergi această cheltuială?",
@@ -301,7 +402,7 @@
       "yes": "Da",
       "cancel": "Anulează"
     },
-    "attachDocuments": "Atașează documente",
+    "attachDocuments": "Atașează imagini",
     "create": "Adaugă",
     "creating": "Se adaugă…",
     "save": "Salvează",
@@ -317,7 +418,7 @@
       "postSaveTitle": "Expense split across group and direct records",
       "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
       "postSaveGroupHalfLine": "The group expense is {amount}",
-      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "singlePayerNote": "Când adaugi persoane din afara grupului (ex. {names}), cheltuiala este împărțită în două, așa că doar o singură persoană poate plăti.",
       "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
       "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
       "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
@@ -326,7 +427,16 @@
       "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
+  "ExpenseTitleInput": {
+    "noSuggestions": "Nicio sugestie găsită.",
+    "clear": "Șterge"
+  },
   "ExpenseDocumentsInput": {
+    "addImage": "Adaugă imagine",
+    "addDocumentHint": "PNG sau JPG · până la 5 MB",
+    "previewDocument": "Previzualizează {name}",
+    "removeDocument": "Elimină {name}",
+    "uploadingDocument": "Se încarcă…",
     "TooBigToast": {
       "title": "Fișierul este prea mare",
       "description": "Dimensiunea maximă a fișierului pe care îl poți atașa este {maxSize}. Fișierul tău are {size}."
@@ -388,6 +498,8 @@
       "noOneOwesYou": "Nimeni nu îți datorează în acest grup.",
       "youOweNoOne": "Nu datorezi nimănui în acest grup.",
       "confirmSettle": "Înregistrezi că ai plătit {amount} către {name}?",
+      "confirmSettleReceived": "Înregistrezi că {name} ți-a plătit {amount}?",
+      "settleReceivedTooltip": "Înregistrează plata primită",
       "youAreOwed": "{name} îți datorează {amount}",
       "youOwe": "Datorezi {amount} lui {name}",
       "allSettled": "Ești la zi în acest grup.",
@@ -522,16 +634,27 @@
   "Activity": {
     "title": "Activități",
     "description": "Rezumatul întregii activități a grupului.",
+    "globalTitle": "Activitate",
+    "globalDescription": "Prezentare generală a întregii activități din grupurile tale.",
+    "globalListTitle": "Istoricul activității",
+    "globalListDescription": "Modificări recente din toate grupurile tale.",
+    "globalNoActivity": "Nu există încă nicio activitate în grupurile tale.",
     "noActivity": "Nu este nicio activitate în grupul tău încă.",
+    "error": "Nu s-a putut încărca activitatea.",
+    "retry": "Reîncearcă",
     "someone": "Cineva",
     "settingsModified": "Setările grupului au fost modificate de <strong>{participant}</strong>.",
     "expenseCreated": "Cheltuială <em>{expense}</em> adăugată de <strong>{participant}</strong>.",
     "expenseUpdated": "Cheltuială <em>{expense}</em> modificată de <strong>{participant}</strong>.",
     "expenseDeleted": "Cheltuială <em>{expense}</em> ștearsă de <strong>{participant}</strong>.",
+    "paymentRecorded": "Plată înregistrată de <strong>{participant}</strong>.",
+    "paymentUpdated": "Plată actualizată de <strong>{participant}</strong>.",
+    "paymentDeleted": "Plată ștearsă de <strong>{participant}</strong>.",
     "expenseCreatedDetail": "Adăugată de <strong>{participant}</strong>.",
     "expenseUpdatedDetail": "Modificată de <strong>{participant}</strong>.",
     "paymentRecordedDetail": "Înregistrată de <strong>{participant}</strong>.",
     "paymentUpdatedDetail": "Modificată de <strong>{participant}</strong>.",
+    "reimbursement": "Plată",
     "Groups": {
       "today": "Azi",
       "yesterday": "Ieri",
@@ -563,10 +686,7 @@
     "showLess": "Afișează mai puțin",
     "yes": "Da",
     "no": "Nu",
-    "fieldChangesCount": "{count} modificări de câmpuri",
-    "globalTitle": "Activitate",
-    "globalDescription": "Prezentare generală a întregii activități din grupurile tale.",
-    "globalNoActivity": "Nu există încă nicio activitate în grupurile tale."
+    "fieldChangesCount": "{count} modificări de câmpuri"
   },
   "Information": {
     "title": "Informații",
@@ -590,6 +710,7 @@
     "max50": "Introduceți cel mult 50 de caractere.",
     "duplicateParticipantName": "Un alt membru are deja acest nume.",
     "titleRequired": "Vă rugăm să introduceți un titlu.",
+    "paymentCategoryNotAllowed": "Plata nu este o categorie validă pentru cheltuieli.",
     "invalidNumber": "Număr invalid.",
     "invalidExpression": "Expresie invalidă. Folosiți numere și operatorii +, -, *, /.",
     "amountRequired": "Trebuie să introduceți o sumă.",
@@ -597,14 +718,27 @@
     "amountTenMillion": "Suma trebuie să fie mai mică de 10,000,000.",
     "ratePositive": "Cursul trebuie să fie strict mai mare decât zero.",
     "paidByRequired": "Trebuie să selectați un membru.",
+    "paidToRequired": "Trebuie să selectezi cine a primit plata.",
+    "paidToDifferent": "Plătitorul și beneficiarul trebuie să fie persoane diferite.",
     "paidForMin1": "Cheltuiala trebuie plătită pentru cel puțin un membru.",
-    "noZeroShares": "Toate părțile trebuie să fie mai mari de 0.",
-    "amountSum": "Suma valorilor trebuie să fie egală cu suma cheltuielilor.",
-    "percentageSum": "Suma procentajelor trebuie să fie egală cu 100.",
     "paidByAmountPositive": "Each payer's amount must be greater than zero.",
     "paidByAmountSum": "Payer amounts must sum to the expense total.",
     "paidByDuplicateParticipants": "Each payer can only appear once.",
-    "reimbursementSinglePayer": "Reimbursements support only a single payer."
+    "reimbursementSinglePayer": "Reimbursements support only a single payer.",
+    "noZeroShares": "Toate părțile trebuie să fie mai mari de 0.",
+    "amountSum": "Suma valorilor trebuie să fie egală cu suma cheltuielilor.",
+    "percentageSum": "Suma procentajelor trebuie să fie egală cu 100.",
+    "itemsRequired": "Adaugă cel puțin un articol sau dezactivează împărțirea pe articole.",
+    "itemNeedsAssignment": "Atribuie fiecare articol la cel puțin o persoană.",
+    "itemTitleRequired": "Introdu un nume pentru articol.",
+    "itemAmountNonNegative": "Suma articolului nu poate fi negativă.",
+    "itemQuantityPositive": "Cantitatea trebuie să fie un număr întreg de cel puțin 1.",
+    "taxNonNegative": "Taxa nu poate fi negativă.",
+    "tipNonNegative": "Bacșișul nu poate fi negativ.",
+    "itemAssignmentUnknownParticipant": "Un articol este atribuit unei persoane care nu participă la împărțire.",
+    "itemizationNotAllowedHere": "Rambursările și cheltuielile recurente nu pot fi împărțite pe articole.",
+    "itemsExceedAmount": "Articolele depășesc suma totală a cheltuielii.",
+    "remainderShareUnknownParticipant": "Împărțirea Altele include o persoană care nu face parte din cheltuială."
   },
   "Categories": {
     "search": "Căutați categorie…",
@@ -688,6 +822,64 @@
       "heading": "Other currencies"
     }
   },
+  "ExpenseImport": {
+    "button": "Importă cheltuieli",
+    "fromKnots": "Importă din Knots",
+    "fromSplitwise": "Importă din Splitwise"
+  },
+  "KnotsImport": {
+    "title": "Importă din Knots",
+    "description": "Încarcă un fișier exportat din Knots. Dacă fișierul include persoane care nu sunt încă în acest grup, le poți adăuga aici înainte de import.",
+    "fileLabel": "Fișier de export Knots",
+    "previewLabel": "Previzualizare (primele 10 rânduri)",
+    "clear": "Șterge",
+    "cancel": "Anulează",
+    "import": "Importă cheltuieli",
+    "addAndImport": "Adaugă membri și importă",
+    "importing": "Se importă...",
+    "analyzing": "Se analizează exportul…",
+    "expenseCount": "{count, plural, one {# cheltuială găsită} few {# cheltuieli găsite} other {# de cheltuieli găsite}}",
+    "matchedParticipants": "Deja în grup: {names}",
+    "missingParticipantsLabel": "Persoane de adăugat în acest grup",
+    "missingParticipantsDescription": "Introdu un e-mail pentru fiecare persoană. Conturile noi sunt create automat și asociate cu acest grup. Dacă au deja un cont, sunt adăugate ca membri.",
+    "expenseReferences": "{count, plural, one {# cheltuială} few {# cheltuieli} other {# de cheltuieli}}",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "nume@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "Se pot înregistra mai târziu cu acest e-mail pentru a accesa grupul.",
+    "errors": {
+      "invalidJson": "Fișier JSON invalid.",
+      "invalidFormat": "Acest fișier nu este un export Knots valid.",
+      "noExpenses": "Exportul nu conține cheltuieli."
+    },
+    "toast": {
+      "invalidFileType": {
+        "title": "Tip de fișier nevalid",
+        "description": "Selectează un fișier de export Knots în format JSON sau CSV."
+      },
+      "noContent": {
+        "title": "Fișier fără conținut",
+        "description": "Selectează mai întâi un fișier de export Knots."
+      },
+      "missingEmail": {
+        "title": "E-mail obligatoriu",
+        "description": "Introdu e-mailul pentru {name}."
+      },
+      "success": {
+        "title": "Import reușit",
+        "description": "Au fost importate cu succes {count} cheltuieli din Knots."
+      },
+      "error": {
+        "title": "Import eșuat",
+        "description": "Nu s-a putut importa fișierul de export Knots."
+      },
+      "cancelled": {
+        "title": "Import anulat",
+        "description": "Importul a fost oprit înainte să se termine."
+      }
+    }
+  },
   "SplitwiseImport": {
     "button": "Import from Splitwise",
     "title": "Import from Splitwise",
@@ -698,6 +890,20 @@
     "cancel": "Cancel",
     "import": "Import Expenses",
     "importing": "Importing...",
+    "analyzing": "Analyzing CSV…",
+    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
+    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
+    "participantMappingLabel": "Match Splitwise names",
+    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
+    "mapToMemberLabel": "Group member",
+    "mapToMemberPlaceholder": "Select a member",
+    "addNewMemberOption": "Add new member by email",
+    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "They can register later with this email to access the group.",
     "toast": {
       "invalidFileType": {
         "title": "Invalid file type",
@@ -706,6 +912,14 @@
       "noContent": {
         "title": "No CSV content",
         "description": "Please select a CSV file first."
+      },
+      "missingEmail": {
+        "title": "Email required",
+        "description": "Enter an email for {name}."
+      },
+      "incompleteMapping": {
+        "title": "Mapping incomplete",
+        "description": "Choose a member or email for {name}."
       },
       "success": {
         "title": "Import successful",
@@ -718,91 +932,219 @@
       "cancelled": {
         "title": "Import anulat",
         "description": "Importul a fost oprit înainte să se termine."
-      },
-      "missingEmail": {
-        "title": "Email required",
-        "description": "Enter an email for {name}."
-      },
-      "incompleteMapping": {
-        "title": "Mapping incomplete",
-        "description": "Choose a member or email for {name}."
       }
-    },
-    "analyzing": "Analyzing CSV…",
-    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
-    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
-    "participantMappingLabel": "Match Splitwise names",
-    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
-    "mapToMemberLabel": "Group member",
-    "mapToMemberPlaceholder": "Select a member",
-    "addNewMemberOption": "Add new member by email",
-    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
-    "emailLabel": "Email",
-    "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group.",
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
+    }
   },
   "ProfileSettings": {
-    "title": "Setări profil",
-    "emailTitle": "E-mail",
-    "emailDescription": "Adresa ta de e-mail nu poate fi schimbată.",
+    "title": "Setări cont",
+    "back": "Înapoi",
+    "Profile": {
+      "photoLabel": "Poză de profil",
+      "photoDescription": "Încarcă o poză de profil vizibilă pentru prieteni și membrii grupului.",
+      "photoAlt": "Poza ta de profil",
+      "choosePhoto": "Alege poza",
+      "removePhoto": "Elimină poza",
+      "photoUpdatedToast": "Poza de profil a fost actualizată.",
+      "photoRemovedToast": "Poza de profil a fost eliminată.",
+      "photoUnavailableToast": "Stocarea pozelor nu este configurată.",
+      "photoInvalidToast": "Alege un fișier imagine valid (PNG, JPG, WebP) sub 5 MB.",
+      "photoFailedToast": "Nu s-a putut încărca poza de profil.",
+      "nameLabel": "Nume afișat",
+      "namePlaceholder": "Numele tău",
+      "nameError": "Introdu un nume afișat valid.",
+      "nameUpdatedToast": "Numele afișat a fost actualizat.",
+      "saveChanges": "Salvează modificările",
+      "saving": "Se salvează…"
+    },
+    "profileTitle": "Profil",
+    "appPreferencesTitle": "Preferințe aplicație",
+    "notificationsTitle": "Canale de notificare",
+    "notificationsDescription": "Gestionează modul în care primești notificări despre activitatea din grupuri.",
+    "notifications": {
+      "masterSwitchAria": "Notificări",
+      "saving": "Se salvează preferințele…",
+      "saveSuccess": "Preferințe de notificare salvate.",
+      "saveError": "Nu s-au putut salva preferințele de notificare.",
+      "comingSoon": "În curând",
+      "done": "Gata",
+      "channelSelectorAria": "Canale de livrare pentru {category}",
+      "emailNeedsVerification": "Verifică-ți adresa de email pentru a activa notificările prin email.",
+      "channelLabel": {
+        "off": "Dezactivat",
+        "email": "Email",
+        "push": "Push",
+        "emailAndPush": "Email și Push"
+      },
+      "pushDisabled": {
+        "unsupported": "Notificările push nu sunt acceptate în acest browser.",
+        "unconfigured": "Notificările push nu sunt configurate pe acest server.",
+        "iosInstall": "Pe iOS, adaugă Knots pe ecranul de pornire pentru a primi notificări push.",
+        "denied": "Permisiune de notificare refuzată. Activeaz-o din setările browserului."
+      },
+      "thisDevice": {
+        "title": "Notificări push pe acest dispozitiv",
+        "description": "Primește alerte instantanee în acest browser la fiecare activitate.",
+        "checking": "Se verifică abonamentul…",
+        "enabledLabel": "Notificările push sunt activate pe acest dispozitiv.",
+        "disabledLabel": "Notificările push sunt dezactivate pe acest dispozitiv.",
+        "pushSelectedWarning": "Ai selectat notificări push pentru anumite categorii, dar acest dispozitiv nu este abonat.",
+        "enable": "Activează pe acest dispozitiv",
+        "disable": "Dezactivează pe acest dispozitiv",
+        "error": "Nu s-a putut actualiza abonamentul push."
+      },
+      "groups": {
+        "groups-and-friends": "Grupuri și prieteni",
+        "expenses": "Cheltuieli",
+        "summaries": "Rezumate"
+      },
+      "categories": {
+        "added-to-group": "Adăugat într-un grup",
+        "friend-added": "Prieten adăugat",
+        "budget-alert": "Alertă de buget",
+        "expense-created": "Cheltuială creată",
+        "recurring-expense-created": "Cheltuială recurentă creată",
+        "expense-changed": "Cheltuială modificată sau ștearsă",
+        "expense-comment": "Comentariu la cheltuială",
+        "weekly-summary": "Rezumat săptămânal"
+      },
+      "categoryDescriptions": {
+        "weekly-summary": "O recapitulare săptămânală a cheltuielilor și soldurilor tale."
+      }
+    },
+    "emailTitle": "Adresă de email",
+    "emailDescription": "Adresa folosită pentru notificări și autentificare.",
     "displayNameTitle": "Nume afișat",
+    "usernameTitle": "Nume de utilizator",
+    "usernameDescription": "Identificatorul tău unic pe Knots.",
     "passwordTitle": "Parolă",
+    "passkeyTitle": "Chei de acces (Passkeys)",
+    "Email": {
+      "description": "Schimbarea adresei de email necesită un cod de confirmare trimis la noua adresă.",
+      "changeButton": "Schimbă emailul",
+      "dialogTitle": "Schimbă adresa de email",
+      "dialogDescription": "Introdu noua adresă. Îți vom trimite un cod de confirmare.",
+      "newEmailLabel": "Email nou",
+      "newEmailPlaceholder": "tu@exemplu.com",
+      "sendCode": "Trimite codul",
+      "cancel": "Anulează",
+      "otpTitle": "Introdu codul de confirmare",
+      "otpDescription": "Am trimis un cod de 6 cifre la {email}. Introdu-l mai jos pentru confirmare.",
+      "codeLabel": "Cod de confirmare",
+      "resend": "Retrimite codul",
+      "resendIn": "Retrimite în {seconds}s",
+      "useDifferentEmail": "Folosește alt email",
+      "verify": "Verifică și schimbă",
+      "successToast": "Adresă de email actualizată cu succes.",
+      "errorInUse": "Această adresă de email este deja utilizată.",
+      "errorInvalid": "Introdu o adresă de email validă.",
+      "errorSame": "Noua adresă trebuie să fie diferită de cea actuală.",
+      "errorInvalidCode": "Cod de confirmare invalid.",
+      "errorExpired": "Codul de confirmare a expirat. Solicită unul nou.",
+      "errorRateLimited": "Prea multe încercări. Așteaptă câteva momente înainte de a reîncerca.",
+      "errorSendFailed": "Nu s-a putut trimite emailul de confirmare. Te rugăm să reîncerci."
+    },
+    "Password": {
+      "description": "Schimbă parola sau setează una dacă folosești doar chei de acces.",
+      "noPasswordDescription": "Te poți conecta cu un link pe email sau o cheie de acces. Adaugă o parolă dacă dorești o modalitate suplimentară de conectare.",
+      "changeButton": "Schimbă parola",
+      "setButton": "Setează o parolă",
+      "removeButton": "Elimină parola",
+      "changeDialogTitle": "Schimbă parola",
+      "changeDialogDescription": "Introdu parola actuală și alege una nouă.",
+      "setDialogTitle": "Setează o parolă",
+      "setDialogDescription": "Adaugă o parolă pentru a te putea autentifica cu email și parolă.",
+      "setSuccessToast": "Parolă setată cu succes.",
+      "removeDialogTitle": "Elimină parola",
+      "removeDialogDescription": "Te vei putea conecta în continuare cu un link pe email sau o cheie de acces. Introdu parola actuală pentru a confirma.",
+      "currentLabel": "Parola actuală",
+      "newLabel": "Parola nouă",
+      "confirmLabel": "Confirmă parola nouă",
+      "cancel": "Anulează",
+      "removeConfirm": "Elimină",
+      "changeSuccessToast": "Parolă schimbată cu succes.",
+      "removeSuccessToast": "Parolă eliminată cu succes.",
+      "errorCurrentRequired": "Parola actuală este obligatorie.",
+      "errorMismatch": "Parolele nu se potrivesc.",
+      "errorRequirements": "Parola trebuie să aibă cel puțin 8 caractere.",
+      "errorSame": "Noua parolă trebuie să fie diferită de cea actuală.",
+      "errorCurrentIncorrect": "Parola actuală este incorectă.",
+      "forgotPrefix": "Ai uitat parola?",
+      "forgotLink": "Reseteaz-o aici",
+      "rule_TOO_SHORT": "Cel puțin 8 caractere",
+      "rule_MISSING_UPPERCASE": "O literă mare",
+      "rule_MISSING_LOWERCASE": "O literă mică",
+      "rule_MISSING_DIGIT": "O cifră"
+    },
+    "Passkey": {
+      "description": "Autentifică-te în siguranță cu date biometrice, cheie de securitate sau blocare ecran fără parolă.",
+      "unavailable": "Cheile de acces nu sunt disponibile pe acest dispozitiv.",
+      "addButton": "Adaugă cheie de acces",
+      "empty": "Nicio cheie de acces înregistrată încă.",
+      "created": "Adăugată pe {date}",
+      "badgeSynced": "Sincronizată",
+      "badgeDeviceBound": "Legată de dispozitiv",
+      "badgeBackedUp": "Copie de rezervă creată",
+      "addDialogTitle": "Adaugă o cheie de acces",
+      "addDialogDescription": "Dă-i un nume opțional și urmează instrucțiunile dispozitivului.",
+      "nicknameLabel": "Pseudonim (opțional)",
+      "nicknamePlaceholder": "ex. Laptopul meu",
+      "confirmPasswordLabel": "Parola actuală",
+      "confirmPasswordHint": "Confirmă parola pentru a adăuga o cheie de acces.",
+      "addConfirm": "Adaugă cheie de acces",
+      "cancel": "Anulează",
+      "addSuccessToast": "Cheie de acces adăugată.",
+      "addFailedToast": "Nu s-a putut adăuga cheia de acces.",
+      "errorPasswordRequired": "Introdu parola actuală.",
+      "deleteAria": "Șterge {name}",
+      "deleteDialogTitle": "Ștergi cheia de acces?",
+      "deleteDialogDescription": "\"{name}\" nu va mai putea fi folosită pentru autentificare în contul tău.",
+      "deleteConfirm": "Șterge",
+      "deleteSuccessToast": "Cheie de acces eliminată.",
+      "deleteFailedToast": "Nu s-a putut elimina cheia de acces.",
+      "reauthTitle": "Conectează-te din nou pentru a adăuga o cheie de acces",
+      "reauthDescription": "Ultima ta conectare este mai veche de 30 de zile. Conectează-te din nou cu parola, un link pe email sau o cheie de acces, apoi revino aici.",
+      "reauthConfirm": "Conectează-te din nou"
+    },
     "preferencesTitle": "Preferințe",
-    "preferencesDescription": "Personalizează limba și aspectul.",
+    "preferencesDescription": "Personalizează limba, tema și moneda implicită.",
     "languageLabel": "Limbă",
     "themeLabel": "Temă",
+    "blockedUsersTitle": "Utilizatori blocați",
+    "blockedUsersDescription": "Gestionează utilizatorii pe care i-ai blocat.",
+    "blockedUsersRowLabel": "Utilizatori blocați",
+    "blockedUsersRowDescription": "Vezi și gestionează utilizatorii blocați.",
     "accountTitle": "Cont",
     "signOut": "Deconectare",
-    "signingOut": "Deconectare…",
-    "NameForm": {
-      "nameRequired": "Numele este obligatoriu",
-      "nameMaxLength": "Numele trebuie să aibă cel mult 100 de caractere",
-      "successToast": "Numele afișat a fost actualizat cu succes.",
-      "label": "Nume afișat",
-      "placeholder": "Introdu numele afișat",
-      "saving": "Se salvează…",
-      "submit": "Salvează numele"
-    },
-    "PasswordForm": {
-      "currentPasswordRequired": "Parola actuală este obligatorie",
-      "newPasswordRequired": "Parola nouă este obligatorie",
-      "confirmPasswordRequired": "Confirmă parola nouă",
-      "passwordsDoNotMatch": "Parolele nu se potrivesc",
-      "successToast": "Parola a fost schimbată cu succes.",
-      "currentPasswordIncorrect": "Parola actuală este incorectă",
-      "newPasswordSameAsCurrent": "Parola nouă trebuie să fie diferită de cea actuală",
-      "passwordRequirementsNotMet": "Parola nu îndeplinește cerințele",
-      "currentPasswordLabel": "Parola actuală",
-      "newPasswordLabel": "Parolă nouă",
-      "confirmPasswordLabel": "Confirmă parola nouă",
-      "passwordHint": "Min. 8 caractere, max. 128. Trebuie să includă cel puțin o majusculă, o minusculă și o cifră.",
-      "changingPassword": "Se schimbă parola…",
-      "submit": "Schimbă parola",
-      "errorTooShort": "Trebuie să aibă cel puțin 8 caractere",
-      "errorTooLong": "Trebuie să aibă cel mult 128 de caractere",
-      "errorMissingUppercase": "Trebuie să conțină cel puțin o majusculă",
-      "errorMissingLowercase": "Trebuie să conțină cel puțin o minusculă",
-      "errorMissingDigit": "Trebuie să conțină cel puțin o cifră"
-    },
-    "blockedUsersTitle": "Utilizatori blocați",
-    "blockedUsersDescription": "Gestionează utilizatorii pe care i-ai blocat. Utilizatorii blocați nu te pot adăuga în grupuri și nu îți pot trimite cereri de prietenie.",
+    "signOutDescription": "Deconectează-te de pe acest dispozitiv.",
+    "signOutAllTitle": "Deconectare de pe toate dispozitivele",
+    "signOutAllDescription": "Închide toate sesiunile active de pe toate dispozitivele.",
+    "signingOut": "Se deconectează…",
     "Preferences": {
       "timezoneLabel": "Fus orar",
       "timezoneSelect": "Selectează fusul orar…",
       "timezoneSearch": "Caută fusul orar…",
       "timezoneEmpty": "Nu s-a găsit niciun fus orar.",
       "timezoneSaved": "Fus orar actualizat.",
+      "timezoneHelp": "Setează valoarea implicită pentru orele cheltuielilor noi și programărilor recurente.",
+      "languageSearch": "Caută limba…",
+      "languageEmpty": "Nicio limbă găsită.",
+      "languageCommon": "Cele mai comune",
+      "languageOther": "Alte limbi",
       "currencyLabel": "Monedă implicită",
       "currencySaved": "Monedă implicită actualizată."
     },
+    "appPreferencesDescription": "Ajustează limba, tema și moneda implicită pentru contul tău.",
+    "preferencesSaving": "Se salvează preferințele…",
+    "themeSaved": "Temă actualizată.",
+    "themeLight": "Luminos",
+    "themeDark": "Întunecat",
+    "themeSystem": "Sistem",
     "SignOutAll": {
       "button": "Deconectează toate dispozitivele",
       "dialogTitle": "Deconectezi toate dispozitivele?",
       "dialogDescription": "Această acțiune va închide toate sesiunile active, inclusiv pe aceasta. Vei fi redirecționat la pagina de autentificare.",
       "cancel": "Anulează",
-      "confirm": "Deconectează-te de peste tot",
+      "confirm": "Deconectează tot",
       "signingOut": "Deconectare…",
       "successToast": "Toate sesiunile au fost închise."
     },
@@ -816,13 +1158,51 @@
       "emailPlaceholder": "nume@exemplu.ro",
       "block": "Blochează",
       "unblock": "Deblochează",
-      "empty": "Nu ai blocat pe nimeni.",
+      "empty": "Nu ai niciun utilizator blocat.",
       "blockedToast": "Utilizator blocat cu succes.",
       "unblockedToast": "Utilizator deblocat.",
       "confirmBlockTitle": "Blochezi acest prieten?",
       "confirmBlockDescription": "Blocarea lui {name} îl va elimina, de asemenea, din lista ta de prieteni. Acesta nu va fi notificat despre blocare.",
       "confirmBlockCancel": "Anulează",
       "confirmBlockAction": "Blochează și elimină prietenul"
+    },
+    "NameForm": {
+      "nameRequired": "Numele afișat este obligatoriu.",
+      "nameMaxLength": "Numele trebuie să aibă cel mult 100 de caractere",
+      "successToast": "Numele afișat a fost actualizat cu succes.",
+      "label": "Nume afișat",
+      "placeholder": "Introdu numele afișat",
+      "saving": "Se salvează…",
+      "submit": "Salvează numele"
+    },
+    "UsernameForm": {
+      "successToast": "Nume de utilizator actualizat cu succes.",
+      "label": "Nume de utilizator",
+      "placeholder": "numele-tau-de-utilizator",
+      "description": "Folosit în adresa URL a profilului. Doar litere mici, cifre și cratime.",
+      "saving": "Se salvează…",
+      "submit": "Salvează numele de utilizator"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "Parola actuală este obligatorie.",
+      "newPasswordRequired": "Parola nouă este obligatorie.",
+      "confirmPasswordRequired": "Confirmă parola nouă.",
+      "passwordsDoNotMatch": "Parolele nu se potrivesc.",
+      "successToast": "Parola a fost schimbată cu succes.",
+      "currentPasswordIncorrect": "Parola actuală este incorectă.",
+      "newPasswordSameAsCurrent": "Parola nouă trebuie să fie diferită de cea actuală.",
+      "passwordRequirementsNotMet": "Parola nu îndeplinește cerințele.",
+      "currentPasswordLabel": "Parola actuală",
+      "newPasswordLabel": "Parola nouă",
+      "confirmPasswordLabel": "Confirmă parola nouă",
+      "passwordHint": "Minim 8 caractere, maxim 128. Trebuie să conțină cel puțin o majusculă, o minusculă și o cifră.",
+      "changingPassword": "Se schimbă parola…",
+      "submit": "Schimbă parola",
+      "errorTooShort": "Trebuie să aibă cel puțin 8 caractere",
+      "errorTooLong": "Trebuie să aibă cel mult 128 de caractere",
+      "errorMissingUppercase": "Trebuie să conțină cel puțin o majusculă",
+      "errorMissingLowercase": "Trebuie să conțină cel puțin o minusculă",
+      "errorMissingDigit": "Trebuie să conțină cel puțin o cifră"
     }
   },
   "Friends": {
@@ -908,6 +1288,7 @@
       "title": "Expenses with {name}",
       "description": "All expenses you share with this friend, across groups.",
       "backToFriends": "Back to friends",
+      "backToFriend": "Înapoi la {name}",
       "listTitle": "Expense history",
       "listDescription": "Direct expenses and expenses from shared groups.",
       "create": "Add expense",
@@ -950,6 +1331,10 @@
       "friendOwesYou": "{name} îți datorează {amount}",
       "youOweFriend": "Datorezi {amount} lui {name}",
       "paid": "{payer} a plătit lui {payee} {amount}",
+      "deletePayment": "Șterge",
+      "deletePaymentConfirm": "Sigur dorești să ștergi această plată?",
+      "deletePaymentSuccess": "Plată ștearsă cu succes",
+      "deletePaymentError": "Ștergerea plății a eșuat",
       "groups": {
         "upcoming": "Viitoare",
         "thisWeek": "Săptămâna aceasta",
@@ -965,14 +1350,15 @@
       "paid": "{payer} a plătit lui {payee}",
       "addedBy": "Adăugat de {name} pe {date}",
       "disclaimer": "Această plată a fost înregistrată prin \"Înregistrează o plată\". Nu au fost transferați bani.",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "readOnlyNotice": "Această plată nu poate fi editată sau ștearsă individual deoarece face parte dintr-o decontare de sold.",
       "edit": "Editează",
       "delete": "Șterge",
       "deleteConfirm": "Ștergi această plată?",
       "deleteDescription": "Acest lucru va ajusta soldurile ca și cum plata nu ar fi avut loc.",
+      "deleting": "Deleting...",
       "notFound": "Plata nu a fost găsită.",
-      "backToFriend": "Înapoi la {name}",
-      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
-      "deleting": "Deleting..."
+      "backToFriend": "Înapoi la {name}"
     },
     "DirectExpense": {
       "title": "Adaugă o cheltuială",
@@ -984,12 +1370,19 @@
       "paidByYou": "Tu",
       "splitEqually": "Plătit de {payer} și împărțit în mod egal",
       "dateLabel": "Data",
+      "attachLabel": "Atașează imagine sau PDF",
+      "notesLabel": "Note",
+      "notesPlaceholder": "Adaugă note (opțional)",
       "save": "Salvează",
       "saving": "Se salvează…",
       "cancel": "Anulează",
       "success": "Cheltuială adăugată.",
       "error": "Nu s-a putut adăuga cheltuiala.",
       "persistError": "Nu s-au putut salva datele formularului. Navigarea nu este disponibilă."
+    },
+    "Settings": {
+      "currencyTitle": "Monedă principală",
+      "currencyDescription": "Folosită pentru cheltuieli directe și plăți între prieteni."
     },
     "SettleAll": {
       "button": "Achită tot",
@@ -1013,6 +1406,7 @@
     "memberPromoted": "Membru promovat la proprietar.",
     "memberDemoted": "Membru retrogradat la membru obișnuit.",
     "addMember": "Adaugă membru",
+    "pickFriend": "Choose from your friends or enter an email.",
     "adding": "Se adaugă…",
     "add": "Adaugă",
     "cancel": "Anulează",
@@ -1021,8 +1415,7 @@
     "leave": "Părăsește",
     "removeFromGroup": "Elimină din grup",
     "promoteToOwner": "Promovează la proprietar",
-    "demoteToMember": "Retrogradează la membru",
-    "pickFriend": "Choose from your friends or enter an email."
+    "demoteToMember": "Retrogradează la membru"
   },
   "MyGroups": {
     "title": "Grupurile mele",
@@ -1032,7 +1425,9 @@
     "noGroupsHint": "Creează un grup pentru a începe să împarți cheltuielile cu alții.",
     "createGroup": "Creează grup",
     "createGroupTitle": "Creează un grup nou",
-    "createGroupDescription": "Introdu un nume pentru grup. Poți invita membri după creare.",
+    "createGroupDescription": "Introdu un nume și o monedă pentru grup. Poți invita membri după creare.",
+    "invalidCurrency": "Alege o monedă validă.",
+    "currencySymbolRequired": "Introdu un simbol de monedă.",
     "groupNameLabel": "Numele grupului",
     "characters": "caractere",
     "leaveGroup": "Părăsește grupul",
@@ -1052,100 +1447,6 @@
     "deleteGroupConfirmCancel": "Anulează",
     "deleteGroupConfirmAction": "Șterge definitiv"
   },
-  "UserMenu": {
-    "profileSettings": "Setări cont",
-    "signingOut": "Deconectare…",
-    "signOut": "Deconectare"
-  },
-  "Notifications": {
-    "settings": "Setări notificări",
-    "subscribe": "Activează notificările",
-    "unsubscribe": "Dezactivează notificările",
-    "selectParticipant": "Notifică-mă despre modificările altora",
-    "noParticipant": "Toate modificările",
-    "permissionDenied": "Permisiunea pentru notificări a fost refuzată. Activează-o din setările browserului.",
-    "notSupported": "Notificările push nu sunt suportate pe acest dispozitiv.",
-    "expenseCreated": "{actor} a adăugat \"{title}\"",
-    "expenseUpdated": "{actor} a actualizat \"{title}\"",
-    "expenseDeleted": "{actor} a șters \"{title}\"",
-    "groupUpdated": "{actor} a actualizat grupul \"{group}\"",
-    "notificationTitle": "Knots – {group}",
-    "defaultBody": "Activitate nouă în grupul tău",
-    "filterHint": "Alege de la cine vrei alerte și ce evenimente să primești.",
-    "subscribeError": "Nu s-au putut activa notificările. Te rugăm să încerci din nou.",
-    "membersLabel": "Notifică-mă despre",
-    "notifyAllMembers": "Toată lumea din grup",
-    "notifySpecificMembers": "Sau doar acești membri:",
-    "eventsLabel": "Evenimente",
-    "eventCreate": "Cheltuială creată",
-    "eventUpdate": "Cheltuială actualizată",
-    "eventDelete": "Cheltuială ștearsă",
-    "selectAtLeastOneFilter": "Selectează cel puțin un membru sau un eveniment.",
-    "channelsLabel": "Canale",
-    "pushLabel": "Notificări push",
-    "pushUnavailable": "Notificările push nu sunt disponibile în această instalare.",
-    "emailLabel": "Notificări e-mail",
-    "enableChannelHint": "Activează un canal pentru a configura despre cine și ce primești notificări.",
-    "pushSyncWarning": "Preferințele au fost salvate, dar sincronizarea filtrului de notificări push a eșuat."
-  },
-  "ExpenseImport": {
-    "button": "Importă cheltuieli",
-    "fromKnots": "Importă din Knots",
-    "fromSplitwise": "Importă din Splitwise"
-  },
-  "KnotsImport": {
-    "title": "Importă din Knots",
-    "description": "Încarcă un fișier exportat din Knots. Dacă fișierul include persoane care nu sunt încă în acest grup, le poți adăuga aici înainte de import.",
-    "fileLabel": "Fișier de export Knots",
-    "previewLabel": "Previzualizare (primele 10 rânduri)",
-    "clear": "Șterge",
-    "cancel": "Anulează",
-    "import": "Importă cheltuieli",
-    "addAndImport": "Adaugă membri și importă",
-    "importing": "Se importă...",
-    "analyzing": "Se analizează exportul…",
-    "expenseCount": "{count, plural, one {# cheltuială găsită} few {# cheltuieli găsite} other {# de cheltuieli găsite}}",
-    "matchedParticipants": "Deja în grup: {names}",
-    "missingParticipantsLabel": "Persoane de adăugat în acest grup",
-    "missingParticipantsDescription": "Introdu un e-mail pentru fiecare persoană. Conturile noi sunt create automat și asociate cu acest grup. Dacă au deja un cont, sunt adăugate ca membri.",
-    "expenseReferences": "{count, plural, one {# cheltuială} few {# cheltuieli} other {# de cheltuieli}}",
-    "emailLabel": "E-mail",
-    "emailPlaceholder": "nume@example.com",
-    "softCreateHint": "Se pot înregistra mai târziu cu acest e-mail pentru a accesa grupul.",
-    "toast": {
-      "invalidFileType": {
-        "title": "Tip de fișier nevalid",
-        "description": "Selectează un fișier de export Knots în format JSON sau CSV."
-      },
-      "noContent": {
-        "title": "Fișier fără conținut",
-        "description": "Selectează mai întâi un fișier de export Knots."
-      },
-      "missingEmail": {
-        "title": "E-mail obligatoriu",
-        "description": "Introdu e-mailul pentru {name}."
-      },
-      "success": {
-        "title": "Import reușit",
-        "description": "Au fost importate cu succes {count} cheltuieli din Knots."
-      },
-      "error": {
-        "title": "Import eșuat",
-        "description": "Nu s-a putut importa fișierul de export Knots."
-      },
-      "cancelled": {
-        "title": "Import anulat",
-        "description": "Importul a fost oprit înainte să se termine."
-      }
-    },
-    "errors": {
-      "invalidJson": "Fișier JSON invalid.",
-      "invalidFormat": "Acest fișier nu este un export Knots valid.",
-      "noExpenses": "Exportul nu conține cheltuieli."
-    },
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
-  },
   "GroupDangerZone": {
     "title": "Administrarea grupului",
     "description": "Arhivarea ascunde acest grup din lista ta fără a șterge datele. Ștergerea elimină definitiv grupul pentru toată lumea.",
@@ -1159,6 +1460,109 @@
     "deleteConfirmDescription": "Aceasta va șterge definitiv „{name}” și toate cheltuielile, soldurile și istoricul său pentru toți membrii. Acțiunea nu poate fi anulată.",
     "cancel": "Anulează",
     "deleteConfirmAction": "Șterge definitiv"
+  },
+  "UserMenu": {
+    "menuLabel": "Meniu utilizator",
+    "profileSettings": "Setări cont",
+    "theme": "Temă",
+    "themeLight": "Luminos",
+    "themeDark": "Întunecat",
+    "themeSystem": "Sistem",
+    "signingOut": "Deconectare…",
+    "signOut": "Deconectare"
+  },
+  "Notifications": {
+    "settings": "Setări notificări",
+    "subscribe": "Activează notificările",
+    "unsubscribe": "Dezactivează notificările",
+    "selectParticipant": "Notifică-mă despre modificările altora",
+    "noParticipant": "Toate modificările",
+    "permissionDenied": "Permisiunea pentru notificări a fost refuzată. Activează-o din setările browserului.",
+    "notSupported": "Notificările push nu sunt suportate pe acest dispozitiv.",
+    "expenseCreated": "{actor} a adăugat \"{title}\" în grupul {group}",
+    "expenseUpdated": "{actor} a actualizat \"{title}\" în grupul {group}",
+    "expenseDeleted": "{actor} a șters \"{title}\" în grupul {group}",
+    "groupUpdated": "{actor} a actualizat grupul \"{group}\"",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "Activitate nouă în grupul tău",
+    "filterHint": "Alege de la cine vrei alerte și ce evenimente să primești.",
+    "membersLabel": "Notifică-mă despre",
+    "notifyAllMembers": "Toată lumea din grup",
+    "notifySpecificMembers": "Sau doar acești membri:",
+    "eventsLabel": "Evenimente",
+    "eventCreate": "Cheltuială creată",
+    "eventUpdate": "Cheltuială actualizată",
+    "eventDelete": "Cheltuială ștearsă",
+    "selectAtLeastOneFilter": "Selectează cel puțin un membru sau un eveniment.",
+    "subscribeError": "Nu s-au putut activa notificările. Te rugăm să încerci din nou.",
+    "channelsLabel": "Canale",
+    "pushLabel": "Notificări push",
+    "pushUnavailable": "Notificările push nu sunt disponibile în această instalare.",
+    "emailLabel": "Notificări e-mail",
+    "enableChannelHint": "Activează un canal pentru a configura despre cine și ce primești notificări.",
+    "pushSyncWarning": "Preferințele au fost salvate, dar sincronizarea filtrului de notificări push a eșuat."
+  },
+  "AppError": {
+    "title": "Ceva nu a funcționat corect",
+    "description": "Datele locale ale aplicației au fost șterse. Sesiunea ta va fi încheiată pentru a putea reîncepe de pe pagina principală.",
+    "recover": "Mergi la pagina principală",
+    "recovering": "Redirecționare…"
+  },
+  "PaymentForm": {
+    "dateLabel": "Data plății",
+    "dateDescription": "Introdu data la care s-a efectuat plata.",
+    "amountLabel": "Sumă",
+    "amountDescription": "Introdu suma plății.",
+    "paidByLabel": "Plătit de",
+    "paidByDescription": "Selectează cine a efectuat plata.",
+    "paidToLabel": "Plătit către",
+    "paidToDescription": "Selectează cine a primit plata.",
+    "notesLabel": "Note",
+    "notesPlaceholder": "Adaugă note (opțional)",
+    "participantPlaceholder": "Selectează un participant",
+    "disclaimer": "Aceasta înregistrează o plată între persoane pentru decontarea soldurilor. Nu este o cheltuială comună."
+  },
+  "FloatingCreateExpense": {
+    "addExpense": "Adaugă cheltuială",
+    "dialogTitle": "Adaugă o cheltuială",
+    "editDialogTitle": "Editează cheltuiala",
+    "createPaymentDialogTitle": "Înregistrează o plată",
+    "editPaymentDialogTitle": "Editează plata",
+    "withWho": "Cu tine și:",
+    "back": "Înapoi",
+    "searchPlaceholder": "Caută prieteni sau grupuri…",
+    "descriptionPlaceholder": "Introdu o descriere",
+    "amountPlaceholder": "0.00",
+    "paidByLabel": "Plătit de",
+    "you": "tu",
+    "splitEqually": "împărțit egal",
+    "save": "Salvează",
+    "saving": "Se salvează…",
+    "cancel": "Anulează",
+    "successToast": "Cheltuială creată cu succes.",
+    "updateSuccessToast": "Cheltuială actualizată cu succes.",
+    "paymentSuccessToast": "Plată înregistrată cu succes.",
+    "paymentUpdateSuccessToast": "Plată actualizată cu succes.",
+    "errorToast": "Nu s-a putut crea cheltuiala.",
+    "paymentErrorToast": "Nu s-a putut înregistra plata.",
+    "updateErrorToast": "Nu s-a putut actualiza cheltuiala.",
+    "paymentUpdateErrorToast": "Nu s-a putut actualiza plata.",
+    "lockedPaymentToast": "Această plată face parte dintr-o decontare de sold și nu poate fi editată.",
+    "noFriendOrGroupFound": "Nu s-au găsit prieteni sau grupuri.",
+    "groupsHeader": "Grupuri",
+    "friendsHeader": "Prieteni",
+    "selectGroupText": "Grup: {name}",
+    "pickerTitle": "Cu cine?",
+    "pickerDone": "Gata",
+    "selectParticipants": "Selectează prieteni sau grup",
+    "selectParticipantsHint": "Selectează un grup sau un prieten pentru a începe.",
+    "singleGroupAlertTitle": "Doar un singur grup",
+    "singleGroupAlertDescription": "Poți selecta doar un singur grup odată. Elimină grupul curent înainte de a alege altul.",
+    "singleGroupAlertOk": "OK",
+    "advancedOptions": "Opțiuni avansate",
+    "splitDetails": "Detalii împărțire",
+    "notesPlaceholder": "Adaugă note (opțional)",
+    "viewGroupExpense": "Vezi cheltuiala grupului"
   },
   "DuplicateExpense": {
     "title": "Posibil duplicat detectat",
@@ -1183,7 +1587,47 @@
   "CurrencyAmountInput": {
     "expressionHint": "sau 10+5"
   },
-  "ExpenseTitleInput": {
-    "clear": "Șterge"
+  "Login": {
+    "title": "Autentificare",
+    "description": "Conectează-te cu o cheie de acces, un link pe email sau parola ta.",
+    "orContinueWithEmail": "SAU CONTINUĂ CU EMAIL",
+    "methodMagicLink": "Link magic",
+    "methodPassword": "Parolă",
+    "sendSignInLink": "Trimite linkul de conectare",
+    "signInWithPassword": "Conectează-te cu parola",
+    "usePasskey": "Folosește o cheie de acces",
+    "passkeyFailed": "Nu te-am putut conecta cu această cheie de acces. Încearcă din nou.",
+    "forgotPassword": "Ai uitat parola?",
+    "noAccount": "Nu ai un cont?",
+    "signUp": "Înregistrează-te",
+    "magicLinkButton": "Trimite linkul de conectare",
+    "magicLinkEmailRequired": "Introdu adresa ta de email.",
+    "magicLinkSendFailed": "Nu am putut trimite emailul de conectare. Încearcă din nou.",
+    "magicLinkSentTitle": "Verifică-ți căsuța de email",
+    "magicLinkSentDescription": "Dacă există un cont pentru această adresă, am trimis un link de conectare. Funcționează o singură dată și expiră în 15 minute.",
+    "magicLinkSigningIn": "Se realizează conectarea…",
+    "magicLinkFailedTitle": "Conectarea a eșuat",
+    "magicLinkInvalid": "Acest link de conectare este nevalid sau a expirat.",
+    "backToLogin": "Înapoi la conectare"
+  },
+  "Register": {
+    "title": "Creează un cont",
+    "description": "Înregistrează-te cu un link pe email sau o parolă.",
+    "signUpWithPassword": "Creează cont cu parolă",
+    "confirmPassword": "Confirmă parola",
+    "hasAccount": "Ai deja un cont?",
+    "signIn": "Autentificare",
+    "creating": "Se creează contul…",
+    "passwordMismatch": "Parolele nu se potrivesc",
+    "ruleLength": "8 caractere",
+    "ruleLowercase": "Literă mică",
+    "ruleUppercase": "Literă mare",
+    "ruleNumber": "Cifră",
+    "successTitle": "Înregistrare reușită",
+    "successDescription": "Contul tău a fost creat",
+    "successAlertTitle": "Verifică-ți emailul",
+    "successAlertDescription": "Am trimis un link de verificare pe adresa ta de email. Te rugăm să apeși pe link pentru a-ți verifica contul înainte de a te conecta.",
+    "goToLogin": "Mergi la autentificare",
+    "failedTitle": "Înregistrarea a eșuat"
   }
 }

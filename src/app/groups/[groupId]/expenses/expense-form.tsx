@@ -68,7 +68,6 @@ import {
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from '@/components/ui/toast'
 import { Locale } from '@/i18n'
-import { randomId } from '@/lib/api'
 import { defaultCurrencyList, getCurrency, type Currency } from '@/lib/currency'
 import {
   enforceCurrencyPattern,
@@ -85,6 +84,7 @@ import {
   leaveAuthoritative,
   switchToAuthoritative,
 } from '@/lib/itemization-gate'
+import { randomId } from '@/lib/random-id'
 import {
   ExpenseFormValues,
   PaidByOptions,
@@ -698,6 +698,7 @@ export function ExpenseForm({
   isDesktop = false,
   scrollHeader,
   singlePayerOnly = false,
+  outsideFriendNames = [],
   containedScroll = true,
 }: {
   group: NonNullable<AppRouterOutput['groups']['get']['group']>
@@ -712,6 +713,8 @@ export function ExpenseForm({
   isDesktop?: boolean
   scrollHeader?: ReactNode
   singlePayerOnly?: boolean
+  /** Friends outside the group. Their presence limits paid-by to one person. */
+  outsideFriendNames?: string[]
   /** When false, the page scroller moves the form. The dialog keeps its own scroll. */
   containedScroll?: boolean
 }) {
@@ -3018,8 +3021,13 @@ export function ExpenseForm({
                           singlePayerOnly || hasNonMembersInPaidFor
                         }
                         nonMemberSinglePayerNote={
-                          hasNonMembersInPaidFor
-                            ? t('decompositionBanner.singlePayerNote')
+                          outsideFriendNames.length > 0
+                            ? t('decompositionBanner.singlePayerNote', {
+                                names: new Intl.ListFormat(locale, {
+                                  style: 'long',
+                                  type: 'conjunction',
+                                }).format(outsideFriendNames),
+                              })
                             : undefined
                         }
                       />

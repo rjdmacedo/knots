@@ -29,10 +29,10 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { randomId } from '@/lib/api'
 import { getGroupExpenseNewPath } from '@/lib/expense-editor-navigation'
 import { stashExpensePrefill } from '@/lib/expense-prefill-store'
 import { useMediaQuery } from '@/lib/hooks'
+import { randomId } from '@/lib/random-id'
 import {
   formatCurrency,
   formatDate,

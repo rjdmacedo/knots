@@ -7,9 +7,10 @@
  *
  * **Validates: Requirements 6.3, 6.4, 7.7**
  *
- * Property 2 — across generated (passwordMatches, passkeyCount) combinations:
+ * Property 2 — across generated (passwordMatches, passkeyCount, emailVerified)
+ * combinations:
  *  - `removePassword` succeeds and clears `passwordHash` IF AND ONLY IF the
- *    current password matches AND `passkeyCount >= 1`.
+ *    current password matches AND (`passkeyCount >= 1` OR the email is verified).
  *  - In every other case it fails and leaves `passwordHash` unchanged.
  *
  * The test drives the real `removePassword` against a small in-memory fake of
@@ -25,7 +26,12 @@ import { removePassword } from './profile-service'
 // --- In-memory Prisma fake ------------------------------------------------
 
 /** Minimal shape mirroring the columns removePassword reads and writes. */
-type UserRow = { id: string; passwordHash: string | null }
+type UserRow = {
+  id: string
+  passwordHash: string | null
+  email: string
+  emailVerified: Date | null
+}
 
 /**
  * A tiny in-memory store backing the mocked Prisma methods: one user row and
@@ -79,6 +85,12 @@ jest.mock('@/lib/auth/password', () => ({
   verifyPassword: jest.fn(),
 }))
 
+jest.mock('@/lib/auth/email-service', () => ({
+  emailService: {
+    sendPasswordRemovedEmail: jest.fn().mockResolvedValue({ ok: true }),
+  },
+}))
+
 const mockUserFindUnique = prisma.user.findUnique as jest.Mock
 const mockUserUpdate = prisma.user.update as jest.Mock
 const mockPasskeyCount = prisma.passkey.count as jest.Mock
@@ -100,9 +112,18 @@ const PBT_NUM_RUNS = 100
 const STORED_HASH = 'stored-hash'
 
 /** Seed a single user with a stored password hash and a passkey count. */
-function setup(passkeyCount: number, passwordMatches: boolean) {
+function setup(
+  passkeyCount: number,
+  passwordMatches: boolean,
+  emailVerified: boolean,
+) {
   db = new FakeDb()
-  db.users.push({ id: 'user-1', passwordHash: STORED_HASH })
+  db.users.push({
+    id: 'user-1',
+    passwordHash: STORED_HASH,
+    email: 'rafael@example.com',
+    emailVerified: emailVerified ? new Date('2026-01-01') : null,
+  })
   db.passkeyCount = passkeyCount
   bindPrismaToDb(db)
   mockVerifyPassword.mockResolvedValue(passwordMatches)
@@ -111,30 +132,27 @@ function setup(passkeyCount: number, passwordMatches: boolean) {
 // --- Property -------------------------------------------------------------
 
 describe('Property 2: password removal requires another sign-in method', () => {
-  it('removes the password iff the current password matches and passkeyCount >= 1', async () => {
+  it('removes the password iff the current password matches and another sign-in method exists', async () => {
     await fc.assert(
       fc.asyncProperty(
         fc.boolean(),
         fc.integer({ min: 0, max: 5 }),
-        async (passwordMatches, passkeyCount) => {
-          setup(passkeyCount, passwordMatches)
+        fc.boolean(),
+        async (passwordMatches, passkeyCount, emailVerified) => {
+          setup(passkeyCount, passwordMatches, emailVerified)
 
           const result = await removePassword('user-1', 'current-password')
 
-          const shouldSucceed = passwordMatches && passkeyCount >= 1
+          const hasAlternative = passkeyCount >= 1 || emailVerified
+          const shouldSucceed = passwordMatches && hasAlternative
 
           expect(result.ok).toBe(shouldSucceed)
 
           if (shouldSucceed) {
-            // On success the hash is cleared so credentials sign-in fails and
-            // only the passkey path remains.
             expect(db.users[0].passwordHash).toBeNull()
           } else {
-            // On any failure the stored hash is left untouched.
             expect(db.users[0].passwordHash).toBe(STORED_HASH)
             if (!result.ok) {
-              // A wrong password reports mismatch; a matching password with no
-              // passkey reports the alternative-sign-in gate.
               expect(result.error.code).toBe(
                 passwordMatches
                   ? 'NO_ALTERNATIVE_SIGN_IN'

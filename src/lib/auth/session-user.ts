@@ -4,7 +4,12 @@ import { cache } from 'react'
 const findSessionUser = cache(async (userId: string) => {
   return prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, name: true, email: true },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      sessionsInvalidatedAt: true,
+    },
   })
 })
 

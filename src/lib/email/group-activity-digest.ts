@@ -25,8 +25,8 @@ function getBaseUrl(): string {
 
 /**
  * Upsert a pending digest for the group, resetting `sendAfter` to now + 5 minutes.
- * No-op when nobody in the group has email notifications enabled, or when the
- * actor is the only opted-in member.
+ * No-op when the actor is the only other member. Channel choice lives in
+ * account preferences and is applied when the digest is sent.
  */
 export async function scheduleGroupEmailDigest(
   groupId: string,
@@ -35,7 +35,6 @@ export async function scheduleGroupEmailDigest(
   const optedInCount = await prisma.groupMembership.count({
     where: {
       groupId,
-      emailNotificationsEnabled: true,
       archivedAt: null,
       userId: { not: actorUserId },
     },
@@ -126,7 +125,6 @@ export async function processDueGroupEmailDigests(
         prisma.groupMembership.findMany({
           where: {
             groupId: pending.groupId,
-            emailNotificationsEnabled: true,
             archivedAt: null,
             ...(windowActorIds.size > 0
               ? { userId: { notIn: Array.from(windowActorIds) } }

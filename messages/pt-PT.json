@@ -23,6 +23,7 @@
     "noSearchResults": "Nenhuma despesa corresponde à tua pesquisa.",
     "loadError": "Não foi possível carregar as despesas.",
     "retry": "Tentar novamente",
+    "export": "Exportar",
     "exportJson": "Exportar para JSON",
     "exportCsv": "Exportar para CSV",
     "searchPlaceholder": "Procurar uma despesa…",
@@ -73,17 +74,16 @@
       "selectPayers": "Selecciona quem pagou",
       "shareLabel": "Partes",
       "percentageLabel": "Percentagem"
-    },
-    "export": "Exportar"
+    }
   },
   "ExpenseCard": {
     "paidBy": "Pago por <strong>{paidBy}</strong> para <paidFor></paidFor>",
+    "paidByMultiple": "Pago por <strong>{paidBy}</strong> para <paidFor></paidFor>",
+    "everyone": "Todos",
     "receivedBy": "Recebido por <strong>{paidBy}</strong> para <paidFor></paidFor>",
     "yourBalance": "O teu saldo:",
-    "everyone": "Todos",
     "notInvolved": "Não estás envolvido",
     "close": "Fechar",
-    "paidByMultiple": "Pago por <strong>{paidBy}</strong> para <paidFor></paidFor>",
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
@@ -131,7 +131,7 @@
     "deleteDescription": "Isto ajustará os saldos como se esta despesa nunca tivesse acontecido.",
     "cancel": "Cancelar",
     "deleting": "A eliminar…",
-    "viewGroupExpense": "View group expense"
+    "viewGroupExpense": "Ver despesa do grupo"
   },
   "Groups": {
     "myGroups": "Os meus grupos",
@@ -148,6 +148,8 @@
     "archive": "Arquivar grupo",
     "unarchive": "Desarquivar grupo",
     "removeRecent": "Remover dos grupos recentes",
+    "enableNotifications": "Ativar notificações",
+    "disableNotifications": "Desativar notificações",
     "RecentRemovedToast": {
       "title": "Grupo removido",
       "description": "O grupo foi removido da lista de grupos recentes.",
@@ -164,8 +166,6 @@
       "text": "Esse grupo não existe.",
       "link": "Ir para grupos visitados recentemente"
     },
-    "enableNotifications": "Ativar notificações",
-    "disableNotifications": "Desativar notificações",
     "backToGroups": "Voltar aos grupos",
     "detailDescription": "Despesas, saldos e atividade deste grupo."
   },
@@ -185,16 +185,32 @@
       "placeholder": "$, €, £…",
       "description": "Vamos usá-lo para mostrar os valores."
     },
+    "CurrencyCodeField": {
+      "label": "Moeda principal",
+      "createDescription": "Todos os valores e saldos estarão nesta moeda.",
+      "editDescription": "Todos os valores e saldos estarão nesta moeda. Alterar esta moeda NÃO converte as despesas já inseridas, excepto quando a nova moeda tiver unidades diferentes (por ex. de Dólar para Iene).",
+      "customOption": "Personalizada"
+    },
+    "SimplifyDebtsField": {
+      "label": "Simplificar dívidas",
+      "description": "Reduz o número de pagamentos ao combinar saldos entre os membros (como o Splitwise Pro). Desativado, cada pessoa só deve a quem pagou pela sua parte."
+    },
+    "FriendsField": {
+      "label": "Amigos",
+      "description": "Escolhe pessoas que já são amigas, ou convida alguém novo.",
+      "placeholder": "Seleciona um amigo…",
+      "remove": "Remover {name}"
+    },
     "Participants": {
       "title": "Participantes",
       "description": "Introduz o nome de cada participante.",
       "protectedParticipant": "Este participante faz parte de despesas e não pode ser removido.",
+      "noLongerInGroup": "já não faz parte deste grupo",
       "new": "Novo",
       "add": "Adicionar participante",
       "John": "João",
       "Jane": "Maria",
-      "Jack": "José",
-      "noLongerInGroup": "já não faz parte deste grupo"
+      "Jack": "José"
     },
     "Settings": {
       "title": "Definições locais",
@@ -210,16 +226,6 @@
       "create": "Criar",
       "creating": "A criar…",
       "cancel": "Cancelar"
-    },
-    "CurrencyCodeField": {
-      "label": "Moeda principal",
-      "createDescription": "Todos os valores e saldos estarão nesta moeda.",
-      "editDescription": "Todos os valores e saldos estarão nesta moeda. Alterar esta moeda NÃO converte as despesas já inseridas, excepto quando a nova moeda tiver unidades diferentes (por ex. de Dólar para Iene).",
-      "customOption": "Personalizada"
-    },
-    "SimplifyDebtsField": {
-      "label": "Simplificar dívidas",
-      "description": "Reduz o número de pagamentos ao combinar saldos entre os membros (como o Splitwise Pro). Desativado, cada pessoa só deve a quem pagou pela sua parte."
     }
   },
   "ExpenseForm": {
@@ -235,6 +241,10 @@
         "label": "Data da receita",
         "description": "Introduz a data em que a receita foi recebida."
       },
+      "currencyField": {
+        "label": "Moeda da receita",
+        "description": "A moeda em que a receita foi recebida."
+      },
       "categoryFieldDescription": "Selecciona a categoria da receita.",
       "paidByField": {
         "label": "Recebido por",
@@ -246,11 +256,7 @@
       },
       "splitModeDescription": "Selecciona como dividir a receita.",
       "notesDescription": "Adiciona detalhes opcionais sobre esta receita.",
-      "attachDescription": "Vê e anexa recibos à receita.",
-      "currencyField": {
-        "label": "Moeda da receita",
-        "description": "A moeda em que a receita foi recebida."
-      }
+      "attachDescription": "Vê e anexa recibos à receita."
     },
     "Expense": {
       "create": "Criar despesa",
@@ -264,19 +270,16 @@
         "label": "Data da despesa",
         "description": "Introduz a data em que a despesa foi paga."
       },
+      "currencyField": {
+        "label": "Moeda da despesa",
+        "description": "A moeda em que a despesa foi paga."
+      },
       "categoryFieldDescription": "Selecciona a categoria da despesa.",
       "paidByField": {
         "label": "Pago por",
-        "description": "Selecciona quem forneceu o dinheiro e quanto cada pagador contribuiu.",
-        "placeholder": "Selecciona um participante"
+        "placeholder": "Selecciona um participante",
+        "description": "Selecciona quem forneceu o dinheiro e quanto cada pagador contribuiu."
       },
-      "paidFor": {
-        "title": "Dividir entre participantes",
-        "description": "Escolhe como dividir a despesa e quem está incluído."
-      },
-      "splitModeDescription": "Selecciona como dividir a despesa.",
-      "notesDescription": "Adiciona detalhes opcionais sobre esta despesa.",
-      "attachDescription": "Vê e anexa recibos à despesa.",
       "recurrenceRule": {
         "label": "Recorrência da despesa",
         "description": "Selecciona a frequência com que a despesa se repete.",
@@ -285,62 +288,19 @@
         "weekly": "Semanalmente",
         "monthly": "Mensalmente"
       },
-      "currencyField": {
-        "label": "Moeda da despesa",
-        "description": "A moeda em que a despesa foi paga."
-      }
+      "paidFor": {
+        "title": "Dividir entre participantes",
+        "description": "Escolhe como dividir a despesa e quem está incluído."
+      },
+      "splitModeDescription": "Selecciona como dividir a despesa.",
+      "notesDescription": "Adiciona detalhes opcionais sobre esta despesa.",
+      "attachDescription": "Vê e anexa recibos à despesa."
     },
     "amountField": {
       "label": "Valor",
       "description": "Introduz o valor total da despesa.",
       "convertedDescription": "Introduz o valor na moeda do grupo."
     },
-    "isReimbursementField": {
-      "label": "Isto é um reembolso"
-    },
-    "categoryField": {
-      "label": "Categoria"
-    },
-    "notesField": {
-      "label": "Notas"
-    },
-    "selectNone": "Remover selecção",
-    "selectAll": "Seleccionar todos",
-    "resetSplit": "Repor",
-    "evenlySplit": "Divisão igual: {amount} × {count}",
-    "totalWeight": "Peso total: {count, plural, one {# parte} other {# partes}}",
-    "matchesPercent": "Corresponde a 100%",
-    "matchesAmount": "Corresponde a {amount}",
-    "decreaseShares": "Diminuir partes",
-    "increaseShares": "Aumentar partes",
-    "shares": "parte(s)",
-    "advancedOptions": "Opções avançadas de divisão…",
-    "SplitModeField": {
-      "label": "Modo de divisão",
-      "evenly": "Igualmente",
-      "byShares": "Por partes",
-      "byPercentage": "Por percentagem",
-      "byAmount": "Por montante",
-      "saveAsDefault": "Guardar como opções de divisão padrão",
-      "evenlyDescription": "Dividido igualmente entre os participantes selecionados",
-      "bySharesDescription": "Dividir com partes ponderadas",
-      "byPercentageDescription": "Dividir com percentagens que somam 100%",
-      "byAmountDescription": "Dividir com um montante fixo para cada participante"
-    },
-    "DeletePopup": {
-      "label": "Apagar",
-      "title": "Apagar esta despesa?",
-      "description": "Tens a certeza de que queres apagar esta despesa? Esta acção é irreversível.",
-      "yes": "Sim",
-      "cancel": "Cancelar"
-    },
-    "attachDocuments": "Anexar imagens",
-    "create": "Criar",
-    "creating": "A criar…",
-    "save": "Guardar",
-    "saving": "A guardar…",
-    "cancel": "Cancelar",
-    "reimbursement": "Reembolso",
     "conversionUnavailable": "Para definir uma moeda diferente por despesa e converter valores, selecciona uma moeda não personalizada para o grupo.",
     "originalAmountField": {
       "label": "Valor a converter",
@@ -365,7 +325,90 @@
       "refresh": "Atualizar",
       "customRate": "A usar taxa personalizada"
     },
+    "isReimbursementField": {
+      "label": "Isto é um reembolso"
+    },
+    "categoryField": {
+      "label": "Categoria"
+    },
+    "notesField": {
+      "label": "Notas"
+    },
+    "selectNone": "Remover selecção",
+    "selectAll": "Seleccionar todos",
+    "resetSplit": "Repor",
+    "evenlySplit": "Divisão igual: {amount} × {count}",
+    "totalWeight": "Peso total: {count, plural, one {# parte} other {# partes}}",
+    "matchesPercent": "Corresponde a 100%",
+    "matchesAmount": "Corresponde a {amount}",
+    "decreaseShares": "Diminuir partes",
+    "increaseShares": "Aumentar partes",
     "noLongerInGroup": "já não faz parte deste grupo",
+    "shares": "parte(s)",
+    "advancedOptions": "Opções avançadas de divisão…",
+    "SplitModeField": {
+      "label": "Modo de divisão",
+      "evenly": "Igualmente",
+      "byShares": "Por partes",
+      "byPercentage": "Por percentagem",
+      "byAmount": "Por montante",
+      "saveAsDefault": "Guardar como opções de divisão padrão",
+      "evenlyDescription": "Dividido igualmente entre os participantes selecionados",
+      "bySharesDescription": "Dividir com partes ponderadas",
+      "byPercentageDescription": "Dividir com percentagens que somam 100%",
+      "byAmountDescription": "Dividir com um montante fixo para cada participante"
+    },
+    "itemized": {
+      "toggleLabel": "Discriminar despesa",
+      "toggleDescription": "Dividir itens individuais com participantes específicos em vez do valor total",
+      "noItems": "Nenhum item adicionado ainda. Clica em Adicionar item para começar a discriminar a despesa.",
+      "addItem": "Adicionar item",
+      "removeItem": "Remover item",
+      "itemTitleLabel": "Descrição do item",
+      "itemTitlePlaceholder": "ex.: Hambúrguer, Bilhete de museu",
+      "itemUnitPriceLabel": "Preço unitário",
+      "itemQuantityLabel": "Qtd",
+      "itemLineTotalLabel": "Total do item",
+      "itemAmountLabel": "Valor",
+      "sectionTitle": "Discriminação de itens",
+      "sectionDescription": "Divide esta despesa em itens individuais e atribui-os a pessoas específicas.",
+      "assignTo": "Atribuir a",
+      "otherLabel": "Outros / Restante",
+      "otherDerivedNote": "Qualquer valor não coberto por itens é dividido igualmente por todos.",
+      "itemsExceedTotal": "Os itens excedem o valor total. Aumenta o valor total ou reduz os itens.",
+      "setAmountFromItems": "Definir total a partir dos itens",
+      "total": "Total",
+      "addItemsAction": "Adicionar itens",
+      "documentationNote": "A discriminação de itens é mantida apenas para documentação e não altera a divisão igual.",
+      "authoritativeNote": "A atribuição dos itens define a divisão ativa.",
+      "leaveAction": "Sair da discriminação de itens",
+      "switchDialog": {
+        "title": "Mudar para discriminação de itens?",
+        "description": "Quaisquer divisões manuais configuradas serão substituídas pelas atribuições dos itens.",
+        "confirm": "Mudar para discriminada",
+        "cancel": "Cancelar"
+      },
+      "leaveDialog": {
+        "title": "Sair da discriminação de itens?",
+        "description": "As tuas atribuições de itens serão mantidas para referência, mas a divisão usará o método padrão.",
+        "confirm": "Sair da discriminada",
+        "cancel": "Cancelar"
+      }
+    },
+    "DeletePopup": {
+      "label": "Apagar",
+      "title": "Apagar esta despesa?",
+      "description": "Tens a certeza de que queres apagar esta despesa? Esta acção é irreversível.",
+      "yes": "Sim",
+      "cancel": "Cancelar"
+    },
+    "attachDocuments": "Anexar imagens",
+    "create": "Criar",
+    "creating": "A criar…",
+    "save": "Guardar",
+    "saving": "A guardar…",
+    "cancel": "Cancelar",
+    "reimbursement": "Reembolso",
     "PaidByField": {
       "saveAsDefault": "Guardar como opções de pagamento padrão"
     },
@@ -375,7 +418,7 @@
       "postSaveTitle": "Expense split across group and direct records",
       "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
       "postSaveGroupHalfLine": "The group expense is {amount}",
-      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "singlePayerNote": "Quando adicionamos pessoas de fora (p.ex.: {names}), a despesa é dividida em duas e, como tal, apenas uma pessoa pode pagar.",
       "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
       "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
       "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
@@ -673,18 +716,29 @@
     "amountRequired": "Tens de introduzir um valor.",
     "amountNotZero": "O valor não pode ser zero.",
     "amountTenMillion": "O valor deve ser inferior a 10.000.000.",
+    "ratePositive": "A taxa tem de ser estritamente superior a zero.",
     "paidByRequired": "Tens de selecionar um participante.",
     "paidToRequired": "Tens de selecionar quem recebeu o pagamento.",
     "paidToDifferent": "Quem pagou e quem recebeu têm de ser pessoas diferentes.",
     "paidForMin1": "A despesa deve ser paga para pelo menos um participante.",
-    "noZeroShares": "Todas as partes têm de ser superiores a 0.",
-    "amountSum": "A soma dos valores tem de ser igual ao valor da despesa.",
-    "percentageSum": "A soma das percentagens tem de ser igual a 100.",
-    "ratePositive": "A taxa tem de ser estritamente superior a zero.",
     "paidByAmountPositive": "O valor de cada pagador tem de ser superior a zero.",
     "paidByAmountSum": "A soma dos valores dos pagadores tem de ser igual ao valor da despesa.",
     "paidByDuplicateParticipants": "Cada pagador só pode aparecer uma vez.",
-    "reimbursementSinglePayer": "Os reembolsos suportam apenas um pagador."
+    "reimbursementSinglePayer": "Os reembolsos suportam apenas um pagador.",
+    "noZeroShares": "Todas as partes têm de ser superiores a 0.",
+    "amountSum": "A soma dos valores tem de ser igual ao valor da despesa.",
+    "percentageSum": "A soma das percentagens tem de ser igual a 100.",
+    "itemsRequired": "É necessário pelo menos um item para despesas discriminadas.",
+    "itemNeedsAssignment": "Atribui cada item a pelo menos uma pessoa.",
+    "itemTitleRequired": "Introduz um nome para o item.",
+    "itemAmountNonNegative": "O valor do item não pode ser negativo.",
+    "itemQuantityPositive": "A quantidade tem de ser um número inteiro igual ou superior a 1.",
+    "taxNonNegative": "O imposto não pode ser negativo.",
+    "tipNonNegative": "A gorjeta não pode ser negativa.",
+    "itemAssignmentUnknownParticipant": "Um item está atribuído a alguém que não faz parte da divisão.",
+    "itemizationNotAllowedHere": "A discriminação de itens não está disponível para este tipo de despesa.",
+    "itemsExceedAmount": "A soma dos itens não pode exceder o valor da despesa.",
+    "remainderShareUnknownParticipant": "Restante atribuído a um participante inválido."
   },
   "Categories": {
     "search": "Procurar categoria...",
@@ -725,12 +779,12 @@
       "heading": "Vida",
       "Childcare": "Cuidados infantis",
       "Clothing": "Vestuário",
+      "Donation": "Donativos",
       "Education": "Educação",
       "Gifts": "Presentes",
       "Insurance": "Seguro",
       "Medical Expenses": "Despesas médicas",
-      "Taxes": "Impostos",
-      "Donation": "Donativos"
+      "Taxes": "Impostos"
     },
     "Transportation": {
       "heading": "Transporte",
@@ -881,37 +935,6 @@
       }
     }
   },
-  "Notifications": {
-    "settings": "Definições de notificações",
-    "subscribe": "Ativar notificações",
-    "unsubscribe": "Desativar notificações",
-    "selectParticipant": "Notificar-me sobre alterações de outros",
-    "noParticipant": "Todas as alterações",
-    "permissionDenied": "A permissão de notificação foi negada. Ative-a nas definições do navegador.",
-    "notSupported": "As notificações push não são suportadas neste dispositivo.",
-    "expenseCreated": "{actor} adicionou \"{title}\"",
-    "expenseUpdated": "{actor} atualizou \"{title}\"",
-    "expenseDeleted": "{actor} eliminou \"{title}\"",
-    "groupUpdated": "{actor} atualizou o grupo \"{group}\"",
-    "notificationTitle": "Knots – {group}",
-    "defaultBody": "Nova atividade no seu grupo",
-    "filterHint": "Escolhe de quem queres alertas e que eventos receber.",
-    "membersLabel": "Notificar-me sobre",
-    "notifyAllMembers": "Todos no grupo",
-    "notifySpecificMembers": "Ou apenas estes membros:",
-    "eventsLabel": "Eventos",
-    "eventCreate": "Despesa criada",
-    "eventUpdate": "Despesa atualizada",
-    "eventDelete": "Despesa eliminada",
-    "selectAtLeastOneFilter": "Selecciona pelo menos um membro ou evento.",
-    "subscribeError": "Não foi possível ativar as notificações. Por favor, tente novamente.",
-    "channelsLabel": "Canais",
-    "pushLabel": "Notificações push",
-    "pushUnavailable": "As notificações push não estão disponíveis nesta instalação.",
-    "emailLabel": "Notificações por email",
-    "enableChannelHint": "Ativa um canal para configurar de quem e do que recebes notificações.",
-    "pushSyncWarning": "Preferências guardadas, mas a sincronização do filtro de notificações push falhou."
-  },
   "ProfileSettings": {
     "title": "Definições de Perfil",
     "back": "Voltar",
@@ -991,6 +1014,8 @@
     "emailTitle": "E-mail",
     "emailDescription": "O teu endereço de e-mail não pode ser alterado.",
     "displayNameTitle": "Nome de Apresentação",
+    "usernameTitle": "Nome de utilizador",
+    "usernameDescription": "O teu nome de utilizador aparece nos URLs do teu perfil. Tem de ser único.",
     "passwordTitle": "Palavra-passe",
     "passkeyTitle": "Chaves de acesso",
     "Email": {
@@ -1020,7 +1045,7 @@
     },
     "Password": {
       "description": "Inicia sessão com o teu e-mail e palavra-passe.",
-      "noPasswordDescription": "Inicias sessão com uma chave de acesso. Adiciona uma palavra-passe se quiseres outra forma de entrar.",
+      "noPasswordDescription": "Podes entrar com um link de email ou uma chave de acesso. Adiciona uma palavra-passe se quiseres outra forma de entrar.",
       "changeButton": "Alterar palavra-passe",
       "setButton": "Definir palavra-passe",
       "removeButton": "Remover palavra-passe",
@@ -1030,7 +1055,7 @@
       "setDialogDescription": "Escolhe uma palavra-passe. Continua a poder iniciar sessão com a chave de acesso.",
       "setSuccessToast": "Palavra-passe definida.",
       "removeDialogTitle": "Remover palavra-passe",
-      "removeDialogDescription": "Vais iniciar sessão com uma chave de acesso. Introduz a palavra-passe atual para confirmar.",
+      "removeDialogDescription": "Continua a poder entrar com um link de email ou uma chave de acesso. Introduz a palavra-passe atual para confirmar.",
       "currentLabel": "Palavra-passe atual",
       "newLabel": "Nova palavra-passe",
       "confirmLabel": "Confirmar nova palavra-passe",
@@ -1075,7 +1100,10 @@
       "deleteDialogDescription": "\"{name}\" deixará de poder iniciar sessão na tua conta.",
       "deleteConfirm": "Remover chave de acesso",
       "deleteSuccessToast": "Chave de acesso removida.",
-      "deleteFailedToast": "Não foi possível remover a chave de acesso."
+      "deleteFailedToast": "Não foi possível remover a chave de acesso.",
+      "reauthTitle": "Entra outra vez para adicionar uma chave de acesso",
+      "reauthDescription": "A última entrada tem mais de 30 dias. Entra outra vez com a palavra-passe, um link de email ou uma chave de acesso, e volta aqui.",
+      "reauthConfirm": "Entrar outra vez"
     },
     "preferencesTitle": "Preferências",
     "preferencesDescription": "Personaliza fuso horário, moeda, idioma e aparência.",
@@ -1147,6 +1175,14 @@
       "saving": "A guardar...",
       "submit": "Guardar Nome"
     },
+    "UsernameForm": {
+      "successToast": "Nome de utilizador actualizado com sucesso.",
+      "label": "Nome de utilizador",
+      "placeholder": "o-teu-nome-de-utilizador",
+      "description": "Usado no URL do teu perfil. Apenas letras minúsculas, números e hífenes.",
+      "saving": "A guardar...",
+      "submit": "Guardar nome de utilizador"
+    },
     "PasswordForm": {
       "currentPasswordRequired": "A palavra-passe actual é obrigatória",
       "newPasswordRequired": "A nova palavra-passe é obrigatória",
@@ -1167,16 +1203,6 @@
       "errorMissingUppercase": "Deve conter pelo menos uma letra maiúscula",
       "errorMissingLowercase": "Deve conter pelo menos uma letra minúscula",
       "errorMissingDigit": "Deve conter pelo menos um dígito"
-    },
-    "usernameTitle": "Nome de utilizador",
-    "usernameDescription": "O teu nome de utilizador aparece nos URLs do teu perfil. Tem de ser único.",
-    "UsernameForm": {
-      "successToast": "Nome de utilizador actualizado com sucesso.",
-      "label": "Nome de utilizador",
-      "placeholder": "o-teu-nome-de-utilizador",
-      "description": "Usado no URL do teu perfil. Apenas letras minúsculas, números e hífenes.",
-      "saving": "A guardar...",
-      "submit": "Guardar nome de utilizador"
     }
   },
   "Friends": {
@@ -1262,6 +1288,7 @@
       "title": "Despesas com {name}",
       "description": "Todas as despesas que partilham, em todos os grupos.",
       "backToFriends": "Voltar aos amigos",
+      "backToFriend": "Voltar a {name}",
       "listTitle": "Histórico de despesas",
       "listDescription": "Despesas diretas e despesas de grupos partilhados.",
       "create": "Adicionar despesa",
@@ -1279,8 +1306,7 @@
         "earlierThisYear": "Anteriores neste ano",
         "lastYear": "Ano passado",
         "older": "Mais antigas"
-      },
-      "backToFriend": "Voltar a {name}"
+      }
     },
     "List": {
       "totalOwedToYou": "No total, devem-lhe {amount}",
@@ -1399,7 +1425,9 @@
     "noGroupsHint": "Cria um grupo para começares a dividir despesas com outros.",
     "createGroup": "Criar Grupo",
     "createGroupTitle": "Criar um novo grupo",
-    "createGroupDescription": "Introduz um nome para o teu grupo. Podes convidar membros depois de o criar.",
+    "createGroupDescription": "Introduz um nome e uma moeda para o teu grupo. Podes convidar membros depois de o criar.",
+    "invalidCurrency": "Escolhe uma moeda válida.",
+    "currencySymbolRequired": "Introduz um símbolo de moeda.",
     "groupNameLabel": "Nome do grupo",
     "characters": "caracteres",
     "leaveGroup": "Sair do grupo",
@@ -1442,6 +1470,37 @@
     "themeSystem": "Sistema",
     "signingOut": "A terminar sessão…",
     "signOut": "Terminar sessão"
+  },
+  "Notifications": {
+    "settings": "Definições de notificações",
+    "subscribe": "Ativar notificações",
+    "unsubscribe": "Desativar notificações",
+    "selectParticipant": "Notificar-me sobre alterações de outros",
+    "noParticipant": "Todas as alterações",
+    "permissionDenied": "A permissão de notificação foi negada. Ative-a nas definições do navegador.",
+    "notSupported": "As notificações push não são suportadas neste dispositivo.",
+    "expenseCreated": "{actor} adicionou \"{title}\" no grupo {group}",
+    "expenseUpdated": "{actor} atualizou \"{title}\" no grupo {group}",
+    "expenseDeleted": "{actor} eliminou \"{title}\" no grupo {group}",
+    "groupUpdated": "{actor} atualizou o grupo \"{group}\"",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "Nova atividade no seu grupo",
+    "filterHint": "Escolhe de quem queres alertas e que eventos receber.",
+    "membersLabel": "Notificar-me sobre",
+    "notifyAllMembers": "Todos no grupo",
+    "notifySpecificMembers": "Ou apenas estes membros:",
+    "eventsLabel": "Eventos",
+    "eventCreate": "Despesa criada",
+    "eventUpdate": "Despesa atualizada",
+    "eventDelete": "Despesa eliminada",
+    "selectAtLeastOneFilter": "Selecciona pelo menos um membro ou evento.",
+    "subscribeError": "Não foi possível ativar as notificações. Por favor, tente novamente.",
+    "channelsLabel": "Canais",
+    "pushLabel": "Notificações push",
+    "pushUnavailable": "As notificações push não estão disponíveis nesta instalação.",
+    "emailLabel": "Notificações por email",
+    "enableChannelHint": "Ativa um canal para configurar de quem e do que recebes notificações.",
+    "pushSyncWarning": "Preferências guardadas, mas a sincronização do filtro de notificações push falhou."
   },
   "AppError": {
     "title": "Algo correu mal",
@@ -1502,7 +1561,8 @@
     "singleGroupAlertOk": "OK",
     "advancedOptions": "Opções Avançadas",
     "splitDetails": "Detalhes da divisão",
-    "notesPlaceholder": "Adicionar notas (opcional)"
+    "notesPlaceholder": "Adicionar notas (opcional)",
+    "viewGroupExpense": "Ver despesa do grupo"
   },
   "DuplicateExpense": {
     "title": "Possível duplicado detetado",
@@ -1526,5 +1586,48 @@
   },
   "CurrencyAmountInput": {
     "expressionHint": "ou 10+5"
+  },
+  "Login": {
+    "title": "Iniciar sessão",
+    "description": "Entra com uma chave de acesso, um link de email ou a palavra-passe.",
+    "orContinueWithEmail": "OU CONTINUAR COM EMAIL",
+    "methodMagicLink": "Magic link",
+    "methodPassword": "Palavra-passe",
+    "sendSignInLink": "Enviar link de entrada",
+    "signInWithPassword": "Entrar com palavra-passe",
+    "usePasskey": "Usar uma chave de acesso",
+    "passkeyFailed": "Não foi possível entrar com essa chave de acesso. Tenta outra vez.",
+    "forgotPassword": "Esqueceste-te da palavra-passe?",
+    "noAccount": "Ainda não tens conta?",
+    "signUp": "Criar conta",
+    "magicLinkButton": "Enviar link de entrada",
+    "magicLinkEmailRequired": "Indica o teu email.",
+    "magicLinkSendFailed": "Não foi possível enviar o email. Tenta outra vez.",
+    "magicLinkSentTitle": "Verifica o email",
+    "magicLinkSentDescription": "Se existir uma conta com esse endereço, enviámos um link de entrada. Funciona uma vez e expira em 15 minutos.",
+    "magicLinkSigningIn": "A entrar…",
+    "magicLinkFailedTitle": "Não foi possível entrar",
+    "magicLinkInvalid": "Este link de entrada é inválido ou expirou.",
+    "backToLogin": "Voltar ao início de sessão"
+  },
+  "Register": {
+    "title": "Criar conta",
+    "description": "Cria a conta com um link de email ou uma palavra-passe.",
+    "signUpWithPassword": "Criar conta com palavra-passe",
+    "confirmPassword": "Confirmar palavra-passe",
+    "hasAccount": "Já tens conta?",
+    "signIn": "Entrar",
+    "creating": "A criar a conta…",
+    "passwordMismatch": "As palavras-passe não coincidem",
+    "ruleLength": "8 caracteres",
+    "ruleLowercase": "Minúscula",
+    "ruleUppercase": "Maiúscula",
+    "ruleNumber": "Número",
+    "successTitle": "Conta criada",
+    "successDescription": "A tua conta foi criada",
+    "successAlertTitle": "Verifica o email",
+    "successAlertDescription": "Enviámos um link de verificação para o teu email. Clica no link para confirmares a conta antes de entrares.",
+    "goToLogin": "Ir para o início de sessão",
+    "failedTitle": "Não foi possível criar a conta"
   }
 }

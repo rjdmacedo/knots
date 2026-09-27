@@ -1,5 +1,6 @@
 'use client'
 
+import { AddFriendSection } from '@/components/add-friend-form'
 import { Money } from '@/components/money'
 import {
   AlertDialog,
@@ -23,8 +24,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from '@/components/ui/toast'
 import type { CurrencyBalance } from '@/lib/friend-balances'
@@ -33,7 +32,6 @@ import {
   ChevronDown,
   Loader2,
   MoreVertical,
-  Plus,
   Trash2,
   UserPlus,
   X,
@@ -45,11 +43,6 @@ import { useState } from 'react'
 export function FriendsManagement() {
   const t = useTranslations('Friends')
   const tList = useTranslations('Friends.List')
-  const [isAdding, setIsAdding] = useState(false)
-  const [email, setEmail] = useState('')
-  const [name, setName] = useState('')
-  const [showUnblockDialog, setShowUnblockDialog] = useState(false)
-  const [pendingBlockedEmail, setPendingBlockedEmail] = useState('')
   const [friendToRemove, setFriendToRemove] = useState<{
     id: string
     name: string
@@ -61,20 +54,6 @@ export function FriendsManagement() {
     trpc.friends.listIncoming.useQuery()
   const { data: balances, isLoading: isLoadingBalances } =
     trpc.friends.listWithBalances.useQuery()
-
-  const addFriend = trpc.friends.add.useMutation({
-    onSuccess: (data) => {
-      toast.success(t('addedToast', { name: data.name }))
-      setEmail('')
-      setName('')
-      setIsAdding(false)
-      utils.friends.list.invalidate()
-      utils.friends.listWithBalances.invalidate()
-    },
-    onError: (mutationError) => {
-      toast.error(mutationError.message)
-    },
-  })
 
   const removeFriend = trpc.friends.remove.useMutation({
     onSuccess: () => {
@@ -108,43 +87,6 @@ export function FriendsManagement() {
       toast.error(mutationError.message)
     },
   })
-
-  const unblockUser = trpc.profile.unblockUser.useMutation({
-    onSuccess: () => {
-      utils.profile.getBlockedUsers.invalidate()
-      addFriend.mutate({
-        email: pendingBlockedEmail,
-        ...(name.trim() ? { name: name.trim() } : {}),
-      })
-      setShowUnblockDialog(false)
-      setPendingBlockedEmail('')
-    },
-    onError: (mutationError) => {
-      toast.error(mutationError.message)
-    },
-  })
-
-  const handleAddFriend = async (event: React.FormEvent) => {
-    event.preventDefault()
-    if (!email.trim()) return
-
-    const normalizedEmail = email.trim().toLowerCase()
-
-    const result = await utils.profile.checkBlocked.fetch({
-      email: normalizedEmail,
-    })
-
-    if (result.blocked) {
-      setPendingBlockedEmail(normalizedEmail)
-      setShowUnblockDialog(true)
-      return
-    }
-
-    addFriend.mutate({
-      email: normalizedEmail,
-      ...(name.trim() ? { name: name.trim() } : {}),
-    })
-  }
 
   // Compute aggregate totals per currency and split friends into unsettled/settled
   const aggregateTotals = computeAggregateTotals(balances ?? [])
@@ -318,68 +260,7 @@ export function FriendsManagement() {
         />
       )}
 
-      {/* 11.5: Add friend section */}
-      <section className="rounded-lg border p-4 space-y-4">
-        <div>
-          <h2 className="font-semibold text-lg">{t('addTitle')}</h2>
-          <p className="text-sm text-muted-foreground">{t('addDescription')}</p>
-        </div>
-
-        {isAdding ? (
-          <form onSubmit={handleAddFriend} className="flex flex-col gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="friend-email">{t('emailLabel')}</Label>
-              <Input
-                id="friend-email"
-                type="email"
-                placeholder={t('emailPlaceholder')}
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                className="text-base"
-                autoFocus
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="friend-name">{t('nameLabel')}</Label>
-              <Input
-                id="friend-name"
-                type="text"
-                placeholder={t('namePlaceholder')}
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                className="text-base"
-              />
-            </div>
-            <div className="flex gap-2">
-              <Button
-                type="submit"
-                size="sm"
-                disabled={addFriend.isPending || !email.trim()}
-              >
-                {addFriend.isPending ? t('adding') : t('add')}
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setIsAdding(false)
-                  setEmail('')
-                  setName('')
-                }}
-              >
-                {t('cancel')}
-              </Button>
-            </div>
-          </form>
-        ) : (
-          <Button variant="outline" size="sm" onClick={() => setIsAdding(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            {t('addFriend')}
-          </Button>
-        )}
-      </section>
+      <AddFriendSection />
 
       {/* Remove friend dialog */}
       <AlertDialog
@@ -408,36 +289,6 @@ export function FriendsManagement() {
               }}
             >
               {t('remove')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Unblock dialog */}
-      <AlertDialog open={showUnblockDialog} onOpenChange={setShowUnblockDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t('unblockDialogTitle')}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t('unblockDialogDescription', { email: pendingBlockedEmail })}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel
-              onClick={() => {
-                setShowUnblockDialog(false)
-                setPendingBlockedEmail('')
-              }}
-            >
-              {t('cancel')}
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() =>
-                unblockUser.mutate({ blockedEmail: pendingBlockedEmail })
-              }
-              disabled={unblockUser.isPending}
-            >
-              {unblockUser.isPending ? t('unblocking') : t('unblockAndAdd')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

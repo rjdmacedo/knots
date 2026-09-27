@@ -192,7 +192,6 @@ function editButtonPreservesClickBehavior(fileContent: string): {
  */
 function contextMenuPreservesClickBehavior(fileContent: string): {
   hasDropdownMenu: boolean
-  hasNotificationsToggle: boolean
   hasArchiveItem: boolean
   hasArchiveGroupHandler: boolean
   hasLeaveGroupHandler: boolean
@@ -200,10 +199,6 @@ function contextMenuPreservesClickBehavior(fileContent: string): {
 } {
   return {
     hasDropdownMenu: fileContent.includes('<DropdownMenu'),
-    hasNotificationsToggle:
-      fileContent.includes('notifications.toggle') &&
-      (fileContent.includes('enableNotifications') ||
-        fileContent.includes('disableNotifications')),
     hasArchiveItem:
       fileContent.includes('archive') || fileContent.includes('unarchive'),
     hasArchiveGroupHandler:
@@ -452,7 +447,7 @@ describe('UI Button Preservation Property Tests', () => {
     })
 
     /**
-     * Group card context menu: notifications, archive, leave, and delete SHALL
+     * Group card context menu: archive, leave, and delete SHALL
      * CONTINUE TO perform those actions as before.
      *
      * **Validates: Requirements 3.7**
@@ -467,7 +462,6 @@ describe('UI Button Preservation Property Tests', () => {
             const result = contextMenuPreservesClickBehavior(fileContent)
 
             expect(result.hasDropdownMenu).toBe(true)
-            expect(result.hasNotificationsToggle).toBe(true)
             expect(result.hasArchiveItem).toBe(true)
             expect(result.hasArchiveGroupHandler).toBe(true)
             expect(result.hasLeaveGroupHandler).toBe(true)
@@ -571,7 +565,6 @@ describe('UI Button Preservation Property Tests', () => {
               case 'GroupCardContextMenu': {
                 const r = contextMenuPreservesClickBehavior(fileContent)
                 expect(r.hasDropdownMenu).toBe(true)
-                expect(r.hasNotificationsToggle).toBe(true)
                 expect(r.hasArchiveItem).toBe(true)
                 break
               }

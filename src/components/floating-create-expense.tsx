@@ -29,6 +29,7 @@ import { Locale } from '@/i18n'
 import { getCurrency } from '@/lib/currency'
 import { parseExpenseCreateContext } from '@/lib/expense-create-context'
 import { resolveAddExpenseTarget } from '@/lib/expense-editor-navigation'
+import { outsideFriendDisplayNames } from '@/lib/expense-editor-participants'
 import { stashStandaloneExpenseCreate } from '@/lib/expense-prefill-store'
 import { RuntimeFeatureFlags } from '@/lib/featureFlags'
 import { FriendListItem } from '@/lib/friends'
@@ -40,7 +41,11 @@ import {
 import { invalidateActivityQueries } from '@/lib/invalidate-activity-queries'
 import { isConsolidatedPayment } from '@/lib/payments'
 import { ExpenseFormValues } from '@/lib/schemas'
-import { formatCurrency, getCurrencyFromGroup } from '@/lib/utils'
+import {
+  formatCurrency,
+  getCurrencyFromGroup,
+  sharesForGlobalExpense,
+} from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { useIsClient } from 'foxact/use-is-client'
 import { ExternalLink, Plus, Users } from 'lucide-react'
@@ -465,7 +470,11 @@ export function FloatingCreateExpense({
               })),
               paidFor: values.paidFor.map((pf) => ({
                 participant: pf.participant,
-                shares: pf.shares,
+                shares: sharesForGlobalExpense(
+                  values.splitMode,
+                  pf.shares,
+                  currencyObj.decimal_digits,
+                ),
               })),
             })
 
@@ -575,7 +584,11 @@ export function FloatingCreateExpense({
             })),
             paidFor: values.paidFor.map((pf) => ({
               participant: pf.participant,
-              shares: pf.shares,
+              shares: sharesForGlobalExpense(
+                values.splitMode,
+                pf.shares,
+                currencyObj.decimal_digits,
+              ),
             })),
           })
           toast.success(t('successToast'))
@@ -705,6 +718,11 @@ export function FloatingCreateExpense({
             scrollHeader={participantScrollHeader}
             // Friend and hybrid (group+friends) paths only persist the first payer
             singlePayerOnly={selectedFriends.length > 0}
+            outsideFriendNames={
+              selectedGroup
+                ? outsideFriendDisplayNames(selectedFriends, groupParticipants)
+                : []
+            }
           />
         )
       ) : !editingExpenseId ? (

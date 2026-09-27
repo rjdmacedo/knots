@@ -44,14 +44,17 @@ export type FriendSelection = {
 
 type FriendPickerProps = {
   excludeUserIds?: string[]
+  excludeEmails?: string[]
   onSelect: (selection: FriendSelection) => void
   placeholder?: string
   disabled?: boolean
   value?: FriendSelection | null
   className?: string
+  /** When false, the inline email field is hidden so a parent can use AddFriendForm. */
+  allowManualEmail?: boolean
 }
 
-function friendToSelection(friend: FriendListItem): FriendSelection {
+export function friendToSelection(friend: FriendListItem): FriendSelection {
   return {
     ...(friend.friendUserId ? { userId: friend.friendUserId } : {}),
     email: friend.email,
@@ -65,11 +68,13 @@ function selectionKey(selection: FriendSelection): string {
 
 export function FriendPicker({
   excludeUserIds = [],
+  excludeEmails = [],
   onSelect,
   placeholder,
   disabled,
   value,
   className,
+  allowManualEmail = true,
 }: FriendPickerProps) {
   const t = useTranslations('Friends')
   const [open, setOpen] = useState(false)
@@ -81,14 +86,20 @@ export function FriendPicker({
   const { data: friends = [], isLoading } = trpc.friends.list.useQuery()
 
   const excludeSet = useMemo(() => new Set(excludeUserIds), [excludeUserIds])
+  const excludeEmailSet = useMemo(
+    () => new Set(excludeEmails.map((email) => email.toLowerCase())),
+    [excludeEmails],
+  )
 
   const availableFriends = useMemo(
     () =>
-      friends.filter(
-        (friend) =>
-          !friend.friendUserId || !excludeSet.has(friend.friendUserId),
-      ),
-    [friends, excludeSet],
+      friends.filter((friend) => {
+        if (friend.friendUserId && excludeSet.has(friend.friendUserId)) {
+          return false
+        }
+        return !excludeEmailSet.has(friend.email.toLowerCase())
+      }),
+    [friends, excludeSet, excludeEmailSet],
   )
 
   const handleSelect = (selection: FriendSelection) => {
@@ -123,11 +134,13 @@ export function FriendPicker({
       onSelectFriend={(friend) => handleSelect(friendToSelection(friend))}
       onSubmitManualEmail={handleManualEmail}
       disabled={disabled}
+      allowManualEmail={allowManualEmail}
     />
   )
 
   const trigger = (
     <Button
+      type="button"
       variant="outline"
       role="combobox"
       aria-expanded={open}
@@ -181,6 +194,7 @@ function FriendPickerCommand({
   onSelectFriend,
   onSubmitManualEmail,
   disabled,
+  allowManualEmail,
 }: {
   friends: FriendListItem[]
   isLoading: boolean
@@ -192,6 +206,7 @@ function FriendPickerCommand({
   onSelectFriend: (friend: FriendListItem) => void
   onSubmitManualEmail: () => void
   disabled?: boolean
+  allowManualEmail: boolean
 }) {
   const t = useTranslations('Friends')
 
@@ -236,44 +251,48 @@ function FriendPickerCommand({
           })}
         </CommandGroup>
       </CommandList>
-      <div className="border-t p-2">
-        <Collapsible
-          open={emailSectionOpen}
-          onOpenChange={onEmailSectionOpenChange}
-        >
-          <CollapsibleTrigger
-            render={<Button variant="link" size="sm" className="h-auto px-0" />}
+      {allowManualEmail ? (
+        <div className="border-t p-2">
+          <Collapsible
+            open={emailSectionOpen}
+            onOpenChange={onEmailSectionOpenChange}
           >
-            {t('addByEmail')}
-          </CollapsibleTrigger>
-          <CollapsibleContent className="space-y-2 pt-2">
-            <Input
-              type="email"
-              placeholder={t('emailPlaceholder')}
-              value={manualEmail}
-              onChange={(event) => onManualEmailChange(event.target.value)}
-              disabled={disabled}
-              className="text-base"
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') {
-                  event.preventDefault()
-                  onSubmitManualEmail()
-                }
-              }}
-            />
-            <Button
-              type="button"
-              size="sm"
-              variant="secondary"
-              className="w-full"
-              disabled={disabled || !manualEmail.trim().includes('@')}
-              onClick={onSubmitManualEmail}
+            <CollapsibleTrigger
+              render={
+                <Button variant="link" size="sm" className="h-auto px-0" />
+              }
             >
-              {t('useEmail')}
-            </Button>
-          </CollapsibleContent>
-        </Collapsible>
-      </div>
+              {t('addByEmail')}
+            </CollapsibleTrigger>
+            <CollapsibleContent className="space-y-2 pt-2">
+              <Input
+                type="email"
+                placeholder={t('emailPlaceholder')}
+                value={manualEmail}
+                onChange={(event) => onManualEmailChange(event.target.value)}
+                disabled={disabled}
+                className="text-base"
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault()
+                    onSubmitManualEmail()
+                  }
+                }}
+              />
+              <Button
+                type="button"
+                size="sm"
+                variant="secondary"
+                className="w-full"
+                disabled={disabled || !manualEmail.trim().includes('@')}
+                onClick={onSubmitManualEmail}
+              >
+                {t('useEmail')}
+              </Button>
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
+      ) : null}
     </Command>
   )
 }

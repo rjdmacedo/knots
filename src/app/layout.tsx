@@ -145,8 +145,8 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={cn('font-sans', inter.variable)}
     >
-      <ApplePwaSplash icon="/logo-with-text.png" color="#027756" />
       <body className="h-dvh overflow-hidden flex flex-col items-stretch">
+        <ApplePwaSplash icon="/logo-with-text.png" color="#027756" />
         <NextIntlClientProvider messages={messages}>
           <ThemeProvider
             attribute="class"

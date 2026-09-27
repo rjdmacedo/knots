@@ -1,6 +1,7 @@
 'use client'
 
 import { CurrencyAmountInput } from '@/components/currency-amount-input'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -37,6 +38,7 @@ import {
   Equal,
   Hash,
   Percent,
+  TriangleAlert,
   User,
   type LucideIcon,
 } from 'lucide-react'
@@ -523,14 +525,17 @@ export function PayerSelector({
                 ))}
               </SelectContent>
             </Select>
-            {nonMemberSinglePayerNote && (
-              <p className="mt-2 text-xs text-muted-foreground">
-                {nonMemberSinglePayerNote}
-              </p>
-            )}
           </div>
         )}
       </FieldLabel>
+      {nonMemberSinglePayerNote && (
+        <Alert variant="warning" className="w-full">
+          <TriangleAlert />
+          <AlertDescription className="w-full text-wrap">
+            {nonMemberSinglePayerNote}
+          </AlertDescription>
+        </Alert>
+      )}
 
       {!forceSingle && (
         <>

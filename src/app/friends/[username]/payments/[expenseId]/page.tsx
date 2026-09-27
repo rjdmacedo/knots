@@ -13,12 +13,10 @@ export default async function FriendPaymentDetailPage({ params }: Props) {
   const { username, expenseId } = await params
 
   return (
-    <div className="px-4 py-6">
-      <ExpenseDetail
-        scope="friend-payment"
-        username={username}
-        expenseId={expenseId}
-      />
-    </div>
+    <ExpenseDetail
+      scope="friend-payment"
+      username={username}
+      expenseId={expenseId}
+    />
   )
 }

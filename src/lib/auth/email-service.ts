@@ -5,10 +5,14 @@
  */
 
 import {
+  buildSimpleEmailHtml,
   buildTransactionalEmailHtml,
+  EMAIL_LOGO_CID,
   escapeHtml,
+  type SimpleEmailOptions,
 } from '@/lib/auth/transactional-email-layout'
 import type { Resend } from 'resend'
+import { EMAIL_LOGO_BASE64 } from './email-logo-data'
 
 export interface EmailService {
   sendVerificationEmail(
@@ -58,6 +62,14 @@ export interface EmailService {
     to: string,
     code: string,
   ): Promise<{ ok: true } | { ok: false; error: string }>
+  sendMagicLinkEmail(
+    to: string,
+    token: string,
+    callbackUrl?: string | null,
+  ): Promise<{ ok: true } | { ok: false; error: string }>
+  sendPasswordRemovedEmail(
+    to: string,
+  ): Promise<{ ok: true } | { ok: false; error: string }>
 }
 
 const APP_NAME = 'Knots'
@@ -68,6 +80,28 @@ function getBaseUrl(): string {
     process.env.NEXT_PUBLIC_APP_URL ||
     'http://localhost:3000'
   )
+}
+
+function buildAuthEmailHtml(
+  options: Omit<SimpleEmailOptions, 'appName'>,
+): string {
+  return buildSimpleEmailHtml({
+    ...options,
+    appName: APP_NAME,
+  })
+}
+
+let emailLogoBytes: Buffer | undefined
+
+/** Inline logo so mail clients do not have to fetch the app server. */
+function emailLogoAttachment() {
+  emailLogoBytes ??= Buffer.from(EMAIL_LOGO_BASE64, 'base64')
+  return {
+    filename: 'logo.png',
+    content: emailLogoBytes,
+    contentType: 'image/png',
+    contentId: EMAIL_LOGO_CID,
+  }
 }
 
 function getFromAddress(): string {
@@ -92,14 +126,14 @@ export function buildVerificationEmailHtml(token: string): string {
   const baseUrl = getBaseUrl()
   const verificationLink = `${baseUrl}/verify-email?token=${token}`
 
-  return `
-    <h1>Verify your email for ${APP_NAME}</h1>
-    <p>Welcome to ${APP_NAME}! Please verify your email address to complete your registration.</p>
-    <p>Click the link below to verify your email:</p>
-    <p><a href="${verificationLink}">Verify Email</a></p>
-    <p>This link will expire in 24 hours.</p>
-    <p>If you did not create an account, you can safely ignore this email.</p>
-  `.trim()
+  return buildAuthEmailHtml({
+    previewText: `Verify your email for ${APP_NAME}`,
+    title: 'Verify your email',
+    intro: `Welcome to ${APP_NAME}. Confirm this address to finish creating your account. This link expires in 24 hours.`,
+    cta: { label: 'Verify email', href: verificationLink },
+    footnote:
+      'If you did not create an account, you can safely ignore this email.',
+  })
 }
 
 export function buildVerificationEmailText(token: string): string {
@@ -120,18 +154,76 @@ export function buildVerificationEmailText(token: string): string {
   ].join('\n')
 }
 
+export function buildMagicLinkEmailHtml(
+  token: string,
+  callbackUrl?: string | null,
+): string {
+  const baseUrl = getBaseUrl()
+  const params = new URLSearchParams({ token })
+  if (callbackUrl) params.set('callbackUrl', callbackUrl)
+  const link = `${baseUrl}/login/magic?${params.toString()}`
+
+  return buildAuthEmailHtml({
+    previewText: `Sign in to ${APP_NAME}`,
+    title: 'Sign in',
+    intro: `Use the button below to sign in to your ${APP_NAME} account. It works once and expires in 15 minutes.`,
+    cta: { label: 'Sign in', href: link },
+    footnote: 'If you did not request this email, you can safely ignore it.',
+  })
+}
+
+export function buildMagicLinkEmailText(
+  token: string,
+  callbackUrl?: string | null,
+): string {
+  const baseUrl = getBaseUrl()
+  const params = new URLSearchParams({ token })
+  if (callbackUrl) params.set('callbackUrl', callbackUrl)
+  const link = `${baseUrl}/login/magic?${params.toString()}`
+
+  return [
+    `Sign in to ${APP_NAME}`,
+    '',
+    `Use the link below to sign in to your ${APP_NAME} account. It works once and expires in 15 minutes.`,
+    link,
+    '',
+    `If you did not request this email, you can safely ignore it.`,
+  ].join('\n')
+}
+
+export function buildPasswordRemovedEmailHtml(): string {
+  return buildAuthEmailHtml({
+    previewText: `Your ${APP_NAME} password was removed`,
+    title: 'Password removed',
+    intro: `You can still sign in with an email link or a passkey.`,
+    cta: { label: 'Sign in', href: `${getBaseUrl()}/login` },
+    footnote:
+      'If you did not remove your password, reset it from the sign-in page.',
+  })
+}
+
+export function buildPasswordRemovedEmailText(): string {
+  return [
+    `Your ${APP_NAME} password was removed`,
+    '',
+    `You can still sign in with an email link or a passkey.`,
+    '',
+    `If you did not remove your password, reset it from the sign-in page.`,
+  ].join('\n')
+}
+
 export function buildPasswordResetEmailHtml(token: string): string {
   const baseUrl = getBaseUrl()
   const resetLink = `${baseUrl}/reset-password?token=${token}`
 
-  return `
-    <h1>Reset your password for ${APP_NAME}</h1>
-    <p>You requested a password reset for your ${APP_NAME} account.</p>
-    <p>Click the link below to set a new password:</p>
-    <p><a href="${resetLink}">Reset Password</a></p>
-    <p>This link will expire in 1 hour.</p>
-    <p>If you did not request a password reset, you can safely ignore this email.</p>
-  `.trim()
+  return buildAuthEmailHtml({
+    previewText: `Reset your password for ${APP_NAME}`,
+    title: 'Reset your password',
+    intro: `You requested a password reset for your ${APP_NAME} account. This link expires in 1 hour.`,
+    cta: { label: 'Reset password', href: resetLink },
+    footnote:
+      'If you did not request a password reset, you can safely ignore this email.',
+  })
 }
 
 export function buildPasswordResetEmailText(token: string): string {
@@ -156,14 +248,14 @@ export function buildInvitationEmailHtml(
   groupName: string,
   inviteLink: string,
 ): string {
-  return `
-    <h1>You've been invited to join a group on ${APP_NAME}</h1>
-    <p>You have been invited to join the group "${groupName}" on ${APP_NAME}.</p>
-    <p>Click the link below to accept the invitation:</p>
-    <p><a href="${inviteLink}">Join Group</a></p>
-    <p>This invitation will expire in 7 days.</p>
-    <p>If you did not expect this invitation, you can safely ignore this email.</p>
-  `.trim()
+  return buildAuthEmailHtml({
+    previewText: `You've been invited to join ${groupName} on ${APP_NAME}`,
+    title: `Join ${groupName}`,
+    intro: `You have been invited to join this group on ${APP_NAME}. This invitation expires in 7 days.`,
+    cta: { label: 'Join group', href: inviteLink },
+    footnote:
+      'If you did not expect this invitation, you can safely ignore this email.',
+  })
 }
 
 export function buildInvitationEmailText(
@@ -189,23 +281,20 @@ export function buildFriendInviteEmailHtml(
   inviteLink: string,
   hasAccount: boolean,
 ): string {
-  if (hasAccount) {
-    return `
-    <h1>${inviterName} added you on ${APP_NAME}</h1>
-    <p>${inviterName} added you to their friends on ${APP_NAME} — a simple way to share expenses with friends and family.</p>
-    <p>Sign in to connect:</p>
-    <p><a href="${inviteLink}">Open ${APP_NAME}</a></p>
-    <p>If you do not know ${inviterName}, you can safely ignore this email.</p>
-  `.trim()
-  }
-
-  return `
-    <h1>Connect with ${inviterName} on ${APP_NAME}</h1>
-    <p>${inviterName} added you to their friends on ${APP_NAME} — a simple way to share expenses with friends and family.</p>
-    <p>Create your free account to connect:</p>
-    <p><a href="${inviteLink}">Join ${APP_NAME}</a></p>
-    <p>If you do not know ${inviterName}, you can safely ignore this email.</p>
-  `.trim()
+  return buildAuthEmailHtml({
+    previewText: hasAccount
+      ? `${inviterName} added you on ${APP_NAME}`
+      : `Connect with ${inviterName} on ${APP_NAME}`,
+    title: hasAccount
+      ? `${inviterName} added you`
+      : `Connect with ${inviterName}`,
+    intro: `${inviterName} added you to their friends on ${APP_NAME}, a simple way to share expenses with friends and family.`,
+    cta: {
+      label: hasAccount ? `Open ${APP_NAME}` : `Join ${APP_NAME}`,
+      href: inviteLink,
+    },
+    footnote: `If you do not know ${inviterName}, you can safely ignore this email.`,
+  })
 }
 
 export function buildFriendInviteEmailText(
@@ -256,8 +345,8 @@ export function buildPaymentRequestEmailHtml(
     : `${requesterName} is requesting ${amount} in ${groupName}`
 
   const intro = isDirectBalance
-    ? `<strong style="color:#1f2937;">${safeRequester}</strong> is requesting <strong style="color:#0d9488;">${safeAmount}</strong> for your direct balance.`
-    : `<strong style="color:#1f2937;">${safeRequester}</strong> is requesting <strong style="color:#0d9488;">${safeAmount}</strong> for your balance in the group <strong style="color:#1f2937;">${safeGroup}</strong>.`
+    ? `<strong style="color:#09090b;">${safeRequester}</strong> is requesting <strong style="color:#007595;">${safeAmount}</strong> for your direct balance.`
+    : `<strong style="color:#09090b;">${safeRequester}</strong> is requesting <strong style="color:#007595;">${safeAmount}</strong> for your balance in the group <strong style="color:#09090b;">${safeGroup}</strong>.`
 
   const details = isDirectBalance
     ? [
@@ -346,8 +435,8 @@ export function buildSettlementRecordedEmailHtml(
     : `${payerName} recorded a ${amount} payment in ${groupName} — ${remainingBalance}`
 
   const intro = isDirectBalance
-    ? `<strong style="color:#1f2937;">${safePayer}</strong> recorded a payment of <strong style="color:#0d9488;">${safeAmount}</strong> for your direct balance.`
-    : `<strong style="color:#1f2937;">${safePayer}</strong> recorded a payment of <strong style="color:#0d9488;">${safeAmount}</strong> in the group <strong style="color:#1f2937;">${safeGroup}</strong>.`
+    ? `<strong style="color:#09090b;">${safePayer}</strong> recorded a payment of <strong style="color:#007595;">${safeAmount}</strong> for your direct balance.`
+    : `<strong style="color:#09090b;">${safePayer}</strong> recorded a payment of <strong style="color:#007595;">${safeAmount}</strong> in the group <strong style="color:#09090b;">${safeGroup}</strong>.`
 
   const details = isDirectBalance
     ? [
@@ -374,7 +463,7 @@ export function buildSettlementRecordedEmailHtml(
     appName: APP_NAME,
     previewText,
     title: 'Payment recorded',
-    intro: `${intro} <strong style="color:${isFullySettled ? '#0d9488' : '#1f2937'};">${safeRemainingBalance}</strong>.`,
+    intro: `${intro} <strong style="color:${isFullySettled ? '#007595' : '#09090b'};">${safeRemainingBalance}</strong>.`,
     detailsTitle: 'Payment details',
     details,
     cta: { label: 'View balances', href: balancesLink },
@@ -432,7 +521,7 @@ export function buildGroupActivityDigestEmailHtml(
     appName: APP_NAME,
     previewText: `${actorName} made changes in ${groupName}`,
     title: 'Group activity',
-    intro: `<strong style="color:#1f2937;">${safeActor}</strong> made changes in the group <strong style="color:#1f2937;">${safeGroup}</strong>.`,
+    intro: `<strong style="color:#09090b;">${safeActor}</strong> made changes in the group <strong style="color:#09090b;">${safeGroup}</strong>.`,
     detailsTitle: 'Activity',
     details: [
       { label: 'Changed by', value: actorName },
@@ -465,15 +554,14 @@ export function buildGroupActivityDigestEmailText(
 }
 
 export function buildEmailChangeCodeEmailHtml(code: string): string {
-  const safeCode = escapeHtml(code)
-
-  return `
-    <h1>Confirm your new email for ${APP_NAME}</h1>
-    <p>Use the code below to confirm this address as the new email for your ${APP_NAME} account.</p>
-    <p style="font-size:24px;font-weight:bold;letter-spacing:4px;">${safeCode}</p>
-    <p>This code will expire in 15 minutes.</p>
-    <p>If you did not request an email change, you can safely ignore this email and your address will stay the same.</p>
-  `.trim()
+  return buildAuthEmailHtml({
+    previewText: `Confirm your new email for ${APP_NAME}`,
+    title: 'Confirm your new email',
+    intro: `Use this code to confirm the new address for your ${APP_NAME} account. It expires in 15 minutes.`,
+    code,
+    footnote:
+      'If you did not request an email change, you can safely ignore this email and your address will stay the same.',
+  })
 }
 
 export function buildEmailChangeCodeEmailText(code: string): string {
@@ -506,6 +594,7 @@ function createEmailService(): EmailService {
           subject,
           html,
           text,
+          attachments: [emailLogoAttachment()],
         })
         if (error) {
           console.error(
@@ -540,6 +629,7 @@ function createEmailService(): EmailService {
           subject,
           html,
           text,
+          attachments: [emailLogoAttachment()],
         })
         if (error) {
           console.error(
@@ -574,6 +664,7 @@ function createEmailService(): EmailService {
           subject,
           html,
           text,
+          attachments: [emailLogoAttachment()],
         })
         if (error) {
           console.error(
@@ -616,6 +707,7 @@ function createEmailService(): EmailService {
           subject,
           html,
           text,
+          attachments: [emailLogoAttachment()],
         })
         if (error) {
           console.error(
@@ -677,6 +769,7 @@ function createEmailService(): EmailService {
           subject,
           html,
           text,
+          attachments: [emailLogoAttachment()],
         })
         if (error) {
           console.error(
@@ -738,6 +831,7 @@ function createEmailService(): EmailService {
           subject,
           html,
           text,
+          attachments: [emailLogoAttachment()],
         })
         if (error) {
           console.error(
@@ -780,6 +874,7 @@ function createEmailService(): EmailService {
           subject,
           html,
           text,
+          attachments: [emailLogoAttachment()],
         })
         if (error) {
           console.error(
@@ -814,6 +909,7 @@ function createEmailService(): EmailService {
           subject,
           html,
           text,
+          attachments: [emailLogoAttachment()],
         })
         if (error) {
           console.error(
@@ -828,6 +924,76 @@ function createEmailService(): EmailService {
           err instanceof Error ? err.message : 'Unknown email delivery error'
         console.error(
           `[EmailService] Failed to send email change code email to ${to}:`,
+          message,
+        )
+        return { ok: false, error: message }
+      }
+    },
+
+    async sendMagicLinkEmail(to, token, callbackUrl) {
+      const resend = await getResendClient()
+      const from = getFromAddress()
+      const subject = `Sign in to ${APP_NAME}`
+      const html = buildMagicLinkEmailHtml(token, callbackUrl)
+      const text = buildMagicLinkEmailText(token, callbackUrl)
+
+      try {
+        const { error } = await resend.emails.send({
+          from,
+          to,
+          subject,
+          html,
+          text,
+          attachments: [emailLogoAttachment()],
+        })
+        if (error) {
+          console.error(
+            `[EmailService] Failed to send magic link email to ${to}:`,
+            error,
+          )
+          return { ok: false, error: error.message }
+        }
+        return { ok: true }
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : 'Unknown email delivery error'
+        console.error(
+          `[EmailService] Failed to send magic link email to ${to}:`,
+          message,
+        )
+        return { ok: false, error: message }
+      }
+    },
+
+    async sendPasswordRemovedEmail(to) {
+      const resend = await getResendClient()
+      const from = getFromAddress()
+      const subject = `Your ${APP_NAME} password was removed`
+      const html = buildPasswordRemovedEmailHtml()
+      const text = buildPasswordRemovedEmailText()
+
+      try {
+        const { error } = await resend.emails.send({
+          from,
+          to,
+          subject,
+          html,
+          text,
+          attachments: [emailLogoAttachment()],
+        })
+        if (error) {
+          console.error(
+            `[EmailService] Failed to send password-removed email to ${to}:`,
+            error,
+          )
+          return { ok: false, error: error.message }
+        }
+        return { ok: true }
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : 'Unknown email delivery error'
+        console.error(
+          `[EmailService] Failed to send password-removed email to ${to}:`,
           message,
         )
         return { ok: false, error: message }

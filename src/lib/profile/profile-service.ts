@@ -5,6 +5,7 @@
  */
 
 import type { Locale } from '@/i18n'
+import { emailService } from '@/lib/auth/email-service'
 import { hashPassword, verifyPassword } from '@/lib/auth/password'
 import { validatePassword } from '@/lib/auth/password-validation'
 import { prisma } from '@/lib/prisma'
@@ -219,11 +220,10 @@ export async function setPassword(
 }
 
 /**
- * Removes the user's password so they sign in with a passkey instead.
- * Verifies the current password, then refuses when the user has no passkey —
- * clearing the hash would otherwise leave the account with no sign-in method.
- * On success sets `passwordHash` to null; credentials sign-in then treats the
- * account as invalid credentials, leaving passkey sign-in as the other path.
+ * Removes the user's password. Verifies the current password, then refuses
+ * when the account has neither a passkey nor a verified email. On success
+ * sets `passwordHash` to null and sends a notice. Delivery failure does not
+ * undo the removal.
  */
 export async function removePassword(
   userId: string,
@@ -231,7 +231,7 @@ export async function removePassword(
 ): Promise<ProfileResult> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { passwordHash: true },
+    select: { passwordHash: true, email: true, emailVerified: true },
   })
 
   // Verify current password. A missing user or null hash cannot verify, and we
@@ -260,14 +260,15 @@ export async function removePassword(
     }
   }
 
-  // Refuse to remove the password when it is the only sign-in method.
+  // A verified email can receive a magic link, so it counts as another way in.
   const passkeyCount = await prisma.passkey.count({ where: { userId } })
-  if (passkeyCount === 0) {
+  if (passkeyCount === 0 && user.emailVerified == null) {
     return {
       ok: false,
       error: {
         code: 'NO_ALTERNATIVE_SIGN_IN',
-        message: 'Add a passkey before removing your password',
+        message:
+          'Verify your email or add a passkey before removing your password',
       },
     }
   }
@@ -276,6 +277,15 @@ export async function removePassword(
     where: { id: userId },
     data: { passwordHash: null },
   })
+
+  try {
+    await emailService.sendPasswordRemovedEmail(user.email)
+  } catch (err) {
+    console.error(
+      '[ProfileService] Failed to send password-removed email:',
+      err,
+    )
+  }
 
   return { ok: true }
 }
@@ -324,10 +334,14 @@ export async function changePreferences(
 }
 
 /**
- * Signs out all devices by deleting all sessions for this user.
+ * Signs out all devices by invalidating all active sessions for this user.
  */
 export async function signOutAllDevices(userId: string): Promise<void> {
   await prisma.$transaction([
+    prisma.user.update({
+      where: { id: userId },
+      data: { sessionsInvalidatedAt: new Date() },
+    }),
     prisma.session.deleteMany({ where: { userId } }),
     prisma.pushSubscription.deleteMany({ where: { userId } }),
   ])

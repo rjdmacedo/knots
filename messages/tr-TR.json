@@ -20,6 +20,9 @@
     "create": "Masraf oluştur",
     "createFirst": "İlk masrafı oluştur",
     "noExpenses": "Grubunuzda henüz herhangi bir masraf yok.",
+    "noSearchResults": "Aramanızla eşleşen harcama bulunamadı.",
+    "loadError": "Harcamalar yüklenemedi.",
+    "retry": "Tekrar dene",
     "export": "Export",
     "exportJson": "JSON olarak dışa aktar",
     "exportCsv": "CSV olarak dışa aktar",
@@ -75,19 +78,60 @@
   },
   "ExpenseCard": {
     "paidBy": "<strong>{paidBy}</strong> tarafından ödendi, <paidFor></paidFor> için",
+    "paidByMultiple": "<strong>{paidBy}</strong> tarafından ödendi, <paidFor></paidFor> için",
     "everyone": "everyone",
     "receivedBy": "<strong>{paidBy}</strong> tarafından alındı, <paidFor></paidFor> için",
     "yourBalance": "Bakiyeniz:",
     "notInvolved": "You are not involved",
     "close": "Kapat",
-    "paidByMultiple": "<strong>{paidBy}</strong> tarafından ödendi, <paidFor></paidFor> için",
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
   "ExpenseDetail": {
+    "backToExpenses": "Harcamalara dön",
+    "backToFriend": "{name} adlı kişiye dön",
+    "copy": "Harcamayı kopyala",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "payment": "Ödeme",
+    "expense": "Harcama",
+    "onDate": "{date}",
+    "addedBy": "{name} tarafından {date} tarihinde eklendi",
+    "addedByYou": "Sizin tarafınızdan {date} tarihinde eklendi",
+    "lastUpdatedBy": "Son güncelleyen: {name}, {date}",
+    "lastUpdatedByYou": "Son güncellemeniz: {date}",
+    "trendsTitle": "{contextName} harcama eğilimleri :: {categoryName}",
+    "trendsSeeMore": "Daha fazla gör",
+    "generalCategory": "Genel",
+    "editCategory": "Kategoriyi düzenle",
+    "categoryUpdateError": "Kategori güncellenemedi.",
+    "attachReceipt": "Fiş ekle",
+    "receiptUploadSuccess": "Fiş başarıyla yüklendi.",
+    "paidAmount": "{name} {amount} ödedi",
+    "youPaidAmount": "Siz {amount} ödediniz",
+    "paidAmountMultiple": "{name} {amount} ödedi",
+    "youPaidAmountMultiple": "Siz {amount} ödediniz",
+    "multiPayerSeparator": ", ",
+    "paidYou": "{name} size {amount} ödedi",
+    "youPaidRecipient": "{name} adlı kişiye {amount} ödediniz",
+    "payerPaidPayee": "{payer}, {payee} adlı kişiye {amount} ödedi",
+    "someone": "Biri",
+    "youOwe": "Borcunuz: {amount}",
+    "participantOwes": "{name} borçlu: {amount}",
+    "yourShare": "Sizin payınız: {amount}",
+    "participantShare": "{name}: {amount}",
+    "notes": "Notlar",
     "activity": "Etkinlik",
-    "noActivity": "Bu masraf için henüz bir etkinlik kaydedilmedi.",
-    "viewGroupExpense": "View group expense"
+    "noActivity": "Henüz kayıtlı bir etkinlik yok.",
+    "paymentDisclaimer": "Bu, grup bakiyelerini kapatmak için kaydedilmiş iki kişilik bir ödemedir.",
+    "consolidationDisclaimer": "Bu ödeme birleştirilmiş bir hesap kapatmanın parçasıdır.",
+    "readOnlyNotice": "Bu harcama salt okunurdur ve düzenlenemez.",
+    "deleteConfirm": "Bu harcamayı silmek istediğinizden emin misiniz?",
+    "deletePaymentConfirm": "Bu ödemeyi silmek istediğinizden emin misiniz?",
+    "deleteDescription": "Bu işlem harcamayı gruptaki herkes için silecektir. Bu işlem geri alınamaz.",
+    "cancel": "İptal",
+    "deleting": "Siliniyor…",
+    "viewGroupExpense": "Grup harcamasını görüntüle"
   },
   "Groups": {
     "myGroups": "Gruplarım",
@@ -151,6 +195,12 @@
       "label": "Borçları sadeleştir",
       "description": "Üyeler arasındaki bakiyeleri birleştirerek ödeme sayısını azaltır (Splitwise Pro gibi). Kapalıyken herkes yalnızca payı için ödeyen kişiye borçludur."
     },
+    "FriendsField": {
+      "label": "Arkadaşlar",
+      "description": "Mevcut arkadaşlarınızı seçin veya yenilerini davet edin.",
+      "placeholder": "Arkadaş seçin…",
+      "remove": "{name} kaldır"
+    },
     "Participants": {
       "title": "Katılımcılar",
       "description": "Her katılımcı için bir ad girin.",
@@ -205,6 +255,7 @@
         "description": "Gelirin kim(ler) için alındığını seçin."
       },
       "splitModeDescription": "Gelirin nasıl paylaştırılacağını seçin.",
+      "notesDescription": "Gelir hakkında ek ayrıntılar veya notlar ekleyin.",
       "attachDescription": "Gelire makbuz ekleyin ve görüntüleyin."
     },
     "Expense": {
@@ -227,7 +278,7 @@
       "paidByField": {
         "label": "Ödeyen",
         "placeholder": "Select a participant",
-        "description": "Select who provided the money and how much each payer contributed."
+        "description": "Kimin ödeme yaptığını ve her ödeyenin ne kadar katkıda bulunduğunu seçin."
       },
       "recurrenceRule": {
         "label": "Expense Recurrence",
@@ -238,23 +289,29 @@
         "monthly": "Monthly"
       },
       "paidFor": {
-        "title": "Masraf kimin için ödendi",
-        "description": "Masrafın kim(ler) için ödendiğini seçin."
+        "title": "Bölüşülen kişiler",
+        "description": "Harcamanın nasıl bölüşüleceğini ve kimlerin dahil olduğunu seçin."
       },
       "splitModeDescription": "Masrafın nasıl paylaştırılacağını seçin.",
+      "notesDescription": "Harcama hakkında ek ayrıntılar veya notlar ekleyin.",
       "attachDescription": "Masrafa makbuz ekleyin ve görüntüleyin."
     },
     "amountField": {
-      "label": "Tutar"
+      "label": "Tutar",
+      "description": "Toplam harcama tutarını girin.",
+      "convertedDescription": "Tutarı grubun para biriminde girin."
     },
     "conversionUnavailable": "Gider başına farklı para birimi belirlemek ve tutarları dönüştürmek için grup için özel olmayan bir para birimi seçin.",
     "originalAmountField": {
-      "label": "Dönüştürülecek tutar"
+      "label": "Dönüştürülecek tutar",
+      "description": "Dönüştürme öncesi orijinal tutar."
     },
     "conversionRateField": {
       "useApi": "Frankfurter kurlarını kullan",
       "useCustom": "Özel kur kullan",
-      "label": "Döviz kuru"
+      "label": "Döviz kuru",
+      "description": "Dönüştürme için kullanılan döviz kuru.",
+      "collapsibleDescription": "Gerekirse döviz kurunu özelleştirin."
     },
     "conversionRateState": {
       "loading": "Döviz kurları alınıyor…",
@@ -279,6 +336,13 @@
     },
     "selectNone": "Hiçbirini seçme",
     "selectAll": "Hepsini seç",
+    "resetSplit": "Bölüşümü sıfırla",
+    "evenlySplit": "Eşit bölüşüm: {amount} × {count}",
+    "totalWeight": "Toplam ağırlık: {count, plural, one {# pay} other {# pay}}",
+    "matchesPercent": "%100 ile eşleşiyor.",
+    "matchesAmount": "{amount} ile eşleşiyor",
+    "decreaseShares": "Payları azalt",
+    "increaseShares": "Payları artır",
     "noLongerInGroup": "artık bu grupta değil",
     "shares": "pay",
     "advancedOptions": "Gelişmiş paylaşım seçenekleri…",
@@ -294,6 +358,43 @@
       "byPercentageDescription": "Split using percentages that add up to 100%",
       "byAmountDescription": "Split using fixed amounts for each participant"
     },
+    "itemized": {
+      "toggleLabel": "Kalem bazlı bölüşüm",
+      "toggleDescription": "Fişteki her kalemi farklı kişilere paylaştırın.",
+      "noItems": "Henüz kalem eklenmedi.",
+      "addItem": "Kalem ekle",
+      "removeItem": "Kalemi kaldır",
+      "itemTitleLabel": "Kalem adı",
+      "itemTitlePlaceholder": "örn. Ana yemek",
+      "itemUnitPriceLabel": "Birim fiyat",
+      "itemQuantityLabel": "Adet",
+      "itemLineTotalLabel": "Toplam",
+      "itemAmountLabel": "Tutar",
+      "sectionTitle": "Kalem Bazlı Bölüşüm",
+      "sectionDescription": "Fişteki tek tek kalemleri girin ve kişilere atayın.",
+      "assignTo": "Kişilere ata",
+      "otherLabel": "Diğer giderler",
+      "otherDerivedNote": "Kalan tutar diğer katılımcılar arasında eşit paylaştırılır.",
+      "itemsExceedTotal": "Kalemler toplam harcama tutarını aşıyor.",
+      "setAmountFromItems": "Tutarı kalemlerden al",
+      "total": "Kalemler toplamı",
+      "addItemsAction": "Kalemleri ekle",
+      "documentationNote": "Kalem bazlı döküm katılımcıların ne için ödeme yaptığını netleştirir.",
+      "authoritativeNote": "Kalemlerin toplamı harcamanın genel tutarını belirler.",
+      "leaveAction": "Ayrıştırmadan çık",
+      "switchDialog": {
+        "title": "Bölüşüm yöntemi değiştirilsin mi?",
+        "description": "Yöntemi değiştirmek kalem bazlı dökümü sıfırlayacaktır.",
+        "confirm": "Bölüşüm yöntemini değiştir",
+        "cancel": "İptal"
+      },
+      "leaveDialog": {
+        "title": "Ayrıştırma iptal edilsin mi?",
+        "description": "Ayrıştırmadan çıkarsanız girdiğiniz kalemler silinecektir.",
+        "confirm": "Ayrıştırmayı iptal et",
+        "cancel": "İptal"
+      }
+    },
     "DeletePopup": {
       "label": "Sil",
       "title": "Bu masraf silinsin mi?",
@@ -301,7 +402,7 @@
       "yes": "Evet",
       "cancel": "İptal"
     },
-    "attachDocuments": "Belge ekle",
+    "attachDocuments": "Görsel ekle",
     "create": "Oluştur",
     "creating": "Oluşturuluyor…",
     "save": "Kaydet",
@@ -317,7 +418,7 @@
       "postSaveTitle": "Expense split across group and direct records",
       "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
       "postSaveGroupHalfLine": "The group expense is {amount}",
-      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "singlePayerNote": "Grup dışından katılımcı eklediğinizde ({names}), harcama ikiye bölünür; bu nedenle yalnızca tek bir kişi ödeyebilir.",
       "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
       "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
       "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
@@ -326,7 +427,16 @@
       "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
+  "ExpenseTitleInput": {
+    "noSuggestions": "Öneri bulunamadı",
+    "clear": "Temizle"
+  },
   "ExpenseDocumentsInput": {
+    "addImage": "Görsel ekle",
+    "addDocumentHint": "Görsel veya fiş ekleyebilirsiniz.",
+    "previewDocument": "{name} önizle",
+    "removeDocument": "{name} kaldır",
+    "uploadingDocument": "Belge yükleniyor…",
     "TooBigToast": {
       "title": "Dosya çok büyük",
       "description": "Yükleyebileceğiniz maksimum dosya boyutu {maxSize}. Dosyanız {size} boyutunda."
@@ -388,6 +498,8 @@
       "noOneOwesYou": "Bu grupta kimse sana borçlu değil.",
       "youOweNoOne": "Bu grupta kimseye borçlu değilsin.",
       "confirmSettle": "{name} kişisine {amount} ödediğini kaydet?",
+      "confirmSettleReceived": "{name} adlı kullanıcının size {amount} ödediğini kaydetmek istiyor musunuz?",
+      "settleReceivedTooltip": "Alınan ödemeyi kaydet",
       "youAreOwed": "{name} sana {amount} borçlu",
       "youOwe": "{name} kişisine {amount} borçlusun",
       "allSettled": "Bu grupta hesabın kapalı.",
@@ -522,16 +634,27 @@
   "Activity": {
     "title": "Etkinlik",
     "description": "Bu gruptaki tüm etkinliklerin genel görünümü.",
+    "globalTitle": "Aktivite",
+    "globalDescription": "Gruplarınızdaki tüm aktivitelere genel bakış.",
+    "globalListTitle": "Etkinlik Geçmişi",
+    "globalListDescription": "Tüm gruplarınızdaki en son güncellemeler.",
+    "globalNoActivity": "Gruplarınızda henüz bir aktivite yok.",
     "noActivity": "Grubunuzda henüz bir etkinlik yok.",
+    "error": "Etkinlikler yüklenemedi.",
+    "retry": "Tekrar dene",
     "someone": "Birisi",
     "settingsModified": "Grup ayarları <strong>{participant}</strong> tarafından değiştirildi.",
     "expenseCreated": "Masraf <em>{expense}</em>, <strong>{participant}</strong> tarafından oluşturuldu.",
     "expenseUpdated": "Masraf <em>{expense}</em>, <strong>{participant}</strong> tarafından güncellendi.",
     "expenseDeleted": "Masraf <em>{expense}</em>, <strong>{participant}</strong> tarafından silindi.",
+    "paymentRecorded": "<strong>{participant}</strong> bir ödeme kaydetti.",
+    "paymentUpdated": "<strong>{participant}</strong> bir ödemeyi güncelledi.",
+    "paymentDeleted": "<strong>{participant}</strong> bir ödemeyi sildi.",
     "expenseCreatedDetail": "<strong>{participant}</strong> tarafından oluşturuldu.",
     "expenseUpdatedDetail": "<strong>{participant}</strong> tarafından güncellendi.",
     "paymentRecordedDetail": "<strong>{participant}</strong> tarafından kaydedildi.",
     "paymentUpdatedDetail": "<strong>{participant}</strong> tarafından güncellendi.",
+    "reimbursement": "Ödeme",
     "Groups": {
       "today": "Bugün",
       "yesterday": "Dün",
@@ -563,10 +686,7 @@
     "showLess": "Daha az göster",
     "yes": "Evet",
     "no": "Hayır",
-    "fieldChangesCount": "{count} alan değişikliği",
-    "globalTitle": "Aktivite",
-    "globalDescription": "Gruplarınızdaki tüm aktivitelere genel bakış.",
-    "globalNoActivity": "Gruplarınızda henüz bir aktivite yok."
+    "fieldChangesCount": "{count} alan değişikliği"
   },
   "Information": {
     "title": "Bilgi",
@@ -590,6 +710,7 @@
     "max50": "En fazla 50 karakter girin.",
     "duplicateParticipantName": "Başka bir katılımcı zaten bu ada sahip.",
     "titleRequired": "Lütfen bir başlık girin.",
+    "paymentCategoryNotAllowed": "Ödeme harcamalar için geçerli bir kategori değildir.",
     "invalidNumber": "Geçersiz numara.",
     "invalidExpression": "Geçersiz ifade. Sayılar ve +, -, *, / operatörlerini kullanın.",
     "amountRequired": "Bir tutar girmelisiniz.",
@@ -597,14 +718,27 @@
     "amountTenMillion": "Tutar 10.000.000'dan düşük olmalı.",
     "ratePositive": "Kur sıfırdan büyük olmalıdır.",
     "paidByRequired": "Bir katılımcı seçmelisiniz.",
+    "paidToRequired": "Ödemeyi kimin aldığını seçmelisiniz.",
+    "paidToDifferent": "Ödeyen ve alıcı farklı kişiler olmalıdır.",
     "paidForMin1": "Masraf en az bir katılımcı için ödenmiş olmalıdır.",
-    "noZeroShares": "Tüm paylar 0'dan büyük olmalıdır.",
-    "amountSum": "Tutarların toplamı masraf tutarına eşit olmalıdır.",
-    "percentageSum": "Yüzdelerin toplamı 100 olmalıdır.",
     "paidByAmountPositive": "Each payer's amount must be greater than zero.",
     "paidByAmountSum": "Payer amounts must sum to the expense total.",
     "paidByDuplicateParticipants": "Each payer can only appear once.",
-    "reimbursementSinglePayer": "Reimbursements support only a single payer."
+    "reimbursementSinglePayer": "Reimbursements support only a single payer.",
+    "noZeroShares": "Tüm paylar 0'dan büyük olmalıdır.",
+    "amountSum": "Tutarların toplamı masraf tutarına eşit olmalıdır.",
+    "percentageSum": "Yüzdelerin toplamı 100 olmalıdır.",
+    "itemsRequired": "En az bir kalem ekleyin veya kalem bazlı bölüşümü kapatın.",
+    "itemNeedsAssignment": "Her kalemi en az bir kişiye atayın.",
+    "itemTitleRequired": "Bir kalem adı girin.",
+    "itemAmountNonNegative": "Kalem tutarı negatif olamaz.",
+    "itemQuantityPositive": "Adet en az 1 tam sayı olmalıdır.",
+    "taxNonNegative": "Vergi negatif olamaz.",
+    "tipNonNegative": "Bahşiş negatif olamaz.",
+    "itemAssignmentUnknownParticipant": "Bir kalem bölüşümde yer almayan birine atanmış.",
+    "itemizationNotAllowedHere": "Geri ödemeler ve yinelenen harcamalar kalem bazlı bölünemez.",
+    "itemsExceedAmount": "Kalemler toplam harcama tutarını aşıyor.",
+    "remainderShareUnknownParticipant": "Kalan bölüşüm harcamada yer almayan birini içeriyor."
   },
   "Categories": {
     "search": "Kategori ara...",
@@ -688,6 +822,64 @@
       "heading": "Other currencies"
     }
   },
+  "ExpenseImport": {
+    "button": "Giderleri içe aktar",
+    "fromKnots": "Knots’tan içe aktar",
+    "fromSplitwise": "Splitwise’dan içe aktar"
+  },
+  "KnotsImport": {
+    "title": "Knots’tan içe aktar",
+    "description": "Bir Knots dışa aktarma dosyası yükleyin. Dosyada henüz bu grupta olmayan kişiler varsa, içe aktarmadan önce onları burada ekleyebilirsiniz.",
+    "fileLabel": "Knots dışa aktarma dosyası",
+    "previewLabel": "Önizleme (ilk 10 satır)",
+    "clear": "Temizle",
+    "cancel": "İptal",
+    "import": "Giderleri içe aktar",
+    "addAndImport": "Üyeleri ekle ve içe aktar",
+    "importing": "İçe aktarılıyor...",
+    "analyzing": "Dışa aktarma analiz ediliyor…",
+    "expenseCount": "{count, plural, one {# gider bulundu} other {# gider bulundu}}",
+    "matchedParticipants": "Zaten grupta: {names}",
+    "missingParticipantsLabel": "Bu gruba eklenecek kişiler",
+    "missingParticipantsDescription": "Her kişi için bir e-posta girin. Yeni hesaplar otomatik olarak oluşturulur ve bu gruba bağlanır. Zaten hesapları varsa üye olarak eklenirler.",
+    "expenseReferences": "{count, plural, one {# gider} other {# gider}}",
+    "emailLabel": "E-posta",
+    "emailPlaceholder": "ad@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "Daha sonra bu e-posta ile kaydolup gruba erişebilirler.",
+    "errors": {
+      "invalidJson": "Geçersiz JSON dosyası.",
+      "invalidFormat": "Bu dosya geçerli bir Knots dışa aktarımı değil.",
+      "noExpenses": "Dışa aktarımda gider yok."
+    },
+    "toast": {
+      "invalidFileType": {
+        "title": "Geçersiz dosya türü",
+        "description": "Lütfen JSON veya CSV Knots dışa aktarma dosyası seçin."
+      },
+      "noContent": {
+        "title": "Dosya içeriği yok",
+        "description": "Lütfen önce bir Knots dışa aktarma dosyası seçin."
+      },
+      "missingEmail": {
+        "title": "E-posta gerekli",
+        "description": "{name} için bir e-posta girin."
+      },
+      "success": {
+        "title": "İçe aktarma başarılı",
+        "description": "Knots’tan {count} gider başarıyla içe aktarıldı."
+      },
+      "error": {
+        "title": "İçe aktarma başarısız",
+        "description": "Knots dışa aktarma dosyası içe aktarılamadı."
+      },
+      "cancelled": {
+        "title": "İçe aktarma iptal edildi",
+        "description": "İçe aktarma tamamlanmadan durduruldu."
+      }
+    }
+  },
   "SplitwiseImport": {
     "button": "Import from Splitwise",
     "title": "Import from Splitwise",
@@ -698,6 +890,20 @@
     "cancel": "Cancel",
     "import": "Import Expenses",
     "importing": "Importing...",
+    "analyzing": "Analyzing CSV…",
+    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
+    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
+    "participantMappingLabel": "Match Splitwise names",
+    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
+    "mapToMemberLabel": "Group member",
+    "mapToMemberPlaceholder": "Select a member",
+    "addNewMemberOption": "Add new member by email",
+    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "They can register later with this email to access the group.",
     "toast": {
       "invalidFileType": {
         "title": "Invalid file type",
@@ -706,6 +912,14 @@
       "noContent": {
         "title": "No CSV content",
         "description": "Please select a CSV file first."
+      },
+      "missingEmail": {
+        "title": "Email required",
+        "description": "Enter an email for {name}."
+      },
+      "incompleteMapping": {
+        "title": "Mapping incomplete",
+        "description": "Choose a member or email for {name}."
       },
       "success": {
         "title": "Import successful",
@@ -718,85 +932,213 @@
       "cancelled": {
         "title": "İçe aktarma iptal edildi",
         "description": "İçe aktarma tamamlanmadan durduruldu."
-      },
-      "missingEmail": {
-        "title": "Email required",
-        "description": "Enter an email for {name}."
-      },
-      "incompleteMapping": {
-        "title": "Mapping incomplete",
-        "description": "Choose a member or email for {name}."
       }
-    },
-    "analyzing": "Analyzing CSV…",
-    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
-    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
-    "participantMappingLabel": "Match Splitwise names",
-    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
-    "mapToMemberLabel": "Group member",
-    "mapToMemberPlaceholder": "Select a member",
-    "addNewMemberOption": "Add new member by email",
-    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
-    "emailLabel": "Email",
-    "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group.",
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
+    }
   },
   "ProfileSettings": {
-    "title": "Profil ayarları",
-    "emailTitle": "E-posta",
-    "emailDescription": "E-posta adresiniz değiştirilemez.",
-    "displayNameTitle": "Görünen ad",
-    "passwordTitle": "Parola",
+    "title": "Hesap Ayarları",
+    "back": "Geri",
+    "Profile": {
+      "photoLabel": "Profil fotoğrafı",
+      "photoDescription": "Arkadaşlarınıza ve gruplarınıza görünecek bir profil fotoğrafı yükleyin.",
+      "photoAlt": "Profil fotoğrafınız",
+      "choosePhoto": "Fotoğraf seç",
+      "removePhoto": "Fotoğrafı kaldır",
+      "photoUpdatedToast": "Profil fotoğrafı güncellendi.",
+      "photoRemovedToast": "Profil fotoğrafı kaldırıldı.",
+      "photoUnavailableToast": "Fotoğraf depolama alanı yapılandırılmamış.",
+      "photoInvalidToast": "Lütfen 5 MB'tan küçük geçerli bir görsel dosyası (PNG, JPG, WebP) seçin.",
+      "photoFailedToast": "Profil fotoğrafı yüklenemedi.",
+      "nameLabel": "Görünen ad",
+      "namePlaceholder": "Adınız",
+      "nameError": "Geçerli bir ad girin.",
+      "nameUpdatedToast": "Görünen ad güncellendi.",
+      "saveChanges": "Değişiklikleri kaydet",
+      "saving": "Kaydediliyor…"
+    },
+    "profileTitle": "Profil",
+    "appPreferencesTitle": "Uygulama Tercihleri",
+    "notificationsTitle": "Bildirim Kanalları",
+    "notificationsDescription": "Gruplarınızdaki etkinlikler hakkında bildirimleri nasıl alacağınızı yönetin.",
+    "notifications": {
+      "masterSwitchAria": "Bildirimler",
+      "saving": "Ayarlar kaydediliyor…",
+      "saveSuccess": "Bildirim ayarları kaydedildi.",
+      "saveError": "Bildirim ayarları kaydedilemedi.",
+      "comingSoon": "Yakında",
+      "done": "Tamam",
+      "channelSelectorAria": "{category} için teslim kanalları",
+      "emailNeedsVerification": "E-posta bildirimlerini etkinleştirmek için e-posta adresinizi doğrulayın.",
+      "channelLabel": {
+        "off": "Kapalı",
+        "email": "E-posta",
+        "push": "Anlık Bildirim (Push)",
+        "emailAndPush": "E-posta ve Anlık Bildirim"
+      },
+      "pushDisabled": {
+        "unsupported": "Anlık bildirimler bu tarayıcıda desteklenmiyor.",
+        "unconfigured": "Anlık bildirimler bu sunucuda yapılandırılmamış.",
+        "iosInstall": "iOS'ta bildirim almak için Knots'u ana ekrana ekleyin.",
+        "denied": "Bildirim izni reddedildi. Tarayıcı ayarlarından etkinleştirin."
+      },
+      "thisDevice": {
+        "title": "Bu Cihazda Anlık Bildirimler",
+        "description": "Etkinlik olduğunda bu tarayıcıda anında uyarılar alın.",
+        "checking": "Abonelik kontrol ediliyor…",
+        "enabledLabel": "Anlık bildirimler bu cihazda etkin.",
+        "disabledLabel": "Anlık bildirimler bu cihazda devre dışı.",
+        "pushSelectedWarning": "Bazı kategoriler için anlık bildirim seçtiniz ancak bu cihaz abone değil.",
+        "enable": "Bu cihazda etkinleştir",
+        "disable": "Bu cihazda devre dışı bırak",
+        "error": "Anlık bildirim aboneliği güncellenemedi."
+      },
+      "groups": {
+        "groups-and-friends": "Gruplar ve Arkadaşlar",
+        "expenses": "Harcamalar",
+        "summaries": "Özetler"
+      },
+      "categories": {
+        "added-to-group": "Gruba eklendi",
+        "friend-added": "Arkadaş eklendi",
+        "budget-alert": "Bütçe uyarısı",
+        "expense-created": "Harcama oluşturuldu",
+        "recurring-expense-created": "Yinelenen harcama oluşturuldu",
+        "expense-changed": "Harcama değiştirildi veya silindi",
+        "expense-comment": "Harcama yorumu",
+        "weekly-summary": "Haftalık özet"
+      },
+      "categoryDescriptions": {
+        "weekly-summary": "Harcamalarınız ve bakiyeleriniz hakkında haftalık genel bakış."
+      }
+    },
+    "emailTitle": "E-posta Adresi",
+    "emailDescription": "Bildirimler ve giriş için kullanılır.",
+    "displayNameTitle": "Görünen Ad",
+    "usernameTitle": "Kullanıcı Adı",
+    "usernameDescription": "Knots'taki benzersiz tanıtıcınız.",
+    "passwordTitle": "Şifre",
+    "passkeyTitle": "Geçiş Anahtarları (Passkeys)",
+    "Email": {
+      "description": "E-posta adresinizi değiştirmek için yeni adresinize gönderilen doğrulama kodu gerekir.",
+      "changeButton": "E-postayı değiştir",
+      "dialogTitle": "E-posta Adresini Değiştir",
+      "dialogDescription": "Yeni e-posta adresinizi girin. Bu adrese bir doğrulama kodu göndereceğiz.",
+      "newEmailLabel": "Yeni e-posta",
+      "newEmailPlaceholder": "adiniz@ornek.com",
+      "sendCode": "Kodu gönder",
+      "cancel": "İptal",
+      "otpTitle": "Doğrulama Kodunu Girin",
+      "otpDescription": "{email} adresine 6 haneli bir kod gönderdik. Lütfen aşağıya girin.",
+      "codeLabel": "Doğrulama kodu",
+      "resend": "Tekrar gönder",
+      "resendIn": "{seconds} sn sonra tekrar gönder",
+      "useDifferentEmail": "Farklı bir e-posta kullan",
+      "verify": "Doğrula ve değiştir",
+      "successToast": "E-posta adresi güncellendi.",
+      "errorInUse": "Bu e-posta adresi zaten kullanımda.",
+      "errorInvalid": "Lütfen geçerli bir e-posta adresi girin.",
+      "errorSame": "Yeni e-posta adresi mevcut adresinizden farklı olmalıdır.",
+      "errorInvalidCode": "Geçersiz doğrulama kodu.",
+      "errorExpired": "Doğrulama kodunun süresi doldu. Lütfen yeni bir kod isteyin.",
+      "errorRateLimited": "Çok fazla deneme yapıldı. Lütfen biraz bekleyip tekrar deneyin.",
+      "errorSendFailed": "Doğrulama e-postası gönderilemedi. Lütfen tekrar deneyin."
+    },
+    "Password": {
+      "description": "Şifrenizi değiştirin veya şu anda yalnızca geçiş anahtarı kullanıyorsanız yeni bir şifre belirleyin.",
+      "noPasswordDescription": "Bir e-posta bağlantısıyla veya geçiş anahtarıyla giriş yapabilirsiniz. Başka bir giriş yöntemi istiyorsanız bir şifre ekleyin.",
+      "changeButton": "Şifreyi değiştir",
+      "setButton": "Şifre belirle",
+      "removeButton": "Şifreyi kaldır",
+      "changeDialogTitle": "Şifreyi Değiştir",
+      "changeDialogDescription": "Mevcut şifrenizi girin ve yeni bir şifre seçin.",
+      "setDialogTitle": "Şifre Belirle",
+      "setDialogDescription": "E-posta ve şifre ile giriş yapabilmek için bir şifre ekleyin.",
+      "setSuccessToast": "Şifre başarıyla belirlendi.",
+      "removeDialogTitle": "Şifreyi Kaldır",
+      "removeDialogDescription": "Yine de bir e-posta bağlantısıyla veya geçiş anahtarıyla giriş yapabileceksiniz. Onaylamak için mevcut şifrenizi girin.",
+      "currentLabel": "Mevcut şifre",
+      "newLabel": "Yeni şifre",
+      "confirmLabel": "Yeni şifreyi onayla",
+      "cancel": "İptal",
+      "removeConfirm": "Kaldır",
+      "changeSuccessToast": "Şifre başarıyla değiştirildi.",
+      "removeSuccessToast": "Şifre kaldırıldı.",
+      "errorCurrentRequired": "Mevcut şifre gereklidir.",
+      "errorMismatch": "Şifreler eşleşmiyor.",
+      "errorRequirements": "Şifre en az 8 karakter uzunluğunda olmalıdır.",
+      "errorSame": "Yeni şifre mevcut şifrenizden farklı olmalıdır.",
+      "errorCurrentIncorrect": "Mevcut şifre yanlış.",
+      "forgotPrefix": "Şifrenizi mi unuttunuz?",
+      "forgotLink": "Buradan sıfırlayın",
+      "rule_TOO_SHORT": "En az 8 karakter",
+      "rule_MISSING_UPPERCASE": "Bir büyük harf",
+      "rule_MISSING_LOWERCASE": "Bir küçük harf",
+      "rule_MISSING_DIGIT": "Bir rakam"
+    },
+    "Passkey": {
+      "description": "Biyometrik veriler, güvenlik anahtarı veya cihaz kilidi ile şifresiz güvenli giriş yapın.",
+      "unavailable": "Bu cihazda geçiş anahtarları kullanılamıyor.",
+      "addButton": "Geçiş anahtarı ekle",
+      "empty": "Henüz kayıtlı bir geçiş anahtarı yok.",
+      "created": "{date} tarihinde eklendi",
+      "badgeSynced": "Senkronize",
+      "badgeDeviceBound": "Cihaza bağlı",
+      "badgeBackedUp": "Yedeklendi",
+      "addDialogTitle": "Geçiş Anahtarı Ekle",
+      "addDialogDescription": "Tanınabilir bir ad verin ve cihazınızdaki yönergeleri izleyin.",
+      "nicknameLabel": "Ad (isteğe bağlı)",
+      "nicknamePlaceholder": "örn. Dizüstü bilgisayarım",
+      "confirmPasswordLabel": "Mevcut şifre",
+      "confirmPasswordHint": "Geçiş anahtarı eklemek için şifrenizi onaylayın.",
+      "addConfirm": "Geçiş anahtarı ekle",
+      "cancel": "İptal",
+      "addSuccessToast": "Geçiş anahtarı eklendi.",
+      "addFailedToast": "Geçiş anahtarı eklenemedi.",
+      "errorPasswordRequired": "Lütfen mevcut şifrenizi girin.",
+      "deleteAria": "{name} sil",
+      "deleteDialogTitle": "Geçiş anahtarı silinsin mi?",
+      "deleteDialogDescription": "\"{name}\" adlı geçiş anahtarı artık hesabınıza giriş yapmak için kullanılamaz.",
+      "deleteConfirm": "Sil",
+      "deleteSuccessToast": "Geçiş anahtarı silindi.",
+      "deleteFailedToast": "Geçiş anahtarı silinemedi.",
+      "reauthTitle": "Geçiş anahtarı eklemek için tekrar giriş yapın",
+      "reauthDescription": "Son girişiniz 30 günden eski. Şifrenizle, bir e-posta bağlantısıyla veya bir geçiş anahtarıyla tekrar giriş yapın, ardından buraya dönün.",
+      "reauthConfirm": "Tekrar giriş yap"
+    },
     "preferencesTitle": "Tercihler",
-    "preferencesDescription": "Dili ve görünümü özelleştirin.",
+    "preferencesDescription": "Dili, temayı ve varsayılan para birimini özelleştirin.",
     "languageLabel": "Dil",
     "themeLabel": "Tema",
-    "accountTitle": "Hesap",
-    "signOut": "Çıkış yap",
-    "signingOut": "Çıkış yapılıyor…",
-    "NameForm": {
-      "nameRequired": "Ad gereklidir",
-      "nameMaxLength": "Ad en fazla 100 karakter olmalıdır",
-      "successToast": "Görünen ad başarıyla güncellendi.",
-      "label": "Görünen ad",
-      "placeholder": "Görünen adınızı girin",
-      "saving": "Kaydediliyor…",
-      "submit": "Adı kaydet"
-    },
-    "PasswordForm": {
-      "currentPasswordRequired": "Mevcut parola gereklidir",
-      "newPasswordRequired": "Yeni parola gereklidir",
-      "confirmPasswordRequired": "Lütfen yeni parolanızı onaylayın",
-      "passwordsDoNotMatch": "Parolalar eşleşmiyor",
-      "successToast": "Parola başarıyla değiştirildi.",
-      "currentPasswordIncorrect": "Mevcut parola yanlış",
-      "newPasswordSameAsCurrent": "Yeni parola mevcut olandan farklı olmalıdır",
-      "passwordRequirementsNotMet": "Parola gereksinimleri karşılanmıyor",
-      "currentPasswordLabel": "Mevcut parola",
-      "newPasswordLabel": "Yeni parola",
-      "confirmPasswordLabel": "Yeni parolayı onayla",
-      "passwordHint": "En az 8, en fazla 128 karakter. En az bir büyük harf, bir küçük harf ve bir rakam içermelidir.",
-      "changingPassword": "Parola değiştiriliyor…",
-      "submit": "Parolayı değiştir",
-      "errorTooShort": "En az 8 karakter olmalıdır",
-      "errorTooLong": "En fazla 128 karakter olmalıdır",
-      "errorMissingUppercase": "En az bir büyük harf içermelidir",
-      "errorMissingLowercase": "En az bir küçük harf içermelidir",
-      "errorMissingDigit": "En az bir rakam içermelidir"
-    },
     "blockedUsersTitle": "Engellenen Kullanıcılar",
-    "blockedUsersDescription": "Engellediğiniz kullanıcıları yönetin. Engellenen kullanıcılar sizi gruplara ekleyemez veya arkadaşlık isteği gönderemez.",
+    "blockedUsersDescription": "Engellediğiniz kullanıcıları yönetin.",
+    "blockedUsersRowLabel": "Engellenen kullanıcılar",
+    "blockedUsersRowDescription": "Engellenen kullanıcıları görüntüleyin ve yönetin.",
+    "accountTitle": "Hesap",
+    "signOut": "Çıkış Yap",
+    "signOutDescription": "Bu cihazdaki oturumu kapatın.",
+    "signOutAllTitle": "Tüm Cihazlardan Çıkış Yap",
+    "signOutAllDescription": "Tüm cihazlardaki aktif oturumları sonlandırın.",
+    "signingOut": "Çıkış yapılıyor…",
     "Preferences": {
       "timezoneLabel": "Saat Dilimi",
       "timezoneSelect": "Saat dilimi seçin…",
       "timezoneSearch": "Saat dilimi arayın…",
       "timezoneEmpty": "Saat dilimi bulunamadı.",
       "timezoneSaved": "Saat dilimi güncellendi.",
+      "timezoneHelp": "Yeni harcamalar ve yinelenen planlar için varsayılan zamanı belirler.",
+      "languageSearch": "Dil ara…",
+      "languageEmpty": "Dil bulunamadı.",
+      "languageCommon": "Popüler Diller",
+      "languageOther": "Diğer Diller",
       "currencyLabel": "Varsayılan Para Birimi",
       "currencySaved": "Varsayılan para birimi güncellendi."
     },
+    "appPreferencesDescription": "Hesabınızın dilini, temasını ve varsayılan para birimini özelleştirin.",
+    "preferencesSaving": "Ayarlar kaydediliyor…",
+    "themeSaved": "Tema güncellendi.",
+    "themeLight": "Aydınlık",
+    "themeDark": "Karanlık",
+    "themeSystem": "Sistem",
     "SignOutAll": {
       "button": "Tüm cihazlardan çıkış yap",
       "dialogTitle": "Tüm cihazlardan çıkış yapılsın mı?",
@@ -815,14 +1157,52 @@
       "or": "veya e-posta ile engelle",
       "emailPlaceholder": "isim@örnek.com",
       "block": "Engelle",
-      "unblock": "Engeli Kaldır",
-      "empty": "Hiç kimseyi engellemediniz.",
+      "unblock": "Engeli kaldır",
+      "empty": "Engellediğiniz kullanıcı bulunmuyor.",
       "blockedToast": "Kullanıcı başarıyla engellendi.",
       "unblockedToast": "Kullanıcının engeli kaldırıldı.",
       "confirmBlockTitle": "Bu arkadaşı engelle?",
       "confirmBlockDescription": "{name} kullanıcısını engellemek, onu arkadaş listenizden de çıkaracaktır. Engellendiğine dair kendisine bildirim gitmeyecektir.",
       "confirmBlockCancel": "İptal",
       "confirmBlockAction": "Engelle ve arkadaşı çıkar"
+    },
+    "NameForm": {
+      "nameRequired": "Görünen ad gereklidir.",
+      "nameMaxLength": "Ad en fazla 100 karakter olmalıdır",
+      "successToast": "Görünen ad başarıyla güncellendi.",
+      "label": "Görünen ad",
+      "placeholder": "Görünen adınızı girin",
+      "saving": "Kaydediliyor…",
+      "submit": "Adı kaydet"
+    },
+    "UsernameForm": {
+      "successToast": "Kullanıcı adı güncellendi.",
+      "label": "Kullanıcı adı",
+      "placeholder": "kullanici-adiniz",
+      "description": "Profil bağlantınızda kullanılır. Yalnızca küçük harfler, rakamlar ve tire.",
+      "saving": "Kaydediliyor…",
+      "submit": "Kullanıcı adını kaydet"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "Mevcut şifre gereklidir.",
+      "newPasswordRequired": "Yeni şifre gereklidir.",
+      "confirmPasswordRequired": "Yeni şifreyi onaylayın.",
+      "passwordsDoNotMatch": "Şifreler eşleşmiyor.",
+      "successToast": "Parola başarıyla değiştirildi.",
+      "currentPasswordIncorrect": "Mevcut şifre yanlış.",
+      "newPasswordSameAsCurrent": "Yeni şifre mevcut şifrenizden farklı olmalıdır.",
+      "passwordRequirementsNotMet": "Şifre gereksinimleri karşılamıyor.",
+      "currentPasswordLabel": "Mevcut şifre",
+      "newPasswordLabel": "Yeni şifre",
+      "confirmPasswordLabel": "Yeni şifreyi onayla",
+      "passwordHint": "8-128 karakter. En az bir büyük harf, bir küçük harf ve bir rakam içermelidir.",
+      "changingPassword": "Şifre değiştiriliyor…",
+      "submit": "Parolayı değiştir",
+      "errorTooShort": "En az 8 karakter olmalıdır",
+      "errorTooLong": "En fazla 128 karakter olmalıdır",
+      "errorMissingUppercase": "En az bir büyük harf içermelidir",
+      "errorMissingLowercase": "En az bir küçük harf içermelidir",
+      "errorMissingDigit": "En az bir rakam içermelidir"
     }
   },
   "Friends": {
@@ -908,6 +1288,7 @@
       "title": "Expenses with {name}",
       "description": "All expenses you share with this friend, across groups.",
       "backToFriends": "Back to friends",
+      "backToFriend": "{name} adlı kişiye dön",
       "listTitle": "Expense history",
       "listDescription": "Direct expenses and expenses from shared groups.",
       "create": "Add expense",
@@ -950,6 +1331,10 @@
       "friendOwesYou": "{name} size {amount} borçlu",
       "youOweFriend": "{name} kişisine {amount} borçlusunuz",
       "paid": "{payer}, {payee} kişisine {amount} ödedi",
+      "deletePayment": "Sil",
+      "deletePaymentConfirm": "Bu ödemeyi silmek istediğinizden emin misiniz?",
+      "deletePaymentSuccess": "Ödeme başarıyla silindi",
+      "deletePaymentError": "Ödeme silinemedi",
       "groups": {
         "upcoming": "Yaklaşan",
         "thisWeek": "Bu hafta",
@@ -965,14 +1350,15 @@
       "paid": "{payer}, {payee} kişisine ödedi",
       "addedBy": "{name} tarafından {date} tarihinde eklendi",
       "disclaimer": "Bu ödeme \"Ödeme kaydet\" ile kaydedildi. Para transferi yapılmadı.",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "readOnlyNotice": "Bu ödeme bir hesap kapatmanın parçası olduğundan ayrı olarak düzenlenemez veya silinemez.",
       "edit": "Düzenle",
       "delete": "Sil",
       "deleteConfirm": "Bu ödeme silinsin mi?",
       "deleteDescription": "Bu, bakiyeleri ödeme hiç yapılmamış gibi ayarlayacaktır.",
+      "deleting": "Deleting...",
       "notFound": "Ödeme bulunamadı.",
-      "backToFriend": "{name} kişisine geri dön",
-      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
-      "deleting": "Deleting..."
+      "backToFriend": "{name} kişisine geri dön"
     },
     "DirectExpense": {
       "title": "Harcama ekle",
@@ -984,12 +1370,19 @@
       "paidByYou": "Siz",
       "splitEqually": "{payer} tarafından ödendi ve eşit bölündü",
       "dateLabel": "Tarih",
+      "attachLabel": "Görsel veya PDF ekle",
+      "notesLabel": "Notlar",
+      "notesPlaceholder": "Not ekleyin (isteğe bağlı)",
       "save": "Kaydet",
       "saving": "Kaydediliyor…",
       "cancel": "İptal",
       "success": "Harcama eklendi.",
       "error": "Harcama eklenemedi.",
       "persistError": "Form verileri kaydedilemedi. Gezinme kullanılamıyor."
+    },
+    "Settings": {
+      "currencyTitle": "Birincil Para Birimi",
+      "currencyDescription": "Arkadaşlarla doğrudan harcamalar ve ödemeler için kullanılır."
     },
     "SettleAll": {
       "button": "Tümünü kapat",
@@ -1013,6 +1406,7 @@
     "memberPromoted": "Üye sahip olarak yükseltildi.",
     "memberDemoted": "Üye normal üyeye indirildi.",
     "addMember": "Üye ekle",
+    "pickFriend": "Choose from your friends or enter an email.",
     "adding": "Ekleniyor…",
     "add": "Ekle",
     "cancel": "İptal",
@@ -1021,8 +1415,7 @@
     "leave": "Ayrıl",
     "removeFromGroup": "Gruptan kaldır",
     "promoteToOwner": "Sahip yap",
-    "demoteToMember": "Üyeye indir",
-    "pickFriend": "Choose from your friends or enter an email."
+    "demoteToMember": "Üyeye indir"
   },
   "MyGroups": {
     "title": "Gruplarım",
@@ -1032,7 +1425,9 @@
     "noGroupsHint": "Başkalarıyla gider paylaşmaya başlamak için bir grup oluşturun.",
     "createGroup": "Grup oluştur",
     "createGroupTitle": "Yeni grup oluştur",
-    "createGroupDescription": "Grubunuz için bir ad girin. Oluşturduktan sonra üye davet edebilirsiniz.",
+    "createGroupDescription": "Grup için bir ad ve para birimi girin. Oluşturduktan sonra katılımcıları davet edebilirsiniz.",
+    "invalidCurrency": "Geçerli bir para birimi seçin.",
+    "currencySymbolRequired": "Bir para birimi simgesi girin.",
     "groupNameLabel": "Grup adı",
     "characters": "karakter",
     "leaveGroup": "Gruptan ayrıl",
@@ -1052,100 +1447,6 @@
     "deleteGroupConfirmCancel": "İptal",
     "deleteGroupConfirmAction": "Kalıcı olarak sil"
   },
-  "UserMenu": {
-    "profileSettings": "Hesap ayarları",
-    "signingOut": "Çıkış yapılıyor…",
-    "signOut": "Çıkış yap"
-  },
-  "Notifications": {
-    "settings": "Bildirim ayarları",
-    "subscribe": "Bildirimleri etkinleştir",
-    "unsubscribe": "Bildirimleri devre dışı bırak",
-    "selectParticipant": "Başkalarının değişikliklerini bana bildir",
-    "noParticipant": "Tüm değişiklikler",
-    "permissionDenied": "Bildirim izni reddedildi. Tarayıcı ayarlarınızdan etkinleştirin.",
-    "notSupported": "Bu cihazda push bildirimleri desteklenmiyor.",
-    "expenseCreated": "{actor} \"{title}\" ekledi",
-    "expenseUpdated": "{actor} \"{title}\" güncelledi",
-    "expenseDeleted": "{actor} \"{title}\" sildi",
-    "groupUpdated": "{actor} \"{group}\" grubunu güncelledi",
-    "notificationTitle": "Knots – {group}",
-    "defaultBody": "Grubunuzda yeni etkinlik",
-    "filterHint": "Kimin değişikliklerinden haberdar olacağınızı ve hangi olayları seçin.",
-    "subscribeError": "Bildirimler etkinleştirilemedi. Lütfen tekrar deneyin.",
-    "membersLabel": "Beni şunlar hakkında bilgilendir",
-    "notifyAllMembers": "Gruptaki herkes",
-    "notifySpecificMembers": "Veya yalnızca bu üyeler:",
-    "eventsLabel": "Olaylar",
-    "eventCreate": "Gider oluşturuldu",
-    "eventUpdate": "Gider güncellendi",
-    "eventDelete": "Gider silindi",
-    "selectAtLeastOneFilter": "En az bir üye veya olay seçin.",
-    "channelsLabel": "Kanallar",
-    "pushLabel": "Anlık bildirimler",
-    "pushUnavailable": "Anlık bildirimler bu kurulumda kullanılamıyor.",
-    "emailLabel": "E-posta bildirimleri",
-    "enableChannelHint": "Kimden ve ne hakkında bildirim alacağınızı yapılandırmak için bir kanal etkinleştirin.",
-    "pushSyncWarning": "Tercihler kaydedildi, ancak anlık bildirim filtresi senkronizasyonu başarısız oldu."
-  },
-  "ExpenseImport": {
-    "button": "Giderleri içe aktar",
-    "fromKnots": "Knots’tan içe aktar",
-    "fromSplitwise": "Splitwise’dan içe aktar"
-  },
-  "KnotsImport": {
-    "title": "Knots’tan içe aktar",
-    "description": "Bir Knots dışa aktarma dosyası yükleyin. Dosyada henüz bu grupta olmayan kişiler varsa, içe aktarmadan önce onları burada ekleyebilirsiniz.",
-    "fileLabel": "Knots dışa aktarma dosyası",
-    "previewLabel": "Önizleme (ilk 10 satır)",
-    "clear": "Temizle",
-    "cancel": "İptal",
-    "import": "Giderleri içe aktar",
-    "addAndImport": "Üyeleri ekle ve içe aktar",
-    "importing": "İçe aktarılıyor...",
-    "analyzing": "Dışa aktarma analiz ediliyor…",
-    "expenseCount": "{count, plural, one {# gider bulundu} other {# gider bulundu}}",
-    "matchedParticipants": "Zaten grupta: {names}",
-    "missingParticipantsLabel": "Bu gruba eklenecek kişiler",
-    "missingParticipantsDescription": "Her kişi için bir e-posta girin. Yeni hesaplar otomatik olarak oluşturulur ve bu gruba bağlanır. Zaten hesapları varsa üye olarak eklenirler.",
-    "expenseReferences": "{count, plural, one {# gider} other {# gider}}",
-    "emailLabel": "E-posta",
-    "emailPlaceholder": "ad@example.com",
-    "softCreateHint": "Daha sonra bu e-posta ile kaydolup gruba erişebilirler.",
-    "toast": {
-      "invalidFileType": {
-        "title": "Geçersiz dosya türü",
-        "description": "Lütfen JSON veya CSV Knots dışa aktarma dosyası seçin."
-      },
-      "noContent": {
-        "title": "Dosya içeriği yok",
-        "description": "Lütfen önce bir Knots dışa aktarma dosyası seçin."
-      },
-      "missingEmail": {
-        "title": "E-posta gerekli",
-        "description": "{name} için bir e-posta girin."
-      },
-      "success": {
-        "title": "İçe aktarma başarılı",
-        "description": "Knots’tan {count} gider başarıyla içe aktarıldı."
-      },
-      "error": {
-        "title": "İçe aktarma başarısız",
-        "description": "Knots dışa aktarma dosyası içe aktarılamadı."
-      },
-      "cancelled": {
-        "title": "İçe aktarma iptal edildi",
-        "description": "İçe aktarma tamamlanmadan durduruldu."
-      }
-    },
-    "errors": {
-      "invalidJson": "Geçersiz JSON dosyası.",
-      "invalidFormat": "Bu dosya geçerli bir Knots dışa aktarımı değil.",
-      "noExpenses": "Dışa aktarımda gider yok."
-    },
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
-  },
   "GroupDangerZone": {
     "title": "Grup yönetimi",
     "description": "Arşivleme, verileri silmeden bu grubu listenizden gizler. Silme, grubu herkes için kalıcı olarak kaldırır.",
@@ -1159,6 +1460,109 @@
     "deleteConfirmDescription": "Bu işlem “{name}” grubunu ve tüm giderlerini, bakiyelerini ve geçmişini herkes için kalıcı olarak siler. Bu işlem geri alınamaz.",
     "cancel": "İptal",
     "deleteConfirmAction": "Kalıcı olarak sil"
+  },
+  "UserMenu": {
+    "menuLabel": "Kullanıcı menüsü",
+    "profileSettings": "Hesap ayarları",
+    "theme": "Tema",
+    "themeLight": "Aydınlık",
+    "themeDark": "Karanlık",
+    "themeSystem": "Sistem",
+    "signingOut": "Çıkış yapılıyor…",
+    "signOut": "Çıkış yap"
+  },
+  "Notifications": {
+    "settings": "Bildirim ayarları",
+    "subscribe": "Bildirimleri etkinleştir",
+    "unsubscribe": "Bildirimleri devre dışı bırak",
+    "selectParticipant": "Başkalarının değişikliklerini bana bildir",
+    "noParticipant": "Tüm değişiklikler",
+    "permissionDenied": "Bildirim izni reddedildi. Tarayıcı ayarlarınızdan etkinleştirin.",
+    "notSupported": "Bu cihazda push bildirimleri desteklenmiyor.",
+    "expenseCreated": "{actor}, {group} grubunda \"{title}\" harcamasını ekledi",
+    "expenseUpdated": "{actor}, {group} grubunda \"{title}\" harcamasını düzenledi",
+    "expenseDeleted": "{actor}, {group} grubunda \"{title}\" harcamasını sildi",
+    "groupUpdated": "{actor} \"{group}\" grubunu güncelledi",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "Grubunuzda yeni etkinlik",
+    "filterHint": "Kimin değişikliklerinden haberdar olacağınızı ve hangi olayları seçin.",
+    "membersLabel": "Beni şunlar hakkında bilgilendir",
+    "notifyAllMembers": "Gruptaki herkes",
+    "notifySpecificMembers": "Veya yalnızca bu üyeler:",
+    "eventsLabel": "Olaylar",
+    "eventCreate": "Gider oluşturuldu",
+    "eventUpdate": "Gider güncellendi",
+    "eventDelete": "Gider silindi",
+    "selectAtLeastOneFilter": "En az bir üye veya olay seçin.",
+    "subscribeError": "Bildirimler etkinleştirilemedi. Lütfen tekrar deneyin.",
+    "channelsLabel": "Kanallar",
+    "pushLabel": "Anlık bildirimler",
+    "pushUnavailable": "Anlık bildirimler bu kurulumda kullanılamıyor.",
+    "emailLabel": "E-posta bildirimleri",
+    "enableChannelHint": "Kimden ve ne hakkında bildirim alacağınızı yapılandırmak için bir kanal etkinleştirin.",
+    "pushSyncWarning": "Tercihler kaydedildi, ancak anlık bildirim filtresi senkronizasyonu başarısız oldu."
+  },
+  "AppError": {
+    "title": "Bir şeyler ters gitti",
+    "description": "Uygulama yerel verileri temizlendi. Ana sayfadan temiz bir başlangıç yapabilmeniz için oturumunuz da kapatılacaktır.",
+    "recover": "Ana sayfaya dön",
+    "recovering": "Yönlendiriliyor…"
+  },
+  "PaymentForm": {
+    "dateLabel": "Ödeme Tarihi",
+    "dateDescription": "Ödeme tarihini girin.",
+    "amountLabel": "Tutar",
+    "amountDescription": "Ödeme tutarını girin.",
+    "paidByLabel": "Ödeyen",
+    "paidByDescription": "Ödemeyi kimin yaptığını seçin.",
+    "paidToLabel": "Alıcı",
+    "paidToDescription": "Ödemeyi kimin aldığını seçin.",
+    "notesLabel": "Notlar",
+    "notesPlaceholder": "Not ekleyin (isteğe bağlı)",
+    "participantPlaceholder": "Katılımcı seçin",
+    "disclaimer": "Bakiyeleri kapatmak için kişiler arasında bir ödeme kaydeder. Bu paylaşılan bir harcama değildir."
+  },
+  "FloatingCreateExpense": {
+    "addExpense": "Harcama ekle",
+    "dialogTitle": "Harcama veya Ödeme Oluştur",
+    "editDialogTitle": "Harcamayı düzenle",
+    "createPaymentDialogTitle": "Ödeme kaydet",
+    "editPaymentDialogTitle": "Ödemeyi düzenle",
+    "withWho": "Siz ve dahil olanlar:",
+    "back": "Geri",
+    "searchPlaceholder": "Arkadaş veya grup arayın…",
+    "descriptionPlaceholder": "Bu harcama ne içindi?",
+    "amountPlaceholder": "0,00",
+    "paidByLabel": "Ödeyen",
+    "you": "siz",
+    "splitEqually": "eşit bölüşüldü",
+    "save": "Kaydet",
+    "saving": "Kaydediliyor…",
+    "cancel": "İptal",
+    "successToast": "Harcama başarıyla oluşturuldu.",
+    "updateSuccessToast": "Harcama başarıyla güncellendi.",
+    "paymentSuccessToast": "Ödeme başarıyla kaydedildi.",
+    "paymentUpdateSuccessToast": "Ödeme başarıyla güncellendi.",
+    "errorToast": "Harcama oluşturulamadı.",
+    "paymentErrorToast": "Ödeme kaydedilemedi.",
+    "updateErrorToast": "Harcama güncellenemedi.",
+    "paymentUpdateErrorToast": "Ödeme güncellenemedi.",
+    "lockedPaymentToast": "Bu ödeme doğrudan düzenlenemez.",
+    "noFriendOrGroupFound": "Arkadaş veya grup bulunamadı.",
+    "groupsHeader": "Gruplar",
+    "friendsHeader": "Arkadaşlar",
+    "selectGroupText": "Grup: {name}",
+    "pickerTitle": "Kiminle?",
+    "pickerDone": "Tamam",
+    "selectParticipants": "Arkadaşları veya grubu seçin",
+    "selectParticipantsHint": "Başlamak için bir grup veya arkadaş seçin.",
+    "singleGroupAlertTitle": "Yalnızca tek bir grup",
+    "singleGroupAlertDescription": "Aynı anda yalnızca bir grup seçebilirsiniz. Başka bir grup seçmeden önce mevcut grubu kaldırın.",
+    "singleGroupAlertOk": "Tamam",
+    "advancedOptions": "Gelişmiş seçenekler",
+    "splitDetails": "Bölüşüm ayrıntıları",
+    "notesPlaceholder": "Not ekleyin…",
+    "viewGroupExpense": "Grup harcamasını görüntüle"
   },
   "DuplicateExpense": {
     "title": "Olası yinelenen harcama tespit edildi",
@@ -1183,7 +1587,47 @@
   "CurrencyAmountInput": {
     "expressionHint": "veya 10+5"
   },
-  "ExpenseTitleInput": {
-    "clear": "Temizle"
+  "Login": {
+    "title": "Giriş Yap",
+    "description": "Geçiş anahtarı, e-posta bağlantısı veya şifrenizle giriş yapın.",
+    "orContinueWithEmail": "VEYA E-POSTA İLE DEVAM EDİN",
+    "methodMagicLink": "Sihirli bağlantı",
+    "methodPassword": "Şifre",
+    "sendSignInLink": "Giriş bağlantısı gönder",
+    "signInWithPassword": "Şifre ile giriş yap",
+    "usePasskey": "Geçiş anahtarı kullan",
+    "passkeyFailed": "Bu geçiş anahtarıyla giriş yapılamadı. Tekrar deneyin.",
+    "forgotPassword": "Şifrenizi mi unuttunuz?",
+    "noAccount": "Hesabınız yok mu?",
+    "signUp": "Kayıt ol",
+    "magicLinkButton": "Giriş bağlantısı gönder",
+    "magicLinkEmailRequired": "E-posta adresinizi girin.",
+    "magicLinkSendFailed": "Giriş e-postası gönderilemedi. Tekrar deneyin.",
+    "magicLinkSentTitle": "E-postanızı kontrol edin",
+    "magicLinkSentDescription": "Bu adrese ait bir hesap varsa, bir giriş bağlantısı gönderdik. Tek kullanımlıktır ve 15 dakika içinde geçerliliğini yitirir.",
+    "magicLinkSigningIn": "Giriş yapılıyor…",
+    "magicLinkFailedTitle": "Giriş yapılamadı",
+    "magicLinkInvalid": "Bu giriş bağlantısı geçersiz veya süresi dolmuş.",
+    "backToLogin": "Giriş yapmaya geri dön"
+  },
+  "Register": {
+    "title": "Hesap oluştur",
+    "description": "E-posta bağlantısı veya şifre ile kaydolun.",
+    "signUpWithPassword": "Şifre ile hesap oluştur",
+    "confirmPassword": "Şifreyi onayla",
+    "hasAccount": "Zaten bir hesabınız var mı?",
+    "signIn": "Giriş yap",
+    "creating": "Hesap oluşturuluyor…",
+    "passwordMismatch": "Şifreler eşleşmiyor",
+    "ruleLength": "8 karakter",
+    "ruleLowercase": "Küçük harf",
+    "ruleUppercase": "Büyük harf",
+    "ruleNumber": "Rakam",
+    "successTitle": "Kayıt başarılı",
+    "successDescription": "Hesabınız oluşturuldu",
+    "successAlertTitle": "E-postanızı kontrol edin",
+    "successAlertDescription": "E-posta adresinize bir doğrulama bağlantısı gönderdik. Lütfen giriş yapmadan önce hesabınızı doğrulamak için bağlantıya tıklayın.",
+    "goToLogin": "Girişe git",
+    "failedTitle": "Kayıt başarısız"
   }
 }

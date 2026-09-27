@@ -7,7 +7,7 @@ import { prisma } from '@/lib/prisma'
 import { TokenType as PrismaTokenType } from '@prisma/client'
 import crypto from 'crypto'
 
-export type TokenType = 'EMAIL_VERIFICATION' | 'PASSWORD_RESET'
+export type TokenType = 'EMAIL_VERIFICATION' | 'PASSWORD_RESET' | 'MAGIC_LINK'
 export type TokenError = 'EXPIRED' | 'USED' | 'INVALID'
 
 export type TokenValidationResult =
@@ -19,6 +19,8 @@ export interface TokenManager {
   validateVerificationToken(token: string): Promise<TokenValidationResult>
   createPasswordResetToken(userId: string): Promise<string>
   validatePasswordResetToken(token: string): Promise<TokenValidationResult>
+  createMagicLinkToken(userId: string): Promise<string>
+  validateMagicLinkToken(token: string): Promise<TokenValidationResult>
   invalidateUserTokens(userId: string, type: TokenType): Promise<void>
 }
 
@@ -26,6 +28,8 @@ export interface TokenManager {
 const VERIFICATION_TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000
 /** 1 hour in milliseconds */
 const PASSWORD_RESET_TOKEN_EXPIRY_MS = 60 * 60 * 1000
+/** 15 minutes in milliseconds */
+const MAGIC_LINK_TOKEN_EXPIRY_MS = 15 * 60 * 1000
 
 /**
  * Generates a cryptographically random token string.
@@ -91,6 +95,29 @@ export function createTokenManager(): TokenManager {
       token: string,
     ): Promise<TokenValidationResult> {
       return validateToken(token, PrismaTokenType.PASSWORD_RESET)
+    },
+
+    async createMagicLinkToken(userId: string): Promise<string> {
+      const rawToken = generateRawToken()
+      const hash = hashToken(rawToken)
+      const expiresAt = new Date(Date.now() + MAGIC_LINK_TOKEN_EXPIRY_MS)
+
+      await prisma.token.create({
+        data: {
+          userId,
+          type: PrismaTokenType.MAGIC_LINK,
+          hash,
+          expiresAt,
+        },
+      })
+
+      return rawToken
+    },
+
+    async validateMagicLinkToken(
+      token: string,
+    ): Promise<TokenValidationResult> {
+      return validateToken(token, PrismaTokenType.MAGIC_LINK)
     },
 
     async invalidateUserTokens(userId: string, type: TokenType): Promise<void> {

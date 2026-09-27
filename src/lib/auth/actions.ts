@@ -6,6 +6,7 @@
 
 import { signIn, signOut } from './auth'
 import { LOGIN_RATE_LIMIT, rateLimiter } from './rate-limiter'
+import { validateReturnUrl } from './return-url'
 
 export type LoginResult =
   | { ok: true }
@@ -107,6 +108,57 @@ export async function passkeyLoginAction(formData: {
       error: 'We could not sign you in with that passkey. Try again.',
     }
   }
+}
+
+/**
+ * Exchanges a single-use magic-link token for a session. The token is consumed
+ * inside the `magic-link` provider, so this action must not validate it first.
+ */
+export async function magicLinkLoginAction(formData: {
+  token: string
+  redirectTo?: string
+}): Promise<LoginResult> {
+  const { token, redirectTo } = formData
+  const baseUrl =
+    process.env.NEXTAUTH_URL ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    'http://localhost:3000'
+  const safeRedirect = redirectTo
+    ? validateReturnUrl(redirectTo, baseUrl)
+    : null
+
+  try {
+    await signIn('magic-link', {
+      token,
+      redirectTo: safeRedirect || '/groups',
+    })
+
+    return { ok: true }
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      'digest' in error &&
+      typeof (error as { digest?: string }).digest === 'string' &&
+      (error as { digest: string }).digest.startsWith('NEXT_REDIRECT')
+    ) {
+      throw error
+    }
+
+    return {
+      ok: false,
+      error: 'This sign-in link is invalid or has expired.',
+    }
+  }
+}
+
+/**
+ * Ends the current session and sends the user through sign-in again, then
+ * back to account settings. Used when adding a passkey needs a fresh sign-in.
+ */
+export async function reauthenticateAction(): Promise<void> {
+  await signOut({
+    redirectTo: '/login?callbackUrl=/account/settings',
+  })
 }
 
 /**

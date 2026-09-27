@@ -1,4 +1,5 @@
 import { GroupExpenseEditPageClient } from '@/app/groups/[groupId]/expenses/[expenseId]/edit/page.client'
+import { getRuntimeFeatureFlags } from '@/lib/featureFlags'
 import { Metadata } from 'next'
 
 type Props = {
@@ -11,6 +12,13 @@ export const metadata: Metadata = {
 
 export default async function GroupExpenseEditPage({ params }: Props) {
   const { groupId, expenseId } = await params
+  const runtimeFeatureFlags = await getRuntimeFeatureFlags()
 
-  return <GroupExpenseEditPageClient groupId={groupId} expenseId={expenseId} />
+  return (
+    <GroupExpenseEditPageClient
+      groupId={groupId}
+      expenseId={expenseId}
+      runtimeFeatureFlags={runtimeFeatureFlags}
+    />
+  )
 }

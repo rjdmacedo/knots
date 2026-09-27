@@ -20,6 +20,9 @@
     "create": "支出を作成",
     "createFirst": "最初の支出を作成",
     "noExpenses": "グループにはまだ支出がありません。",
+    "noSearchResults": "一致する支出は見つかりませんでした。",
+    "loadError": "支出を読み込めませんでした。",
+    "retry": "再試行",
     "export": "エクスポート",
     "exportJson": "JSONにエクスポート",
     "exportCsv": "CSVにエクスポート",
@@ -75,19 +78,60 @@
   },
   "ExpenseCard": {
     "paidBy": "<strong>{paidBy}</strong>が<paidFor></paidFor>のために支払いました",
+    "paidByMultiple": "<strong>{paidBy}</strong>が<paidFor></paidFor>のために支払いました",
     "everyone": "everyone",
     "receivedBy": "<strong>{paidBy}</strong>が<paidFor></paidFor>のために受け取りました",
     "yourBalance": "あなたの残高:",
     "notInvolved": "You are not involved",
     "close": "閉じる",
-    "paidByMultiple": "<strong>{paidBy}</strong>が<paidFor></paidFor>のために支払いました",
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
   "ExpenseDetail": {
+    "backToExpenses": "支出一覧に戻る",
+    "backToFriend": "{name} に戻る",
+    "copy": "支出をコピー",
+    "delete": "削除",
+    "edit": "編集",
+    "payment": "支払い",
+    "expense": "支出",
+    "onDate": "{date}",
+    "addedBy": "{name} が {date} に追加",
+    "addedByYou": "あなたが {date} に追加",
+    "lastUpdatedBy": "最終更新: {name}、{date}",
+    "lastUpdatedByYou": "最終更新: あなた、{date}",
+    "trendsTitle": "{contextName} の支出傾向 :: {categoryName}",
+    "trendsSeeMore": "もっと見る",
+    "generalCategory": "一般",
+    "editCategory": "カテゴリーを編集",
+    "categoryUpdateError": "カテゴリーを更新できませんでした。",
+    "attachReceipt": "領収書を添付",
+    "receiptUploadSuccess": "領収書が正常にアップロードされました。",
+    "paidAmount": "{name} が {amount} を支払いました",
+    "youPaidAmount": "あなたが {amount} を支払いました",
+    "paidAmountMultiple": "{name} が {amount} を支払いました",
+    "youPaidAmountMultiple": "あなたが {amount} を支払いました",
+    "multiPayerSeparator": "、",
+    "paidYou": "{name} があなたに {amount} を支払いました",
+    "youPaidRecipient": "{name} に {amount} を支払いました",
+    "payerPaidPayee": "{payer} が {payee} に {amount} を支払いました",
+    "someone": "誰か",
+    "youOwe": "あなたの未払い: {amount}",
+    "participantOwes": "{name} の未払い: {amount}",
+    "yourShare": "あなたの負担額: {amount}",
+    "participantShare": "{name}: {amount}",
+    "notes": "メモ",
     "activity": "アクティビティ",
-    "noActivity": "この支出にはまだアクティビティがありません。",
-    "viewGroupExpense": "View group expense"
+    "noActivity": "アクティビティの記録はまだありません。",
+    "paymentDisclaimer": "これはグループの残高を清算するために記録された2者間の支払いです。",
+    "consolidationDisclaimer": "この支払いは一括清算の一部です。",
+    "readOnlyNotice": "この支出は読み取り専用で編集できません。",
+    "deleteConfirm": "この支出を削除してもよろしいですか？",
+    "deletePaymentConfirm": "この支払いを削除してもよろしいですか？",
+    "deleteDescription": "この操作を行うと、グループ全員の支出から削除されます。この操作は取り消せません。",
+    "cancel": "キャンセル",
+    "deleting": "削除中…",
+    "viewGroupExpense": "グループの支出を表示"
   },
   "Groups": {
     "myGroups": "マイグループ",
@@ -151,6 +195,12 @@
       "label": "借金を簡略化",
       "description": "メンバー間の残高をまとめて支払い回数を減らします（Splitwise Proと同様）。オフの場合、各人は自分の分を支払った人にのみ借りがあります。"
     },
+    "FriendsField": {
+      "label": "友達",
+      "description": "既存の友達を選択するか、新しい友達を招待します。",
+      "placeholder": "友達を選択…",
+      "remove": "{name} を削除"
+    },
     "Participants": {
       "title": "参加者",
       "description": "各参加者の名前を入力してください。",
@@ -205,6 +255,7 @@
         "description": "誰のために収入が受け取られたかを選択してください。"
       },
       "splitModeDescription": "収入の分割方法を選択してください。",
+      "notesDescription": "収入に関するメモや詳細を追加します。",
       "attachDescription": "領収書を確認し、収入に添付してください。"
     },
     "Expense": {
@@ -227,7 +278,7 @@
       "paidByField": {
         "label": "支払者",
         "placeholder": "Select a participant",
-        "description": "Select who provided the money and how much each payer contributed."
+        "description": "誰が支払い、各支払者がいくら負担したかを選択します。"
       },
       "recurrenceRule": {
         "label": "支出の繰り返し",
@@ -238,23 +289,29 @@
         "monthly": "毎月"
       },
       "paidFor": {
-        "title": "支払い対象",
-        "description": "誰のために支出が支払われたかを選択してください。"
+        "title": "負担対象",
+        "description": "支出の分割方法と対象メンバーを選択します。"
       },
       "splitModeDescription": "支出の分割方法を選択してください。",
+      "notesDescription": "支出に関するメモや詳細を追加します。",
       "attachDescription": "領収書を確認し、支出に添付してください。"
     },
     "amountField": {
-      "label": "金額"
+      "label": "金額",
+      "description": "支出の総額を入力します。",
+      "convertedDescription": "グループの通貨で金額を入力してください。"
     },
     "conversionUnavailable": "支出ごとに異なる通貨を設定して金額を換算するには、グループでカスタム以外の通貨を選択してください。",
     "originalAmountField": {
-      "label": "換算する金額"
+      "label": "換算する金額",
+      "description": "換算前の元の金額。"
     },
     "conversionRateField": {
       "useApi": "Frankfurter のレートを使用",
       "useCustom": "カスタムレートを使用",
-      "label": "為替レート"
+      "label": "為替レート",
+      "description": "換算に使用される為替レート。",
+      "collapsibleDescription": "必要に応じて為替レートを変更します。"
     },
     "conversionRateState": {
       "loading": "為替レートを取得中…",
@@ -279,6 +336,13 @@
     },
     "selectNone": "選択解除",
     "selectAll": "すべて選択",
+    "resetSplit": "分割をリセット",
+    "evenlySplit": "均等分割: {amount} × {count}",
+    "totalWeight": "合計配分: {count, plural, other {# 口}}",
+    "matchesPercent": "100% と一致。",
+    "matchesAmount": "{amount} と一致",
+    "decreaseShares": "口数を減らす",
+    "increaseShares": "口数を増やす",
     "noLongerInGroup": "このグループにいません",
     "shares": "シェア",
     "advancedOptions": "詳細な分割オプション...",
@@ -294,6 +358,43 @@
       "byPercentageDescription": "Split using percentages that add up to 100%",
       "byAmountDescription": "Split using fixed amounts for each participant"
     },
+    "itemized": {
+      "toggleLabel": "項目ごとの内訳",
+      "toggleDescription": "領収書の項目を別々のメンバーに割り当てます。",
+      "noItems": "項目はまだ追加されていません。",
+      "addItem": "項目を追加",
+      "removeItem": "項目を削除",
+      "itemTitleLabel": "項目名",
+      "itemTitlePlaceholder": "例: メイン料理",
+      "itemUnitPriceLabel": "単価",
+      "itemQuantityLabel": "数量",
+      "itemLineTotalLabel": "小計",
+      "itemAmountLabel": "金額",
+      "sectionTitle": "項目ごとの内訳",
+      "sectionDescription": "領収書の個々の項目を入力して割り当てます。",
+      "assignTo": "メンバーに割り当て",
+      "otherLabel": "その他の費用",
+      "otherDerivedNote": "残額は他のメンバーで均等に分割されます。",
+      "itemsExceedTotal": "項目の合計が全体の支出額を超えています。",
+      "setAmountFromItems": "項目の合計から金額を設定",
+      "total": "項目合計",
+      "addItemsAction": "項目を追加する",
+      "documentationNote": "項目ごとの内訳で、誰が何に支払っているかが明確になります。",
+      "authoritativeNote": "項目の合計が全体の支出金額になります。",
+      "leaveAction": "内訳入力を終了",
+      "switchDialog": {
+        "title": "分割方法を変更しますか？",
+        "description": "分割方法を変更すると、項目ごとの内訳はリセットされます。",
+        "confirm": "分割方法を変更",
+        "cancel": "キャンセル"
+      },
+      "leaveDialog": {
+        "title": "内訳入力を破棄しますか？",
+        "description": "内訳入力を終了すると、入力した項目は破棄されます。",
+        "confirm": "内訳入力を破棄",
+        "cancel": "キャンセル"
+      }
+    },
     "DeletePopup": {
       "label": "削除",
       "title": "この支出を削除しますか？",
@@ -301,7 +402,7 @@
       "yes": "はい",
       "cancel": "キャンセル"
     },
-    "attachDocuments": "書類を添付",
+    "attachDocuments": "画像を追加",
     "create": "作成",
     "creating": "作成中...",
     "save": "保存",
@@ -317,7 +418,7 @@
       "postSaveTitle": "Expense split across group and direct records",
       "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
       "postSaveGroupHalfLine": "The group expense is {amount}",
-      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "singlePayerNote": "グループ外の参加者（{names}）を追加すると支出が2つに分割されるため、支払者は1人のみとなります。",
       "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
       "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
       "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
@@ -326,7 +427,16 @@
       "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
+  "ExpenseTitleInput": {
+    "noSuggestions": "候補がありません",
+    "clear": "クリア"
+  },
   "ExpenseDocumentsInput": {
+    "addImage": "画像を追加",
+    "addDocumentHint": "画像や領収書を追加できます。",
+    "previewDocument": "{name} をプレビュー",
+    "removeDocument": "{name} を削除",
+    "uploadingDocument": "アップロード中…",
     "TooBigToast": {
       "title": "ファイルが大きすぎます",
       "description": "アップロードできる最大ファイルサイズは{maxSize}です。あなたのファイルは{size}です。"
@@ -388,6 +498,8 @@
       "noOneOwesYou": "このグループであなたに借りがある人はいません。",
       "youOweNoOne": "このグループで誰にも借りはありません。",
       "confirmSettle": "{name}に{amount}を支払ったことを記録しますか？",
+      "confirmSettleReceived": "{name} から {amount} を受け取ったことを記録しますか？",
+      "settleReceivedTooltip": "受け取った支払いを記録",
       "youAreOwed": "{name}があなたに{amount}の借りがあります",
       "youOwe": "あなたは{name}に{amount}の借りがあります",
       "allSettled": "このグループで精算済みです。",
@@ -522,16 +634,27 @@
   "Activity": {
     "title": "アクティビティ",
     "description": "このグループのすべてのアクティビティの概要。",
+    "globalTitle": "アクティビティ",
+    "globalDescription": "すべてのグループのアクティビティ概要。",
+    "globalListTitle": "アクティビティ履歴",
+    "globalListDescription": "すべてのグループの最新の更新。",
+    "globalNoActivity": "グループにはまだアクティビティがありません。",
     "noActivity": "グループにはまだアクティビティがありません。",
+    "error": "アクティビティを読み込めませんでした。",
+    "retry": "再試行",
     "someone": "誰か",
     "settingsModified": "グループ設定が<strong>{participant}</strong>によって変更されました。",
     "expenseCreated": "支出<em>{expense}</em>が<strong>{participant}</strong>によって作成されました。",
     "expenseUpdated": "支出<em>{expense}</em>が<strong>{participant}</strong>によって更新されました。",
     "expenseDeleted": "支出<em>{expense}</em>が<strong>{participant}</strong>によって削除されました。",
+    "paymentRecorded": "<strong>{participant}</strong> が支払いを記録しました。",
+    "paymentUpdated": "<strong>{participant}</strong> が支払いを更新しました。",
+    "paymentDeleted": "<strong>{participant}</strong> が支払いを削除しました。",
     "expenseCreatedDetail": "<strong>{participant}</strong>によって作成されました。",
     "expenseUpdatedDetail": "<strong>{participant}</strong>によって更新されました。",
     "paymentRecordedDetail": "<strong>{participant}</strong>によって記録されました。",
     "paymentUpdatedDetail": "<strong>{participant}</strong>によって更新されました。",
+    "reimbursement": "支払い",
     "Groups": {
       "today": "今日",
       "yesterday": "昨日",
@@ -563,10 +686,7 @@
     "showLess": "折りたたむ",
     "yes": "はい",
     "no": "いいえ",
-    "fieldChangesCount": "{count} 件のフィールド変更",
-    "globalTitle": "アクティビティ",
-    "globalDescription": "すべてのグループのアクティビティ概要。",
-    "globalNoActivity": "グループにはまだアクティビティがありません。"
+    "fieldChangesCount": "{count} 件のフィールド変更"
   },
   "Information": {
     "title": "情報",
@@ -590,6 +710,7 @@
     "max50": "最大50文字まで入力してください。",
     "duplicateParticipantName": "別の参加者がすでにこの名前を使用しています。",
     "titleRequired": "タイトルを入力してください。",
+    "paymentCategoryNotAllowed": "支払いは支出の有効なカテゴリーではありません。",
     "invalidNumber": "無効な数字です。",
     "invalidExpression": "無効な式です。数字と +, -, *, / 演算子を使用してください。",
     "amountRequired": "金額を入力する必要があります。",
@@ -597,14 +718,27 @@
     "amountTenMillion": "金額は10,000,000未満である必要があります。",
     "ratePositive": "レートはゼロより大きい必要があります。",
     "paidByRequired": "参加者を選択する必要があります。",
+    "paidToRequired": "支払いを受け取った人を選択してください。",
+    "paidToDifferent": "支払者と受取人は異なるメンバーである必要があります。",
     "paidForMin1": "支出は少なくとも1人の参加者のために支払われている必要があります。",
-    "noZeroShares": "すべてのシェアは0より大きくなければなりません。",
-    "amountSum": "金額の合計は支出金額と一致する必要があります。",
-    "percentageSum": "パーセンテージの合計は100である必要があります。",
     "paidByAmountPositive": "Each payer's amount must be greater than zero.",
     "paidByAmountSum": "Payer amounts must sum to the expense total.",
     "paidByDuplicateParticipants": "Each payer can only appear once.",
-    "reimbursementSinglePayer": "Reimbursements support only a single payer."
+    "reimbursementSinglePayer": "Reimbursements support only a single payer.",
+    "noZeroShares": "すべてのシェアは0より大きくなければなりません。",
+    "amountSum": "金額の合計は支出金額と一致する必要があります。",
+    "percentageSum": "パーセンテージの合計は100である必要があります。",
+    "itemsRequired": "少なくとも1つの項目を追加するか、内訳を無効にしてください。",
+    "itemNeedsAssignment": "各項目を少なくとも1人のメンバーに割り当ててください。",
+    "itemTitleRequired": "項目名を入力してください。",
+    "itemAmountNonNegative": "項目の金額は0以上である必要があります。",
+    "itemQuantityPositive": "数量は1以上の整数である必要があります。",
+    "taxNonNegative": "税金は0以上である必要があります。",
+    "tipNonNegative": "チップは0以上である必要があります。",
+    "itemAssignmentUnknownParticipant": "分割に含まれていないメンバーに項目が割り当てられています。",
+    "itemizationNotAllowedHere": "支払いおよび定期的な支出では項目ごとの内訳を使用できません。",
+    "itemsExceedAmount": "項目の合計が全体の支出額を超えています。",
+    "remainderShareUnknownParticipant": "残額の分割に支出に含まれていないメンバーが含まれています。"
   },
   "Categories": {
     "search": "カテゴリーを検索...",
@@ -688,6 +822,64 @@
       "heading": "Other currencies"
     }
   },
+  "ExpenseImport": {
+    "button": "支出をインポート",
+    "fromKnots": "Knots からインポート",
+    "fromSplitwise": "Splitwise からインポート"
+  },
+  "KnotsImport": {
+    "title": "Knots からインポート",
+    "description": "Knots のエクスポートファイルをアップロードしてください。ファイルにまだこのグループにいない人が含まれている場合は、インポート前にここで追加できます。",
+    "fileLabel": "Knots エクスポートファイル",
+    "previewLabel": "プレビュー（最初の 10 行）",
+    "clear": "クリア",
+    "cancel": "キャンセル",
+    "import": "支出をインポート",
+    "addAndImport": "メンバーを追加してインポート",
+    "importing": "インポート中...",
+    "analyzing": "エクスポートを解析中…",
+    "expenseCount": "{count, plural, one {# 件の支出が見つかりました} other {# 件の支出が見つかりました}}",
+    "matchedParticipants": "すでにグループ内: {names}",
+    "missingParticipantsLabel": "このグループに追加する人",
+    "missingParticipantsDescription": "各人のメールアドレスを入力してください。新しいアカウントは自動的に作成され、このグループにリンクされます。すでにアカウントがある場合はメンバーとして追加されます。",
+    "expenseReferences": "{count, plural, one {# 件の支出} other {# 件の支出}}",
+    "emailLabel": "メール",
+    "emailPlaceholder": "name@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "後でこのメールアドレスで登録すると、グループにアクセスできます。",
+    "errors": {
+      "invalidJson": "無効なJSONファイルです。",
+      "invalidFormat": "このファイルは有効なKnotsエクスポートではありません。",
+      "noExpenses": "エクスポートに支出が含まれていません。"
+    },
+    "toast": {
+      "invalidFileType": {
+        "title": "無効なファイル形式",
+        "description": "Knots の JSON または CSV エクスポートファイルを選択してください。"
+      },
+      "noContent": {
+        "title": "ファイル内容がありません",
+        "description": "まず Knots エクスポートファイルを選択してください。"
+      },
+      "missingEmail": {
+        "title": "メールが必要です",
+        "description": "{name} のメールアドレスを入力してください。"
+      },
+      "success": {
+        "title": "インポート成功",
+        "description": "Knots から {count} 件の支出をインポートしました。"
+      },
+      "error": {
+        "title": "インポート失敗",
+        "description": "Knots エクスポートファイルをインポートできませんでした。"
+      },
+      "cancelled": {
+        "title": "インポートをキャンセルしました",
+        "description": "インポートは完了前に停止されました。"
+      }
+    }
+  },
   "SplitwiseImport": {
     "button": "Import from Splitwise",
     "title": "Import from Splitwise",
@@ -698,6 +890,20 @@
     "cancel": "Cancel",
     "import": "Import Expenses",
     "importing": "Importing...",
+    "analyzing": "Analyzing CSV…",
+    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
+    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
+    "participantMappingLabel": "Match Splitwise names",
+    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
+    "mapToMemberLabel": "Group member",
+    "mapToMemberPlaceholder": "Select a member",
+    "addNewMemberOption": "Add new member by email",
+    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "They can register later with this email to access the group.",
     "toast": {
       "invalidFileType": {
         "title": "Invalid file type",
@@ -706,6 +912,14 @@
       "noContent": {
         "title": "No CSV content",
         "description": "Please select a CSV file first."
+      },
+      "missingEmail": {
+        "title": "Email required",
+        "description": "Enter an email for {name}."
+      },
+      "incompleteMapping": {
+        "title": "Mapping incomplete",
+        "description": "Choose a member or email for {name}."
       },
       "success": {
         "title": "Import successful",
@@ -718,91 +932,219 @@
       "cancelled": {
         "title": "インポートをキャンセルしました",
         "description": "インポートは完了前に停止されました。"
-      },
-      "missingEmail": {
-        "title": "Email required",
-        "description": "Enter an email for {name}."
-      },
-      "incompleteMapping": {
-        "title": "Mapping incomplete",
-        "description": "Choose a member or email for {name}."
       }
-    },
-    "analyzing": "Analyzing CSV…",
-    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
-    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
-    "participantMappingLabel": "Match Splitwise names",
-    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
-    "mapToMemberLabel": "Group member",
-    "mapToMemberPlaceholder": "Select a member",
-    "addNewMemberOption": "Add new member by email",
-    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
-    "emailLabel": "Email",
-    "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group.",
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
+    }
   },
   "ProfileSettings": {
-    "title": "プロフィール設定",
-    "emailTitle": "メール",
-    "emailDescription": "メールアドレスは変更できません。",
+    "title": "アカウント設定",
+    "back": "戻る",
+    "Profile": {
+      "photoLabel": "プロフィール写真",
+      "photoDescription": "友達やグループに表示されるプロフィール写真をアップロードします。",
+      "photoAlt": "あなたのプロフィール写真",
+      "choosePhoto": "写真を選択",
+      "removePhoto": "写真を削除",
+      "photoUpdatedToast": "プロフィール写真を更新しました。",
+      "photoRemovedToast": "プロフィール写真を削除しました。",
+      "photoUnavailableToast": "写真ストレージが設定されていません。",
+      "photoInvalidToast": "5MB未満の有効な画像ファイル（PNG、JPG、WebP）を選択してください。",
+      "photoFailedToast": "プロフィール写真をアップロードできませんでした。",
+      "nameLabel": "表示名",
+      "namePlaceholder": "お名前",
+      "nameError": "有効な名前を入力してください。",
+      "nameUpdatedToast": "表示名を更新しました。",
+      "saveChanges": "変更を保存",
+      "saving": "保存中…"
+    },
+    "profileTitle": "プロフィール",
+    "appPreferencesTitle": "アプリ設定",
+    "notificationsTitle": "通知チャンネル",
+    "notificationsDescription": "グループ内のアクティビティに関する通知方法を管理します。",
+    "notifications": {
+      "masterSwitchAria": "通知",
+      "saving": "設定を保存中…",
+      "saveSuccess": "通知設定を保存しました。",
+      "saveError": "通知設定を保存できませんでした。",
+      "comingSoon": "近日公開",
+      "done": "完了",
+      "channelSelectorAria": "{category} の通知チャンネル",
+      "emailNeedsVerification": "メール通知を有効にするには、メールアドレスを確認してください。",
+      "channelLabel": {
+        "off": "オフ",
+        "email": "メール",
+        "push": "プッシュ",
+        "emailAndPush": "メールとプッシュ"
+      },
+      "pushDisabled": {
+        "unsupported": "お使いのブラウザはプッシュ通知に対応していません。",
+        "unconfigured": "サーバーでプッシュ通知が設定されていません。",
+        "iosInstall": "iOSで通知を受け取るには、Knotsをホーム画面に追加してください。",
+        "denied": "通知の権限が拒否されました。ブラウザの設定で有効にしてください。"
+      },
+      "thisDevice": {
+        "title": "このデバイスのプッシュ通知",
+        "description": "アクティビティがあったときに、このブラウザで即座に通知を受け取ります。",
+        "checking": "登録状況を確認中…",
+        "enabledLabel": "このデバイスでプッシュ通知が有効です。",
+        "disabledLabel": "このデバイスでプッシュ通知が無効です。",
+        "pushSelectedWarning": "一部のカテゴリーでプッシュ通知が選択されていますが、このデバイスは登録されていません。",
+        "enable": "このデバイスで有効にする",
+        "disable": "このデバイスで無効にする",
+        "error": "プッシュ通知の登録を更新できませんでした。"
+      },
+      "groups": {
+        "groups-and-friends": "グループと友達",
+        "expenses": "支出",
+        "summaries": "サマリー"
+      },
+      "categories": {
+        "added-to-group": "グループへの追加",
+        "friend-added": "友達の追加",
+        "budget-alert": "予算アラート",
+        "expense-created": "支出の作成",
+        "recurring-expense-created": "定期的な支出の作成",
+        "expense-changed": "支出の変更または削除",
+        "expense-comment": "支出へのコメント",
+        "weekly-summary": "週間サマリー"
+      },
+      "categoryDescriptions": {
+        "weekly-summary": "支出と残高の週次概要。"
+      }
+    },
+    "emailTitle": "メールアドレス",
+    "emailDescription": "通知とログインに使用されます。",
     "displayNameTitle": "表示名",
+    "usernameTitle": "ユーザー名",
+    "usernameDescription": "Knots での一意の識別子。",
     "passwordTitle": "パスワード",
-    "preferencesTitle": "設定",
-    "preferencesDescription": "言語と外観をカスタマイズします。",
+    "passkeyTitle": "パスキー (Passkeys)",
+    "Email": {
+      "description": "メールアドレスの変更には、新しいアドレスに送信される確認コードが必要です。",
+      "changeButton": "メールアドレスを変更",
+      "dialogTitle": "メールアドレスの変更",
+      "dialogDescription": "新しいメールアドレスを入力してください。確認コードを送信します。",
+      "newEmailLabel": "新しいメールアドレス",
+      "newEmailPlaceholder": "you@example.com",
+      "sendCode": "コードを送信",
+      "cancel": "キャンセル",
+      "otpTitle": "確認コードを入力",
+      "otpDescription": "{email} に6桁のコードを送信しました。下に入力してください。",
+      "codeLabel": "確認コード",
+      "resend": "再送信",
+      "resendIn": "{seconds} 秒後に再送信",
+      "useDifferentEmail": "別のメールアドレスを使用",
+      "verify": "確認して変更",
+      "successToast": "メールアドレスを更新しました。",
+      "errorInUse": "このメールアドレスは既に使用されています。",
+      "errorInvalid": "有効なメールアドレスを入力してください。",
+      "errorSame": "新しいメールアドレスは現在のアドレスと異なる必要があります。",
+      "errorInvalidCode": "無効な確認コードです。",
+      "errorExpired": "確認コードの有効期限が切れました。新しいコードをリクエストしてください。",
+      "errorRateLimited": "試行回数が多すぎます。しばらく待ってから再試行してください。",
+      "errorSendFailed": "確認メールを送信できませんでした。もう一度お試しください。"
+    },
+    "Password": {
+      "description": "パスワードを変更するか、現在パスキーのみを使用している場合はパスワードを設定します。",
+      "noPasswordDescription": "メールリンクまたはパスキーでログインできます。別の方法をご希望の場合はパスワードを追加してください。",
+      "changeButton": "パスワードを変更",
+      "setButton": "パスワードを設定",
+      "removeButton": "パスワードを削除",
+      "changeDialogTitle": "パスワードの変更",
+      "changeDialogDescription": "現在のパスワードを入力し、新しいパスワードを設定してください。",
+      "setDialogTitle": "パスワードの設定",
+      "setDialogDescription": "メールアドレスとパスワードでログインするためのパスワードを追加します。",
+      "setSuccessToast": "パスワードを設定しました。",
+      "removeDialogTitle": "パスワードの削除",
+      "removeDialogDescription": "引き続きメールリンクまたはパスキーでログインできます。確認のため現在のパスワードを入力してください。",
+      "currentLabel": "現在のパスワード",
+      "newLabel": "新しいパスワード",
+      "confirmLabel": "新しいパスワードの確認",
+      "cancel": "キャンセル",
+      "removeConfirm": "削除",
+      "changeSuccessToast": "パスワードを変更しました。",
+      "removeSuccessToast": "パスワードを削除しました。",
+      "errorCurrentRequired": "現在のパスワードが必要です。",
+      "errorMismatch": "パスワードが一致しません。",
+      "errorRequirements": "パスワードは8文字以上である必要があります。",
+      "errorSame": "新しいパスワードは現在のパスワードと異なる必要があります。",
+      "errorCurrentIncorrect": "現在のパスワードが正しくありません。",
+      "forgotPrefix": "パスワードをお忘れですか？",
+      "forgotLink": "こちらからリセット",
+      "rule_TOO_SHORT": "8文字以上",
+      "rule_MISSING_UPPERCASE": "大文字1文字以上",
+      "rule_MISSING_LOWERCASE": "小文字1文字以上",
+      "rule_MISSING_DIGIT": "数字1文字以上"
+    },
+    "Passkey": {
+      "description": "生体認証、セキュリティキー、または画面ロックを使用して、パスワードなしで安全にログインできます。",
+      "unavailable": "このデバイスではパスキーをご利用いただけません。",
+      "addButton": "パスキーを追加",
+      "empty": "登録されたパスキーはありません。",
+      "created": "作成日: {date}",
+      "badgeSynced": "同期済み",
+      "badgeDeviceBound": "デバイス限定",
+      "badgeBackedUp": "バックアップ済み",
+      "addDialogTitle": "パスキーを追加",
+      "addDialogDescription": "わかりやすい名前を付け、デバイスの指示に従ってください。",
+      "nicknameLabel": "名前（任意）",
+      "nicknamePlaceholder": "例: 私のノートPC",
+      "confirmPasswordLabel": "現在のパスワード",
+      "confirmPasswordHint": "パスキーを追加するにはパスワードを確認してください。",
+      "addConfirm": "パスキーを追加",
+      "cancel": "キャンセル",
+      "addSuccessToast": "パスキーを追加しました。",
+      "addFailedToast": "パスキーを追加できませんでした。",
+      "errorPasswordRequired": "現在のパスワードを入力してください。",
+      "deleteAria": "{name} を削除",
+      "deleteDialogTitle": "パスキーを削除しますか？",
+      "deleteDialogDescription": "「{name}」はアカウントへのログインに使用できなくなります。",
+      "deleteConfirm": "削除",
+      "deleteSuccessToast": "パスキーを削除しました。",
+      "deleteFailedToast": "パスキーを削除できませんでした。",
+      "reauthTitle": "パスキーを追加するには再度ログインしてください",
+      "reauthDescription": "前回のログインから30日以上経過しています。パスワード、メールリンク、またはパスキーで再度ログインしてから、ここに戻ってください。",
+      "reauthConfirm": "再度ログイン"
+    },
+    "preferencesTitle": "環境設定",
+    "preferencesDescription": "言語、テーマ、デフォルト通貨を設定します。",
     "languageLabel": "言語",
     "themeLabel": "テーマ",
+    "blockedUsersTitle": "ブロック中のユーザー",
+    "blockedUsersDescription": "ブロックしたユーザーを管理します。",
+    "blockedUsersRowLabel": "ブロック中のユーザー",
+    "blockedUsersRowDescription": "ブロック中のユーザーを表示および管理します。",
     "accountTitle": "アカウント",
-    "signOut": "サインアウト",
-    "signingOut": "サインアウト中…",
-    "NameForm": {
-      "nameRequired": "名前は必須です",
-      "nameMaxLength": "名前は100文字以内にしてください",
-      "successToast": "表示名を更新しました。",
-      "label": "表示名",
-      "placeholder": "表示名を入力",
-      "saving": "保存中…",
-      "submit": "名前を保存"
-    },
-    "PasswordForm": {
-      "currentPasswordRequired": "現在のパスワードは必須です",
-      "newPasswordRequired": "新しいパスワードは必須です",
-      "confirmPasswordRequired": "新しいパスワードを確認してください",
-      "passwordsDoNotMatch": "パスワードが一致しません",
-      "successToast": "パスワードを変更しました。",
-      "currentPasswordIncorrect": "現在のパスワードが正しくありません",
-      "newPasswordSameAsCurrent": "新しいパスワードは現在のものと異なる必要があります",
-      "passwordRequirementsNotMet": "パスワードが要件を満たしていません",
-      "currentPasswordLabel": "現在のパスワード",
-      "newPasswordLabel": "新しいパスワード",
-      "confirmPasswordLabel": "新しいパスワードを確認",
-      "passwordHint": "8〜128文字。大文字・小文字・数字をそれぞれ1文字以上含めてください。",
-      "changingPassword": "パスワードを変更中…",
-      "submit": "パスワードを変更",
-      "errorTooShort": "8文字以上必要です",
-      "errorTooLong": "128文字以内にしてください",
-      "errorMissingUppercase": "大文字を1文字以上含めてください",
-      "errorMissingLowercase": "小文字を1文字以上含めてください",
-      "errorMissingDigit": "数字を1文字以上含めてください"
-    },
-    "blockedUsersTitle": "ブロックしたユーザー",
-    "blockedUsersDescription": "ブロックしたユーザーを管理します。ブロックされたユーザーは、あなたをグループに追加したり、友達リクエストを送信したりできなくなります。",
+    "signOut": "ログアウト",
+    "signOutDescription": "このデバイスからログアウトします。",
+    "signOutAllTitle": "すべてのデバイスからログアウト",
+    "signOutAllDescription": "すべてのデバイスのアクティブなセッションを終了します。",
+    "signingOut": "ログアウト中…",
     "Preferences": {
       "timezoneLabel": "タイムゾーン",
       "timezoneSelect": "タイムゾーンを選択…",
       "timezoneSearch": "タイムゾーンを検索…",
       "timezoneEmpty": "タイムゾーンが見つかりません。",
-      "timezoneSaved": "タイムゾーンが更新されました。",
-      "currencyLabel": "デフォルトの通貨",
-      "currencySaved": "デフォルトの通貨が更新されました。"
+      "timezoneSaved": "タイムゾーンを更新しました。",
+      "timezoneHelp": "新しい支出や定期的な予定のデフォルト時刻を設定します。",
+      "languageSearch": "言語を検索…",
+      "languageEmpty": "言語が見つかりません。",
+      "languageCommon": "よく使われる言語",
+      "languageOther": "その他の言語",
+      "currencyLabel": "デフォルト通貨",
+      "currencySaved": "デフォルト通貨を更新しました。"
     },
+    "appPreferencesDescription": "アカウントの言語、テーマ、デフォルト通貨をカスタマイズします。",
+    "preferencesSaving": "設定を保存中…",
+    "themeSaved": "テーマを更新しました。",
+    "themeLight": "ライト",
+    "themeDark": "ダーク",
+    "themeSystem": "システム",
     "SignOutAll": {
       "button": "すべてのデバイスからサインアウト",
       "dialogTitle": "すべてのデバイスからサインアウトしますか？",
       "dialogDescription": "これにより、このセッションを含むすべてのアクティブなセッションが終了します。ログインページにリダイレクトされます。",
       "cancel": "キャンセル",
-      "confirm": "すべての場所からサインアウト",
+      "confirm": "すべてからログアウト",
       "signingOut": "サインアウトしています…",
       "successToast": "すべてのセッションが終了しました。"
     },
@@ -823,6 +1165,44 @@
       "confirmBlockDescription": "{name}をブロックすると、友達リストからも削除されます。相手にブロックの通知は送信されません。",
       "confirmBlockCancel": "キャンセル",
       "confirmBlockAction": "ブロックして友達から削除"
+    },
+    "NameForm": {
+      "nameRequired": "表示名は必須です。",
+      "nameMaxLength": "名前は100文字以内にしてください",
+      "successToast": "表示名を更新しました。",
+      "label": "表示名",
+      "placeholder": "表示名を入力",
+      "saving": "保存中…",
+      "submit": "名前を保存"
+    },
+    "UsernameForm": {
+      "successToast": "ユーザー名を更新しました。",
+      "label": "ユーザー名",
+      "placeholder": "your-username",
+      "description": "プロフィールURLに使用されます。英小文字、数字、ハイフンのみ。",
+      "saving": "保存中…",
+      "submit": "ユーザー名を保存"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "現在のパスワードが必要です。",
+      "newPasswordRequired": "新しいパスワードが必要です。",
+      "confirmPasswordRequired": "新しいパスワードを確認してください。",
+      "passwordsDoNotMatch": "パスワードが一致しません。",
+      "successToast": "パスワードを変更しました。",
+      "currentPasswordIncorrect": "現在のパスワードが正しくありません。",
+      "newPasswordSameAsCurrent": "新しいパスワードは現在のパスワードと異なる必要があります。",
+      "passwordRequirementsNotMet": "パスワードが必要条件を満たしていません。",
+      "currentPasswordLabel": "現在のパスワード",
+      "newPasswordLabel": "新しいパスワード",
+      "confirmPasswordLabel": "新しいパスワードの確認",
+      "passwordHint": "8〜128文字。大文字、小文字、数字をそれぞれ1文字以上含める必要があります。",
+      "changingPassword": "パスワードを変更中…",
+      "submit": "パスワードを変更",
+      "errorTooShort": "8文字以上必要です",
+      "errorTooLong": "128文字以内にしてください",
+      "errorMissingUppercase": "大文字を1文字以上含めてください",
+      "errorMissingLowercase": "小文字を1文字以上含めてください",
+      "errorMissingDigit": "数字を1文字以上含めてください"
     }
   },
   "Friends": {
@@ -908,6 +1288,7 @@
       "title": "Expenses with {name}",
       "description": "All expenses you share with this friend, across groups.",
       "backToFriends": "Back to friends",
+      "backToFriend": "{name} に戻る",
       "listTitle": "Expense history",
       "listDescription": "Direct expenses and expenses from shared groups.",
       "create": "Add expense",
@@ -950,6 +1331,10 @@
       "friendOwesYou": "{name}があなたに{amount}借りています",
       "youOweFriend": "あなたは{name}に{amount}借りています",
       "paid": "{payer}が{payee}に{amount}支払いました",
+      "deletePayment": "削除",
+      "deletePaymentConfirm": "この支払いを削除してもよろしいですか？",
+      "deletePaymentSuccess": "支払いが正常に削除されました",
+      "deletePaymentError": "支払いを削除できませんでした",
       "groups": {
         "upcoming": "今後",
         "thisWeek": "今週",
@@ -965,14 +1350,15 @@
       "paid": "{payer}が{payee}に支払いました",
       "addedBy": "{name}が{date}に追加",
       "disclaimer": "この支払いは「支払いを記録」で記録されました。実際の送金は行われていません。",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "readOnlyNotice": "この支払いは一括清算の一部であるため、個別に編集または削除することはできません。",
       "edit": "編集",
       "delete": "削除",
       "deleteConfirm": "この支払いを削除しますか？",
       "deleteDescription": "支払いが無かったかのように残高が調整されます。",
+      "deleting": "Deleting...",
       "notFound": "支払いが見つかりません。",
-      "backToFriend": "{name}に戻る",
-      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
-      "deleting": "Deleting..."
+      "backToFriend": "{name}に戻る"
     },
     "DirectExpense": {
       "title": "支出を追加",
@@ -984,12 +1370,19 @@
       "paidByYou": "あなた",
       "splitEqually": "{payer}が支払い、均等に分割",
       "dateLabel": "日付",
+      "attachLabel": "画像またはPDFを添付",
+      "notesLabel": "メモ",
+      "notesPlaceholder": "メモを追加（任意）",
       "save": "保存",
       "saving": "保存中…",
       "cancel": "キャンセル",
       "success": "支出を追加しました。",
       "error": "支出を追加できませんでした。",
       "persistError": "フォームデータを保存できませんでした。ナビゲーションは利用できません。"
+    },
+    "Settings": {
+      "currencyTitle": "主通貨",
+      "currencyDescription": "友達との直接の支出や支払いに使用されます。"
     },
     "SettleAll": {
       "button": "すべて精算",
@@ -1013,6 +1406,7 @@
     "memberPromoted": "メンバーをオーナーに昇格しました。",
     "memberDemoted": "メンバーを通常メンバーに降格しました。",
     "addMember": "メンバーを追加",
+    "pickFriend": "Choose from your friends or enter an email.",
     "adding": "追加中…",
     "add": "追加",
     "cancel": "キャンセル",
@@ -1021,8 +1415,7 @@
     "leave": "退出",
     "removeFromGroup": "グループから削除",
     "promoteToOwner": "オーナーに昇格",
-    "demoteToMember": "メンバーに降格",
-    "pickFriend": "Choose from your friends or enter an email."
+    "demoteToMember": "メンバーに降格"
   },
   "MyGroups": {
     "title": "マイグループ",
@@ -1032,7 +1425,9 @@
     "noGroupsHint": "グループを作成して、他の人と支出を分担しましょう。",
     "createGroup": "グループを作成",
     "createGroupTitle": "新しいグループを作成",
-    "createGroupDescription": "グループ名を入力してください。作成後にメンバーを招待できます。",
+    "createGroupDescription": "グループ名と通貨を入力してください。作成後にメンバーを招待できます。",
+    "invalidCurrency": "有効な通貨を選択してください。",
+    "currencySymbolRequired": "通貨記号を入力してください。",
     "groupNameLabel": "グループ名",
     "characters": "文字",
     "leaveGroup": "グループを退出",
@@ -1052,100 +1447,6 @@
     "deleteGroupConfirmCancel": "キャンセル",
     "deleteGroupConfirmAction": "完全に削除"
   },
-  "UserMenu": {
-    "profileSettings": "アカウント設定",
-    "signingOut": "サインアウト中…",
-    "signOut": "サインアウト"
-  },
-  "Notifications": {
-    "settings": "通知設定",
-    "subscribe": "通知を有効にする",
-    "unsubscribe": "通知を無効にする",
-    "selectParticipant": "他のメンバーの変更を通知する",
-    "noParticipant": "すべての変更",
-    "permissionDenied": "通知の許可が拒否されました。ブラウザの設定で有効にしてください。",
-    "notSupported": "このデバイスではプッシュ通知がサポートされていません。",
-    "expenseCreated": "{actor}が「{title}」を追加しました",
-    "expenseUpdated": "{actor}が「{title}」を更新しました",
-    "expenseDeleted": "{actor}が「{title}」を削除しました",
-    "groupUpdated": "{actor}がグループ「{group}」を更新しました",
-    "notificationTitle": "Knots – {group}",
-    "defaultBody": "グループに新しいアクティビティがあります",
-    "filterHint": "通知を受け取るメンバーとイベントを選択してください。",
-    "subscribeError": "通知を有効にできませんでした。もう一度お試しください。",
-    "membersLabel": "通知対象",
-    "notifyAllMembers": "グループ全員",
-    "notifySpecificMembers": "または次のメンバーのみ：",
-    "eventsLabel": "イベント",
-    "eventCreate": "支出の作成",
-    "eventUpdate": "支出の更新",
-    "eventDelete": "支出の削除",
-    "selectAtLeastOneFilter": "メンバーまたはイベントを1つ以上選択してください。",
-    "channelsLabel": "チャンネル",
-    "pushLabel": "プッシュ通知",
-    "pushUnavailable": "このデプロイメントではプッシュ通知を利用できません。",
-    "emailLabel": "メール通知",
-    "enableChannelHint": "チャンネルを有効にして、誰のどのような通知を受け取るかを設定してください。",
-    "pushSyncWarning": "設定は保存されましたが、プッシュ通知フィルターの同期に失敗しました。"
-  },
-  "ExpenseImport": {
-    "button": "支出をインポート",
-    "fromKnots": "Knots からインポート",
-    "fromSplitwise": "Splitwise からインポート"
-  },
-  "KnotsImport": {
-    "title": "Knots からインポート",
-    "description": "Knots のエクスポートファイルをアップロードしてください。ファイルにまだこのグループにいない人が含まれている場合は、インポート前にここで追加できます。",
-    "fileLabel": "Knots エクスポートファイル",
-    "previewLabel": "プレビュー（最初の 10 行）",
-    "clear": "クリア",
-    "cancel": "キャンセル",
-    "import": "支出をインポート",
-    "addAndImport": "メンバーを追加してインポート",
-    "importing": "インポート中...",
-    "analyzing": "エクスポートを解析中…",
-    "expenseCount": "{count, plural, one {# 件の支出が見つかりました} other {# 件の支出が見つかりました}}",
-    "matchedParticipants": "すでにグループ内: {names}",
-    "missingParticipantsLabel": "このグループに追加する人",
-    "missingParticipantsDescription": "各人のメールアドレスを入力してください。新しいアカウントは自動的に作成され、このグループにリンクされます。すでにアカウントがある場合はメンバーとして追加されます。",
-    "expenseReferences": "{count, plural, one {# 件の支出} other {# 件の支出}}",
-    "emailLabel": "メール",
-    "emailPlaceholder": "name@example.com",
-    "softCreateHint": "後でこのメールアドレスで登録すると、グループにアクセスできます。",
-    "toast": {
-      "invalidFileType": {
-        "title": "無効なファイル形式",
-        "description": "Knots の JSON または CSV エクスポートファイルを選択してください。"
-      },
-      "noContent": {
-        "title": "ファイル内容がありません",
-        "description": "まず Knots エクスポートファイルを選択してください。"
-      },
-      "missingEmail": {
-        "title": "メールが必要です",
-        "description": "{name} のメールアドレスを入力してください。"
-      },
-      "success": {
-        "title": "インポート成功",
-        "description": "Knots から {count} 件の支出をインポートしました。"
-      },
-      "error": {
-        "title": "インポート失敗",
-        "description": "Knots エクスポートファイルをインポートできませんでした。"
-      },
-      "cancelled": {
-        "title": "インポートをキャンセルしました",
-        "description": "インポートは完了前に停止されました。"
-      }
-    },
-    "errors": {
-      "invalidJson": "無効なJSONファイルです。",
-      "invalidFormat": "このファイルは有効なKnotsエクスポートではありません。",
-      "noExpenses": "エクスポートに支出が含まれていません。"
-    },
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
-  },
   "GroupDangerZone": {
     "title": "グループ管理",
     "description": "アーカイブするとデータを削除せずにリストから非表示にします。削除すると全員に対してグループが完全に削除されます。",
@@ -1159,6 +1460,109 @@
     "deleteConfirmDescription": "“{name}”と、そのすべての支出、残高、履歴が全メンバーに対して完全に削除されます。この操作は元に戻せません。",
     "cancel": "キャンセル",
     "deleteConfirmAction": "完全に削除"
+  },
+  "UserMenu": {
+    "menuLabel": "ユーザーメニュー",
+    "profileSettings": "アカウント設定",
+    "theme": "テーマ",
+    "themeLight": "ライト",
+    "themeDark": "ダーク",
+    "themeSystem": "システム",
+    "signingOut": "サインアウト中…",
+    "signOut": "サインアウト"
+  },
+  "Notifications": {
+    "settings": "通知設定",
+    "subscribe": "通知を有効にする",
+    "unsubscribe": "通知を無効にする",
+    "selectParticipant": "他のメンバーの変更を通知する",
+    "noParticipant": "すべての変更",
+    "permissionDenied": "通知の許可が拒否されました。ブラウザの設定で有効にしてください。",
+    "notSupported": "このデバイスではプッシュ通知がサポートされていません。",
+    "expenseCreated": "{actor} が {group} で「{title}」を追加しました",
+    "expenseUpdated": "{actor} が {group} で「{title}」を編集しました",
+    "expenseDeleted": "{actor} が {group} で「{title}」を削除しました",
+    "groupUpdated": "{actor}がグループ「{group}」を更新しました",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "グループに新しいアクティビティがあります",
+    "filterHint": "通知を受け取るメンバーとイベントを選択してください。",
+    "membersLabel": "通知対象",
+    "notifyAllMembers": "グループ全員",
+    "notifySpecificMembers": "または次のメンバーのみ：",
+    "eventsLabel": "イベント",
+    "eventCreate": "支出の作成",
+    "eventUpdate": "支出の更新",
+    "eventDelete": "支出の削除",
+    "selectAtLeastOneFilter": "メンバーまたはイベントを1つ以上選択してください。",
+    "subscribeError": "通知を有効にできませんでした。もう一度お試しください。",
+    "channelsLabel": "チャンネル",
+    "pushLabel": "プッシュ通知",
+    "pushUnavailable": "このデプロイメントではプッシュ通知を利用できません。",
+    "emailLabel": "メール通知",
+    "enableChannelHint": "チャンネルを有効にして、誰のどのような通知を受け取るかを設定してください。",
+    "pushSyncWarning": "設定は保存されましたが、プッシュ通知フィルターの同期に失敗しました。"
+  },
+  "AppError": {
+    "title": "問題が発生しました",
+    "description": "アプリのローカルデータが消去されました。トップページからやり直すため、セッションも終了します。",
+    "recover": "トップページに戻る",
+    "recovering": "リダイレクト中…"
+  },
+  "PaymentForm": {
+    "dateLabel": "支払日",
+    "dateDescription": "支払日を入力します。",
+    "amountLabel": "金額",
+    "amountDescription": "支払金額を入力します。",
+    "paidByLabel": "支払者",
+    "paidByDescription": "誰が支払ったかを選択します。",
+    "paidToLabel": "受取人",
+    "paidToDescription": "誰が支払いを受け取ったかを選択します。",
+    "notesLabel": "メモ",
+    "notesPlaceholder": "メモを追加（任意）",
+    "participantPlaceholder": "メンバーを選択",
+    "disclaimer": "残高を清算するためのメンバー間の支払いを記録します。これは割り勘の支出ではありません。"
+  },
+  "FloatingCreateExpense": {
+    "addExpense": "支出を追加",
+    "dialogTitle": "支出または支払いの作成",
+    "editDialogTitle": "支出を編集",
+    "createPaymentDialogTitle": "支払いを記録",
+    "editPaymentDialogTitle": "支払いを編集",
+    "withWho": "あなたと対象メンバー:",
+    "back": "戻る",
+    "searchPlaceholder": "友達またはグループを検索…",
+    "descriptionPlaceholder": "何についての支出ですか？",
+    "amountPlaceholder": "0.00",
+    "paidByLabel": "支払者",
+    "you": "あなた",
+    "splitEqually": "均等分割",
+    "save": "保存",
+    "saving": "保存中…",
+    "cancel": "キャンセル",
+    "successToast": "支出が正常に作成されました。",
+    "updateSuccessToast": "支出が正常に更新されました。",
+    "paymentSuccessToast": "支払いが正常に記録されました。",
+    "paymentUpdateSuccessToast": "支払いが正常に更新されました。",
+    "errorToast": "支出を作成できませんでした。",
+    "paymentErrorToast": "支払いを記録できませんでした。",
+    "updateErrorToast": "支出を更新できませんでした。",
+    "paymentUpdateErrorToast": "支払いを更新できませんでした。",
+    "lockedPaymentToast": "この支払いは直接編集できません。",
+    "noFriendOrGroupFound": "友達またはグループが見つかりません。",
+    "groupsHeader": "グループ",
+    "friendsHeader": "友達",
+    "selectGroupText": "グループ: {name}",
+    "pickerTitle": "誰と？",
+    "pickerDone": "完了",
+    "selectParticipants": "友達またはグループを選択",
+    "selectParticipantsHint": "グループまたは友達を選択して開始します。",
+    "singleGroupAlertTitle": "1つのグループのみ",
+    "singleGroupAlertDescription": "一度に選択できるグループは1つのみです。別のグループを選択する前に現在のグループを解除してください。",
+    "singleGroupAlertOk": "OK",
+    "advancedOptions": "詳細設定",
+    "splitDetails": "割り勘の詳細",
+    "notesPlaceholder": "メモを追加…",
+    "viewGroupExpense": "グループの支出を表示"
   },
   "DuplicateExpense": {
     "title": "重複の可能性がある支出を検出",
@@ -1183,7 +1587,47 @@
   "CurrencyAmountInput": {
     "expressionHint": "または 10+5"
   },
-  "ExpenseTitleInput": {
-    "clear": "クリア"
+  "Login": {
+    "title": "ログイン",
+    "description": "パスキー、メールリンク、またはパスワードでログインします。",
+    "orContinueWithEmail": "またはメールアドレスで続行",
+    "methodMagicLink": "マジックリンク",
+    "methodPassword": "パスワード",
+    "sendSignInLink": "ログインリンクを送信",
+    "signInWithPassword": "パスワードでログイン",
+    "usePasskey": "パスキーを使用",
+    "passkeyFailed": "このパスキーではログインできませんでした。もう一度お試しください。",
+    "forgotPassword": "パスワードをお忘れですか？",
+    "noAccount": "アカウントをお持ちでないですか？",
+    "signUp": "新規登録",
+    "magicLinkButton": "ログインリンクを送信",
+    "magicLinkEmailRequired": "メールアドレスを入力してください。",
+    "magicLinkSendFailed": "ログインメールを送信できませんでした。もう一度お試しください。",
+    "magicLinkSentTitle": "メールを確認してください",
+    "magicLinkSentDescription": "そのアドレスのアカウントが存在する場合、ログインリンクを送信しました。リンクは1回のみ有効で、15分で期限切れになります。",
+    "magicLinkSigningIn": "ログイン中…",
+    "magicLinkFailedTitle": "ログインできませんでした",
+    "magicLinkInvalid": "このログインリンクは無効か、有効期限が切れています。",
+    "backToLogin": "ログインに戻る"
+  },
+  "Register": {
+    "title": "アカウント作成",
+    "description": "メールリンクまたはパスワードで登録します。",
+    "signUpWithPassword": "パスワードでアカウント作成",
+    "confirmPassword": "パスワードの確認",
+    "hasAccount": "既にアカウントをお持ちですか？",
+    "signIn": "ログイン",
+    "creating": "アカウントを作成中…",
+    "passwordMismatch": "パスワードが一致しません",
+    "ruleLength": "8文字以上",
+    "ruleLowercase": "小文字",
+    "ruleUppercase": "大文字",
+    "ruleNumber": "数字",
+    "successTitle": "登録が完了しました",
+    "successDescription": "アカウントが作成されました",
+    "successAlertTitle": "メールを確認してください",
+    "successAlertDescription": "確認リンクをメールでお送りしました。ログインする前にリンクをクリックしてアカウントを確認してください。",
+    "goToLogin": "ログインへ進む",
+    "failedTitle": "登録に失敗しました"
   }
 }

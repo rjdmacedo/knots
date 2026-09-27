@@ -109,11 +109,14 @@ const CHECKLIST: PasswordValidationError[] = [
 export function AccountPasswordSettings({
   passkeyCount,
   hasPassword: hasPasswordFromServer,
+  emailVerified: emailVerifiedFromServer,
 }: {
-  /** Number of registered passkeys; Remove also requires a password. */
+  /** Number of registered passkeys. */
   passkeyCount: number
   /** Server snapshot. The profile query replaces it after remove. */
   hasPassword: boolean
+  /** Verified email can receive a magic link, so it counts as another way in. */
+  emailVerified: Date | null
 }) {
   const t = useTranslations('ProfileSettings')
   const tp = useTranslations('ProfileSettings.Password')
@@ -123,10 +126,11 @@ export function AccountPasswordSettings({
 
   const profile = trpc.profile.getProfile.useQuery()
   const hasPassword = profile.data?.hasPassword ?? hasPasswordFromServer
+  const emailVerified = profile.data?.emailVerified ?? emailVerifiedFromServer
 
   const removePassword = trpc.profile.removePassword.useMutation()
 
-  const canRemove = hasPassword && passkeyCount > 0
+  const canRemove = hasPassword && (passkeyCount > 0 || emailVerified != null)
 
   return (
     <>

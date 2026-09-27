@@ -145,26 +145,23 @@ function setupMocks({
 // P2: Filter sections visibility tracks channel state
 // ---------------------------------------------------------------------------
 
-// Feature: unified-group-notifications, Property 2: Filter sections visibility tracks channel state
-describe('Property 2: Filter sections visibility tracks channel state', () => {
+// Feature: unified-group-notifications, Property 2: Filter sections stay visible without channel toggles
+describe('Property 2: Filter sections stay visible without channel toggles', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
   /**
-   * **Validates: Requirements 2.4, 2.5**
-   *
-   * For any combination of (pushEnabled, emailEnabled) booleans,
-   * the Members and Events filter sections SHALL be visible if and only if
-   * at least one channel is enabled.
+   * Channel choice lives in account settings. The group popover always shows
+   * the member and event filters, and never the channel switches or the
+   * "enable a channel" hint.
    */
-  it('shows Members and Events sections iff at least one channel is enabled', () => {
-    // Feature: unified-group-notifications, Property 2: Filter sections visibility tracks channel state
+  it('shows Members and Events and hides channel controls', () => {
     fc.assert(
       fc.property(fc.boolean(), fc.boolean(), (pushEnabled, emailEnabled) => {
         setupMocks({ pushEnabled, emailEnabled })
 
-        const { unmount, container } = render(
+        const { unmount } = render(
           <NotificationSettingsPopover
             groupId={GROUP_ID}
             members={MEMBERS}
@@ -172,21 +169,16 @@ describe('Property 2: Filter sections visibility tracks channel state', () => {
           />,
         )
 
-        const atLeastOneEnabled = pushEnabled || emailEnabled
-
-        // Suppress unused-variable warning — container is rendered but sections
-        // are queried via screen below.
-        void container
-
-        if (atLeastOneEnabled) {
-          expect(screen.queryByText('membersLabel')).toBeInTheDocument()
-          expect(screen.queryByText('eventsLabel')).toBeInTheDocument()
-        } else {
-          expect(screen.queryByText('membersLabel')).not.toBeInTheDocument()
-          expect(screen.queryByText('eventsLabel')).not.toBeInTheDocument()
-          // Hint should be visible instead
-          expect(screen.queryByText('enableChannelHint')).toBeInTheDocument()
-        }
+        expect(screen.queryByText('membersLabel')).toBeInTheDocument()
+        expect(screen.queryByText('eventsLabel')).toBeInTheDocument()
+        expect(screen.queryByText('channelsLabel')).not.toBeInTheDocument()
+        expect(screen.queryByText('enableChannelHint')).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('switch', { name: 'pushLabel' }),
+        ).not.toBeInTheDocument()
+        expect(
+          screen.queryByRole('switch', { name: 'emailLabel' }),
+        ).not.toBeInTheDocument()
 
         unmount()
       }),

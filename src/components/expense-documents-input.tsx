@@ -20,8 +20,8 @@ import {
 } from '@/components/ui/carousel'
 import { toast } from '@/components/ui/toast'
 import { Locale } from '@/i18n'
-import { randomId } from '@/lib/api'
 import { api } from '@/lib/api-client'
+import { randomId } from '@/lib/random-id'
 import { ExpenseFormValues } from '@/lib/schemas'
 import { cn, formatFileSize } from '@/lib/utils'
 import { Plus, Trash, XIcon } from 'lucide-react'
@@ -302,6 +302,7 @@ export function DocumentThumbnail({
   readOnly = false,
   uploading = false,
   locale,
+  layout = 'card',
 }: {
   document: ExpenseDocumentItem
   documents: ExpenseDocumentItem[]
@@ -309,6 +310,7 @@ export function DocumentThumbnail({
   readOnly?: boolean
   uploading?: boolean
   locale?: Locale
+  layout?: 'card' | 'thumbnail'
 }) {
   const t = useTranslations('ExpenseDocumentsInput')
   const defaultLocale = useLocale() as Locale
@@ -347,47 +349,9 @@ export function DocumentThumbnail({
       globalThis.document.removeEventListener('keydown', onKeyDown, true)
   }, [open])
 
-  return (
-    <>
-      <Attachment
-        state={attachmentState}
-        orientation="vertical"
-        className="shrink-0"
-      >
-        <AttachmentMedia variant="image">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={document.url} alt="" />
-        </AttachmentMedia>
-        <AttachmentContent>
-          <AttachmentTitle>{fileName}</AttachmentTitle>
-          <AttachmentDescription>
-            {attachmentState === 'uploading' ? t('uploadingDocument') : meta}
-          </AttachmentDescription>
-        </AttachmentContent>
-        {!readOnly ? (
-          <AttachmentActions>
-            <AttachmentAction
-              aria-label={t('removeDocument', { name: fileName })}
-              onClick={(event) => {
-                event.preventDefault()
-                event.stopPropagation()
-                deleteDocument(document)
-              }}
-            >
-              <XIcon />
-            </AttachmentAction>
-          </AttachmentActions>
-        ) : null}
-        <AttachmentTrigger
-          type="button"
-          aria-label={t('previewDocument', { name: fileName })}
-          className="focus-visible:ring-inset"
-          onClick={() => setOpen(true)}
-        />
-      </Attachment>
-      {open &&
-        typeof document !== 'undefined' &&
-        createPortal(
+  const preview =
+    open && typeof document !== 'undefined'
+      ? createPortal(
           <div
             role="dialog"
             aria-modal="true"
@@ -448,7 +412,70 @@ export function DocumentThumbnail({
             </Carousel>
           </div>,
           globalThis.document.body,
-        )}
+        )
+      : null
+
+  if (layout === 'thumbnail') {
+    return (
+      <>
+        <button
+          type="button"
+          aria-label={t('previewDocument', { name: fileName })}
+          onClick={() => setOpen(true)}
+          className="relative size-full overflow-hidden rounded-xl border bg-muted"
+        >
+          <Image
+            src={document.url}
+            alt=""
+            fill
+            className="object-cover"
+            sizes="80px"
+          />
+        </button>
+        {preview}
+      </>
+    )
+  }
+
+  return (
+    <>
+      <Attachment
+        state={attachmentState}
+        orientation="vertical"
+        className="shrink-0"
+      >
+        <AttachmentMedia variant="image">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={document.url} alt="" />
+        </AttachmentMedia>
+        <AttachmentContent>
+          <AttachmentTitle>{fileName}</AttachmentTitle>
+          <AttachmentDescription>
+            {attachmentState === 'uploading' ? t('uploadingDocument') : meta}
+          </AttachmentDescription>
+        </AttachmentContent>
+        {!readOnly ? (
+          <AttachmentActions>
+            <AttachmentAction
+              aria-label={t('removeDocument', { name: fileName })}
+              onClick={(event) => {
+                event.preventDefault()
+                event.stopPropagation()
+                deleteDocument(document)
+              }}
+            >
+              <XIcon />
+            </AttachmentAction>
+          </AttachmentActions>
+        ) : null}
+        <AttachmentTrigger
+          type="button"
+          aria-label={t('previewDocument', { name: fileName })}
+          className="focus-visible:ring-inset"
+          onClick={() => setOpen(true)}
+        />
+      </Attachment>
+      {preview}
     </>
   )
 }

@@ -15,8 +15,11 @@ import { hashPassword, validatePassword, verifyPassword } from './password'
 import {
   EMAIL_RESEND_RATE_LIMIT,
   PASSWORD_RESET_RATE_LIMIT,
+  authEmailRecipientLimiter,
+  hashRateLimitIdentity,
   rateLimiter,
 } from './rate-limiter'
+import { validateReturnUrl } from './return-url'
 import { tokenManager } from './token-manager'
 
 export interface RegisterInput {
@@ -49,6 +52,10 @@ export interface AuthService {
   ): Promise<{ ok: true } | { ok: false; error: AuthError }>
   resetPassword(
     input: ResetPasswordInput,
+  ): Promise<{ ok: true } | { ok: false; error: AuthError }>
+  requestMagicLink(
+    email: string,
+    callbackUrl?: string | null,
   ): Promise<{ ok: true } | { ok: false; error: AuthError }>
 }
 
@@ -349,6 +356,53 @@ function createAuthService(emailService: EmailService): AuthService {
       }
 
       // Always return success to prevent email enumeration
+      return { ok: true }
+    },
+
+    async requestMagicLink(email, callbackUrl) {
+      const normalizedEmail = email.toLowerCase().trim()
+
+      const hashedKey = hashRateLimitIdentity(normalizedEmail)
+      const decision = authEmailRecipientLimiter.hit(hashedKey)
+
+      if (!decision.allowed) {
+        return {
+          ok: false,
+          error: {
+            code: 'RATE_LIMITED',
+            message: 'Too many email requests. Please try again later.',
+            retryAfter: new Date(
+              Date.now() + decision.retryAfterSeconds * 1000,
+            ),
+          },
+        }
+      }
+
+      const baseUrl =
+        process.env.NEXTAUTH_URL ||
+        process.env.NEXT_PUBLIC_APP_URL ||
+        'http://localhost:3000'
+      const safeCallback = callbackUrl
+        ? validateReturnUrl(callbackUrl, baseUrl)
+        : null
+
+      const user = await prisma.user.findUnique({
+        where: { email: normalizedEmail },
+        select: { id: true, emailVerified: true },
+      })
+
+      // Unknown addresses and unverified accounts get the same success
+      // response, and no email, so the caller cannot tell them apart.
+      if (user?.emailVerified) {
+        await tokenManager.invalidateUserTokens(user.id, 'MAGIC_LINK')
+        const token = await tokenManager.createMagicLinkToken(user.id)
+        await emailService.sendMagicLinkEmail(
+          normalizedEmail,
+          token,
+          safeCallback,
+        )
+      }
+
       return { ok: true }
     },
 

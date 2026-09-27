@@ -14,6 +14,7 @@ const publicRoutes = [
   '/forgot-password',
   '/reset-password',
   '/verify-email',
+  '/login/magic',
   '/api/health',
 ]
 

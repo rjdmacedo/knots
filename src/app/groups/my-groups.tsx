@@ -13,32 +13,18 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { toast } from '@/components/ui/toast'
-import { usePushNotificationSubscription } from '@/lib/push/use-push-notification-subscription'
 import { trpc } from '@/trpc/client'
 import {
   AlertCircle,
   Archive,
   ArchiveRestore,
-  Bell,
-  BellOff,
   Loader2,
   LogOut,
   MoreVertical,
@@ -51,9 +37,6 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-const GROUP_NAME_MIN = 1
-const GROUP_NAME_MAX = 100
-
 type UserGroup = {
   id: string
   name: string
@@ -64,13 +47,11 @@ type UserGroup = {
 
 export function MyGroups() {
   const t = useTranslations('MyGroups')
-  const { data: profile } = trpc.profile.getProfile.useQuery()
   const {
     data: groups,
     isLoading,
     error,
   } = trpc.groupMembership.getUserGroups.useQuery()
-  const [dialogOpen, setDialogOpen] = useState(false)
 
   const activeGroups = groups?.filter((group) => group.archivedAt == null) ?? []
   const archivedGroups =
@@ -101,7 +82,10 @@ export function MyGroups() {
   return (
     <MyGroupsLayout
       action={
-        <CreateGroupDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+        <Button nativeButton={false} render={<Link href="/groups/create" />}>
+          <Plus className="h-4 w-4 mr-2" />
+          {t('createGroup')}
+        </Button>
       }
     >
       {groups && groups.length === 0 ? (
@@ -119,7 +103,7 @@ export function MyGroups() {
               <ul className="grid gap-2 sm:grid-cols-2">
                 {activeGroups.map((group) => (
                   <li key={group.id}>
-                    <GroupCard group={group} currentUserId={profile?.id} />
+                    <GroupCard group={group} />
                   </li>
                 ))}
               </ul>
@@ -134,7 +118,7 @@ export function MyGroups() {
               <ul className="grid gap-2 sm:grid-cols-2">
                 {archivedGroups.map((group) => (
                   <li key={group.id}>
-                    <GroupCard group={group} currentUserId={profile?.id} />
+                    <GroupCard group={group} />
                   </li>
                 ))}
               </ul>
@@ -146,22 +130,13 @@ export function MyGroups() {
   )
 }
 
-function GroupCard({
-  group,
-  currentUserId,
-}: {
-  group: UserGroup
-  currentUserId: string | undefined
-}) {
+function GroupCard({ group }: { group: UserGroup }) {
   const t = useTranslations('MyGroups')
   const tGroups = useTranslations('Groups')
-  const tNotifications = useTranslations('Notifications')
   const router = useRouter()
   const [leaveDialogOpen, setLeaveDialogOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const utils = trpc.useUtils()
-  const pushConfigured = !!process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
-  const notifications = usePushNotificationSubscription(group.id, currentUserId)
   const isArchived = group.archivedAt != null
   const isOwner = group.role === 'OWNER'
 
@@ -225,33 +200,6 @@ function GroupCard({
             <MoreVertical className="h-4 w-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {pushConfigured && notifications.isSupported && !isArchived && (
-              <>
-                <DropdownMenuItem
-                  disabled={notifications.isLoading}
-                  onSelect={async (e) => {
-                    e.preventDefault()
-                    notifications.clearError()
-                    const errorCode = await notifications.toggle()
-                    if (errorCode) {
-                      toast.error(tNotifications(errorCode))
-                    }
-                  }}
-                >
-                  {notifications.isLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : notifications.isSubscribed ? (
-                    <BellOff className="h-4 w-4" />
-                  ) : (
-                    <Bell className="h-4 w-4" />
-                  )}
-                  {notifications.isSubscribed
-                    ? tGroups('disableNotifications')
-                    : tGroups('enableNotifications')}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-              </>
-            )}
             {isArchived ? (
               <DropdownMenuItem
                 disabled={isBusy}
@@ -353,114 +301,5 @@ function MyGroupsLayout({
       </div>
       <div>{children}</div>
     </>
-  )
-}
-
-function CreateGroupDialog({
-  open,
-  onOpenChange,
-}: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}) {
-  const t = useTranslations('MyGroups')
-  const [name, setName] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
-  const utils = trpc.useUtils()
-
-  const createGroup = trpc.groupMembership.createGroup.useMutation({
-    onSuccess: async (data) => {
-      await utils.groupMembership.getUserGroups.invalidate()
-      onOpenChange(false)
-      setName('')
-      setError(null)
-      router.push(`/groups/${data.groupId}`)
-    },
-    onError: (err) => {
-      setError(err.message)
-    },
-  })
-
-  function validateName(value: string): string | null {
-    if (value.trim().length < GROUP_NAME_MIN) {
-      return 'Group name is required.'
-    }
-    if (value.trim().length > GROUP_NAME_MAX) {
-      return `Group name must be ${GROUP_NAME_MAX} characters or less.`
-    }
-    return null
-  }
-
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const validationError = validateName(name)
-    if (validationError) {
-      setError(validationError)
-      return
-    }
-    setError(null)
-    createGroup.mutate({ name: name.trim() })
-  }
-
-  function handleOpenChange(nextOpen: boolean) {
-    if (!nextOpen) {
-      setName('')
-      setError(null)
-    }
-    onOpenChange(nextOpen)
-  }
-
-  return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger
-        render={
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            {t('createGroup')}
-          </Button>
-        }
-      />
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t('createGroupTitle')}</DialogTitle>
-          <DialogDescription>{t('createGroupDescription')}</DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="grid gap-4">
-          {error && (
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-          <div className="grid gap-2">
-            <Label htmlFor="group-name">{t('groupNameLabel')}</Label>
-            <Input
-              id="group-name"
-              placeholder="e.g. Household, Trip to Paris"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value)
-                if (error) setError(null)
-              }}
-              maxLength={GROUP_NAME_MAX + 10}
-              disabled={createGroup.isPending}
-              autoFocus
-            />
-            <p className="text-xs text-muted-foreground">
-              {name.trim().length}/{GROUP_NAME_MAX} {t('characters')}
-            </p>
-          </div>
-          <DialogFooter>
-            <Button type="submit" disabled={createGroup.isPending}>
-              {createGroup.isPending && (
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              )}
-              {t('createGroup')}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
   )
 }
