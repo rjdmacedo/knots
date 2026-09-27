@@ -16,17 +16,31 @@ export const groupMembershipRouter = createTRPCRouter({
    * Create a new group. The authenticated user becomes the first member.
    */
   createGroup: protectedProcedure
-    .input(z.object({ name: z.string().min(1).max(100) }))
+    .input(
+      z.object({
+        name: z.string().min(1).max(100),
+        currencyCode: z.union([z.string().length(3), z.literal('')]),
+        currencySymbol: z.string().max(5).optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
-      const result = await groupService.createGroup(input.name, ctx.user.id)
+      const result = await groupService.createGroup(
+        input.name,
+        ctx.user.id,
+        input.currencyCode,
+        input.currencySymbol,
+      )
 
       if (!result.ok) {
+        const message =
+          result.error === 'INVALID_NAME'
+            ? 'Group name must be between 1 and 100 characters.'
+            : result.error === 'INVALID_CURRENCY'
+              ? 'Choose a valid currency.'
+              : 'You have reached the maximum number of groups (100).'
         throw new TRPCError({
           code: 'BAD_REQUEST',
-          message:
-            result.error === 'INVALID_NAME'
-              ? 'Group name must be between 1 and 100 characters.'
-              : 'You have reached the maximum number of groups (100).',
+          message,
         })
       }
 

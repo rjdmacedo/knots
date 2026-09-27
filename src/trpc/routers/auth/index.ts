@@ -21,6 +21,11 @@ const requestPasswordResetInputSchema = z.object({
   email: z.string().email(),
 })
 
+const requestMagicLinkInputSchema = z.object({
+  email: z.string().email(),
+  callbackUrl: z.string().optional(),
+})
+
 const resetPasswordInputSchema = z.object({
   token: z.string().min(1),
   newPassword: z.string(),
@@ -115,6 +120,29 @@ export const authRouter = createTRPCRouter({
       }
 
       // Always return success to prevent email enumeration
+      return { success: true }
+    }),
+
+  requestMagicLink: baseProcedure
+    .input(requestMagicLinkInputSchema)
+    .mutation(async ({ input }) => {
+      const result = await authService.requestMagicLink(
+        input.email,
+        input.callbackUrl,
+      )
+
+      if (!result.ok) {
+        const codeMap: Record<string, string> = {
+          RATE_LIMITED: 'TOO_MANY_REQUESTS',
+        }
+
+        throw new TRPCError({
+          code: (codeMap[result.error.code] as any) ?? 'INTERNAL_SERVER_ERROR',
+          message: result.error.message,
+          cause: result.error,
+        })
+      }
+
       return { success: true }
     }),
 

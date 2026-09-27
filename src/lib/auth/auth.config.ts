@@ -15,6 +15,7 @@ const publicRoutes = [
   '/forgot-password',
   '/reset-password',
   '/verify-email',
+  '/login/magic',
   '/api/health',
 ]
 
@@ -32,6 +33,13 @@ export default {
     }),
     Credentials({
       id: 'passkey',
+      credentials: {
+        token: { type: 'text' },
+      },
+      // authorize is handled in auth.ts (full config), not here
+    }),
+    Credentials({
+      id: 'magic-link',
       credentials: {
         token: { type: 'text' },
       },

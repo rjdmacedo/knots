@@ -1,5 +1,10 @@
 'use client'
 
+import {
+  EmailMethodSwitch,
+  type EmailMethod,
+} from '@/components/auth/email-method-switch'
+import { usePasskeySignIn } from '@/components/auth/use-passkey-sign-in'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -10,42 +15,32 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { PasswordInput } from '@/components/ui/password-input'
-import {
-  loginAction,
-  passkeyLoginAction,
-  type LoginResult,
-} from '@/lib/auth/actions'
+import { loginAction, type LoginResult } from '@/lib/auth/actions'
 import { trpc } from '@/trpc/client'
-import { startAuthentication } from '@simplewebauthn/browser'
-import { AlertCircle, Fingerprint, Loader2 } from 'lucide-react'
+import { AlertCircle, Fingerprint, Loader2, Mail } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useState, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 
 export default function LoginPage() {
+  const t = useTranslations('Login')
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') ?? undefined
 
+  const [method, setMethod] = useState<EmailMethod>('magic-link')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [magicSent, setMagicSent] = useState(false)
   const [isPending, startTransition] = useTransition()
-  const [isPasskeyPending, startPasskeyTransition] = useTransition()
-  const [passkeySupported, setPasskeySupported] = useState(false)
+  const [isMagicPending, startMagicTransition] = useTransition()
+  const passkey = usePasskeySignIn(callbackUrl)
 
-  const generateOptions =
-    trpc.passkey.generateAuthenticationOptions.useMutation()
-  const verifyAuthentication = trpc.passkey.verifyAuthentication.useMutation()
-
-  // WebAuthn is only usable when the browser exposes PublicKeyCredential.
-  useEffect(() => {
-    setPasskeySupported(
-      typeof window !== 'undefined' && !!window.PublicKeyCredential,
-    )
-  }, [])
+  const requestMagicLink = trpc.auth.requestMagicLink.useMutation()
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -64,133 +59,160 @@ export default function LoginPage() {
     })
   }
 
-  function handlePasskeySignIn() {
+  function handleMagicLink(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
     setError(null)
+    if (!email.trim()) {
+      setError(t('magicLinkEmailRequired'))
+      return
+    }
 
-    startPasskeyTransition(async () => {
+    startMagicTransition(async () => {
       try {
-        const options = await generateOptions.mutateAsync()
-        const authResponse = await startAuthentication({ optionsJSON: options })
-        const { loginToken } = await verifyAuthentication.mutateAsync({
-          // The router accepts the WebAuthn response as an opaque record and
-          // validates it server-side; the browser type has no index signature.
-          response: authResponse as unknown as Record<string, unknown> & {
-            id: string
-          },
+        await requestMagicLink.mutateAsync({
+          email,
+          callbackUrl,
         })
-
-        const result = await passkeyLoginAction({
-          token: loginToken,
-          redirectTo: callbackUrl,
-        })
-
-        if (!result.ok) {
-          setError(result.error)
-        }
+        setMagicSent(true)
       } catch (err) {
-        // A user who dismisses the browser prompt aborts the ceremony; treat
-        // that as a no-op rather than an error message.
-        if (err instanceof Error && err.name === 'NotAllowedError') {
-          return
-        }
-        setError('We could not sign you in with that passkey. Try again.')
+        const message =
+          err instanceof Error ? err.message : t('magicLinkSendFailed')
+        setError(message)
       }
     })
   }
 
-  const busy = isPending || isPasskeyPending
+  const busy = isPending || isMagicPending || passkey.isPending
+
+  if (magicSent) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('magicLinkSentTitle')}</CardTitle>
+          <CardDescription>{t('magicLinkSentDescription')}</CardDescription>
+        </CardHeader>
+        <CardFooter>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={() => setMagicSent(false)}
+          >
+            {t('backToLogin')}
+          </Button>
+        </CardFooter>
+      </Card>
+    )
+  }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl">Sign in</CardTitle>
-        <CardDescription>
-          Enter your email and password to access your account.
-        </CardDescription>
+        <CardTitle>{t('title')}</CardTitle>
+        <CardDescription>{t('description')}</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="grid gap-4">
-          {error && (
+        <FieldGroup className="gap-4">
+          {error ? (
             <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
+              <AlertCircle />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
-          )}
+          ) : null}
 
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+          {passkey.supported ? (
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={() => {
+                setError(null)
+                passkey.signIn(setError)
+              }}
               disabled={busy}
-            />
-          </div>
+            >
+              {passkey.isPending ? (
+                <Loader2 className="animate-spin" data-icon="inline-start" />
+              ) : (
+                <Fingerprint data-icon="inline-start" />
+              )}
+              {t('usePasskey')}
+            </Button>
+          ) : null}
 
-          <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
-            <PasswordInput
-              id="password"
-              placeholder="••••••••"
-              autoComplete="current-password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={busy}
-            />
-          </div>
+          <EmailMethodSwitch method={method} onMethodChange={setMethod} />
 
-          <Button type="submit" className="w-full" disabled={busy}>
-            {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-            Sign in
-          </Button>
-
-          {passkeySupported && (
-            <>
-              <div className="flex items-center gap-3">
-                <span className="h-px flex-1 bg-border" />
-                <span className="text-xs uppercase text-muted-foreground">
-                  or
-                </span>
-                <span className="h-px flex-1 bg-border" />
-              </div>
-
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={handlePasskeySignIn}
-                disabled={busy}
-              >
-                {isPasskeyPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+          {method === 'magic-link' ? (
+            <form onSubmit={handleMagicLink} className="flex flex-col gap-4">
+              <Field>
+                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={busy}
+                />
+              </Field>
+              <Button type="submit" className="w-full" disabled={busy}>
+                {isMagicPending ? (
+                  <Loader2 className="animate-spin" data-icon="inline-start" />
                 ) : (
-                  <Fingerprint className="h-4 w-4" />
+                  <Mail data-icon="inline-start" />
                 )}
-                Use a passkey
+                {t('sendSignInLink')}
               </Button>
-            </>
+            </form>
+          ) : (
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <Field>
+                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={busy}
+                />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="password">Password</FieldLabel>
+                <PasswordInput
+                  id="password"
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={busy}
+                />
+              </Field>
+              <Link
+                href="/forgot-password"
+                className="text-sm font-medium text-primary"
+              >
+                {t('forgotPassword')}
+              </Link>
+              <Button type="submit" className="w-full" disabled={busy}>
+                {isPending ? (
+                  <Loader2 className="animate-spin" data-icon="inline-start" />
+                ) : null}
+                {t('signInWithPassword')}
+              </Button>
+            </form>
           )}
-        </form>
+        </FieldGroup>
       </CardContent>
-      <CardFooter className="flex flex-col items-center gap-2">
-        <Link
-          href="/forgot-password"
-          className="text-sm text-primary underline-offset-4 hover:underline"
-        >
-          Forgot password?
-        </Link>
+      <CardFooter className="justify-center">
         <p className="text-sm text-muted-foreground">
-          Don&apos;t have an account?{' '}
-          <Link
-            href="/register"
-            className="font-medium text-primary underline-offset-4 hover:underline"
-          >
-            Sign up
+          {t('noAccount')}{' '}
+          <Link href="/register" className="font-medium text-primary">
+            {t('signUp')}
           </Link>
         </p>
       </CardFooter>

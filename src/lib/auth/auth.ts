@@ -15,6 +15,7 @@ import authConfig from './auth.config'
 import { verifyPassword } from './password'
 import { enforceSessionLimit } from './session-limit'
 import { resolveSessionUser } from './session-user'
+import { tokenManager } from './token-manager'
 
 export const { auth, signIn, signOut, handlers } = NextAuth({
   ...authConfig,
@@ -81,6 +82,40 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
         }
       },
     }),
+    // Magic-link sign-in: the email link carries a single-use token. authorize
+    // consumes it and only then builds the same session shape as a password login.
+    Credentials({
+      id: 'magic-link',
+      credentials: {
+        token: { type: 'text' },
+      },
+      async authorize(credentials) {
+        const token = credentials?.token as string | undefined
+        if (!token) return null
+
+        const result = await tokenManager.validateMagicLinkToken(token)
+        if (!result.ok) return null
+
+        const user = await prisma.user.findUnique({
+          where: { id: result.userId },
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            emailVerified: true,
+          },
+        })
+
+        if (!user?.emailVerified) return null
+
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          emailVerified: user.emailVerified,
+        }
+      },
+    }),
   ],
   callbacks: {
     ...authConfig.callbacks,
@@ -89,11 +124,22 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
         token.id = user.id
         token.name = user.name
         token.email = user.email
+        // Set only at sign-in. Later refreshes must not slide this timestamp,
+        // so the passkey gate can tell how old the sign-in is.
+        token.authTime = Date.now()
       }
 
       if (token.id) {
         const dbUser = await resolveSessionUser(token.id as string)
         if (!dbUser) {
+          return null
+        }
+
+        if (
+          dbUser.sessionsInvalidatedAt &&
+          typeof token.authTime === 'number' &&
+          token.authTime < dbUser.sessionsInvalidatedAt.getTime()
+        ) {
           return null
         }
       }
@@ -110,9 +156,20 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
         return { expires: session.expires }
       }
 
+      if (
+        user.sessionsInvalidatedAt &&
+        typeof token.authTime === 'number' &&
+        token.authTime < user.sessionsInvalidatedAt.getTime()
+      ) {
+        return { expires: session.expires }
+      }
+
       session.user.id = user.id
       session.user.name = user.name
       session.user.email = user.email
+      if (typeof token.authTime === 'number') {
+        session.authTime = token.authTime
+      }
       return session
     },
   },

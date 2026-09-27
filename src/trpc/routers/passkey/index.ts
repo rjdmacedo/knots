@@ -7,6 +7,7 @@
  * page (task 3.4). All ceremony logic, challenge handling, and origin/rpID
  * checks live in `src/lib/passkey`.
  */
+import { isSessionFresh } from '@/lib/auth/session-freshness'
 import {
   deletePasskey,
   generateAuthenticationOptions,
@@ -63,7 +64,8 @@ function passkeyErrorToTRPCError(error: PasskeyError): TRPCError {
       : error.code === 'PASSKEY_NOT_FOUND' ||
           error.code === 'CREDENTIAL_NOT_FOUND'
         ? 'NOT_FOUND'
-        : error.code === 'LAST_SIGN_IN_METHOD'
+        : error.code === 'LAST_SIGN_IN_METHOD' ||
+            error.code === 'SESSION_NOT_FRESH'
           ? 'PRECONDITION_FAILED'
           : 'BAD_REQUEST'
 
@@ -71,8 +73,15 @@ function passkeyErrorToTRPCError(error: PasskeyError): TRPCError {
 }
 
 export const passkeyRouter = createTRPCRouter({
+  sessionFreshness: protectedProcedure.query(({ ctx }) => {
+    return { fresh: isSessionFresh(ctx.session.authTime) }
+  }),
+
   generateRegistrationOptions: protectedProcedure.mutation(async ({ ctx }) => {
-    const result = await generateRegistrationOptions(ctx.user.id)
+    const result = await generateRegistrationOptions(
+      ctx.user.id,
+      ctx.session.authTime,
+    )
     if (!result.ok) throw passkeyErrorToTRPCError(result.error)
     return result.value
   }),
@@ -84,6 +93,7 @@ export const passkeyRouter = createTRPCRouter({
         ctx.user.id,
         input.response as unknown as RegistrationResponseJSON,
         input.name,
+        ctx.session.authTime,
       )
       if (!result.ok) throw passkeyErrorToTRPCError(result.error)
       return result.value

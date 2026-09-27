@@ -98,8 +98,9 @@ export function SettingsPage({ profile }: { profile: SettingsPageProfile }) {
             <AccountPasswordSettings
               passkeyCount={passkeyCount}
               hasPassword={profile.hasPassword}
+              emailVerified={profile.emailVerified}
             />
-            <AccountPasskeySettings hasPassword={profile.hasPassword} />
+            <AccountPasskeySettings />
           </>
         }
       />

@@ -20,7 +20,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { getGroupExpenses } from '@/lib/api'
+import type { getGroupExpenses } from '@/lib/api'
 import { Currency } from '@/lib/currency'
 import type { CopyableExpense } from '@/lib/expense-copy'
 import { buildCopyExpensePrefill } from '@/lib/expense-copy'

@@ -91,15 +91,6 @@ jest.mock('react', () => ({
 // Imports (after mocks)
 // ---------------------------------------------------------------------------
 
-import { usePushNotificationSubscription } from '@/lib/push/use-push-notification-subscription'
-import { trpc } from '@/trpc/client'
-
-const mockUsePush = usePushNotificationSubscription as jest.Mock
-const mockGetPrefsQuery = trpc.groupMembership.getNotificationPreferences
-  .useQuery as jest.Mock
-const mockSetPrefsMutation = trpc.groupMembership.setNotificationPreferences
-  .useMutation as jest.Mock
-
 let GroupNotificationToggle: React.ComponentType<{
   groupId: string
   members: Array<{ id: string; name: string }>
@@ -128,44 +119,17 @@ const MEMBERS = [
 // ---------------------------------------------------------------------------
 
 /**
- * Feature: unified-group-notifications, Property 1: Bell icon reflects channel state
- *
- * For any combination of (pushEnabled, emailEnabled) booleans,
- * GroupNotificationToggle SHALL render a Bell icon when at least one channel
- * is enabled, and a BellOff icon when both channels are disabled.
- *
- * **Validates: Requirements 1.4**
+ * The bell opens per-group filters. Channel state lives in account settings,
+ * so the icon is always Bell.
  */
-describe('Property 1: Bell icon reflects channel state', () => {
+describe('Property 1: Bell icon opens group notification filters', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  it('renders Bell when at least one channel is enabled, BellOff when both disabled', () => {
-    // Feature: unified-group-notifications, Property 1: Bell icon reflects channel state
+  it('always renders Bell', () => {
     fc.assert(
-      fc.property(fc.boolean(), fc.boolean(), (pushEnabled, emailEnabled) => {
-        mockUsePush.mockReturnValue({
-          isSubscribed: pushEnabled,
-          isLoading: false,
-          error: null,
-          subscribe: jest.fn(),
-          unsubscribe: jest.fn(),
-          updatePreferences: jest.fn(),
-          clearError: jest.fn(),
-        })
-
-        mockGetPrefsQuery.mockReturnValue({
-          data: { emailNotificationsEnabled: emailEnabled },
-          isError: false,
-          isLoading: false,
-        })
-
-        mockSetPrefsMutation.mockReturnValue({
-          mutateAsync: jest.fn(),
-          isPending: false,
-        })
-
+      fc.property(fc.boolean(), fc.boolean(), () => {
         const { unmount, container } = render(
           <GroupNotificationToggle
             groupId={GROUP_ID}
@@ -174,21 +138,13 @@ describe('Property 1: Bell icon reflects channel state', () => {
           />,
         )
 
-        const atLeastOneEnabled = pushEnabled || emailEnabled
-
-        // lucide-react renders SVGs with class "lucide-bell" / "lucide-bell-off"
         const bell = container.querySelector(
           '.lucide-bell:not(.lucide-bell-off)',
         )
         const bellOff = container.querySelector('.lucide-bell-off')
 
-        if (atLeastOneEnabled) {
-          expect(bell).toBeInTheDocument()
-          expect(bellOff).not.toBeInTheDocument()
-        } else {
-          expect(bellOff).toBeInTheDocument()
-          expect(bell).not.toBeInTheDocument()
-        }
+        expect(bell).toBeInTheDocument()
+        expect(bellOff).not.toBeInTheDocument()
 
         unmount()
       }),

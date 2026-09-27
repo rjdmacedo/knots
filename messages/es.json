@@ -20,6 +20,9 @@
     "create": "Crear gasto",
     "createFirst": "Crea el primero",
     "noExpenses": "Tu grupo aun no tiene gastos.",
+    "noSearchResults": "Ningún gasto coincide con tu búsqueda.",
+    "loadError": "No se pudieron cargar los gastos.",
+    "retry": "Reintentar",
     "export": "Exportar",
     "exportJson": "Exportar a JSON",
     "exportCsv": "Exportar a CSV",
@@ -75,19 +78,60 @@
   },
   "ExpenseCard": {
     "paidBy": "Pagado por <strong>{paidBy}</strong> para <paidFor></paidFor>",
+    "paidByMultiple": "Pagado por <strong>{paidBy}</strong> para <paidFor></paidFor>",
     "everyone": "everyone",
     "receivedBy": "Recibido por <strong>{paidBy}</strong> para <paidFor></paidFor>",
     "yourBalance": "Tu balance:",
     "notInvolved": "You are not involved",
     "close": "Cerrar",
-    "paidByMultiple": "Pagado por <strong>{paidBy}</strong> para <paidFor></paidFor>",
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
   "ExpenseDetail": {
+    "backToExpenses": "Volver a gastos",
+    "backToFriend": "Volver a {name}",
+    "copy": "Copiar gasto",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "payment": "Pago",
+    "expense": "Gasto",
+    "onDate": "El {date}",
+    "addedBy": "Añadido por {name} el {date}",
+    "addedByYou": "Añadido por ti el {date}",
+    "lastUpdatedBy": "Última actualización por {name} el {date}",
+    "lastUpdatedByYou": "Última actualización por ti el {date}",
+    "trendsTitle": "Tendencias de gasto en {contextName} :: {categoryName}",
+    "trendsSeeMore": "Ver más detalles",
+    "generalCategory": "General",
+    "editCategory": "Editar categoría",
+    "categoryUpdateError": "No se pudo actualizar la categoría.",
+    "attachReceipt": "Adjuntar recibo",
+    "receiptUploadSuccess": "Recibo adjuntado.",
+    "paidAmount": "{name} pagó {amount}",
+    "youPaidAmount": "Pagaste {amount}",
+    "paidAmountMultiple": "{name} pagó {amount}",
+    "youPaidAmountMultiple": "Pagaste {amount}",
+    "multiPayerSeparator": ", ",
+    "paidYou": "{name} te pagó {amount}",
+    "youPaidRecipient": "Pagaste {amount} a {name}",
+    "payerPaidPayee": "{payer} pagó {amount} a {payee}",
+    "someone": "Alguien",
+    "youOwe": "Debes {amount}",
+    "participantOwes": "{name} debe {amount}",
+    "yourShare": "Tu parte {amount}",
+    "participantShare": "Parte de {name} {amount}",
+    "notes": "Notas",
     "activity": "Actividad",
-    "noActivity": "Todavía no hay actividad registrada para este gasto.",
-    "viewGroupExpense": "View group expense"
+    "noActivity": "No hay cambios registrados todavía.",
+    "paymentDisclaimer": "Este pago se registró usando \"Registrar un pago\". No se transfirió dinero real.",
+    "consolidationDisclaimer": "Este pago forma parte de una liquidación combinada.",
+    "readOnlyNotice": "Este pago no se puede editar ni eliminar individualmente porque forma parte de una liquidación de saldo.",
+    "deleteConfirm": "¿Eliminar este gasto?",
+    "deletePaymentConfirm": "¿Eliminar este pago?",
+    "deleteDescription": "Esto eliminará el gasto para todos los miembros del grupo. Esta acción no se puede deshacer.",
+    "cancel": "Cancelar",
+    "deleting": "Eliminando…",
+    "viewGroupExpense": "Ver gasto del grupo"
   },
   "Groups": {
     "myGroups": "Mis grupos",
@@ -151,6 +195,12 @@
       "label": "Simplificar deudas",
       "description": "Reduce el número de pagos combinando saldos entre los miembros (como Splitwise Pro). Desactivado, cada persona solo debe a quien pagó su parte."
     },
+    "FriendsField": {
+      "label": "Amigos",
+      "description": "Elige personas que ya sean amigos o invita a alguien nuevo.",
+      "placeholder": "Selecciona un amigo…",
+      "remove": "Eliminar a {name}"
+    },
     "Participants": {
       "title": "Participantes",
       "description": "Ingresa el nombre de cada participante.",
@@ -205,6 +255,7 @@
         "description": "Seleccione para quién se recibió el ingreso."
       },
       "splitModeDescription": "Seleccione como quieres dividir el ingreso.",
+      "notesDescription": "Añade detalles opcionales sobre este ingreso.",
       "attachDescription": "Ver y adjuntar tickets para el ingreso."
     },
     "Expense": {
@@ -227,7 +278,7 @@
       "paidByField": {
         "label": "Pagado por",
         "placeholder": "Select a participant",
-        "description": "Select who provided the money and how much each payer contributed."
+        "description": "Selecciona quién aportó el dinero y cuánto contribuyó cada pagador."
       },
       "recurrenceRule": {
         "label": "Recurrencia",
@@ -238,23 +289,29 @@
         "monthly": "Mensual"
       },
       "paidFor": {
-        "title": "Pagado para",
-        "description": "Seleccione para quién se pagó el gasto."
+        "title": "Dividido entre",
+        "description": "Elige cómo dividir el gasto y quién está incluido."
       },
       "splitModeDescription": "Seleccione como quieres dividir el gasto.",
+      "notesDescription": "Añade detalles opcionales sobre este gasto.",
       "attachDescription": "Ver y adjuntar tickets para el gasto."
     },
     "amountField": {
-      "label": "Cantidad"
+      "label": "Cantidad",
+      "description": "Introduce el importe total del gasto.",
+      "convertedDescription": "Introduce el importe en la moneda del grupo."
     },
     "conversionUnavailable": "Para establecer una moneda diferente por gasto y convertir importes, selecciona una moneda no personalizada para el grupo.",
     "originalAmountField": {
-      "label": "Importe a convertir"
+      "label": "Importe a convertir",
+      "description": "Introduce el importe en la moneda original."
     },
     "conversionRateField": {
       "useApi": "Usar tipos de Frankfurter",
       "useCustom": "Usar tipo personalizado",
-      "label": "Tipo de cambio"
+      "label": "Tipo de cambio",
+      "description": "El tipo de cambio utilizado para convertir el importe original a la moneda del grupo.",
+      "collapsibleDescription": "Anular el tipo de cambio automático de Frankfurter"
     },
     "conversionRateState": {
       "loading": "Obteniendo tipos de cambio…",
@@ -279,6 +336,13 @@
     },
     "selectNone": "Seleccionar ninguno",
     "selectAll": "Seleccionar todos",
+    "resetSplit": "Restablecer",
+    "evenlySplit": "Dividido a partes iguales: {amount} × {count}",
+    "totalWeight": "Peso total: {count, plural, one {# parte} other {# partes}}",
+    "matchesPercent": "Coincide con el 100%",
+    "matchesAmount": "Coincide con {amount}",
+    "decreaseShares": "Reducir partes",
+    "increaseShares": "Aumentar partes",
     "noLongerInGroup": "ya no está en este grupo",
     "shares": "partes",
     "advancedOptions": "Opciones avanzadas",
@@ -294,6 +358,43 @@
       "byPercentageDescription": "Dividir con porcentajes que suman 100%",
       "byAmountDescription": "Dividir con un importe fijo para cada participante"
     },
+    "itemized": {
+      "toggleLabel": "Dividir por elementos",
+      "toggleDescription": "Añade elementos, asigna cada uno a quien lo compartió y divide impuestos y propinas proporcionalmente.",
+      "noItems": "Aún no hay elementos. Añade las líneas de tu recibo.",
+      "addItem": "Añadir elemento",
+      "removeItem": "Eliminar elemento",
+      "itemTitleLabel": "Elemento",
+      "itemTitlePlaceholder": "p. ej., Hamburguesa",
+      "itemUnitPriceLabel": "Precio",
+      "itemQuantityLabel": "Cant.",
+      "itemLineTotalLabel": "Total línea",
+      "itemAmountLabel": "Importe",
+      "sectionTitle": "Elementos",
+      "sectionDescription": "Divide el recibo en líneas. Asigna cada una a quien la compartió.",
+      "assignTo": "Compartido por",
+      "otherLabel": "Otros (impuestos, propina, servicio)",
+      "otherDerivedNote": "La diferencia entre el total y tus elementos, dividida entre todos.",
+      "itemsExceedTotal": "Los elementos suman más que el total del gasto.",
+      "setAmountFromItems": "Establecer total a partir de los elementos",
+      "total": "Total",
+      "addItemsAction": "Añadir elementos",
+      "documentationNote": "Estos elementos son solo de referencia. Asigna un elemento para dividir el gasto por elementos.",
+      "authoritativeNote": "Este gasto se divide por sus elementos.",
+      "leaveAction": "Usar división normal",
+      "switchDialog": {
+        "title": "¿Dividir por elementos?",
+        "description": "Asignar elementos decidirá quién debe qué. Tu división actual se reemplazará.",
+        "confirm": "Dividir por elementos",
+        "cancel": "Cancelar"
+      },
+      "leaveDialog": {
+        "title": "¿Usar división normal?",
+        "description": "El gasto volverá a una división normal. Tus elementos se conservarán como referencia.",
+        "confirm": "Usar división normal",
+        "cancel": "Cancelar"
+      }
+    },
     "DeletePopup": {
       "label": "Borrar",
       "title": "Borrar gasto?",
@@ -301,7 +402,7 @@
       "yes": "Si",
       "cancel": "Cancelar"
     },
-    "attachDocuments": "Adjuntar documentos",
+    "attachDocuments": "Adjuntar imágenes",
     "create": "Crear",
     "creating": "Creando",
     "save": "Guardar",
@@ -317,7 +418,7 @@
       "postSaveTitle": "Expense split across group and direct records",
       "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
       "postSaveGroupHalfLine": "The group expense is {amount}",
-      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "singlePayerNote": "Al añadir personas de fuera del grupo (p. ej., {names}), el gasto se divide en dos, por lo que solo una persona puede pagar.",
       "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
       "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
       "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
@@ -326,7 +427,16 @@
       "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
+  "ExpenseTitleInput": {
+    "noSuggestions": "No se encontraron sugerencias.",
+    "clear": "Borrar"
+  },
   "ExpenseDocumentsInput": {
+    "addImage": "Añadir imagen",
+    "addDocumentHint": "PNG o JPG · hasta 5 MB",
+    "previewDocument": "Vista previa de {name}",
+    "removeDocument": "Eliminar {name}",
+    "uploadingDocument": "Subiendo…",
     "TooBigToast": {
       "title": "El archivo es demasiado grande",
       "description": "El tamaño máximo de archivo que puede cargar es {maxSize}. El tuyo pesa {size}."
@@ -388,6 +498,8 @@
       "noOneOwesYou": "Nadie te debe en este grupo.",
       "youOweNoOne": "No debes a nadie en este grupo.",
       "confirmSettle": "¿Registrar que pagaste {amount} a {name}?",
+      "confirmSettleReceived": "¿Registrar que {name} te pagó {amount}?",
+      "settleReceivedTooltip": "Registrar pago recibido",
       "youAreOwed": "{name} te debe {amount}",
       "youOwe": "Debes {amount} a {name}",
       "allSettled": "Estás al día en este grupo.",
@@ -522,16 +634,27 @@
   "Activity": {
     "title": "Actividad",
     "description": "Aquí encontrarás todas las actividades recientes en tu grupo.",
+    "globalTitle": "Actividad",
+    "globalDescription": "Resumen de toda la actividad de tus grupos.",
+    "globalListTitle": "Historial de actividad",
+    "globalListDescription": "Cambios recientes en todos tus grupos.",
+    "globalNoActivity": "Aún no hay actividad en tus grupos.",
     "noActivity": "No hay actividad reciente en este grupo.",
+    "error": "No se pudo cargar la actividad.",
+    "retry": "Reintentar",
     "someone": "Alguien",
     "settingsModified": "Los ajustes del grupo fueron modificados por <strong>{participant}</strong>.",
     "expenseCreated": "Gasto <em>{expense}</em> creado por <strong>{participant}</strong>.",
     "expenseUpdated": "Gasto <em>{expense}</em> actualizado por <strong>{participant}</strong>.",
     "expenseDeleted": "Gasto <em>{expense}</em> borrado por <strong>{participant}</strong>.",
+    "paymentRecorded": "Pago registrado por <strong>{participant}</strong>.",
+    "paymentUpdated": "Pago actualizado por <strong>{participant}</strong>.",
+    "paymentDeleted": "Pago eliminado por <strong>{participant}</strong>.",
     "expenseCreatedDetail": "Creado por <strong>{participant}</strong>.",
     "expenseUpdatedDetail": "Actualizado por <strong>{participant}</strong>.",
     "paymentRecordedDetail": "Registrado por <strong>{participant}</strong>.",
     "paymentUpdatedDetail": "Actualizado por <strong>{participant}</strong>.",
+    "reimbursement": "Pago",
     "Groups": {
       "today": "Hoy",
       "yesterday": "Ayer",
@@ -563,10 +686,7 @@
     "showLess": "Mostrar menos",
     "yes": "Sí",
     "no": "No",
-    "fieldChangesCount": "{count} cambios de campos",
-    "globalTitle": "Actividad",
-    "globalDescription": "Resumen de toda la actividad de tus grupos.",
-    "globalNoActivity": "Aún no hay actividad en tus grupos."
+    "fieldChangesCount": "{count} cambios de campos"
   },
   "Information": {
     "title": "Información",
@@ -590,6 +710,7 @@
     "max50": "Introduzca al menos treinta carácter.",
     "duplicateParticipantName": "Otro participante ya tiene este nombre",
     "titleRequired": "Por favor, introduzca un título",
+    "paymentCategoryNotAllowed": "Pago no es una categoría válida para gastos.",
     "invalidNumber": "Número inválido",
     "invalidExpression": "Expresión inválida. Usa números y los operadores +, -, *, /.",
     "amountRequired": "Debe introducir un importe",
@@ -597,14 +718,27 @@
     "amountTenMillion": "El importe debe ser inferior a 10.000.000.",
     "ratePositive": "El tipo debe ser estrictamente mayor que cero.",
     "paidByRequired": "Debe seleccionar un participante",
+    "paidToRequired": "Debes seleccionar quién recibió el pago.",
+    "paidToDifferent": "El pagador y el destinatario deben ser personas distintas.",
     "paidForMin1": "El gasto debe ser pagado por al menos un participante",
-    "noZeroShares": "Todas las participaciones deben ser superiores a 0",
-    "amountSum": "La suma de los importes debe ser igual al importe del gasto",
-    "percentageSum": "Suma de porcentajes debe ser igual a 100",
     "paidByAmountPositive": "Each payer's amount must be greater than zero.",
     "paidByAmountSum": "Payer amounts must sum to the expense total.",
     "paidByDuplicateParticipants": "Each payer can only appear once.",
-    "reimbursementSinglePayer": "Reimbursements support only a single payer."
+    "reimbursementSinglePayer": "Reimbursements support only a single payer.",
+    "noZeroShares": "Todas las participaciones deben ser superiores a 0",
+    "amountSum": "La suma de los importes debe ser igual al importe del gasto",
+    "percentageSum": "Suma de porcentajes debe ser igual a 100",
+    "itemsRequired": "Añade al menos un elemento o desactiva la división por elementos.",
+    "itemNeedsAssignment": "Asigna cada elemento al menos a una persona.",
+    "itemTitleRequired": "Introduce un nombre para el elemento.",
+    "itemAmountNonNegative": "El importe del elemento no puede ser negativo.",
+    "itemQuantityPositive": "La cantidad debe ser un número entero de al menos 1.",
+    "taxNonNegative": "Los impuestos no pueden ser negativos.",
+    "tipNonNegative": "La propina no puede ser negativa.",
+    "itemAssignmentUnknownParticipant": "Un elemento está asignado a alguien que no forma parte de la división.",
+    "itemizationNotAllowedHere": "Los reembolsos y gastos periódicos no se pueden dividir por elementos.",
+    "itemsExceedAmount": "Los elementos suman más que el total del gasto.",
+    "remainderShareUnknownParticipant": "La división de Otros incluye a alguien que no está en el gasto."
   },
   "Categories": {
     "search": "Buscar categoría...",
@@ -688,6 +822,64 @@
       "heading": "Other currencies"
     }
   },
+  "ExpenseImport": {
+    "button": "Importar gastos",
+    "fromKnots": "Importar desde Knots",
+    "fromSplitwise": "Importar desde Splitwise"
+  },
+  "KnotsImport": {
+    "title": "Importar desde Knots",
+    "description": "Sube un archivo exportado de Knots. Si el archivo incluye personas que aún no están en este grupo, puedes añadirlas aquí antes de importar.",
+    "fileLabel": "Archivo de exportación de Knots",
+    "previewLabel": "Vista previa (primeras 10 líneas)",
+    "clear": "Limpiar",
+    "cancel": "Cancelar",
+    "import": "Importar gastos",
+    "addAndImport": "Añadir miembros e importar",
+    "importing": "Importando...",
+    "analyzing": "Analizando exportación…",
+    "expenseCount": "{count, plural, one {# gasto encontrado} other {# gastos encontrados}}",
+    "matchedParticipants": "Ya están en el grupo: {names}",
+    "missingParticipantsLabel": "Personas para añadir a este grupo",
+    "missingParticipantsDescription": "Introduce un correo electrónico para cada persona. Las cuentas nuevas se crean automáticamente y se vinculan a este grupo. Si ya tienen cuenta, se añaden como miembros.",
+    "expenseReferences": "{count, plural, one {# gasto} other {# gastos}}",
+    "emailLabel": "Correo electrónico",
+    "emailPlaceholder": "nombre@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "Podrán registrarse más tarde con este correo para acceder al grupo.",
+    "errors": {
+      "invalidJson": "Archivo JSON no válido.",
+      "invalidFormat": "Este archivo no es una exportación de Knots válida.",
+      "noExpenses": "La exportación no contiene gastos."
+    },
+    "toast": {
+      "invalidFileType": {
+        "title": "Tipo de archivo no válido",
+        "description": "Selecciona un archivo JSON o CSV exportado de Knots."
+      },
+      "noContent": {
+        "title": "Archivo sin contenido",
+        "description": "Selecciona primero un archivo de exportación de Knots."
+      },
+      "missingEmail": {
+        "title": "Correo obligatorio",
+        "description": "Introduce el correo de {name}."
+      },
+      "success": {
+        "title": "Importación completada",
+        "description": "Se importaron correctamente {count} gastos de Knots."
+      },
+      "error": {
+        "title": "Error al importar",
+        "description": "No se pudo importar el archivo de Knots."
+      },
+      "cancelled": {
+        "title": "Importación cancelada",
+        "description": "La importación se detuvo antes de terminar."
+      }
+    }
+  },
   "SplitwiseImport": {
     "button": "Importar desde Splitwise",
     "title": "Importar desde Splitwise",
@@ -698,6 +890,20 @@
     "cancel": "Cancelar",
     "import": "Importar Gastos",
     "importing": "Importando...",
+    "analyzing": "Analyzing CSV…",
+    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
+    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
+    "participantMappingLabel": "Match Splitwise names",
+    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
+    "mapToMemberLabel": "Group member",
+    "mapToMemberPlaceholder": "Select a member",
+    "addNewMemberOption": "Add new member by email",
+    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "They can register later with this email to access the group.",
     "toast": {
       "invalidFileType": {
         "title": "Tipo de archivo inválido",
@@ -706,6 +912,14 @@
       "noContent": {
         "title": "Sin contenido CSV",
         "description": "Por favor selecciona un archivo CSV primero."
+      },
+      "missingEmail": {
+        "title": "Email required",
+        "description": "Enter an email for {name}."
+      },
+      "incompleteMapping": {
+        "title": "Mapping incomplete",
+        "description": "Choose a member or email for {name}."
       },
       "success": {
         "title": "Importación exitosa",
@@ -718,91 +932,219 @@
       "cancelled": {
         "title": "Importación cancelada",
         "description": "La importación se detuvo antes de terminar."
-      },
-      "missingEmail": {
-        "title": "Email required",
-        "description": "Enter an email for {name}."
-      },
-      "incompleteMapping": {
-        "title": "Mapping incomplete",
-        "description": "Choose a member or email for {name}."
       }
-    },
-    "analyzing": "Analyzing CSV…",
-    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
-    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
-    "participantMappingLabel": "Match Splitwise names",
-    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
-    "mapToMemberLabel": "Group member",
-    "mapToMemberPlaceholder": "Select a member",
-    "addNewMemberOption": "Add new member by email",
-    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
-    "emailLabel": "Email",
-    "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group.",
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
+    }
   },
   "ProfileSettings": {
-    "title": "Configuración del perfil",
+    "title": "Configuración de la cuenta",
+    "back": "Volver",
+    "Profile": {
+      "photoLabel": "Foto de perfil",
+      "photoDescription": "Sube una foto de perfil visible para tus amigos y miembros de grupo.",
+      "photoAlt": "Tu foto de perfil",
+      "choosePhoto": "Elegir foto",
+      "removePhoto": "Eliminar foto",
+      "photoUpdatedToast": "Foto de perfil actualizada.",
+      "photoRemovedToast": "Foto de perfil eliminada.",
+      "photoUnavailableToast": "El almacenamiento de fotos no está configurado.",
+      "photoInvalidToast": "Elige un archivo de imagen válido (PNG, JPG, WebP) de menos de 5 MB.",
+      "photoFailedToast": "No se pudo subir la foto de perfil.",
+      "nameLabel": "Nombre visible",
+      "namePlaceholder": "Tu nombre",
+      "nameError": "Introduce un nombre visible válido.",
+      "nameUpdatedToast": "Nombre visible actualizado.",
+      "saveChanges": "Guardar cambios",
+      "saving": "Guardando…"
+    },
+    "profileTitle": "Perfil",
+    "appPreferencesTitle": "Preferencias de la aplicación",
+    "notificationsTitle": "Canales de notificación",
+    "notificationsDescription": "Gestiona cómo recibes notificaciones de actividad en tus grupos.",
+    "notifications": {
+      "masterSwitchAria": "Notificaciones",
+      "saving": "Guardando preferencias…",
+      "saveSuccess": "Preferencias de notificación guardadas.",
+      "saveError": "No se pudieron guardar las preferencias de notificación.",
+      "comingSoon": "Próximamente",
+      "done": "Hecho",
+      "channelSelectorAria": "Canales de entrega para {category}",
+      "emailNeedsVerification": "Verifica tu correo electrónico para habilitar las notificaciones por correo.",
+      "channelLabel": {
+        "off": "Desactivado",
+        "email": "Correo",
+        "push": "Push",
+        "emailAndPush": "Correo y Push"
+      },
+      "pushDisabled": {
+        "unsupported": "Las notificaciones push no son compatibles con este navegador.",
+        "unconfigured": "Las notificaciones push no están configuradas en este servidor.",
+        "iosInstall": "En iOS, añade Knots a tu pantalla de inicio para recibir notificaciones push.",
+        "denied": "Permiso de notificación denegado. Habilítalo en la configuración de tu navegador."
+      },
+      "thisDevice": {
+        "title": "Notificaciones push en este dispositivo",
+        "description": "Recibe alertas instantáneas en este navegador cuando haya actividad.",
+        "checking": "Comprobando suscripción…",
+        "enabledLabel": "Las notificaciones push están habilitadas en este dispositivo.",
+        "disabledLabel": "Las notificaciones push están desactivadas en este dispositivo.",
+        "pushSelectedWarning": "Has seleccionado notificaciones push para algunas categorías, pero este dispositivo no está suscrito.",
+        "enable": "Habilitar en este dispositivo",
+        "disable": "Deshabilitar en este dispositivo",
+        "error": "No se pudo actualizar la suscripción push."
+      },
+      "groups": {
+        "groups-and-friends": "Grupos y amigos",
+        "expenses": "Gastos",
+        "summaries": "Resúmenes"
+      },
+      "categories": {
+        "added-to-group": "Añadido a un grupo",
+        "friend-added": "Amigo añadido",
+        "budget-alert": "Alerta de presupuesto",
+        "expense-created": "Gasto creado",
+        "recurring-expense-created": "Gasto periódico creado",
+        "expense-changed": "Gasto modificado o eliminado",
+        "expense-comment": "Comentario en gasto",
+        "weekly-summary": "Resumen semanal"
+      },
+      "categoryDescriptions": {
+        "weekly-summary": "Un resumen semanal de tus gastos y saldos."
+      }
+    },
     "emailTitle": "Correo electrónico",
-    "emailDescription": "Tu dirección de correo no se puede cambiar.",
-    "displayNameTitle": "Nombre para mostrar",
+    "emailDescription": "Dirección utilizada para notificaciones e inicio de sesión.",
+    "displayNameTitle": "Nombre visible",
+    "usernameTitle": "Nombre de usuario",
+    "usernameDescription": "Tu identificador único en Knots.",
     "passwordTitle": "Contraseña",
+    "passkeyTitle": "Claves de acceso (Passkeys)",
+    "Email": {
+      "description": "Cambiar tu correo requiere un código de confirmación enviado a la nueva dirección.",
+      "changeButton": "Cambiar correo",
+      "dialogTitle": "Cambiar dirección de correo",
+      "dialogDescription": "Introduce la nueva dirección. Te enviaremos un código de confirmación.",
+      "newEmailLabel": "Nuevo correo",
+      "newEmailPlaceholder": "tu@ejemplo.com",
+      "sendCode": "Enviar código",
+      "cancel": "Cancelar",
+      "otpTitle": "Introduce el código de confirmación",
+      "otpDescription": "Enviamos un código de 6 dígitos a {email}. Introdúcelo a continuación para confirmar el cambio.",
+      "codeLabel": "Código de confirmación",
+      "resend": "Reenviar código",
+      "resendIn": "Reenviar en {seconds} s",
+      "useDifferentEmail": "Usar un correo diferente",
+      "verify": "Verificar y cambiar",
+      "successToast": "Correo electrónico actualizado correctamente.",
+      "errorInUse": "Esta dirección de correo ya está en uso.",
+      "errorInvalid": "Introduce una dirección de correo válida.",
+      "errorSame": "La nueva dirección debe ser diferente de la actual.",
+      "errorInvalidCode": "Código de confirmación no válido.",
+      "errorExpired": "El código de confirmación ha caducado. Solicita uno nuevo.",
+      "errorRateLimited": "Demasiados intentos. Espera unos momentos antes de volver a intentarlo.",
+      "errorSendFailed": "No se pudo enviar el correo de confirmación. Inténtalo de nuevo."
+    },
+    "Password": {
+      "description": "Cambia tu contraseña o define una si solo usas claves de acceso (passkeys).",
+      "noPasswordDescription": "Puedes iniciar sesión con un enlace por correo o una llave de acceso. Añade una contraseña si deseas otra forma de entrar.",
+      "changeButton": "Cambiar contraseña",
+      "setButton": "Establecer contraseña",
+      "removeButton": "Eliminar contraseña",
+      "changeDialogTitle": "Cambiar contraseña",
+      "changeDialogDescription": "Introduce tu contraseña actual y elige una nueva.",
+      "setDialogTitle": "Establecer una contraseña",
+      "setDialogDescription": "Añade una contraseña para poder iniciar sesión con correo y contraseña.",
+      "setSuccessToast": "Contraseña establecida correctamente.",
+      "removeDialogTitle": "Eliminar contraseña",
+      "removeDialogDescription": "Aún podrás iniciar sesión con un enlace por correo o una llave de acceso. Introduce tu contraseña actual para confirmar.",
+      "currentLabel": "Contraseña actual",
+      "newLabel": "Nueva contraseña",
+      "confirmLabel": "Confirmar nueva contraseña",
+      "cancel": "Cancelar",
+      "removeConfirm": "Eliminar",
+      "changeSuccessToast": "Contraseña cambiada correctamente.",
+      "removeSuccessToast": "Contraseña eliminada correctamente.",
+      "errorCurrentRequired": "Se requiere la contraseña actual.",
+      "errorMismatch": "Las contraseñas no coinciden.",
+      "errorRequirements": "La contraseña debe tener al menos 8 caracteres.",
+      "errorSame": "La nueva contraseña debe ser diferente de la actual.",
+      "errorCurrentIncorrect": "Tu contraseña actual es incorrecta.",
+      "forgotPrefix": "¿Olvidaste tu contraseña?",
+      "forgotLink": "Restablécela aquí",
+      "rule_TOO_SHORT": "Al menos 8 caracteres",
+      "rule_MISSING_UPPERCASE": "Una letra mayúscula",
+      "rule_MISSING_LOWERCASE": "Una letra minúscula",
+      "rule_MISSING_DIGIT": "Un dígito"
+    },
+    "Passkey": {
+      "description": "Inicia sesión de forma segura con datos biométricos, llave de seguridad o bloqueo de pantalla sin introducir una contraseña.",
+      "unavailable": "Las claves de acceso no están disponibles en este dispositivo.",
+      "addButton": "Añadir clave de acceso",
+      "empty": "No hay claves de acceso registradas todavía.",
+      "created": "Añadida el {date}",
+      "badgeSynced": "Sincronizada",
+      "badgeDeviceBound": "Vinculada al dispositivo",
+      "badgeBackedUp": "Con copia de seguridad",
+      "addDialogTitle": "Añadir una clave de acceso",
+      "addDialogDescription": "Asigna un nombre opcional y sigue las instrucciones de tu dispositivo.",
+      "nicknameLabel": "Apodo (opcional)",
+      "nicknamePlaceholder": "p. ej., Mi portátil",
+      "confirmPasswordLabel": "Contraseña actual",
+      "confirmPasswordHint": "Confirma tu contraseña para añadir una clave de acceso.",
+      "addConfirm": "Añadir clave de acceso",
+      "cancel": "Cancelar",
+      "addSuccessToast": "Clave de acceso añadida.",
+      "addFailedToast": "No se pudo añadir la clave de acceso.",
+      "errorPasswordRequired": "Introduce tu contraseña actual.",
+      "deleteAria": "Eliminar {name}",
+      "deleteDialogTitle": "¿Eliminar clave de acceso?",
+      "deleteDialogDescription": "\"{name}\" ya no podrá iniciar sesión en tu cuenta.",
+      "deleteConfirm": "Eliminar",
+      "deleteSuccessToast": "Clave de acceso eliminada.",
+      "deleteFailedToast": "No se pudo eliminar la clave de acceso.",
+      "reauthTitle": "Inicia sesión de nuevo para añadir una llave de acceso",
+      "reauthDescription": "Tu último inicio de sesión tiene más de 30 días. Inicia sesión de nuevo con tu contraseña, un enlace por correo o una llave de acceso, y vuelve aquí.",
+      "reauthConfirm": "Iniciar sesión de nuevo"
+    },
     "preferencesTitle": "Preferencias",
-    "preferencesDescription": "Personaliza el idioma y la apariencia.",
+    "preferencesDescription": "Personaliza el idioma, tema y moneda predeterminada.",
     "languageLabel": "Idioma",
     "themeLabel": "Tema",
+    "blockedUsersTitle": "Usuarios bloqueados",
+    "blockedUsersDescription": "Gestiona a los usuarios que has bloqueado.",
+    "blockedUsersRowLabel": "Usuarios bloqueados",
+    "blockedUsersRowDescription": "Ver y gestionar usuarios bloqueados.",
     "accountTitle": "Cuenta",
     "signOut": "Cerrar sesión",
+    "signOutDescription": "Cierra sesión en este dispositivo.",
+    "signOutAllTitle": "Cerrar sesión en todos los dispositivos",
+    "signOutAllDescription": "Cierra todas las sesiones activas en cualquier lugar.",
     "signingOut": "Cerrando sesión…",
-    "NameForm": {
-      "nameRequired": "El nombre es obligatorio",
-      "nameMaxLength": "El nombre debe tener como máximo 100 caracteres",
-      "successToast": "Nombre para mostrar actualizado correctamente.",
-      "label": "Nombre para mostrar",
-      "placeholder": "Introduce tu nombre para mostrar",
-      "saving": "Guardando…",
-      "submit": "Guardar nombre"
-    },
-    "PasswordForm": {
-      "currentPasswordRequired": "La contraseña actual es obligatoria",
-      "newPasswordRequired": "La nueva contraseña es obligatoria",
-      "confirmPasswordRequired": "Confirma tu nueva contraseña",
-      "passwordsDoNotMatch": "Las contraseñas no coinciden",
-      "successToast": "Contraseña cambiada correctamente.",
-      "currentPasswordIncorrect": "La contraseña actual es incorrecta",
-      "newPasswordSameAsCurrent": "La nueva contraseña debe ser diferente de la actual",
-      "passwordRequirementsNotMet": "La contraseña no cumple los requisitos",
-      "currentPasswordLabel": "Contraseña actual",
-      "newPasswordLabel": "Nueva contraseña",
-      "confirmPasswordLabel": "Confirmar nueva contraseña",
-      "passwordHint": "Mín. 8 caracteres, máx. 128. Debe incluir al menos una mayúscula, una minúscula y un dígito.",
-      "changingPassword": "Cambiando contraseña…",
-      "submit": "Cambiar contraseña",
-      "errorTooShort": "Debe tener al menos 8 caracteres",
-      "errorTooLong": "Debe tener como máximo 128 caracteres",
-      "errorMissingUppercase": "Debe contener al menos una mayúscula",
-      "errorMissingLowercase": "Debe contener al menos una minúscula",
-      "errorMissingDigit": "Debe contener al menos un dígito"
-    },
-    "blockedUsersTitle": "Usuarios bloqueados",
-    "blockedUsersDescription": "Administra los usuarios que has bloqueado. Los usuarios bloqueados no pueden agregarte a grupos ni enviarte solicitudes de amistad.",
     "Preferences": {
       "timezoneLabel": "Zona horaria",
       "timezoneSelect": "Seleccionar zona horaria…",
       "timezoneSearch": "Buscar zona horaria…",
       "timezoneEmpty": "No se encontró ninguna zona horaria.",
       "timezoneSaved": "Zona horaria actualizada.",
+      "timezoneHelp": "Establece el valor predeterminado para las horas de nuevos gastos y programaciones periódicas, y da formato a las fechas.",
+      "languageSearch": "Buscar idioma…",
+      "languageEmpty": "No se encontró ningún idioma.",
+      "languageCommon": "Más comunes",
+      "languageOther": "Otros idiomas",
       "currencyLabel": "Moneda predeterminada",
       "currencySaved": "Moneda predeterminada actualizada."
     },
+    "appPreferencesDescription": "Ajusta el idioma, tema y moneda predeterminada de tu cuenta.",
+    "preferencesSaving": "Guardando preferencias…",
+    "themeSaved": "Tema actualizado.",
+    "themeLight": "Claro",
+    "themeDark": "Oscuro",
+    "themeSystem": "Sistema",
     "SignOutAll": {
       "button": "Cerrar sesión en todos los dispositivos",
       "dialogTitle": "¿Cerrar sesión en todos los dispositivos?",
       "dialogDescription": "Esto finalizará todas las sesiones activas, incluida esta. Serás redirigido a la página de inicio de sesión.",
       "cancel": "Cancelar",
-      "confirm": "Cerrar sesión en todas partes",
+      "confirm": "Cerrar todas las sesiones",
       "signingOut": "Cerrando sesión…",
       "successToast": "Se han cerrado todas las sesiones."
     },
@@ -816,13 +1158,51 @@
       "emailPlaceholder": "correo@ejemplo.com",
       "block": "Bloquear",
       "unblock": "Desbloquear",
-      "empty": "No has bloqueado a nadie.",
+      "empty": "No tienes ningún usuario bloqueado.",
       "blockedToast": "Usuario bloqueado correctamente.",
       "unblockedToast": "Usuario desbloqueado.",
       "confirmBlockTitle": "¿Bloquear a este amigo?",
       "confirmBlockDescription": "Bloquear a {name} también lo eliminará de tu lista de amigos. No se le notificará sobre el bloqueo.",
       "confirmBlockCancel": "Cancelar",
       "confirmBlockAction": "Bloquear y eliminar amigo"
+    },
+    "NameForm": {
+      "nameRequired": "El nombre visible es obligatorio.",
+      "nameMaxLength": "El nombre debe tener como máximo 100 caracteres",
+      "successToast": "Nombre para mostrar actualizado correctamente.",
+      "label": "Nombre para mostrar",
+      "placeholder": "Introduce tu nombre para mostrar",
+      "saving": "Guardando…",
+      "submit": "Guardar nombre"
+    },
+    "UsernameForm": {
+      "successToast": "Nombre de usuario actualizado correctamente.",
+      "label": "Nombre de usuario",
+      "placeholder": "tu-nombre-de-usuario",
+      "description": "Se utiliza en la URL de tu perfil. Solo letras minúsculas, números y guiones.",
+      "saving": "Guardando…",
+      "submit": "Guardar nombre de usuario"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "La contraseña actual es obligatoria.",
+      "newPasswordRequired": "La nueva contraseña es obligatoria.",
+      "confirmPasswordRequired": "Confirma la nueva contraseña.",
+      "passwordsDoNotMatch": "Las contraseñas no coinciden.",
+      "successToast": "Contraseña cambiada correctamente.",
+      "currentPasswordIncorrect": "La contraseña actual es incorrecta.",
+      "newPasswordSameAsCurrent": "La nueva contraseña debe ser diferente de la actual.",
+      "passwordRequirementsNotMet": "La contraseña no cumple con los requisitos.",
+      "currentPasswordLabel": "Contraseña actual",
+      "newPasswordLabel": "Nueva contraseña",
+      "confirmPasswordLabel": "Confirmar nueva contraseña",
+      "passwordHint": "Mínimo 8 caracteres, máximo 128. Debe incluir al menos una letra mayúscula, una minúscula y un número.",
+      "changingPassword": "Cambiando contraseña…",
+      "submit": "Cambiar contraseña",
+      "errorTooShort": "Debe tener al menos 8 caracteres",
+      "errorTooLong": "Debe tener como máximo 128 caracteres",
+      "errorMissingUppercase": "Debe contener al menos una mayúscula",
+      "errorMissingLowercase": "Debe contener al menos una minúscula",
+      "errorMissingDigit": "Debe contener al menos un dígito"
     }
   },
   "Friends": {
@@ -908,6 +1288,7 @@
       "title": "Expenses with {name}",
       "description": "All expenses you share with this friend, across groups.",
       "backToFriends": "Back to friends",
+      "backToFriend": "Volver a {name}",
       "listTitle": "Expense history",
       "listDescription": "Direct expenses and expenses from shared groups.",
       "create": "Add expense",
@@ -950,6 +1331,10 @@
       "friendOwesYou": "{name} te debe {amount}",
       "youOweFriend": "Debes {amount} a {name}",
       "paid": "{payer} pagó a {payee} {amount}",
+      "deletePayment": "Eliminar",
+      "deletePaymentConfirm": "¿Seguro que deseas eliminar este pago?",
+      "deletePaymentSuccess": "Pago eliminado correctamente",
+      "deletePaymentError": "No se pudo eliminar el pago",
       "groups": {
         "upcoming": "Próximos",
         "thisWeek": "Esta semana",
@@ -965,14 +1350,15 @@
       "paid": "{payer} pagó a {payee}",
       "addedBy": "Añadido por {name} el {date}",
       "disclaimer": "Este pago fue registrado usando \"Registrar un pago\". No se transfirió dinero.",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "readOnlyNotice": "Este pago no se puede editar ni eliminar individualmente porque forma parte de una liquidación de saldos.",
       "edit": "Editar",
       "delete": "Eliminar",
       "deleteConfirm": "¿Eliminar este pago?",
       "deleteDescription": "Esto ajustará los saldos como si el pago nunca hubiera ocurrido.",
       "deleting": "Deleting…",
       "notFound": "Pago no encontrado.",
-      "backToFriend": "Volver a {name}",
-      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group."
+      "backToFriend": "Volver a {name}"
     },
     "DirectExpense": {
       "title": "Añadir un gasto",
@@ -993,6 +1379,10 @@
       "success": "Gasto añadido.",
       "error": "No se pudo añadir el gasto.",
       "persistError": "No se pudieron guardar los datos del formulario. La navegación no está disponible."
+    },
+    "Settings": {
+      "currencyTitle": "Moneda principal",
+      "currencyDescription": "Utilizada para gastos directos y pagos con amigos."
     },
     "SettleAll": {
       "button": "Liquidar todo",
@@ -1016,6 +1406,7 @@
     "memberPromoted": "Miembro ascendido a propietario.",
     "memberDemoted": "Miembro degradado a miembro regular.",
     "addMember": "Añadir miembro",
+    "pickFriend": "Choose from your friends or enter an email.",
     "adding": "Añadiendo…",
     "add": "Añadir",
     "cancel": "Cancelar",
@@ -1024,8 +1415,7 @@
     "leave": "Abandonar",
     "removeFromGroup": "Eliminar del grupo",
     "promoteToOwner": "Ascender a propietario",
-    "demoteToMember": "Degradar a miembro",
-    "pickFriend": "Choose from your friends or enter an email."
+    "demoteToMember": "Degradar a miembro"
   },
   "MyGroups": {
     "title": "Mis grupos",
@@ -1035,7 +1425,9 @@
     "noGroupsHint": "Crea un grupo para empezar a repartir gastos con otros.",
     "createGroup": "Crear grupo",
     "createGroupTitle": "Crear un nuevo grupo",
-    "createGroupDescription": "Introduce un nombre para tu grupo. Puedes invitar miembros después de crearlo.",
+    "createGroupDescription": "Introduce un nombre y una moneda para tu grupo. Puedes invitar miembros después de crearlo.",
+    "invalidCurrency": "Elige una moneda válida.",
+    "currencySymbolRequired": "Introduce un símbolo de moneda.",
     "groupNameLabel": "Nombre del grupo",
     "characters": "caracteres",
     "leaveGroup": "Abandonar grupo",
@@ -1055,100 +1447,6 @@
     "deleteGroupConfirmCancel": "Cancelar",
     "deleteGroupConfirmAction": "Eliminar permanentemente"
   },
-  "UserMenu": {
-    "profileSettings": "Configuración de la cuenta",
-    "signingOut": "Cerrando sesión…",
-    "signOut": "Cerrar sesión"
-  },
-  "Notifications": {
-    "settings": "Ajustes de notificaciones",
-    "subscribe": "Activar notificaciones",
-    "unsubscribe": "Desactivar notificaciones",
-    "selectParticipant": "Notificarme sobre cambios de otros",
-    "noParticipant": "Todos los cambios",
-    "permissionDenied": "El permiso de notificaciones fue denegado. Actívalo en la configuración de tu navegador.",
-    "notSupported": "Las notificaciones push no son compatibles con este dispositivo.",
-    "expenseCreated": "{actor} añadió \"{title}\"",
-    "expenseUpdated": "{actor} actualizó \"{title}\"",
-    "expenseDeleted": "{actor} eliminó \"{title}\"",
-    "groupUpdated": "{actor} actualizó el grupo \"{group}\"",
-    "notificationTitle": "Knots – {group}",
-    "defaultBody": "Nueva actividad en tu grupo",
-    "filterHint": "Elige de quién quieres alertas y qué eventos recibir.",
-    "subscribeError": "No se pudieron activar las notificaciones. Por favor, inténtalo de nuevo.",
-    "membersLabel": "Notificarme sobre",
-    "notifyAllMembers": "Todos en el grupo",
-    "notifySpecificMembers": "O solo estos miembros:",
-    "eventsLabel": "Eventos",
-    "eventCreate": "Gasto creado",
-    "eventUpdate": "Gasto actualizado",
-    "eventDelete": "Gasto eliminado",
-    "selectAtLeastOneFilter": "Selecciona al menos un miembro o un evento.",
-    "channelsLabel": "Canales",
-    "pushLabel": "Notificaciones push",
-    "pushUnavailable": "Las notificaciones push no están disponibles en esta implementación.",
-    "emailLabel": "Notificaciones por correo electrónico",
-    "enableChannelHint": "Activa un canal para configurar de quién y de qué quieres recibir notificaciones.",
-    "pushSyncWarning": "Preferencias guardadas, pero falló la sincronización del filtro de notificaciones push."
-  },
-  "ExpenseImport": {
-    "button": "Importar gastos",
-    "fromKnots": "Importar desde Knots",
-    "fromSplitwise": "Importar desde Splitwise"
-  },
-  "KnotsImport": {
-    "title": "Importar desde Knots",
-    "description": "Sube un archivo exportado de Knots. Si el archivo incluye personas que aún no están en este grupo, puedes añadirlas aquí antes de importar.",
-    "fileLabel": "Archivo de exportación de Knots",
-    "previewLabel": "Vista previa (primeras 10 líneas)",
-    "clear": "Limpiar",
-    "cancel": "Cancelar",
-    "import": "Importar gastos",
-    "addAndImport": "Añadir miembros e importar",
-    "importing": "Importando...",
-    "analyzing": "Analizando exportación…",
-    "expenseCount": "{count, plural, one {# gasto encontrado} other {# gastos encontrados}}",
-    "matchedParticipants": "Ya están en el grupo: {names}",
-    "missingParticipantsLabel": "Personas para añadir a este grupo",
-    "missingParticipantsDescription": "Introduce un correo electrónico para cada persona. Las cuentas nuevas se crean automáticamente y se vinculan a este grupo. Si ya tienen cuenta, se añaden como miembros.",
-    "expenseReferences": "{count, plural, one {# gasto} other {# gastos}}",
-    "emailLabel": "Correo electrónico",
-    "emailPlaceholder": "nombre@example.com",
-    "softCreateHint": "Podrán registrarse más tarde con este correo para acceder al grupo.",
-    "toast": {
-      "invalidFileType": {
-        "title": "Tipo de archivo no válido",
-        "description": "Selecciona un archivo JSON o CSV exportado de Knots."
-      },
-      "noContent": {
-        "title": "Archivo sin contenido",
-        "description": "Selecciona primero un archivo de exportación de Knots."
-      },
-      "missingEmail": {
-        "title": "Correo obligatorio",
-        "description": "Introduce el correo de {name}."
-      },
-      "success": {
-        "title": "Importación completada",
-        "description": "Se importaron correctamente {count} gastos de Knots."
-      },
-      "error": {
-        "title": "Error al importar",
-        "description": "No se pudo importar el archivo de Knots."
-      },
-      "cancelled": {
-        "title": "Importación cancelada",
-        "description": "La importación se detuvo antes de terminar."
-      }
-    },
-    "errors": {
-      "invalidJson": "Archivo JSON no válido.",
-      "invalidFormat": "Este archivo no es una exportación de Knots válida.",
-      "noExpenses": "La exportación no contiene gastos."
-    },
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
-  },
   "GroupDangerZone": {
     "title": "Gestión del grupo",
     "description": "Archivar oculta este grupo de tu lista sin eliminar datos. Eliminar borra permanentemente el grupo para todos.",
@@ -1163,9 +1461,115 @@
     "cancel": "Cancelar",
     "deleteConfirmAction": "Eliminar permanentemente"
   },
+  "UserMenu": {
+    "menuLabel": "Menú de usuario",
+    "profileSettings": "Configuración de la cuenta",
+    "theme": "Tema",
+    "themeLight": "Claro",
+    "themeDark": "Oscuro",
+    "themeSystem": "Sistema",
+    "signingOut": "Cerrando sesión…",
+    "signOut": "Cerrar sesión"
+  },
+  "Notifications": {
+    "settings": "Ajustes de notificaciones",
+    "subscribe": "Activar notificaciones",
+    "unsubscribe": "Desactivar notificaciones",
+    "selectParticipant": "Notificarme sobre cambios de otros",
+    "noParticipant": "Todos los cambios",
+    "permissionDenied": "El permiso de notificaciones fue denegado. Actívalo en la configuración de tu navegador.",
+    "notSupported": "Las notificaciones push no son compatibles con este dispositivo.",
+    "expenseCreated": "{actor} añadió \"{title}\" en el grupo {group}",
+    "expenseUpdated": "{actor} editó \"{title}\" en el grupo {group}",
+    "expenseDeleted": "{actor} eliminó \"{title}\" en el grupo {group}",
+    "groupUpdated": "{actor} actualizó el grupo \"{group}\"",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "Nueva actividad en tu grupo",
+    "filterHint": "Elige de quién quieres alertas y qué eventos recibir.",
+    "membersLabel": "Notificarme sobre",
+    "notifyAllMembers": "Todos en el grupo",
+    "notifySpecificMembers": "O solo estos miembros:",
+    "eventsLabel": "Eventos",
+    "eventCreate": "Gasto creado",
+    "eventUpdate": "Gasto actualizado",
+    "eventDelete": "Gasto eliminado",
+    "selectAtLeastOneFilter": "Selecciona al menos un miembro o un evento.",
+    "subscribeError": "No se pudieron activar las notificaciones. Por favor, inténtalo de nuevo.",
+    "channelsLabel": "Canales",
+    "pushLabel": "Notificaciones push",
+    "pushUnavailable": "Las notificaciones push no están disponibles en esta implementación.",
+    "emailLabel": "Notificaciones por correo electrónico",
+    "enableChannelHint": "Activa un canal para configurar de quién y de qué quieres recibir notificaciones.",
+    "pushSyncWarning": "Preferencias guardadas, pero falló la sincronización del filtro de notificaciones push."
+  },
+  "AppError": {
+    "title": "Algo salió mal",
+    "description": "Se borraron los datos locales de la aplicación. Tu sesión se cerrará para que puedas empezar de cero desde la página principal.",
+    "recover": "Ir a la página principal",
+    "recovering": "Redirigiendo…"
+  },
+  "PaymentForm": {
+    "dateLabel": "Fecha de pago",
+    "dateDescription": "Introduce la fecha en la que se realizó el pago.",
+    "amountLabel": "Importe",
+    "amountDescription": "Introduce el importe del pago.",
+    "paidByLabel": "Pagado por",
+    "paidByDescription": "Selecciona quién realizó el pago.",
+    "paidToLabel": "Pagado a",
+    "paidToDescription": "Selecciona quién recibió el pago.",
+    "notesLabel": "Notas",
+    "notesPlaceholder": "Añadir notas (opcional)",
+    "participantPlaceholder": "Selecciona un participante",
+    "disclaimer": "Esto registra un pago entre personas para saldar balances. No es un gasto compartido."
+  },
+  "FloatingCreateExpense": {
+    "addExpense": "Añadir gasto",
+    "dialogTitle": "Añadir un gasto",
+    "editDialogTitle": "Editar gasto",
+    "createPaymentDialogTitle": "Registrar un pago",
+    "editPaymentDialogTitle": "Editar pago",
+    "withWho": "Contigo y:",
+    "back": "Volver",
+    "searchPlaceholder": "Buscar amigos o grupos…",
+    "descriptionPlaceholder": "Introduce una descripción",
+    "amountPlaceholder": "0,00",
+    "paidByLabel": "Pagado por",
+    "you": "tú",
+    "splitEqually": "dividido a partes iguales",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "cancel": "Cancelar",
+    "successToast": "Gasto creado correctamente.",
+    "updateSuccessToast": "Gasto actualizado correctamente.",
+    "paymentSuccessToast": "Pago registrado correctamente.",
+    "paymentUpdateSuccessToast": "Pago actualizado correctamente.",
+    "errorToast": "No se pudo crear el gasto.",
+    "paymentErrorToast": "No se pudo registrar el pago.",
+    "updateErrorToast": "No se pudo actualizar el gasto.",
+    "paymentUpdateErrorToast": "No se pudo actualizar el pago.",
+    "lockedPaymentToast": "Este pago forma parte de una liquidación de saldos y no se puede editar.",
+    "noFriendOrGroupFound": "No se encontraron amigos ni grupos.",
+    "groupsHeader": "Grupos",
+    "friendsHeader": "Amigos",
+    "selectGroupText": "Grupo: {name}",
+    "pickerTitle": "¿Con quién?",
+    "pickerDone": "Hecho",
+    "selectParticipants": "Seleccionar amigos o grupo",
+    "selectParticipantsHint": "Selecciona un grupo o amigo para comenzar.",
+    "singleGroupAlertTitle": "Solo un grupo",
+    "singleGroupAlertDescription": "Solo puedes seleccionar un grupo a la vez. Quita el grupo actual antes de elegir otro.",
+    "singleGroupAlertOk": "Aceptar",
+    "advancedOptions": "Opciones avanzadas",
+    "splitDetails": "Detalles de la división",
+    "notesPlaceholder": "Añadir notas (opcional)",
+    "viewGroupExpense": "Ver gasto del grupo"
+  },
   "DuplicateExpense": {
     "title": "Posible duplicado detectado",
     "description": "El gasto que estás guardando parece similar a uno existente. Compáralos abajo y decide si continuar.",
+    "cancel": "Cancelar",
+    "confirm": "Guardar de todos modos",
+    "persistError": "No se pudieron guardar los datos del formulario. La navegación no está disponible.",
     "yours": "El tuyo",
     "existing": "Existente",
     "fields": {
@@ -1173,9 +1577,6 @@
       "amount": "Importe",
       "date": "Fecha"
     },
-    "cancel": "Cancelar",
-    "confirm": "Guardar de todos modos",
-    "persistError": "No se pudieron guardar los datos del formulario. La navegación no está disponible.",
     "indicators": {
       "similar-title": "Título similar",
       "same-amount": "Mismo importe",
@@ -1186,7 +1587,47 @@
   "CurrencyAmountInput": {
     "expressionHint": "o 10+5"
   },
-  "ExpenseTitleInput": {
-    "clear": "Borrar"
+  "Login": {
+    "title": "Iniciar sesión",
+    "description": "Inicia sesión con una llave de acceso, un enlace por correo o tu contraseña.",
+    "orContinueWithEmail": "O CONTINÚA CON CORREO",
+    "methodMagicLink": "Enlace mágico",
+    "methodPassword": "Contraseña",
+    "sendSignInLink": "Enviar enlace de acceso",
+    "signInWithPassword": "Iniciar sesión con contraseña",
+    "usePasskey": "Usar una llave de acceso",
+    "passkeyFailed": "No se pudo iniciar sesión con esa llave de acceso. Inténtalo de nuevo.",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes una cuenta?",
+    "signUp": "Regístrate",
+    "magicLinkButton": "Enviar enlace de acceso",
+    "magicLinkEmailRequired": "Introduce tu dirección de correo electrónico.",
+    "magicLinkSendFailed": "No pudimos enviar el correo de acceso. Inténtalo de nuevo.",
+    "magicLinkSentTitle": "Revisa tu correo",
+    "magicLinkSentDescription": "Si existe una cuenta para esa dirección, hemos enviado un enlace de acceso. Funciona una vez y caduca en 15 minutos.",
+    "magicLinkSigningIn": "Iniciando sesión…",
+    "magicLinkFailedTitle": "No se pudo iniciar sesión",
+    "magicLinkInvalid": "Este enlace de acceso no es válido o ha caducado.",
+    "backToLogin": "Volver a iniciar sesión"
+  },
+  "Register": {
+    "title": "Crear una cuenta",
+    "description": "Regístrate con un enlace por correo o una contraseña.",
+    "signUpWithPassword": "Crear cuenta con contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "hasAccount": "¿Ya tienes una cuenta?",
+    "signIn": "Iniciar sesión",
+    "creating": "Creando cuenta…",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "ruleLength": "8 caracteres",
+    "ruleLowercase": "Minúscula",
+    "ruleUppercase": "Mayúscula",
+    "ruleNumber": "Número",
+    "successTitle": "Registro completado con éxito",
+    "successDescription": "Tu cuenta ha sido creada",
+    "successAlertTitle": "Revisa tu correo",
+    "successAlertDescription": "Hemos enviado un enlace de verificación a tu correo. Por favor, haz clic en el enlace para verificar tu cuenta antes de iniciar sesión.",
+    "goToLogin": "Ir a inicio de sesión",
+    "failedTitle": "Error al registrarse"
   }
 }

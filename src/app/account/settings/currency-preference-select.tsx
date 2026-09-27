@@ -31,7 +31,7 @@ export function CurrencyPreferenceSelect({
   return (
     <CurrencySelector
       currencies={currencies}
-      defaultValue={currentCurrency ?? 'EUR'}
+      defaultValue={currentCurrency ?? 'USD'}
       isLoading={changePreferences.isPending}
       onValueChange={(code) => {
         changePreferences.mutate({ preferredCurrency: code })

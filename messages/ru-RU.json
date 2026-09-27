@@ -20,6 +20,9 @@
     "create": "Создать расход",
     "createFirst": "Создать первый расход",
     "noExpenses": "У вашей группы пока что нет расходов.",
+    "noSearchResults": "По вашему запросу расходы не найдены.",
+    "loadError": "Не удалось загрузить расходы.",
+    "retry": "Повторить",
     "export": "Export",
     "exportJson": "Экспортировать в JSON",
     "exportCsv": "Экспортировать в CSV",
@@ -75,19 +78,60 @@
   },
   "ExpenseCard": {
     "paidBy": "Потратил <strong>{paidBy}</strong> за <paidFor></paidFor>",
+    "paidByMultiple": "Потратил <strong>{paidBy}</strong> за <paidFor></paidFor>",
     "everyone": "everyone",
     "receivedBy": "Получил <strong>{paidBy}</strong> за <paidFor></paidFor>",
     "yourBalance": "Изменение баланса участника:",
     "notInvolved": "You are not involved",
     "close": "Закрыть",
-    "paidByMultiple": "Потратил <strong>{paidBy}</strong> за <paidFor></paidFor>",
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
   "ExpenseDetail": {
+    "backToExpenses": "Назад к расходам",
+    "backToFriend": "Назад к {name}",
+    "copy": "Копировать расход",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "payment": "Платеж",
+    "expense": "Расход",
+    "onDate": "{date}",
+    "addedBy": "Добавлено {name} {date}",
+    "addedByYou": "Добавлено вами {date}",
+    "lastUpdatedBy": "Последнее изменение: {name}, {date}",
+    "lastUpdatedByYou": "Последнее изменение вами: {date}",
+    "trendsTitle": "Тренды расходов в {contextName} :: {categoryName}",
+    "trendsSeeMore": "Подробнее",
+    "generalCategory": "Общие",
+    "editCategory": "Изменить категорию",
+    "categoryUpdateError": "Не удалось обновить категорию.",
+    "attachReceipt": "Прикрепить чек",
+    "receiptUploadSuccess": "Чек прикреплен.",
+    "paidAmount": "{name} оплатил(а) {amount}",
+    "youPaidAmount": "Вы заплатили {amount}",
+    "paidAmountMultiple": "{name} оплатил(а) {amount}",
+    "youPaidAmountMultiple": "Вы заплатили {amount}",
+    "multiPayerSeparator": ", ",
+    "paidYou": "{name} перевел(а) вам {amount}",
+    "youPaidRecipient": "Вы перевели {name} {amount}",
+    "payerPaidPayee": "{payer} перевел(а) {payee} {amount}",
+    "someone": "Кто-то",
+    "youOwe": "Вы должны {amount}",
+    "participantOwes": "{name} должен/должна {amount}",
+    "yourShare": "Ваша доля {amount}",
+    "participantShare": "Доля участника {name} {amount}",
+    "notes": "Заметки",
     "activity": "Активность",
-    "noActivity": "Для этого расхода пока нет записей.",
-    "viewGroupExpense": "View group expense"
+    "noActivity": "Изменения пока не зафиксированы.",
+    "paymentDisclaimer": "Этот платеж был зафиксирован через «Записать платеж». Реального перевода средств не происходило.",
+    "consolidationDisclaimer": "Этот платеж является частью общего расчета.",
+    "readOnlyNotice": "Этот платеж нельзя изменить или удалить отдельно, так как он является частью расчета баланса.",
+    "deleteConfirm": "Удалить этот расход?",
+    "deletePaymentConfirm": "Удалить этот платеж?",
+    "deleteDescription": "Это приведет к удалению расхода для всех участников группы. Действие нельзя отменить.",
+    "cancel": "Отмена",
+    "deleting": "Удаление…",
+    "viewGroupExpense": "Посмотреть расход группы"
   },
   "Groups": {
     "myGroups": "Мои группы",
@@ -151,6 +195,12 @@
       "label": "Упростить долги",
       "description": "Уменьшает число платежей, объединяя балансы между участниками (как Splitwise Pro). Выключено: каждый должен только тому, кто оплатил его долю."
     },
+    "FriendsField": {
+      "label": "Друзья",
+      "description": "Выберите существующих друзей или пригласите кого-то нового.",
+      "placeholder": "Выберите друга…",
+      "remove": "Удалить {name}"
+    },
     "Participants": {
       "title": "Участники",
       "description": "Введите имя каждого участника.",
@@ -205,6 +255,7 @@
         "description": "Выберите тех, между кем этот доход будет распределен."
       },
       "splitModeDescription": "Выберите, как доход необходимо распределить между людьми.",
+      "notesDescription": "Добавьте дополнительные сведения об этом доходе.",
       "attachDescription": "Просмотр и прикрепление чеков к этому расходу."
     },
     "Expense": {
@@ -227,7 +278,7 @@
       "paidByField": {
         "label": "Оплативший",
         "placeholder": "Select a participant",
-        "description": "Select who provided the money and how much each payer contributed."
+        "description": "Выберите, кто предоставил деньги и сколько внес каждый плательщик."
       },
       "recurrenceRule": {
         "label": "Expense Recurrence",
@@ -238,23 +289,29 @@
         "monthly": "Monthly"
       },
       "paidFor": {
-        "title": "Участники",
-        "description": "Выберите тех, между кем этот расход будет распределен. Если этот расход — возмещение участнику (участникам), выберите только его (их)."
+        "title": "Разделить между",
+        "description": "Выберите, как разделить расход и кто в него включен."
       },
       "splitModeDescription": "Выберите, как расход необходимо распределить между людьми.",
+      "notesDescription": "Добавьте дополнительные сведения об этом расходе.",
       "attachDescription": "Просмотр и прикрепление чеков к этому доходу."
     },
     "amountField": {
-      "label": "Сумма"
+      "label": "Сумма",
+      "description": "Введите общую сумму расхода.",
+      "convertedDescription": "Введите сумму в валюте группы."
     },
     "conversionUnavailable": "Чтобы задать другую валюту для каждого расхода и конвертировать суммы, выберите для группы валюту, отличную от пользовательской.",
     "originalAmountField": {
-      "label": "Сумма для конвертации"
+      "label": "Сумма для конвертации",
+      "description": "Введите сумму в исходной валюте."
     },
     "conversionRateField": {
       "useApi": "Использовать курсы Frankfurter",
       "useCustom": "Использовать свой курс",
-      "label": "Обменный курс"
+      "label": "Обменный курс",
+      "description": "Курс, используемый для конвертации исходной суммы в валюту группы.",
+      "collapsibleDescription": "Переопределить автоматический курс Frankfurter"
     },
     "conversionRateState": {
       "loading": "Получение обменных курсов…",
@@ -279,6 +336,13 @@
     },
     "selectNone": "Выбрать никого",
     "selectAll": "Выбрать всех",
+    "resetSplit": "Сбросить",
+    "evenlySplit": "Поровну: {amount} × {count}",
+    "totalWeight": "Общий вес: {count, plural, one {# доля} few {# доли} many {# долей} other {# доли}}",
+    "matchesPercent": "Соответствует 100%",
+    "matchesAmount": "Соответствует {amount}",
+    "decreaseShares": "Уменьшить доли",
+    "increaseShares": "Увеличить доли",
     "noLongerInGroup": "больше не в этой группе",
     "shares": "доля(и)",
     "advancedOptions": "Дополнительные настройки распределения…",
@@ -294,6 +358,43 @@
       "byPercentageDescription": "Split using percentages that add up to 100%",
       "byAmountDescription": "Split using fixed amounts for each participant"
     },
+    "itemized": {
+      "toggleLabel": "Разделить по позициям",
+      "toggleDescription": "Добавляйте позиции, назначайте участников и распределяйте налоги и чаевые пропорционально.",
+      "noItems": "Позиций пока нет. Добавьте строки из чека.",
+      "addItem": "Добавить позицию",
+      "removeItem": "Удалить позицию",
+      "itemTitleLabel": "Позиция",
+      "itemTitlePlaceholder": "напр. Бургер",
+      "itemUnitPriceLabel": "Цена",
+      "itemQuantityLabel": "Кол-во",
+      "itemLineTotalLabel": "Итого строка",
+      "itemAmountLabel": "Сумма",
+      "sectionTitle": "Позиции",
+      "sectionDescription": "Разбейте чек на строки. Назначьте каждую тем, кто участвовал.",
+      "assignTo": "Разделили",
+      "otherLabel": "Прочее (налог, чаевые, сбор)",
+      "otherDerivedNote": "Разница между итогом и позициями, разделенная поровну на всех.",
+      "itemsExceedTotal": "Сумма позиций превышает общую сумму расхода.",
+      "setAmountFromItems": "Рассчитать сумму из позиций",
+      "total": "Итого",
+      "addItemsAction": "Добавить позиции",
+      "documentationNote": "Эти позиции приведены только для справки. Назначьте позицию, чтобы разделить расход по позициям.",
+      "authoritativeNote": "Этот расход разделен по позициям.",
+      "leaveAction": "Обычное разделение",
+      "switchDialog": {
+        "title": "Разделить по позициям?",
+        "description": "Назначение позиций определит, кто сколько должен. Текущее разделение будет заменено.",
+        "confirm": "Разделить по позициям",
+        "cancel": "Отмена"
+      },
+      "leaveDialog": {
+        "title": "Вернуться к обычному разделению?",
+        "description": "Расход вернется к обычному разделению. Ваши позиции сохранятся для справки.",
+        "confirm": "Обычное разделение",
+        "cancel": "Отмена"
+      }
+    },
     "DeletePopup": {
       "label": "Удалить",
       "title": "Удалить этот расход?",
@@ -301,7 +402,7 @@
       "yes": "Удалить",
       "cancel": "Отмена"
     },
-    "attachDocuments": "Прикрепить документы",
+    "attachDocuments": "Прикрепить изображения",
     "create": "Создать",
     "creating": "Создание…",
     "save": "Сохранить",
@@ -317,7 +418,7 @@
       "postSaveTitle": "Expense split across group and direct records",
       "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
       "postSaveGroupHalfLine": "The group expense is {amount}",
-      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "singlePayerNote": "Когда вы добавляете участников не из группы (напр., {names}), расход делится на два, поэтому оплатить может только один человек.",
       "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
       "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
       "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
@@ -326,7 +427,16 @@
       "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
+  "ExpenseTitleInput": {
+    "noSuggestions": "Предложений не найдено.",
+    "clear": "Очистить"
+  },
   "ExpenseDocumentsInput": {
+    "addImage": "Добавить изображение",
+    "addDocumentHint": "PNG или JPG · до 5 МБ",
+    "previewDocument": "Просмотр {name}",
+    "removeDocument": "Удалить {name}",
+    "uploadingDocument": "Загрузка…",
     "TooBigToast": {
       "title": "Файл слишком большой",
       "description": "Максимальный размер файла, который можно загрузить — {maxSize}. Размер вашего файла — {size}."
@@ -388,6 +498,8 @@
       "noOneOwesYou": "Никто вам не должен в этой группе.",
       "youOweNoOne": "Вы никому не должны в этой группе.",
       "confirmSettle": "Записать, что вы заплатили {amount} пользователю {name}?",
+      "confirmSettleReceived": "Записать, что {name} перевел(а) вам {amount}?",
+      "settleReceivedTooltip": "Записать полученный платеж",
       "youAreOwed": "{name} должен вам {amount}",
       "youOwe": "Вы должны {name} {amount}",
       "allSettled": "Вы рассчитались в этой группе.",
@@ -522,16 +634,27 @@
   "Activity": {
     "title": "Активность",
     "description": "Обзор действий, совершенных участниками этой группы.",
+    "globalTitle": "Активность",
+    "globalDescription": "Обзор всей активности во всех ваших группах.",
+    "globalListTitle": "История активности",
+    "globalListDescription": "Последние изменения во всех ваших группах.",
+    "globalNoActivity": "В ваших группах пока нет никакой активности.",
     "noActivity": "История действий пуста.",
+    "error": "Не удалось загрузить активность.",
+    "retry": "Повторить",
     "someone": "Аноним",
     "settingsModified": "Настройки группы изменены участником <strong>{participant}</strong>.",
     "expenseCreated": "Расход <em>{expense}</em> создан участником <strong>{participant}</strong>.",
     "expenseUpdated": "Расход <em>{expense}</em> изменен участником <strong>{participant}</strong>.",
     "expenseDeleted": "Расход <em>{expense}</em> удален участником <strong>{participant}</strong>.",
+    "paymentRecorded": "Платеж записан участником <strong>{participant}</strong>.",
+    "paymentUpdated": "Платеж обновлен участником <strong>{participant}</strong>.",
+    "paymentDeleted": "Платеж удален участником <strong>{participant}</strong>.",
     "expenseCreatedDetail": "Создан участником <strong>{participant}</strong>.",
     "expenseUpdatedDetail": "Изменен участником <strong>{participant}</strong>.",
     "paymentRecordedDetail": "Записан участником <strong>{participant}</strong>.",
     "paymentUpdatedDetail": "Изменен участником <strong>{participant}</strong>.",
+    "reimbursement": "Платеж",
     "Groups": {
       "today": "Сегодня",
       "yesterday": "Вчера",
@@ -563,10 +686,7 @@
     "showLess": "Свернуть",
     "yes": "Да",
     "no": "Нет",
-    "fieldChangesCount": "{count} изменений полей",
-    "globalTitle": "Активность",
-    "globalDescription": "Обзор всей активности во всех ваших группах.",
-    "globalNoActivity": "В ваших группах пока нет никакой активности."
+    "fieldChangesCount": "{count} изменений полей"
   },
   "Information": {
     "title": "Информация",
@@ -590,6 +710,7 @@
     "max50": "Введите максимум 50 символов.",
     "duplicateParticipantName": "Участник с таким именем уже существует.",
     "titleRequired": "Пожалуйста, введите название.",
+    "paymentCategoryNotAllowed": "Платеж не является допустимой категорией для расходов.",
     "invalidNumber": "Неверное число.",
     "invalidExpression": "Неверное выражение. Используйте числа и операторы +, -, *, /.",
     "amountRequired": "Пожалуйста, введите сумму.",
@@ -597,14 +718,27 @@
     "amountTenMillion": "Сумма должна быть меньше 10 000 000.",
     "ratePositive": "Курс должен быть строго больше нуля.",
     "paidByRequired": "Пожалуйста, выберите участника.",
+    "paidToRequired": "Необходимо выбрать получателя платежа.",
+    "paidToDifferent": "Плательщик и получатель должны быть разными людьми.",
     "paidForMin1": "За этот расход должен заплатить как минимум один участник.",
-    "noZeroShares": "Все доли должны быть больше 0.",
-    "amountSum": "Сумма расхода должна быть равна сумме значений, распределенных между участниками.",
-    "percentageSum": "Сумма процентов должна быть равна 100.",
     "paidByAmountPositive": "Each payer's amount must be greater than zero.",
     "paidByAmountSum": "Payer amounts must sum to the expense total.",
     "paidByDuplicateParticipants": "Each payer can only appear once.",
-    "reimbursementSinglePayer": "Reimbursements support only a single payer."
+    "reimbursementSinglePayer": "Reimbursements support only a single payer.",
+    "noZeroShares": "Все доли должны быть больше 0.",
+    "amountSum": "Сумма расхода должна быть равна сумме значений, распределенных между участниками.",
+    "percentageSum": "Сумма процентов должна быть равна 100.",
+    "itemsRequired": "Добавьте хотя бы одну позицию или отключите разделение по позициям.",
+    "itemNeedsAssignment": "Назначьте каждую позицию хотя бы одному человеку.",
+    "itemTitleRequired": "Введите название позиции.",
+    "itemAmountNonNegative": "Сумма позиции не может быть отрицательной.",
+    "itemQuantityPositive": "Количество должно быть целым числом не менее 1.",
+    "taxNonNegative": "Налог не может быть отрицательным.",
+    "tipNonNegative": "Чаевые не могут быть отрицательными.",
+    "itemAssignmentUnknownParticipant": "Позиция назначена участнику, не входящему в разделение.",
+    "itemizationNotAllowedHere": "Возмещения и регулярные расходы нельзя делить по позициям.",
+    "itemsExceedAmount": "Сумма позиций превышает общую сумму расхода.",
+    "remainderShareUnknownParticipant": "В остаток включен участник, не входящий в расход."
   },
   "Categories": {
     "search": "Поиск категорий...",
@@ -688,6 +822,64 @@
       "heading": "Other currencies"
     }
   },
+  "ExpenseImport": {
+    "button": "Импортировать расходы",
+    "fromKnots": "Импортировать из Knots",
+    "fromSplitwise": "Импортировать из Splitwise"
+  },
+  "KnotsImport": {
+    "title": "Импорт из Knots",
+    "description": "Загрузите файл экспорта Knots. Если в файле есть люди, которых еще нет в этой группе, вы можете добавить их здесь перед импортом.",
+    "fileLabel": "Файл экспорта Knots",
+    "previewLabel": "Предпросмотр (первые 10 строк)",
+    "clear": "Очистить",
+    "cancel": "Отмена",
+    "import": "Импортировать расходы",
+    "addAndImport": "Добавить участников и импортировать",
+    "importing": "Импорт...",
+    "analyzing": "Анализ экспорта…",
+    "expenseCount": "{count, plural, one {Найден # расход} few {Найдено # расхода} many {Найдено # расходов} other {Найдено # расхода}}",
+    "matchedParticipants": "Уже в группе: {names}",
+    "missingParticipantsLabel": "Люди для добавления в эту группу",
+    "missingParticipantsDescription": "Введите e-mail для каждого человека. Новые аккаунты создаются автоматически и связываются с этой группой. Если аккаунт уже есть, человек будет добавлен как участник.",
+    "expenseReferences": "{count, plural, one {# расход} few {# расхода} many {# расходов} other {# расхода}}",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "name@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "Позже они смогут зарегистрироваться с этим e-mail, чтобы получить доступ к группе.",
+    "errors": {
+      "invalidJson": "Недопустимый JSON-файл.",
+      "invalidFormat": "Этот файл не является допустимым экспортом Knots.",
+      "noExpenses": "В экспорте нет расходов."
+    },
+    "toast": {
+      "invalidFileType": {
+        "title": "Недопустимый тип файла",
+        "description": "Выберите файл экспорта Knots в формате JSON или CSV."
+      },
+      "noContent": {
+        "title": "Нет содержимого файла",
+        "description": "Сначала выберите файл экспорта Knots."
+      },
+      "missingEmail": {
+        "title": "Требуется e-mail",
+        "description": "Введите e-mail для {name}."
+      },
+      "success": {
+        "title": "Импорт завершен",
+        "description": "Успешно импортировано {count} расходов из Knots."
+      },
+      "error": {
+        "title": "Ошибка импорта",
+        "description": "Не удалось импортировать файл экспорта Knots."
+      },
+      "cancelled": {
+        "title": "Импорт отменен",
+        "description": "Импорт был остановлен до завершения."
+      }
+    }
+  },
   "SplitwiseImport": {
     "button": "Import from Splitwise",
     "title": "Import from Splitwise",
@@ -698,6 +890,20 @@
     "cancel": "Cancel",
     "import": "Import Expenses",
     "importing": "Importing...",
+    "analyzing": "Analyzing CSV…",
+    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
+    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
+    "participantMappingLabel": "Match Splitwise names",
+    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
+    "mapToMemberLabel": "Group member",
+    "mapToMemberPlaceholder": "Select a member",
+    "addNewMemberOption": "Add new member by email",
+    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "They can register later with this email to access the group.",
     "toast": {
       "invalidFileType": {
         "title": "Invalid file type",
@@ -706,6 +912,14 @@
       "noContent": {
         "title": "No CSV content",
         "description": "Please select a CSV file first."
+      },
+      "missingEmail": {
+        "title": "Email required",
+        "description": "Enter an email for {name}."
+      },
+      "incompleteMapping": {
+        "title": "Mapping incomplete",
+        "description": "Choose a member or email for {name}."
       },
       "success": {
         "title": "Import successful",
@@ -718,91 +932,219 @@
       "cancelled": {
         "title": "Импорт отменен",
         "description": "Импорт был остановлен до завершения."
-      },
-      "missingEmail": {
-        "title": "Email required",
-        "description": "Enter an email for {name}."
-      },
-      "incompleteMapping": {
-        "title": "Mapping incomplete",
-        "description": "Choose a member or email for {name}."
       }
-    },
-    "analyzing": "Analyzing CSV…",
-    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
-    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
-    "participantMappingLabel": "Match Splitwise names",
-    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
-    "mapToMemberLabel": "Group member",
-    "mapToMemberPlaceholder": "Select a member",
-    "addNewMemberOption": "Add new member by email",
-    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
-    "emailLabel": "Email",
-    "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group.",
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
+    }
   },
   "ProfileSettings": {
-    "title": "Настройки профиля",
-    "emailTitle": "Эл. почта",
-    "emailDescription": "Ваш адрес эл. почты нельзя изменить.",
+    "title": "Настройки аккаунта",
+    "back": "Назад",
+    "Profile": {
+      "photoLabel": "Фото профиля",
+      "photoDescription": "Загрузите фото профиля, видимое друзьям и участникам групп.",
+      "photoAlt": "Ваше фото профиля",
+      "choosePhoto": "Выбрать фото",
+      "removePhoto": "Удалить фото",
+      "photoUpdatedToast": "Фото профиля обновлено.",
+      "photoRemovedToast": "Фото профиля удалено.",
+      "photoUnavailableToast": "Хранилище фото не настроено.",
+      "photoInvalidToast": "Выберите корректный файл изображения (PNG, JPG, WebP) размером менее 5 МБ.",
+      "photoFailedToast": "Не удалось загрузить фото профиля.",
+      "nameLabel": "Отображаемое имя",
+      "namePlaceholder": "Ваше имя",
+      "nameError": "Введите корректное имя.",
+      "nameUpdatedToast": "Отображаемое имя обновлено.",
+      "saveChanges": "Сохранить изменения",
+      "saving": "Сохранение…"
+    },
+    "profileTitle": "Профиль",
+    "appPreferencesTitle": "Настройки приложения",
+    "notificationsTitle": "Каналы уведомлений",
+    "notificationsDescription": "Управляйте получением уведомлений об активности в группах.",
+    "notifications": {
+      "masterSwitchAria": "Уведомления",
+      "saving": "Сохранение настроек…",
+      "saveSuccess": "Настройки уведомлений сохранены.",
+      "saveError": "Не удалось сохранить настройки уведомлений.",
+      "comingSoon": "Скоро",
+      "done": "Готово",
+      "channelSelectorAria": "Каналы доставки для {category}",
+      "emailNeedsVerification": "Подтвердите адрес электронной почты для включения e-mail уведомлений.",
+      "channelLabel": {
+        "off": "Выкл.",
+        "email": "E-mail",
+        "push": "Push",
+        "emailAndPush": "E-mail и Push"
+      },
+      "pushDisabled": {
+        "unsupported": "Push-уведомления не поддерживаются в этом браузере.",
+        "unconfigured": "Push-уведомления не настроены на этом сервере.",
+        "iosInstall": "В iOS добавьте Knots на главный экран для получения push-уведомлений.",
+        "denied": "Разрешение на уведомления отклонено. Включите его в настройках браузера."
+      },
+      "thisDevice": {
+        "title": "Push-уведомления на этом устройстве",
+        "description": "Получайте мгновенные оповещения в этом браузере при активности.",
+        "checking": "Проверка подписки…",
+        "enabledLabel": "Push-уведомления включены на этом устройстве.",
+        "disabledLabel": "Push-уведомления отключены на этом устройстве.",
+        "pushSelectedWarning": "Вы выбрали push-уведомления для некоторых категорий, но это устройство не подписано.",
+        "enable": "Включить на этом устройстве",
+        "disable": "Отключить на этом устройстве",
+        "error": "Не удалось обновить подписку на push-уведомления."
+      },
+      "groups": {
+        "groups-and-friends": "Группы и друзья",
+        "expenses": "Расходы",
+        "summaries": "Сводки"
+      },
+      "categories": {
+        "added-to-group": "Добавление в группу",
+        "friend-added": "Добавление друга",
+        "budget-alert": "Оповещение о бюджете",
+        "expense-created": "Создание расхода",
+        "recurring-expense-created": "Создание регулярного расхода",
+        "expense-changed": "Изменение или удаление расхода",
+        "expense-comment": "Комментарий к расходу",
+        "weekly-summary": "Еженедельная сводка"
+      },
+      "categoryDescriptions": {
+        "weekly-summary": "Еженедельный отчет о ваших расходах и балансах."
+      }
+    },
+    "emailTitle": "Электронная почта",
+    "emailDescription": "Адрес, используемый для уведомлений и входа.",
     "displayNameTitle": "Отображаемое имя",
+    "usernameTitle": "Имя пользователя",
+    "usernameDescription": "Ваш уникальный идентификатор в Knots.",
     "passwordTitle": "Пароль",
+    "passkeyTitle": "Ключи доступа (Passkeys)",
+    "Email": {
+      "description": "Для изменения адреса электронной почты требуется код подтверждения, отправленный на новый адрес.",
+      "changeButton": "Изменить e-mail",
+      "dialogTitle": "Изменить адрес электронной почты",
+      "dialogDescription": "Введите новый адрес. Мы отправим на него код подтверждения.",
+      "newEmailLabel": "Новый e-mail",
+      "newEmailPlaceholder": "you@example.com",
+      "sendCode": "Отправить код",
+      "cancel": "Отмена",
+      "otpTitle": "Введите код подтверждения",
+      "otpDescription": "Мы отправили 6-значный код на {email}. Введите его ниже.",
+      "codeLabel": "Код подтверждения",
+      "resend": "Отправить повторно",
+      "resendIn": "Повторная отправка через {seconds} с",
+      "useDifferentEmail": "Использовать другой e-mail",
+      "verify": "Подтвердить и изменить",
+      "successToast": "Адрес электронной почты успешно обновлен.",
+      "errorInUse": "Этот адрес электронной почты уже используется.",
+      "errorInvalid": "Введите корректный адрес электронной почты.",
+      "errorSame": "Новый адрес должен отличаться от текущего.",
+      "errorInvalidCode": "Неверный код подтверждения.",
+      "errorExpired": "Срок действия кода подтверждения истек. Запросите новый.",
+      "errorRateLimited": "Слишком много попыток. Подождите немного перед повторной попыткой.",
+      "errorSendFailed": "Не удалось отправить письмо с подтверждением. Попробуйте еще раз."
+    },
+    "Password": {
+      "description": "Измените пароль или задайте его, если сейчас используете только ключи доступа.",
+      "noPasswordDescription": "Вы можете входить с помощью ссылки по e-mail или ключа доступа. Задайте пароль, если хотите иметь дополнительный способ входа.",
+      "changeButton": "Изменить пароль",
+      "setButton": "Задать пароль",
+      "removeButton": "Удалить пароль",
+      "changeDialogTitle": "Изменить пароль",
+      "changeDialogDescription": "Введите текущий пароль и выберите новый.",
+      "setDialogTitle": "Задать пароль",
+      "setDialogDescription": "Добавьте пароль для входа с помощью e-mail и пароля.",
+      "setSuccessToast": "Пароль успешно установлен.",
+      "removeDialogTitle": "Удалить пароль",
+      "removeDialogDescription": "Вы по-прежнему сможете входить с помощью ссылки по e-mail или ключа доступа. Введите текущий пароль для подтверждения.",
+      "currentLabel": "Текущий пароль",
+      "newLabel": "Новый пароль",
+      "confirmLabel": "Подтвердите новый пароль",
+      "cancel": "Отмена",
+      "removeConfirm": "Удалить",
+      "changeSuccessToast": "Пароль успешно изменен.",
+      "removeSuccessToast": "Пароль успешно удален.",
+      "errorCurrentRequired": "Необходимо ввести текущий пароль.",
+      "errorMismatch": "Пароли не совпадают.",
+      "errorRequirements": "Пароль должен содержать не менее 8 символов.",
+      "errorSame": "Новый пароль должен отличаться от текущего.",
+      "errorCurrentIncorrect": "Текущий пароль неверен.",
+      "forgotPrefix": "Забыли пароль?",
+      "forgotLink": "Сбросить здесь",
+      "rule_TOO_SHORT": "Не менее 8 символов",
+      "rule_MISSING_UPPERCASE": "Одна заглавная буква",
+      "rule_MISSING_LOWERCASE": "Одна строчная буква",
+      "rule_MISSING_DIGIT": "Одна цифра"
+    },
+    "Passkey": {
+      "description": "Безопасный вход с помощью биометрии, ключа безопасности или блокировки экрана без пароля.",
+      "unavailable": "Ключи доступа недоступны на этом устройстве.",
+      "addButton": "Добавить ключ доступа",
+      "empty": "Ключи доступа еще не зарегистрированы.",
+      "created": "Добавлено {date}",
+      "badgeSynced": "Синхронизирован",
+      "badgeDeviceBound": "Привязан к устройству",
+      "badgeBackedUp": "Создана резервная копия",
+      "addDialogTitle": "Добавить ключ доступа",
+      "addDialogDescription": "Задайте понятное название и следуйте инструкциям на устройстве.",
+      "nicknameLabel": "Название (необязательно)",
+      "nicknamePlaceholder": "напр. Мой ноутбук",
+      "confirmPasswordLabel": "Текущий пароль",
+      "confirmPasswordHint": "Подтвердите пароль для добавления ключа доступа.",
+      "addConfirm": "Добавить ключ доступа",
+      "cancel": "Отмена",
+      "addSuccessToast": "Ключ доступа добавлен.",
+      "addFailedToast": "Не удалось добавить ключ доступа.",
+      "errorPasswordRequired": "Введите текущий пароль.",
+      "deleteAria": "Удалить {name}",
+      "deleteDialogTitle": "Удалить ключ доступа?",
+      "deleteDialogDescription": "Ключ «{name}» больше нельзя будет использовать для входа в ваш аккаунт.",
+      "deleteConfirm": "Удалить",
+      "deleteSuccessToast": "Ключ доступа удален.",
+      "deleteFailedToast": "Не удалось удалить ключ доступа.",
+      "reauthTitle": "Войдите снова, чтобы добавить ключ доступа",
+      "reauthDescription": "С момента вашего последнего входа прошло более 30 дней. Войдите снова с помощью пароля, ссылки по e-mail или ключа доступа, затем вернитесь сюда.",
+      "reauthConfirm": "Войти снова"
+    },
     "preferencesTitle": "Настройки",
-    "preferencesDescription": "Настройте язык и внешний вид.",
+    "preferencesDescription": "Настройте язык, тему и валюту по умолчанию.",
     "languageLabel": "Язык",
     "themeLabel": "Тема",
+    "blockedUsersTitle": "Заблокированные пользователи",
+    "blockedUsersDescription": "Управление заблокированными пользователями.",
+    "blockedUsersRowLabel": "Заблокированные пользователи",
+    "blockedUsersRowDescription": "Просмотр и управление заблокированными пользователями.",
     "accountTitle": "Аккаунт",
     "signOut": "Выйти",
+    "signOutDescription": "Выйти из аккаунта на этом устройстве.",
+    "signOutAllTitle": "Выйти со всех устройств",
+    "signOutAllDescription": "Завершить все активные сеансы на всех устройствах.",
     "signingOut": "Выход…",
-    "NameForm": {
-      "nameRequired": "Имя обязательно",
-      "nameMaxLength": "Имя должно содержать не более 100 символов",
-      "successToast": "Отображаемое имя успешно обновлено.",
-      "label": "Отображаемое имя",
-      "placeholder": "Введите отображаемое имя",
-      "saving": "Сохранение…",
-      "submit": "Сохранить имя"
-    },
-    "PasswordForm": {
-      "currentPasswordRequired": "Текущий пароль обязателен",
-      "newPasswordRequired": "Новый пароль обязателен",
-      "confirmPasswordRequired": "Подтвердите новый пароль",
-      "passwordsDoNotMatch": "Пароли не совпадают",
-      "successToast": "Пароль успешно изменён.",
-      "currentPasswordIncorrect": "Текущий пароль неверен",
-      "newPasswordSameAsCurrent": "Новый пароль должен отличаться от текущего",
-      "passwordRequirementsNotMet": "Пароль не соответствует требованиям",
-      "currentPasswordLabel": "Текущий пароль",
-      "newPasswordLabel": "Новый пароль",
-      "confirmPasswordLabel": "Подтвердите новый пароль",
-      "passwordHint": "От 8 до 128 символов. Должен содержать хотя бы одну заглавную, одну строчную букву и одну цифру.",
-      "changingPassword": "Изменение пароля…",
-      "submit": "Изменить пароль",
-      "errorTooShort": "Не менее 8 символов",
-      "errorTooLong": "Не более 128 символов",
-      "errorMissingUppercase": "Должна быть хотя бы одна заглавная буква",
-      "errorMissingLowercase": "Должна быть хотя бы одна строчная буква",
-      "errorMissingDigit": "Должна быть хотя бы одна цифра"
-    },
-    "blockedUsersTitle": "Заблокированные пользователи",
-    "blockedUsersDescription": "Управление заблокированными пользователями. Заблокированные пользователи не могут добавлять вас в группы или отправлять вам запросы в друзья.",
     "Preferences": {
       "timezoneLabel": "Часовой пояс",
       "timezoneSelect": "Выберите часовой пояс…",
       "timezoneSearch": "Поиск часового пояса…",
       "timezoneEmpty": "Часовой пояс не найден.",
       "timezoneSaved": "Часовой пояс обновлен.",
+      "timezoneHelp": "Задает значение по умолчанию для времени новых расходов и регулярных расписаний.",
+      "languageSearch": "Поиск языка…",
+      "languageEmpty": "Язык не найден.",
+      "languageCommon": "Популярные",
+      "languageOther": "Другие языки",
       "currencyLabel": "Валюта по умолчанию",
       "currencySaved": "Валюта по умолчанию обновлена."
     },
+    "appPreferencesDescription": "Настройте язык, тему и валюту по умолчанию для вашего аккаунта.",
+    "preferencesSaving": "Сохранение настроек…",
+    "themeSaved": "Тема обновлена.",
+    "themeLight": "Светлая",
+    "themeDark": "Темная",
+    "themeSystem": "Системная",
     "SignOutAll": {
       "button": "Выйти на всех устройствах",
       "dialogTitle": "Выйти на всех устройствах?",
       "dialogDescription": "Это завершит все активные сеансы, включая этот. Вы будете перенаправлены на страницу входа.",
       "cancel": "Отмена",
-      "confirm": "Выйти везде",
+      "confirm": "Выйти отовсюду",
       "signingOut": "Выход из системы…",
       "successToast": "Все сеансы были завершены."
     },
@@ -816,13 +1158,51 @@
       "emailPlaceholder": "name@example.com",
       "block": "Заблокировать",
       "unblock": "Разблокировать",
-      "empty": "Вы никого не заблокировали.",
+      "empty": "У вас нет заблокированных пользователей.",
       "blockedToast": "Пользователь успешно заблокирован.",
       "unblockedToast": "Пользователь разблокирован.",
       "confirmBlockTitle": "Заблокировать этого друга?",
       "confirmBlockDescription": "Блокировка {name} также удалит его из вашего списка друзей. Он не получит уведомление о блокировке.",
       "confirmBlockCancel": "Отмена",
       "confirmBlockAction": "Заблокировать и удалить из друзей"
+    },
+    "NameForm": {
+      "nameRequired": "Отображаемое имя обязательно.",
+      "nameMaxLength": "Имя должно содержать не более 100 символов",
+      "successToast": "Отображаемое имя успешно обновлено.",
+      "label": "Отображаемое имя",
+      "placeholder": "Введите отображаемое имя",
+      "saving": "Сохранение…",
+      "submit": "Сохранить имя"
+    },
+    "UsernameForm": {
+      "successToast": "Имя пользователя обновлено.",
+      "label": "Имя пользователя",
+      "placeholder": "vashe-imya-polzovatelya",
+      "description": "Используется в URL вашего профиля. Только строчные буквы, цифры и дефисы.",
+      "saving": "Сохранение…",
+      "submit": "Сохранить имя пользователя"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "Необходимо ввести текущий пароль.",
+      "newPasswordRequired": "Необходимо ввести новый пароль.",
+      "confirmPasswordRequired": "Подтвердите новый пароль.",
+      "passwordsDoNotMatch": "Пароли не совпадают.",
+      "successToast": "Пароль успешно изменён.",
+      "currentPasswordIncorrect": "Текущий пароль неверен.",
+      "newPasswordSameAsCurrent": "Новый пароль должен отличаться от текущего.",
+      "passwordRequirementsNotMet": "Пароль не отвечает требованиям.",
+      "currentPasswordLabel": "Текущий пароль",
+      "newPasswordLabel": "Новый пароль",
+      "confirmPasswordLabel": "Подтвердите новый пароль",
+      "passwordHint": "От 8 до 128 символов. Должен содержать как минимум одну заглавную букву, одну строчную и одну цифру.",
+      "changingPassword": "Смена пароля…",
+      "submit": "Изменить пароль",
+      "errorTooShort": "Не менее 8 символов",
+      "errorTooLong": "Не более 128 символов",
+      "errorMissingUppercase": "Должна быть хотя бы одна заглавная буква",
+      "errorMissingLowercase": "Должна быть хотя бы одна строчная буква",
+      "errorMissingDigit": "Должна быть хотя бы одна цифра"
     }
   },
   "Friends": {
@@ -908,6 +1288,7 @@
       "title": "Expenses with {name}",
       "description": "All expenses you share with this friend, across groups.",
       "backToFriends": "Back to friends",
+      "backToFriend": "Назад к {name}",
       "listTitle": "Expense history",
       "listDescription": "Direct expenses and expenses from shared groups.",
       "create": "Add expense",
@@ -950,6 +1331,10 @@
       "friendOwesYou": "{name} должен вам {amount}",
       "youOweFriend": "Вы должны {name} {amount}",
       "paid": "{payer} заплатил {payee} {amount}",
+      "deletePayment": "Удалить",
+      "deletePaymentConfirm": "Вы уверены, что хотите удалить этот платеж?",
+      "deletePaymentSuccess": "Платеж успешно удален",
+      "deletePaymentError": "Не удалось удалить платеж",
       "groups": {
         "upcoming": "Предстоящие",
         "thisWeek": "На этой неделе",
@@ -965,14 +1350,15 @@
       "paid": "{payer} заплатил {payee}",
       "addedBy": "Добавлено пользователем {name} {date}",
       "disclaimer": "Этот платёж был записан через \"Записать платёж\". Деньги не переводились.",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "readOnlyNotice": "Этот платеж нельзя изменить или удалить отдельно, так как он является частью расчета баланса.",
       "edit": "Редактировать",
       "delete": "Удалить",
       "deleteConfirm": "Удалить этот платёж?",
       "deleteDescription": "Это скорректирует балансы так, как будто платежа не было.",
+      "deleting": "Deleting...",
       "notFound": "Платёж не найден.",
-      "backToFriend": "Назад к {name}",
-      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
-      "deleting": "Deleting..."
+      "backToFriend": "Назад к {name}"
     },
     "DirectExpense": {
       "title": "Добавить расход",
@@ -984,12 +1370,19 @@
       "paidByYou": "Вы",
       "splitEqually": "Оплатил {payer}, поделено поровну",
       "dateLabel": "Дата",
+      "attachLabel": "Прикрепить изображение или PDF",
+      "notesLabel": "Заметки",
+      "notesPlaceholder": "Добавить заметки (необязательно)",
       "save": "Сохранить",
       "saving": "Сохранение…",
       "cancel": "Отмена",
       "success": "Расход добавлен.",
       "error": "Не удалось добавить расход.",
       "persistError": "Не удалось сохранить данные формы. Навигация недоступна."
+    },
+    "Settings": {
+      "currencyTitle": "Основная валюта",
+      "currencyDescription": "Используется для прямых расходов и расчетов с друзьями."
     },
     "SettleAll": {
       "button": "Рассчитать всё",
@@ -1013,6 +1406,7 @@
     "memberPromoted": "Участник повышен до владельца.",
     "memberDemoted": "Участник понижен до обычного участника.",
     "addMember": "Добавить участника",
+    "pickFriend": "Choose from your friends or enter an email.",
     "adding": "Добавление…",
     "add": "Добавить",
     "cancel": "Отмена",
@@ -1021,8 +1415,7 @@
     "leave": "Покинуть",
     "removeFromGroup": "Удалить из группы",
     "promoteToOwner": "Повысить до владельца",
-    "demoteToMember": "Понизить до участника",
-    "pickFriend": "Choose from your friends or enter an email."
+    "demoteToMember": "Понизить до участника"
   },
   "MyGroups": {
     "title": "Мои группы",
@@ -1032,7 +1425,9 @@
     "noGroupsHint": "Создайте группу, чтобы начать делить расходы с другими.",
     "createGroup": "Создать группу",
     "createGroupTitle": "Создать новую группу",
-    "createGroupDescription": "Введите название группы. После создания можно пригласить участников.",
+    "createGroupDescription": "Введите название и валюту группы. После создания можно пригласить участников.",
+    "invalidCurrency": "Выберите корректную валюту.",
+    "currencySymbolRequired": "Введите символ валюты.",
     "groupNameLabel": "Название группы",
     "characters": "символов",
     "leaveGroup": "Покинуть группу",
@@ -1052,100 +1447,6 @@
     "deleteGroupConfirmCancel": "Отмена",
     "deleteGroupConfirmAction": "Удалить навсегда"
   },
-  "UserMenu": {
-    "profileSettings": "Настройки аккаунта",
-    "signingOut": "Выход…",
-    "signOut": "Выйти"
-  },
-  "Notifications": {
-    "settings": "Настройки уведомлений",
-    "subscribe": "Включить уведомления",
-    "unsubscribe": "Отключить уведомления",
-    "selectParticipant": "Уведомлять меня об изменениях других",
-    "noParticipant": "Все изменения",
-    "permissionDenied": "Разрешение на уведомления отклонено. Включите его в настройках браузера.",
-    "notSupported": "Push-уведомления не поддерживаются на этом устройстве.",
-    "expenseCreated": "{actor} добавил(а) «{title}»",
-    "expenseUpdated": "{actor} обновил(а) «{title}»",
-    "expenseDeleted": "{actor} удалил(а) «{title}»",
-    "groupUpdated": "{actor} обновил(а) группу «{group}»",
-    "notificationTitle": "Knots – {group}",
-    "defaultBody": "Новая активность в вашей группе",
-    "filterHint": "Выберите, от кого получать уведомления и о каких событиях.",
-    "subscribeError": "Не удалось включить уведомления. Попробуйте ещё раз.",
-    "membersLabel": "Уведомлять меня о",
-    "notifyAllMembers": "Все в группе",
-    "notifySpecificMembers": "Или только эти участники:",
-    "eventsLabel": "События",
-    "eventCreate": "Расход добавлен",
-    "eventUpdate": "Расход изменён",
-    "eventDelete": "Расход удалён",
-    "selectAtLeastOneFilter": "Выберите хотя бы одного участника или событие.",
-    "channelsLabel": "Каналы",
-    "pushLabel": "Push-уведомления",
-    "pushUnavailable": "Push-уведомления недоступны в этой среде.",
-    "emailLabel": "Уведомления по e-mail",
-    "enableChannelHint": "Включите канал, чтобы настроить, о ком и о чём получать уведомления.",
-    "pushSyncWarning": "Настройки сохранены, но синхронизация фильтра push-уведомлений не удалась."
-  },
-  "ExpenseImport": {
-    "button": "Импортировать расходы",
-    "fromKnots": "Импортировать из Knots",
-    "fromSplitwise": "Импортировать из Splitwise"
-  },
-  "KnotsImport": {
-    "title": "Импорт из Knots",
-    "description": "Загрузите файл экспорта Knots. Если в файле есть люди, которых еще нет в этой группе, вы можете добавить их здесь перед импортом.",
-    "fileLabel": "Файл экспорта Knots",
-    "previewLabel": "Предпросмотр (первые 10 строк)",
-    "clear": "Очистить",
-    "cancel": "Отмена",
-    "import": "Импортировать расходы",
-    "addAndImport": "Добавить участников и импортировать",
-    "importing": "Импорт...",
-    "analyzing": "Анализ экспорта…",
-    "expenseCount": "{count, plural, one {Найден # расход} few {Найдено # расхода} many {Найдено # расходов} other {Найдено # расхода}}",
-    "matchedParticipants": "Уже в группе: {names}",
-    "missingParticipantsLabel": "Люди для добавления в эту группу",
-    "missingParticipantsDescription": "Введите e-mail для каждого человека. Новые аккаунты создаются автоматически и связываются с этой группой. Если аккаунт уже есть, человек будет добавлен как участник.",
-    "expenseReferences": "{count, plural, one {# расход} few {# расхода} many {# расходов} other {# расхода}}",
-    "emailLabel": "E-mail",
-    "emailPlaceholder": "name@example.com",
-    "softCreateHint": "Позже они смогут зарегистрироваться с этим e-mail, чтобы получить доступ к группе.",
-    "toast": {
-      "invalidFileType": {
-        "title": "Недопустимый тип файла",
-        "description": "Выберите файл экспорта Knots в формате JSON или CSV."
-      },
-      "noContent": {
-        "title": "Нет содержимого файла",
-        "description": "Сначала выберите файл экспорта Knots."
-      },
-      "missingEmail": {
-        "title": "Требуется e-mail",
-        "description": "Введите e-mail для {name}."
-      },
-      "success": {
-        "title": "Импорт завершен",
-        "description": "Успешно импортировано {count} расходов из Knots."
-      },
-      "error": {
-        "title": "Ошибка импорта",
-        "description": "Не удалось импортировать файл экспорта Knots."
-      },
-      "cancelled": {
-        "title": "Импорт отменен",
-        "description": "Импорт был остановлен до завершения."
-      }
-    },
-    "errors": {
-      "invalidJson": "Недопустимый JSON-файл.",
-      "invalidFormat": "Этот файл не является допустимым экспортом Knots.",
-      "noExpenses": "В экспорте нет расходов."
-    },
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
-  },
   "GroupDangerZone": {
     "title": "Управление группой",
     "description": "Архивация скрывает эту группу из вашего списка без удаления данных. Удаление навсегда удаляет группу для всех.",
@@ -1159,6 +1460,109 @@
     "deleteConfirmDescription": "Это навсегда удалит «{name}» и все ее расходы, балансы и историю для всех участников. Это действие нельзя отменить.",
     "cancel": "Отмена",
     "deleteConfirmAction": "Удалить навсегда"
+  },
+  "UserMenu": {
+    "menuLabel": "Меню пользователя",
+    "profileSettings": "Настройки аккаунта",
+    "theme": "Тема",
+    "themeLight": "Светлая",
+    "themeDark": "Темная",
+    "themeSystem": "Системная",
+    "signingOut": "Выход…",
+    "signOut": "Выйти"
+  },
+  "Notifications": {
+    "settings": "Настройки уведомлений",
+    "subscribe": "Включить уведомления",
+    "unsubscribe": "Отключить уведомления",
+    "selectParticipant": "Уведомлять меня об изменениях других",
+    "noParticipant": "Все изменения",
+    "permissionDenied": "Разрешение на уведомления отклонено. Включите его в настройках браузера.",
+    "notSupported": "Push-уведомления не поддерживаются на этом устройстве.",
+    "expenseCreated": "{actor} добавил(а) «{title}» в группе {group}",
+    "expenseUpdated": "{actor} обновил(а) «{title}» в группе {group}",
+    "expenseDeleted": "{actor} удалил(а) «{title}» в группе {group}",
+    "groupUpdated": "{actor} обновил(а) группу «{group}»",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "Новая активность в вашей группе",
+    "filterHint": "Выберите, от кого получать уведомления и о каких событиях.",
+    "membersLabel": "Уведомлять меня о",
+    "notifyAllMembers": "Все в группе",
+    "notifySpecificMembers": "Или только эти участники:",
+    "eventsLabel": "События",
+    "eventCreate": "Расход добавлен",
+    "eventUpdate": "Расход изменён",
+    "eventDelete": "Расход удалён",
+    "selectAtLeastOneFilter": "Выберите хотя бы одного участника или событие.",
+    "subscribeError": "Не удалось включить уведомления. Попробуйте ещё раз.",
+    "channelsLabel": "Каналы",
+    "pushLabel": "Push-уведомления",
+    "pushUnavailable": "Push-уведомления недоступны в этой среде.",
+    "emailLabel": "Уведомления по e-mail",
+    "enableChannelHint": "Включите канал, чтобы настроить, о ком и о чём получать уведомления.",
+    "pushSyncWarning": "Настройки сохранены, но синхронизация фильтра push-уведомлений не удалась."
+  },
+  "AppError": {
+    "title": "Что-то пошло не так",
+    "description": "Локальные данные приложения были очищены. Ваш сеанс также будет завершен, чтобы вы могли начать заново с главной страницы.",
+    "recover": "На главную",
+    "recovering": "Перенаправление…"
+  },
+  "PaymentForm": {
+    "dateLabel": "Дата платежа",
+    "dateDescription": "Введите дату совершения платежа.",
+    "amountLabel": "Сумма",
+    "amountDescription": "Введите сумму платежа.",
+    "paidByLabel": "Оплатил(а)",
+    "paidByDescription": "Выберите, кто совершил платеж.",
+    "paidToLabel": "Получатель",
+    "paidToDescription": "Выберите, кто получил платеж.",
+    "notesLabel": "Заметки",
+    "notesPlaceholder": "Добавить заметки (необязательно)",
+    "participantPlaceholder": "Выберите участника",
+    "disclaimer": "Записывает платеж между участниками для расчета баланса. Это не совместный расход."
+  },
+  "FloatingCreateExpense": {
+    "addExpense": "Добавить расход",
+    "dialogTitle": "Добавить расход",
+    "editDialogTitle": "Редактировать расход",
+    "createPaymentDialogTitle": "Записать платеж",
+    "editPaymentDialogTitle": "Редактировать платеж",
+    "withWho": "С вами и:",
+    "back": "Назад",
+    "searchPlaceholder": "Поиск друзей или групп…",
+    "descriptionPlaceholder": "Введите описание",
+    "amountPlaceholder": "0,00",
+    "paidByLabel": "Оплатил(а)",
+    "you": "вы",
+    "splitEqually": "поровну",
+    "save": "Сохранить",
+    "saving": "Сохранение…",
+    "cancel": "Отмена",
+    "successToast": "Расход успешно создан.",
+    "updateSuccessToast": "Расход успешно обновлен.",
+    "paymentSuccessToast": "Платеж успешно записан.",
+    "paymentUpdateSuccessToast": "Платеж успешно обновлен.",
+    "errorToast": "Не удалось создать расход.",
+    "paymentErrorToast": "Не удалось записать платеж.",
+    "updateErrorToast": "Не удалось обновить расход.",
+    "paymentUpdateErrorToast": "Не удалось обновить платеж.",
+    "lockedPaymentToast": "Этот платеж является частью расчета баланса и не может быть отредактирован.",
+    "noFriendOrGroupFound": "Друзья или группы не найдены.",
+    "groupsHeader": "Группы",
+    "friendsHeader": "Друзья",
+    "selectGroupText": "Группа: {name}",
+    "pickerTitle": "С кем?",
+    "pickerDone": "Готово",
+    "selectParticipants": "Выберите друзей или группу",
+    "selectParticipantsHint": "Выберите группу или друга, чтобы начать.",
+    "singleGroupAlertTitle": "Только одна группа",
+    "singleGroupAlertDescription": "Можно выбрать только одну группу за раз. Удалите текущую группу перед выбором другой.",
+    "singleGroupAlertOk": "ОК",
+    "advancedOptions": "Дополнительные параметры",
+    "splitDetails": "Детали разделения",
+    "notesPlaceholder": "Добавить заметки (необязательно)",
+    "viewGroupExpense": "Посмотреть расход группы"
   },
   "DuplicateExpense": {
     "title": "Обнаружен возможный дубликат",
@@ -1183,7 +1587,47 @@
   "CurrencyAmountInput": {
     "expressionHint": "или 10+5"
   },
-  "ExpenseTitleInput": {
-    "clear": "Очистить"
+  "Login": {
+    "title": "Вход",
+    "description": "Войдите с помощью ключа доступа, ссылки по e-mail или пароля.",
+    "orContinueWithEmail": "ИЛИ ПРОДОЛЖИТЕ С E-MAIL",
+    "methodMagicLink": "Ссылка для входа",
+    "methodPassword": "Пароль",
+    "sendSignInLink": "Отправить ссылку для входа",
+    "signInWithPassword": "Войти с паролем",
+    "usePasskey": "Использовать ключ доступа",
+    "passkeyFailed": "Не удалось войти с этим ключом доступа. Попробуйте еще раз.",
+    "forgotPassword": "Забыли пароль?",
+    "noAccount": "Нет аккаунта?",
+    "signUp": "Зарегистрироваться",
+    "magicLinkButton": "Отправить ссылку для входа",
+    "magicLinkEmailRequired": "Введите адрес электронной почты.",
+    "magicLinkSendFailed": "Не удалось отправить письмо со ссылкой для входа. Попробуйте еще раз.",
+    "magicLinkSentTitle": "Проверьте почту",
+    "magicLinkSentDescription": "Если для этого адреса существует аккаунт, мы отправили ссылку для входа. Она действует один раз и истекает через 15 минут.",
+    "magicLinkSigningIn": "Выполняется вход…",
+    "magicLinkFailedTitle": "Не удалось войти",
+    "magicLinkInvalid": "Эта ссылка для входа недействительна или срок ее действия истек.",
+    "backToLogin": "Вернуться ко входу"
+  },
+  "Register": {
+    "title": "Создать аккаунт",
+    "description": "Зарегистрируйтесь с помощью ссылки по e-mail или пароля.",
+    "signUpWithPassword": "Создать аккаунт с паролем",
+    "confirmPassword": "Подтвердите пароль",
+    "hasAccount": "Уже есть аккаунт?",
+    "signIn": "Войти",
+    "creating": "Создание аккаунта…",
+    "passwordMismatch": "Пароли не совпадают",
+    "ruleLength": "8 символов",
+    "ruleLowercase": "Строчная буква",
+    "ruleUppercase": "Заглавная буква",
+    "ruleNumber": "Цифра",
+    "successTitle": "Регистрация прошла успешно",
+    "successDescription": "Ваш аккаунт был создан",
+    "successAlertTitle": "Проверьте почту",
+    "successAlertDescription": "Мы отправили ссылку для подтверждения на ваш e-mail. Пожалуйста, перейдите по ссылке, чтобы подтвердить аккаунт перед входом.",
+    "goToLogin": "Перейти ко входу",
+    "failedTitle": "Ошибка регистрации"
   }
 }

@@ -195,6 +195,12 @@
       "label": "Simplify debts",
       "description": "Reduce the number of payments by combining balances between group members (like Splitwise Pro). When off, each person only owes whoever paid for their share."
     },
+    "FriendsField": {
+      "label": "Friends",
+      "description": "Choose people who are already friends, or invite someone new.",
+      "placeholder": "Select a friend…",
+      "remove": "Remove {name}"
+    },
     "Participants": {
       "title": "Participants",
       "description": "Enter the name for each participant.",
@@ -412,7 +418,7 @@
       "postSaveTitle": "Expense split across group and direct records",
       "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
       "postSaveGroupHalfLine": "The group expense is {amount}",
-      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "singlePayerNote": "When you add people from outside the group (e.g. {names}), the expense is split in two, so only one person can pay.",
       "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
       "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
       "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
@@ -1039,7 +1045,7 @@
     },
     "Password": {
       "description": "Sign in with your email and password.",
-      "noPasswordDescription": "You sign in with a passkey. Add a password if you want another way in.",
+      "noPasswordDescription": "You can sign in with an email link or a passkey. Add a password if you want another way in.",
       "changeButton": "Change password",
       "setButton": "Set password",
       "removeButton": "Remove password",
@@ -1049,7 +1055,7 @@
       "setDialogDescription": "Choose a password. You can still sign in with your passkey.",
       "setSuccessToast": "Password set.",
       "removeDialogTitle": "Remove password",
-      "removeDialogDescription": "You'll sign in with a passkey instead. Enter your current password to confirm.",
+      "removeDialogDescription": "You can still sign in with an email link or a passkey. Enter your current password to confirm.",
       "currentLabel": "Current password",
       "newLabel": "New password",
       "confirmLabel": "Confirm new password",
@@ -1094,7 +1100,10 @@
       "deleteDialogDescription": "\"{name}\" will no longer be able to sign in to your account.",
       "deleteConfirm": "Remove passkey",
       "deleteSuccessToast": "Passkey removed.",
-      "deleteFailedToast": "Could not remove the passkey."
+      "deleteFailedToast": "Could not remove the passkey.",
+      "reauthTitle": "Sign in again to add a passkey",
+      "reauthDescription": "Your last sign-in is older than 30 days. Sign in again with your password, an email link, or a passkey, then come back here.",
+      "reauthConfirm": "Sign in again"
     },
     "preferencesTitle": "Preferences",
     "preferencesDescription": "Customize your timezone, currency, language, and appearance.",
@@ -1416,7 +1425,9 @@
     "noGroupsHint": "Create a group to start splitting expenses with others.",
     "createGroup": "Create Group",
     "createGroupTitle": "Create a new group",
-    "createGroupDescription": "Enter a name for your group. You can invite members after creating it.",
+    "createGroupDescription": "Enter a name and currency for your group. You can invite members after creating it.",
+    "invalidCurrency": "Choose a valid currency.",
+    "currencySymbolRequired": "Enter a currency symbol.",
     "groupNameLabel": "Group name",
     "characters": "characters",
     "leaveGroup": "Leave group",
@@ -1575,5 +1586,48 @@
   },
   "CurrencyAmountInput": {
     "expressionHint": "or 10+5"
+  },
+  "Login": {
+    "title": "Sign in",
+    "description": "Use a passkey, an email link, or your password.",
+    "orContinueWithEmail": "OR CONTINUE WITH EMAIL",
+    "methodMagicLink": "Magic link",
+    "methodPassword": "Password",
+    "sendSignInLink": "Send sign-in link",
+    "signInWithPassword": "Sign in with password",
+    "usePasskey": "Use a passkey",
+    "passkeyFailed": "We could not sign you in with that passkey. Try again.",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "magicLinkButton": "Send sign-in link",
+    "magicLinkEmailRequired": "Enter your email address.",
+    "magicLinkSendFailed": "We could not send the sign-in email. Try again.",
+    "magicLinkSentTitle": "Check your email",
+    "magicLinkSentDescription": "If an account exists for that address, we sent a sign-in link. It works once and expires in 15 minutes.",
+    "magicLinkSigningIn": "Signing you in…",
+    "magicLinkFailedTitle": "Could not sign in",
+    "magicLinkInvalid": "This sign-in link is invalid or has expired.",
+    "backToLogin": "Back to sign in"
+  },
+  "Register": {
+    "title": "Create an account",
+    "description": "Sign up with an email link or a password.",
+    "signUpWithPassword": "Sign up with password",
+    "confirmPassword": "Confirm password",
+    "hasAccount": "Already have an account?",
+    "signIn": "Sign in",
+    "creating": "Creating account…",
+    "passwordMismatch": "Passwords do not match",
+    "ruleLength": "8 characters",
+    "ruleLowercase": "Lowercase",
+    "ruleUppercase": "Uppercase",
+    "ruleNumber": "Number",
+    "successTitle": "Registration successful",
+    "successDescription": "Your account has been created",
+    "successAlertTitle": "Check your email",
+    "successAlertDescription": "We've sent a verification link to your email address. Please click the link to verify your account before logging in.",
+    "goToLogin": "Go to login",
+    "failedTitle": "Registration failed"
   }
 }

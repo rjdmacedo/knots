@@ -282,7 +282,8 @@ model User {
   theme                String? // "light" | "dark" | "system"
   notificationsEnabled Boolean   @default(true)
   timezone             String?
-  preferredCurrency    String?
+  preferredCurrency    String?   @default("USD")
+  sessionsInvalidatedAt DateTime?
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 
@@ -431,6 +432,7 @@ model Token {
 enum TokenType {
   EMAIL_VERIFICATION
   PASSWORD_RESET
+  MAGIC_LINK
 }
 
 model GroupMembership {

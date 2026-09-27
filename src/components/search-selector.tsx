@@ -46,6 +46,8 @@ type SearchSelectorProps = {
   groups: SearchSelectorGroup[]
   placeholder: string
   empty: string
+  /** Trigger text when no item matches `value`. */
+  unselectedLabel?: ReactNode
   disabled?: boolean
   isLoading?: boolean
   variant?: 'default' | 'inline'
@@ -60,6 +62,7 @@ export function SearchSelector({
   groups,
   placeholder,
   empty,
+  unselectedLabel,
   disabled = false,
   isLoading = false,
   variant = 'default',
@@ -96,20 +99,22 @@ export function SearchSelector({
               disabled={disabled}
               item={selected}
               value={value}
+              unselectedLabel={unselectedLabel}
             />
           )
         }
       />
       <PopoverContent
         align={isInline ? 'end' : 'start'}
-        className="w-max max-w-(--available-width) p-0"
+        className={cn(
+          'p-0',
+          isInline ? 'w-max max-w-(--available-width)' : 'w-(--anchor-width)',
+        )}
       >
-        <Command className="h-auto w-max max-w-full">
-          <CommandInput
-            autoFocus
-            placeholder={placeholder}
-            className="text-base"
-          />
+        <Command
+          className={cn('h-auto', isInline ? 'w-max max-w-full' : 'w-full')}
+        >
+          <CommandInput autoFocus placeholder={placeholder} />
           <CommandList>
             <CommandEmpty>{empty}</CommandEmpty>
             {visibleGroups.map((group) => (
@@ -122,6 +127,7 @@ export function SearchSelector({
                     key={`${group.heading ?? 'items'}-${item.value}-${index}`}
                     value={item.keywords}
                     data-checked={item.value === value}
+                    className="w-full"
                     onSelect={() => select(item.value)}
                   >
                     <ItemLabel item={item} value={item.value} />
@@ -148,9 +154,9 @@ function ItemLabel({
   }
 
   return (
-    <span className="flex min-w-0 items-center gap-3">
+    <span className="flex min-w-0 flex-1 items-center gap-3">
       {item.icon}
-      <span className="truncate">{item.label}</span>
+      <span className="min-w-0 flex-1 text-left">{item.label}</span>
     </span>
   )
 }
@@ -162,21 +168,29 @@ const DefaultTrigger = forwardRef<
     isLoading: boolean
     item: SearchSelectorItem | undefined
     value: string
+    unselectedLabel?: ReactNode
   }
 >(function DefaultTrigger(
-  { open, isLoading, item, value, className, ...props },
+  { open, isLoading, item, value, unselectedLabel, className, ...props },
   ref,
 ) {
   return (
     <Button
       ref={ref}
+      type="button"
       variant="outline"
       role="combobox"
       aria-expanded={open}
-      className={cn('flex w-full justify-between', className)}
+      className={cn('flex w-full justify-between text-left', className)}
       {...props}
     >
-      <ItemLabel item={item} value={value} />
+      {item ? (
+        <ItemLabel item={item} value={value} />
+      ) : (
+        <span className="truncate text-muted-foreground">
+          {unselectedLabel ?? value}
+        </span>
+      )}
       <TriggerIcon isLoading={isLoading} />
     </Button>
   )

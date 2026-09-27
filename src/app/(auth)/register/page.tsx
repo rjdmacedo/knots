@@ -1,5 +1,10 @@
 'use client'
 
+import {
+  EmailMethodSwitch,
+  type EmailMethod,
+} from '@/components/auth/email-method-switch'
+import { usePasskeySignIn } from '@/components/auth/use-passkey-sign-in'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
@@ -11,111 +16,142 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
+import { PasswordInput } from '@/components/ui/password-input'
 import { validatePassword } from '@/lib/auth/password-validation'
 import { cn } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { CheckCircle2, Loader2 } from 'lucide-react'
+import {
+  AlertCircle,
+  Check,
+  Circle,
+  Fingerprint,
+  Loader2,
+  Mail,
+} from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-const registerSchema = z
-  .object({
-    name: z.string().min(1, 'Name is required').max(100),
-    email: z.string().email('Please enter a valid email address'),
-    password: z.string().min(1, 'Password is required'),
-    confirmPassword: z.string().min(1, 'Please confirm your password'),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  })
-
-type RegisterFormValues = z.infer<typeof registerSchema>
+function nameFromEmail(email: string): string {
+  const local = email.split('@')[0] ?? ''
+  const words = local
+    .split(/[._-]+/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+  return (words.join(' ') || 'User').slice(0, 100)
+}
 
 export default function RegisterPage() {
+  const t = useTranslations('Login')
+  const tr = useTranslations('Register')
   const searchParams = useSearchParams()
-  const [success, setSuccess] = useState(false)
-  const [serverError, setServerError] = useState<string | null>(null)
-  const [passwordErrors, setPasswordErrors] = useState<string[]>([])
+  const callbackUrl = searchParams.get('callbackUrl') ?? undefined
 
-  const form = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
-    defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    },
-  })
+  const [method, setMethod] = useState<EmailMethod>('magic-link')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [magicSent, setMagicSent] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const passkey = usePasskeySignIn(callbackUrl)
 
   useEffect(() => {
     const emailFromQuery = searchParams.get('email')
     if (!emailFromQuery) return
-
     const parsedEmail = z.string().email().safeParse(emailFromQuery)
-    if (parsedEmail.success) {
-      form.setValue('email', parsedEmail.data)
-    }
-  }, [form, searchParams])
+    if (parsedEmail.success) setEmail(parsedEmail.data)
+  }, [searchParams])
 
+  const requestMagicLink = trpc.auth.requestMagicLink.useMutation()
   const registerMutation = trpc.auth.register.useMutation({
     onSuccess: () => {
       setSuccess(true)
-      setServerError(null)
+      setError(null)
     },
-    onError: (error) => {
-      setServerError(error.message)
+    onError: (mutationError) => {
+      setError(mutationError.message)
     },
   })
 
-  function onSubmit(values: RegisterFormValues) {
-    setServerError(null)
-    setPasswordErrors([])
+  const passwordCheck = validatePassword(password)
+  const passwordsMatch =
+    confirmPassword.length > 0 && password === confirmPassword
+  const emailValid = z.string().email().safeParse(email).success
+  const canSignUp =
+    emailValid &&
+    passwordCheck.valid &&
+    passwordsMatch &&
+    !registerMutation.isPending
 
-    // Client-side password validation with specific error messages
-    const validation = validatePassword(values.password)
-    if (!validation.valid) {
-      const errorMessages: string[] = []
-      for (const err of validation.errors) {
-        switch (err) {
-          case 'TOO_SHORT':
-            errorMessages.push('Must be at least 8 characters')
-            break
-          case 'TOO_LONG':
-            errorMessages.push('Must be no more than 128 characters')
-            break
-          case 'MISSING_UPPERCASE':
-            errorMessages.push('Must contain at least one uppercase letter')
-            break
-          case 'MISSING_LOWERCASE':
-            errorMessages.push('Must contain at least one lowercase letter')
-            break
-          case 'MISSING_DIGIT':
-            errorMessages.push('Must contain at least one digit')
-            break
-        }
-      }
-      setPasswordErrors(errorMessages)
+  const rules = [
+    { id: 'TOO_SHORT' as const, label: tr('ruleLength') },
+    { id: 'MISSING_UPPERCASE' as const, label: tr('ruleUppercase') },
+    { id: 'MISSING_LOWERCASE' as const, label: tr('ruleLowercase') },
+    { id: 'MISSING_DIGIT' as const, label: tr('ruleNumber') },
+  ]
+
+  function handleMagicLink(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setError(null)
+    if (!email.trim()) {
+      setError(t('magicLinkEmailRequired'))
       return
     }
 
+    requestMagicLink.mutate(
+      { email, callbackUrl },
+      {
+        onSuccess: () => setMagicSent(true),
+        onError: (mutationError) => setError(mutationError.message),
+      },
+    )
+  }
+
+  function handleSignUp(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setError(null)
+    if (!canSignUp) return
+
     registerMutation.mutate({
-      name: values.name,
-      email: values.email,
-      password: values.password,
+      name: nameFromEmail(email),
+      email,
+      password,
     })
+  }
+
+  const busy =
+    registerMutation.isPending ||
+    requestMagicLink.isPending ||
+    passkey.isPending
+
+  if (magicSent) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('magicLinkSentTitle')}</CardTitle>
+          <CardDescription>{t('magicLinkSentDescription')}</CardDescription>
+        </CardHeader>
+        <CardFooter>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            onClick={() => setMagicSent(false)}
+          >
+            {t('backToLogin')}
+          </Button>
+        </CardFooter>
+      </Card>
+    )
   }
 
   if (success) {
@@ -123,18 +159,15 @@ export default function RegisterPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <CheckCircle2 className="size-5 text-green-600" />
-            Registration successful
+            <Check className="size-5 text-primary" />
+            {tr('successTitle')}
           </CardTitle>
-          <CardDescription>Your account has been created</CardDescription>
+          <CardDescription>{tr('successDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Alert>
-            <AlertTitle>Check your email</AlertTitle>
-            <AlertDescription>
-              We&apos;ve sent a verification link to your email address. Please
-              click the link to verify your account before logging in.
-            </AlertDescription>
+            <AlertTitle>{tr('successAlertTitle')}</AlertTitle>
+            <AlertDescription>{tr('successAlertDescription')}</AlertDescription>
           </Alert>
         </CardContent>
         <CardFooter>
@@ -142,7 +175,7 @@ export default function RegisterPage() {
             href="/login"
             className={cn(buttonVariants({ variant: 'outline' }), 'w-full')}
           >
-            Go to login
+            {tr('goToLogin')}
           </Link>
         </CardFooter>
       </Card>
@@ -152,128 +185,151 @@ export default function RegisterPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Create an account</CardTitle>
-        <CardDescription>
-          Enter your details below to create your account
-        </CardDescription>
+        <CardTitle>{tr('title')}</CardTitle>
+        <CardDescription>{tr('description')}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-            {serverError && (
-              <Alert variant="destructive">
-                <AlertTitle>Registration failed</AlertTitle>
-                <AlertDescription>{serverError}</AlertDescription>
-              </Alert>
-            )}
+        <FieldGroup className="gap-4">
+          {error ? (
+            <Alert variant="destructive">
+              <AlertCircle />
+              <AlertTitle>{tr('failedTitle')}</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          ) : null}
 
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Your name"
-                      autoComplete="name"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="email"
-                      placeholder="you@example.com"
-                      autoComplete="email"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="••••••••"
-                      autoComplete="new-password"
-                      {...field}
-                    />
-                  </FormControl>
-                  {passwordErrors.length > 0 && (
-                    <ul className="text-destructive text-sm list-disc list-inside">
-                      {passwordErrors.map((msg) => (
-                        <li key={msg}>{msg}</li>
-                      ))}
-                    </ul>
-                  )}
-                  <p className="text-xs text-muted-foreground">
-                    Min 8 characters, max 128. Must include at least one
-                    uppercase letter, one lowercase letter, and one digit.
-                  </p>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Confirm password</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="••••••••"
-                      autoComplete="new-password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
+          {passkey.supported ? (
             <Button
-              type="submit"
+              type="button"
+              variant="outline"
               className="w-full"
-              disabled={registerMutation.isPending}
+              onClick={() => {
+                setError(null)
+                passkey.signIn(setError)
+              }}
+              disabled={busy}
             >
-              {registerMutation.isPending ? (
-                <>
-                  <Loader2 className="size-4 animate-spin" />
-                  Creating account…
-                </>
+              {passkey.isPending ? (
+                <Loader2 className="animate-spin" data-icon="inline-start" />
               ) : (
-                'Create account'
+                <Fingerprint data-icon="inline-start" />
               )}
+              {t('usePasskey')}
             </Button>
-          </form>
-        </Form>
+          ) : null}
+
+          <EmailMethodSwitch method={method} onMethodChange={setMethod} />
+
+          {method === 'magic-link' ? (
+            <form onSubmit={handleMagicLink} className="flex flex-col gap-4">
+              <Field>
+                <FieldLabel htmlFor="register-email">Email</FieldLabel>
+                <Input
+                  id="register-email"
+                  type="email"
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={busy}
+                />
+              </Field>
+              <Button type="submit" className="w-full" disabled={busy}>
+                {requestMagicLink.isPending ? (
+                  <Loader2 className="animate-spin" data-icon="inline-start" />
+                ) : (
+                  <Mail data-icon="inline-start" />
+                )}
+                {t('sendSignInLink')}
+              </Button>
+            </form>
+          ) : (
+            <form onSubmit={handleSignUp} className="flex flex-col gap-4">
+              <Field>
+                <FieldLabel htmlFor="register-email">Email</FieldLabel>
+                <Input
+                  id="register-email"
+                  type="email"
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={busy}
+                />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="register-password">Password</FieldLabel>
+                <PasswordInput
+                  id="register-password"
+                  autoComplete="new-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={busy}
+                />
+                <ul className="grid grid-cols-2 gap-x-4 gap-y-1">
+                  {rules.map((rule) => {
+                    const met =
+                      password.length > 0 &&
+                      !passwordCheck.errors.includes(rule.id)
+                    return (
+                      <li
+                        key={rule.id}
+                        className="flex items-center gap-2 text-sm text-muted-foreground"
+                      >
+                        {met ? (
+                          <Check className="size-3.5 text-primary" />
+                        ) : (
+                          <Circle className="size-3.5" />
+                        )}
+                        {rule.label}
+                      </li>
+                    )
+                  })}
+                </ul>
+              </Field>
+              <Field
+                data-invalid={confirmPassword.length > 0 && !passwordsMatch}
+              >
+                <FieldLabel htmlFor="register-confirm">
+                  {tr('confirmPassword')}
+                </FieldLabel>
+                <PasswordInput
+                  id="register-confirm"
+                  autoComplete="new-password"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={busy}
+                  aria-invalid={confirmPassword.length > 0 && !passwordsMatch}
+                />
+                {confirmPassword.length > 0 && !passwordsMatch ? (
+                  <FieldError>{tr('passwordMismatch')}</FieldError>
+                ) : null}
+              </Field>
+              <Button
+                type="submit"
+                className="w-full disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100"
+                disabled={!canSignUp}
+              >
+                {registerMutation.isPending ? (
+                  <Loader2 className="animate-spin" data-icon="inline-start" />
+                ) : null}
+                {registerMutation.isPending
+                  ? tr('creating')
+                  : tr('signUpWithPassword')}
+              </Button>
+            </form>
+          )}
+        </FieldGroup>
       </CardContent>
       <CardFooter className="justify-center">
         <p className="text-sm text-muted-foreground">
-          Already have an account?{' '}
-          <Link href="/login" className={cn(buttonVariants())}>
-            Sign in
+          {tr('hasAccount')}{' '}
+          <Link href="/login" className="font-medium text-primary">
+            {tr('signIn')}
           </Link>
         </p>
       </CardFooter>

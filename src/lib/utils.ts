@@ -111,6 +111,25 @@ export function amountAsMinorUnits(amount: number, currency: Currency) {
 }
 
 /**
+ * `createGlobalExpense` expects major-unit amounts and percentages out of 100.
+ * The expense form has already stored BY_AMOUNT shares in minor units and
+ * BY_PERCENTAGE shares in basis points, so convert those back before sending.
+ */
+export function sharesForGlobalExpense(
+  splitMode: 'EVENLY' | 'BY_SHARES' | 'BY_PERCENTAGE' | 'BY_AMOUNT',
+  shares: number,
+  decimalDigits: number,
+): number {
+  if (splitMode === 'BY_AMOUNT') {
+    return shares / 10 ** decimalDigits
+  }
+  if (splitMode === 'BY_PERCENTAGE') {
+    return shares / 100
+  }
+  return shares
+}
+
+/**
  * Formats monetary amounts in minor units to the corresponding amount in major units in the given currency,
  * as a string, with correct rounding.
  *

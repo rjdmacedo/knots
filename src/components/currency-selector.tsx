@@ -17,6 +17,7 @@ type Props = {
   defaultValue: Currency['code']
   isLoading: boolean
   variant?: 'default' | 'inline'
+  id?: string
 }
 
 export function CurrencySelector({
@@ -25,6 +26,7 @@ export function CurrencySelector({
   defaultValue,
   isLoading,
   variant = 'default',
+  id,
 }: Props) {
   const t = useTranslations('Currencies')
   const [value, setValue] = useState<string>(defaultValue)
@@ -40,6 +42,7 @@ export function CurrencySelector({
 
   return (
     <SearchSelector
+      id={id}
       value={value}
       onValueChange={(code) => {
         setValue(code)

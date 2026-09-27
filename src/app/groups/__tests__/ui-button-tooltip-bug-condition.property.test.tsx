@@ -82,16 +82,14 @@ function hasTooltipImplementation(fileContent: string): {
 }
 
 /**
- * Checks if the context menu file contains a notifications toggle item.
+ * The group card used to toggle this device's push subscription. That control
+ * now lives in account settings, so the menu must not offer it.
  */
-function hasNotificationsToggle(fileContent: string): boolean {
-  // Check for any indication of a notifications toggle in the context menu
+function hasDevicePushMenuItem(fileContent: string): boolean {
   return (
-    fileContent.includes('notification') ||
-    fileContent.includes('Notification') ||
-    fileContent.includes('subscribe') ||
-    fileContent.includes('Subscribe') ||
-    (fileContent.includes('Bell') && fileContent.includes('DropdownMenuItem'))
+    fileContent.includes('enableNotifications') ||
+    fileContent.includes('disableNotifications') ||
+    fileContent.includes('notifications.toggle')
   )
 }
 
@@ -236,24 +234,12 @@ describe('UI Button Tooltip Bug Condition Exploration', () => {
     })
   })
 
-  describe('Property 1b: Bug Condition - Context Menu Notifications Toggle', () => {
-    /**
-     * Verify that the group card context menu includes a "Toggle notifications" option.
-     *
-     * The bug condition is: the context menu lacks a notifications toggle.
-     * On unfixed code, this test will FAIL because the menu only has
-     * "Remove from recent groups" and "Archive/Unarchive" options.
-     *
-     * **Validates: Requirements 1.7**
-     */
-    it('GroupCardContextMenu SHALL include a notifications toggle menu item', () => {
+  describe('Property 1b: Group card menu does not toggle device push', () => {
+    it('GroupCardContextMenu does not include enable/disable notifications', () => {
       fc.assert(
         fc.property(fc.constant(MY_GROUPS_PATH), (sourceFilePath) => {
           const fileContent = fs.readFileSync(sourceFilePath, 'utf-8')
-
-          // The context menu must contain a notifications toggle item
-          const hasToggle = hasNotificationsToggle(fileContent)
-          expect(hasToggle).toBe(true)
+          expect(hasDevicePushMenuItem(fileContent)).toBe(false)
         }),
         { numRuns: PBT_NUM_RUNS },
       )

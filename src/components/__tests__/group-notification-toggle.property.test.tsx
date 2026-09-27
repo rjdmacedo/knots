@@ -355,36 +355,26 @@ describe('Property 5: Shared filter mutation saved to GroupMembership', () => {
 // ---------------------------------------------------------------------------
 
 /**
- * Feature: unified-group-notifications, Property 3: Push channel inherits defaults on first subscribe
- *
- * For any group member who has no prior shared filter preferences persisted on
- * GroupMembership (i.e. all filter fields are at their schema defaults), when they
- * enable the Push channel, subscribe SHALL be called.
- *
- * **Validates: Requirements 3.5**
+ * Device push is controlled from account settings. The group popover must not
+ * expose a push subscribe switch.
  */
-describe('Property 3: Push channel inherits defaults on first subscribe', () => {
+describe('Property 3: Group popover does not subscribe this device', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    // Push IS supported for P3 tests
     mockIsPushSupported.mockReturnValue(true)
   })
 
   afterEach(() => {
-    // Restore the default (false) for other test suites
     mockIsPushSupported.mockReturnValue(false)
   })
 
-  it('calls subscribe when no saved prefs exist', async () => {
-    // Feature: unified-group-notifications, Property 3: Push channel inherits defaults on first subscribe
+  it('does not render a push switch', async () => {
     await fc.assert(
       fc.asyncProperty(
-        // Any non-empty userId — varies what defaultPushPreferences(userId) returns
         fc.string({ minLength: 1, maxLength: 64 }),
         async (userId) => {
           const subscribeMock = jest.fn().mockResolvedValue(null)
 
-          // Push hook: not yet subscribed, push supported, no error
           mockUsePush.mockReturnValue({
             isSubscribed: false,
             isLoading: false,
@@ -394,7 +384,6 @@ describe('Property 3: Push channel inherits defaults on first subscribe', () => 
             clearError: jest.fn(),
           })
 
-          // No saved preferences → data is undefined → sharedPrefs will be null
           mockGetPrefsQuery.mockReturnValue({
             data: undefined,
             isError: false,
@@ -408,7 +397,7 @@ describe('Property 3: Push channel inherits defaults on first subscribe', () => 
 
           const members = [{ id: userId, name: 'Test User' }]
 
-          const { unmount, getAllByRole } = render(
+          const { unmount, queryByRole } = render(
             <NotificationSettingsPopover
               groupId={GROUP_ID}
               members={members}
@@ -416,18 +405,10 @@ describe('Property 3: Push channel inherits defaults on first subscribe', () => 
             />,
           )
 
-          // The push switch is labeled 'pushLabel' (via our i18n mock).
-          const pushSwitches = getAllByRole('switch', { name: 'pushLabel' })
-          const pushSwitch = pushSwitches[0]!
-
-          // Simulate enabling the push toggle → onCheckedChange(true)
-          await act(async () => {
-            pushSwitch.click()
-          })
-
-          // subscribe must have been called exactly once with no arguments
-          expect(subscribeMock).toHaveBeenCalledTimes(1)
-          expect(subscribeMock).toHaveBeenCalledWith()
+          expect(
+            queryByRole('switch', { name: 'pushLabel' }),
+          ).not.toBeInTheDocument()
+          expect(subscribeMock).not.toHaveBeenCalled()
 
           unmount()
         },

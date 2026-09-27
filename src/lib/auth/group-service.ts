@@ -3,15 +3,21 @@
  * Handles group CRUD and membership validation.
  */
 
+import { resolveGroupCurrency } from '@/lib/currency'
 import { prisma } from '@/lib/prisma'
 import { nanoid } from 'nanoid'
 
-export type GroupError = 'INVALID_NAME' | 'GROUP_LIMIT_REACHED'
+export type GroupError =
+  | 'INVALID_NAME'
+  | 'GROUP_LIMIT_REACHED'
+  | 'INVALID_CURRENCY'
 
 export interface GroupService {
   createGroup(
     name: string,
     userId: string,
+    currencyCode: string,
+    currencySymbol?: string | null,
   ): Promise<{ ok: true; groupId: string } | { ok: false; error: GroupError }>
   getUserGroups(userId: string): Promise<
     Array<{
@@ -33,6 +39,8 @@ function createGroupService(): GroupService {
     async createGroup(
       name: string,
       userId: string,
+      currencyCode: string,
+      currencySymbol?: string | null,
     ): Promise<
       { ok: true; groupId: string } | { ok: false; error: GroupError }
     > {
@@ -54,6 +62,11 @@ function createGroupService(): GroupService {
         return { ok: false, error: 'GROUP_LIMIT_REACHED' }
       }
 
+      const currency = resolveGroupCurrency(currencyCode, currencySymbol)
+      if (!currency) {
+        return { ok: false, error: 'INVALID_CURRENCY' }
+      }
+
       // Create the group and add the user as a member in a transaction
       const groupId = nanoid()
       await prisma.$transaction([
@@ -61,6 +74,8 @@ function createGroupService(): GroupService {
           data: {
             id: groupId,
             name: trimmedName,
+            currency: currency.symbol,
+            currencyCode: currency.code,
           },
         }),
         prisma.groupMembership.create({

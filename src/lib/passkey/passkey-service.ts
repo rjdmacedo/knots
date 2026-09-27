@@ -12,6 +12,7 @@
  * refuses the last sign-in method).
  */
 import { verifyPassword } from '@/lib/auth/password'
+import { isSessionFresh } from '@/lib/auth/session-freshness'
 import { prisma } from '@/lib/prisma'
 import type {
   AuthenticationResponseJSON,
@@ -43,6 +44,7 @@ export type PasskeyError =
   | { code: 'LAST_SIGN_IN_METHOD'; message: string }
   | { code: 'CURRENT_PASSWORD_MISMATCH'; message: string }
   | { code: 'INVALID_NAME'; message: string }
+  | { code: 'SESSION_NOT_FRESH'; message: string }
 
 export type PasskeyResult<T = void> =
   | { ok: true; value: T }
@@ -81,7 +83,15 @@ function toUint8Array(bytes: Uint8Array | Buffer): Uint8Array<ArrayBuffer> {
  */
 export async function generateRegistrationOptions(
   userId: string,
+  authTime?: number | null,
 ): Promise<PasskeyResult<PublicKeyCredentialCreationOptionsJSON>> {
+  if (!isSessionFresh(authTime)) {
+    return {
+      ok: false,
+      error: { code: 'SESSION_NOT_FRESH', message: 'SESSION_NOT_FRESH' },
+    }
+  }
+
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { id: true, name: true, email: true },
@@ -130,7 +140,15 @@ export async function verifyRegistration(
   userId: string,
   response: RegistrationResponseJSON,
   name?: string,
+  authTime?: number | null,
 ): Promise<PasskeyResult<PasskeySummary>> {
+  if (!isSessionFresh(authTime)) {
+    return {
+      ok: false,
+      error: { code: 'SESSION_NOT_FRESH', message: 'SESSION_NOT_FRESH' },
+    }
+  }
+
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { name: true },
@@ -472,8 +490,8 @@ export async function renamePasskey(
 
 /**
  * Deletes a passkey the user owns. Refuses when it is the user's last passkey
- * and the account has no password — that would leave the user with no way to
- * sign in (requirement 7.7).
+ * and the account has neither a password nor a verified email — that would
+ * leave the user with no way to sign in.
  */
 export async function deletePasskey(
   userId: string,
@@ -495,20 +513,21 @@ export async function deletePasskey(
     prisma.passkey.count({ where: { userId } }),
     prisma.user.findUnique({
       where: { id: userId },
-      select: { passwordHash: true },
+      select: { passwordHash: true, emailVerified: true },
     }),
   ])
 
   const isLastPasskey = passkeyCount <= 1
-  const hasNoPassword = !user?.passwordHash
+  const hasAlternative =
+    Boolean(user?.passwordHash) || user?.emailVerified != null
 
-  if (isLastPasskey && hasNoPassword) {
+  if (isLastPasskey && !hasAlternative) {
     return {
       ok: false,
       error: {
         code: 'LAST_SIGN_IN_METHOD',
         message:
-          'This is your only sign-in method. Set a password before removing it.',
+          'This is your only sign-in method. Verify your email or set a password before removing it.',
       },
     }
   }

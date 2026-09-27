@@ -4,6 +4,7 @@ import { ExpenseEditor } from '@/app/groups/[groupId]/expenses/expense-editor'
 import type { ExpenseFormCreatePrefill } from '@/app/groups/[groupId]/expenses/expense-form'
 import { getEditorReturnPath } from '@/lib/expense-editor-navigation'
 import { consumeExpensePrefill } from '@/lib/expense-prefill-store'
+import { RuntimeFeatureFlags } from '@/lib/featureFlags'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
@@ -16,7 +17,13 @@ import { useEffect, useRef, useState } from 'react'
  * with a ref to run a single time even under React strict-mode double mounting.
  * When nothing was stashed (hard refresh, deep link), the Editor opens empty.
  */
-export function NewGroupExpensePageClient({ groupId }: { groupId: string }) {
+export function NewGroupExpensePageClient({
+  groupId,
+  runtimeFeatureFlags,
+}: {
+  groupId: string
+  runtimeFeatureFlags: RuntimeFeatureFlags
+}) {
   const t = useTranslations('ExpenseDetail')
   const consumed = useRef(false)
   const [createPrefill, setCreatePrefill] = useState<
@@ -37,7 +44,11 @@ export function NewGroupExpensePageClient({ groupId }: { groupId: string }) {
       >
         ← {t('backToExpenses')}
       </Link>
-      <ExpenseEditor groupId={groupId} createPrefill={createPrefill} />
+      <ExpenseEditor
+        groupId={groupId}
+        createPrefill={createPrefill}
+        runtimeFeatureFlags={runtimeFeatureFlags}
+      />
     </div>
   )
 }

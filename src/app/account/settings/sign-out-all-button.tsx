@@ -13,26 +13,32 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { toast } from '@/components/ui/toast'
+import { logoutAction } from '@/lib/auth/actions'
 import { disconnectPushSubscription } from '@/lib/push/use-push-notification-subscription'
 import { trpc } from '@/trpc/client'
 import { Loader2, MonitorSmartphone } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useRouter } from 'next/navigation'
+import { useTransition } from 'react'
 
 export function SignOutAllButton() {
   const t = useTranslations('ProfileSettings.SignOutAll')
-  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
 
-  const signOutAll = trpc.profile.signOutAllDevices.useMutation({
-    onSuccess: () => {
-      toast.success(t('successToast'))
-      // Sessions are invalidated server-side; redirect to login
-      router.push('/login')
-    },
-    onError: (error) => {
-      toast.error(error.message)
-    },
-  })
+  const signOutAll = trpc.profile.signOutAllDevices.useMutation()
+
+  function handleConfirm() {
+    startTransition(async () => {
+      try {
+        await disconnectPushSubscription().catch(() => {})
+        await signOutAll.mutateAsync()
+        await logoutAction()
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : String(error))
+      }
+    })
+  }
+
+  const busy = isPending || signOutAll.isPending
 
   return (
     <AlertDialog>
@@ -48,17 +54,13 @@ export function SignOutAllButton() {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+          <AlertDialogCancel disabled={busy}>{t('cancel')}</AlertDialogCancel>
           <AlertDialogAction
             variant="destructive"
-            onClick={() => {
-              void disconnectPushSubscription().finally(() => {
-                signOutAll.mutate()
-              })
-            }}
-            disabled={signOutAll.isPending}
+            onClick={handleConfirm}
+            disabled={busy}
           >
-            {signOutAll.isPending ? (
+            {busy ? (
               <>
                 <Loader2 className="size-4 animate-spin" />
                 {t('signingOut')}

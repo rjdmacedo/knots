@@ -20,7 +20,9 @@ export async function requireSession(options: RequireSessionOptions = {}) {
     redirect(loginUrl)
   }
 
-  return session
+  return session as typeof session & {
+    user: NonNullable<(typeof session)['user']> & { id: string }
+  }
 }
 
 /**

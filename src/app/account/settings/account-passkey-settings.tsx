@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { toast } from '@/components/ui/toast'
+import { reauthenticateAction } from '@/lib/auth/actions'
 import { trpc } from '@/trpc/client'
 import { startRegistration } from '@simplewebauthn/browser'
 import type { PublicKeyCredentialCreationOptionsJSON } from '@simplewebauthn/server'
@@ -29,10 +30,9 @@ import { SettingsBadge, SettingsRow } from './settings-ui'
  * or DEVICE-BOUND (singleDevice) badge, a BACKED UP badge when applicable, and
  * a destructive delete button (req 7.5).
  *
- * Recent-auth gate (req 7.4): the profile does not carry the session age, so
- * when the account has a password we ask the user to confirm it before starting
- * the ceremony (via `profile.confirmRecentPassword`). A passkey-only account
- * (no password) skips straight to the ceremony.
+ * Adding a passkey requires a sign-in from the last 30 days. An older session
+ * asks the user to sign in again (password, email link, or an existing passkey)
+ * and returns here.
  */
 
 function webauthnAvailable(): boolean {
@@ -42,11 +42,7 @@ function webauthnAvailable(): boolean {
   )
 }
 
-export function AccountPasskeySettings({
-  hasPassword,
-}: {
-  hasPassword: boolean
-}) {
+export function AccountPasskeySettings() {
   const t = useTranslations('ProfileSettings')
   const tk = useTranslations('ProfileSettings.Passkey')
   const locale = useLocale()
@@ -55,7 +51,6 @@ export function AccountPasskeySettings({
   const list = trpc.passkey.list.useQuery()
   const generateOptions = trpc.passkey.generateRegistrationOptions.useMutation()
   const verifyRegistration = trpc.passkey.verifyRegistration.useMutation()
-  const confirmRecentPassword = trpc.profile.confirmRecentPassword.useMutation()
   const deletePasskey = trpc.passkey.delete.useMutation()
 
   // Assume support for the first render so the server HTML matches hydration.
@@ -67,8 +62,8 @@ export function AccountPasskeySettings({
   }, [])
 
   const [addOpen, setAddOpen] = useState(false)
+  const [reauthOpen, setReauthOpen] = useState(false)
   const [nickname, setNickname] = useState('')
-  const [currentPassword, setCurrentPassword] = useState('')
   const [addError, setAddError] = useState<string | null>(null)
   const [addBusy, setAddBusy] = useState(false)
 
@@ -82,9 +77,17 @@ export function AccountPasskeySettings({
 
   function resetAdd() {
     setNickname('')
-    setCurrentPassword('')
     setAddError(null)
     setAddBusy(false)
+  }
+
+  async function handleAddClick() {
+    const freshness = await utils.passkey.sessionFreshness.fetch()
+    if (!freshness.fresh) {
+      setReauthOpen(true)
+      return
+    }
+    setAddOpen(true)
   }
 
   function handleAddOpenChange(nextOpen: boolean) {
@@ -97,17 +100,6 @@ export function AccountPasskeySettings({
     setAddError(null)
     setAddBusy(true)
     try {
-      // Recent-auth gate: confirm the current password before the ceremony
-      // when the account has a password (req 7.4).
-      if (hasPassword) {
-        if (!currentPassword) {
-          setAddError(tk('errorPasswordRequired'))
-          setAddBusy(false)
-          return
-        }
-        await confirmRecentPassword.mutateAsync({ currentPassword })
-      }
-
       const options = await generateOptions.mutateAsync()
       const registration = await startRegistration({
         optionsJSON: options as PublicKeyCredentialCreationOptionsJSON,
@@ -129,9 +121,13 @@ export function AccountPasskeySettings({
       resetAdd()
       utils.passkey.list.invalidate()
     } catch (err) {
-      // A cancelled or failed ceremony surfaces an error in the dialog.
+      if (err instanceof Error && err.message === 'SESSION_NOT_FRESH') {
+        setAddOpen(false)
+        resetAdd()
+        setReauthOpen(true)
+        return
+      }
       const message = err instanceof Error ? err.message : tk('addFailedToast')
-      // Password-confirm mismatch keeps the dialog open with the message.
       setAddError(message)
       setAddBusy(false)
     }
@@ -166,7 +162,7 @@ export function AccountPasskeySettings({
             variant="outline"
             size="sm"
             disabled={!supported}
-            onClick={() => setAddOpen(true)}
+            onClick={() => void handleAddClick()}
           >
             <Plus className="size-4" aria-hidden />
             {tk('addButton')}
@@ -255,31 +251,6 @@ export function AccountPasskeySettings({
                 onChange={(event) => setNickname(event.target.value)}
               />
             </div>
-            {hasPassword ? (
-              <div className="flex flex-col gap-1.5">
-                <label
-                  htmlFor="account-passkey-password"
-                  className="text-sm font-medium"
-                >
-                  {tk('confirmPasswordLabel')}
-                </label>
-                <Input
-                  id="account-passkey-password"
-                  type="password"
-                  placeholder="••••••••"
-                  autoComplete="current-password"
-                  value={currentPassword}
-                  disabled={addBusy}
-                  onChange={(event) => {
-                    setCurrentPassword(event.target.value)
-                    if (addError) setAddError(null)
-                  }}
-                />
-                <p className="text-xs text-muted-foreground">
-                  {tk('confirmPasswordHint')}
-                </p>
-              </div>
-            ) : null}
             {addError ? (
               <p role="alert" className="text-sm text-destructive">
                 {addError}
@@ -297,6 +268,23 @@ export function AccountPasskeySettings({
                 <Loader2 className="size-4 animate-spin" aria-hidden />
               ) : null}
               {tk('addConfirm')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={reauthOpen} onOpenChange={setReauthOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{tk('reauthTitle')}</DialogTitle>
+            <DialogDescription>{tk('reauthDescription')}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose render={<Button variant="outline" />}>
+              {tk('cancel')}
+            </DialogClose>
+            <Button type="button" onClick={() => void reauthenticateAction()}>
+              {tk('reauthConfirm')}
             </Button>
           </DialogFooter>
         </DialogContent>

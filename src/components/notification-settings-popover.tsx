@@ -3,19 +3,11 @@
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
 import { toast } from '@/components/ui/toast'
-import { type PushSubscriptionPreferences } from '@/lib/push/subscription-filters'
-import {
-  isPushSupported,
-  type PushNotificationErrorCode,
-  usePushNotificationSubscription,
-} from '@/lib/push/use-push-notification-subscription'
 import { trpc } from '@/trpc/client'
-import { AlertCircle, Loader2 } from 'lucide-react'
+import { AlertCircle } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useId, useMemo, useState } from 'react'
-import { useSpinDelay } from 'spin-delay'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -40,228 +32,6 @@ function normalizeMemberSelection(
     return { notifyAllOthers: true, selectedMemberIds: [] }
   }
   return { notifyAllOthers, selectedMemberIds }
-}
-
-// ---------------------------------------------------------------------------
-// PushChannelRow
-// ---------------------------------------------------------------------------
-
-interface PushChannelRowProps {
-  currentUserId: string | undefined
-  pushEnabled: boolean
-  pushLoading: boolean
-  pushError: PushNotificationErrorCode | null
-  iosHomeScreenRequired?: boolean
-  configured?: boolean
-  subscribe: () => Promise<PushNotificationErrorCode | null>
-  unsubscribe: () => Promise<PushNotificationErrorCode | null>
-  clearError: () => void
-}
-
-function PushChannelRow({
-  currentUserId,
-  pushEnabled,
-  pushLoading,
-  pushError,
-  iosHomeScreenRequired = false,
-  configured,
-  subscribe,
-  unsubscribe,
-  clearError,
-}: PushChannelRowProps) {
-  const t = useTranslations('Notifications')
-  const tPush = useTranslations('ProfileSettings')
-  const vapidKeyMissing =
-    configured === false ||
-    (configured === undefined && !process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY)
-  const browserSupported = isPushSupported()
-
-  const showPushLoading = useSpinDelay(pushLoading, {
-    delay: 1000,
-    minDuration: 1000,
-  })
-
-  // Determine disabled reason
-  let disabledReason: string | null = null
-  if (iosHomeScreenRequired) {
-    disabledReason = tPush('notifications.pushDisabled.iosInstall')
-  } else if (vapidKeyMissing) {
-    disabledReason = t('pushUnavailable')
-  } else if (!browserSupported) {
-    disabledReason = t('notSupported')
-  } else if (pushError === 'permissionDenied') {
-    disabledReason = t('permissionDenied')
-  }
-
-  const isDisabled = disabledReason !== null || pushLoading || !currentUserId
-
-  return (
-    <div className="flex flex-col gap-1">
-      <div className="flex items-center justify-between gap-4">
-        <span className="text-sm font-medium">{t('pushLabel')}</span>
-        {showPushLoading ? (
-          <div className="flex h-[18.4px] w-[32px] items-center justify-center">
-            <Loader2 className="size-4 animate-spin text-muted-foreground" />
-          </div>
-        ) : (
-          <Switch
-            checked={
-              pushEnabled &&
-              !vapidKeyMissing &&
-              browserSupported &&
-              !iosHomeScreenRequired
-            }
-            disabled={isDisabled}
-            aria-label={t('pushLabel')}
-            onCheckedChange={async (checked) => {
-              clearError()
-              if (checked) {
-                await subscribe()
-              } else {
-                await unsubscribe()
-              }
-            }}
-          />
-        )}
-      </div>
-      {disabledReason && (
-        <p className="text-xs text-muted-foreground">{disabledReason}</p>
-      )}
-      {pushError && pushError !== 'permissionDenied' && (
-        <p className="text-xs text-destructive">{t('subscribeError')}</p>
-      )}
-    </div>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// EmailChannelRow
-// ---------------------------------------------------------------------------
-
-interface EmailChannelRowProps {
-  groupId: string
-  emailEnabled: boolean | undefined
-  queryFailed: boolean
-  onToggle: (enabled: boolean) => void
-  isMutationPending: boolean
-}
-
-function EmailChannelRow({
-  groupId: _groupId,
-  emailEnabled,
-  queryFailed,
-  onToggle,
-  isMutationPending,
-}: EmailChannelRowProps) {
-  const t = useTranslations('Notifications')
-  const isEmailLoading = emailEnabled === undefined || isMutationPending
-  const showEmailLoading = useSpinDelay(isEmailLoading, {
-    delay: 1500,
-    minDuration: 1000,
-  })
-
-  if (queryFailed) {
-    return (
-      <div className="flex flex-col gap-1">
-        <div className="flex items-center justify-between gap-4">
-          <span className="text-sm font-medium">{t('emailLabel')}</span>
-          <Switch
-            checked={false}
-            disabled
-            aria-label={t('emailLabel')}
-            onCheckedChange={() => {}}
-          />
-        </div>
-        <p className="text-xs text-destructive">{t('subscribeError')}</p>
-      </div>
-    )
-  }
-
-  return (
-    <div className="flex flex-col gap-1">
-      <div className="flex items-center justify-between gap-4">
-        <span className="text-sm font-medium">{t('emailLabel')}</span>
-        {showEmailLoading ? (
-          <div className="flex h-[18.4px] w-[32px] items-center justify-center">
-            <Loader2 className="size-4 animate-spin text-muted-foreground" />
-          </div>
-        ) : (
-          <Switch
-            checked={emailEnabled}
-            disabled={isMutationPending}
-            aria-label={t('emailLabel')}
-            onCheckedChange={(checked) => onToggle(checked)}
-          />
-        )}
-      </div>
-    </div>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// ChannelsSection
-// ---------------------------------------------------------------------------
-
-interface ChannelsSectionProps {
-  groupId: string
-  currentUserId: string | undefined
-  sharedPrefs: PushSubscriptionPreferences | null
-  emailEnabled: boolean | undefined
-  queryFailed: boolean
-  onEmailToggle: (enabled: boolean) => void
-  isEmailMutationPending: boolean
-  pushEnabled: boolean
-  pushLoading: boolean
-  pushError: PushNotificationErrorCode | null
-  iosHomeScreenRequired?: boolean
-  configured?: boolean
-  subscribe: () => Promise<PushNotificationErrorCode | null>
-  unsubscribe: () => Promise<PushNotificationErrorCode | null>
-  clearError: () => void
-}
-
-function ChannelsSection({
-  groupId,
-  currentUserId,
-  sharedPrefs,
-  emailEnabled,
-  queryFailed,
-  onEmailToggle,
-  isEmailMutationPending,
-  pushEnabled,
-  pushLoading,
-  pushError,
-  iosHomeScreenRequired,
-  configured,
-  subscribe,
-  unsubscribe,
-  clearError,
-}: ChannelsSectionProps) {
-  const t = useTranslations('Notifications')
-
-  return (
-    <div className="flex flex-col gap-3">
-      <p className="text-sm font-semibold">{t('channelsLabel')}</p>
-      <PushChannelRow
-        currentUserId={currentUserId}
-        pushEnabled={pushEnabled}
-        pushLoading={pushLoading}
-        pushError={pushError}
-        iosHomeScreenRequired={iosHomeScreenRequired}
-        configured={configured}
-        subscribe={subscribe}
-        unsubscribe={unsubscribe}
-        clearError={clearError}
-      />
-      <EmailChannelRow
-        groupId={groupId}
-        emailEnabled={emailEnabled}
-        queryFailed={queryFailed}
-        onToggle={onEmailToggle}
-        isMutationPending={isEmailMutationPending}
-      />
-    </div>
-  )
 }
 
 // ---------------------------------------------------------------------------
@@ -429,18 +199,6 @@ export function NotificationSettingsPopover({
   const t = useTranslations('Notifications')
   const panelId = useId()
 
-  // ---- Push state (from hook) ----
-  const {
-    isSubscribed: pushEnabled,
-    isLoading: pushLoading,
-    error: pushError,
-    iosHomeScreenRequired,
-    configured,
-    subscribe,
-    unsubscribe,
-    clearError,
-  } = usePushNotificationSubscription(groupId, currentUserId)
-
   const utils = trpc.useUtils()
 
   // ---- Load all shared preferences in a single query ----
@@ -458,7 +216,6 @@ export function NotificationSettingsPopover({
 
   const persistPrefs = useCallback(
     async (patch: {
-      emailNotificationsEnabled?: boolean
       notifyAllMembers?: boolean
       includedUserIds?: string[]
       notifyOnCreate?: boolean
@@ -475,12 +232,6 @@ export function NotificationSettingsPopover({
     [groupId, setPrefs, utils],
   )
 
-  // ---- Local state for email toggle ----
-  const [emailEnabled, setEmailEnabled] = useState<boolean | undefined>(
-    undefined,
-  )
-  const [isEmailMutationPending, setIsEmailMutationPending] = useState(false)
-
   // ---- Local filter state ----
   const [notifyAllOthers, setNotifyAllOthers] = useState(true)
   const [selectedMemberIds, setSelectedMemberIds] = useState<string[]>([])
@@ -492,7 +243,6 @@ export function NotificationSettingsPopover({
   // Sync local state when preferences load
   useEffect(() => {
     if (!prefsData) return
-    setEmailEnabled(prefsData.emailNotificationsEnabled)
     setNotifyAllOthers(prefsData.notifyAllMembers)
     setSelectedMemberIds(prefsData.includedUserIds)
     setNotifyOnCreate(prefsData.notifyOnCreate)
@@ -506,41 +256,10 @@ export function NotificationSettingsPopover({
     [members, currentUserId],
   )
 
-  // Shared prefs object to pass to PushChannelRow on subscribe
-  const sharedPrefs: PushSubscriptionPreferences | null =
-    prefsData && currentUserId
-      ? {
-          subscriberUserId: currentUserId,
-          notifyAllMembers: prefsData.notifyAllMembers,
-          includedUserIds: prefsData.includedUserIds,
-          notifyOnCreate: prefsData.notifyOnCreate,
-          notifyOnUpdate: prefsData.notifyOnUpdate,
-          notifyOnDelete: prefsData.notifyOnDelete,
-        }
-      : null
-
   // Validation: at least one event AND at least one member selector active
   const isFilterValid =
     (notifyOnCreate || notifyOnUpdate || notifyOnDelete) &&
     (notifyAllOthers || selectedMemberIds.length > 0)
-
-  // ---- Email toggle handler ----
-  const handleEmailToggle = useCallback(
-    async (enabled: boolean) => {
-      const prevValue = emailEnabled
-      setEmailEnabled(enabled)
-      setIsEmailMutationPending(true)
-      try {
-        await persistPrefs({ emailNotificationsEnabled: enabled })
-      } catch {
-        setEmailEnabled(prevValue)
-        toast.error(t('subscribeError'))
-      } finally {
-        setIsEmailMutationPending(false)
-      }
-    },
-    [emailEnabled, persistPrefs, t],
-  )
 
   // ---- Filter save helper ----
   const saveFilters = useCallback(
@@ -655,45 +374,10 @@ export function NotificationSettingsPopover({
     [saveFilters],
   )
 
-  // ---- Visibility ----
-  // At least one channel enabled means we should show Members + Events
-  const atLeastOneChannelEnabled = pushEnabled || (emailEnabled ?? false)
-  const showFilters =
-    atLeastOneChannelEnabled && !!currentUserId && !prefsLoading
+  const showFilters = !!currentUserId && !prefsLoading
 
   return (
     <div className="flex flex-col">
-      {/* Channels section */}
-      <div className="border-b px-4 py-3">
-        <ChannelsSection
-          groupId={groupId}
-          currentUserId={currentUserId}
-          sharedPrefs={sharedPrefs}
-          emailEnabled={emailEnabled}
-          queryFailed={prefsQueryFailed}
-          onEmailToggle={handleEmailToggle}
-          isEmailMutationPending={isEmailMutationPending}
-          pushEnabled={pushEnabled}
-          pushLoading={pushLoading}
-          pushError={pushError}
-          iosHomeScreenRequired={iosHomeScreenRequired}
-          configured={configured}
-          subscribe={subscribe}
-          unsubscribe={unsubscribe}
-          clearError={clearError}
-        />
-      </div>
-
-      {/* Hint when both channels disabled */}
-      {!atLeastOneChannelEnabled && !prefsLoading && (
-        <div className="px-4 py-3">
-          <p className="text-xs text-muted-foreground">
-            {t('enableChannelHint')}
-          </p>
-        </div>
-      )}
-
-      {/* Members + Events filter sections */}
       {showFilters && (
         <div className="flex max-h-[min(24rem,70vh)] flex-col gap-4 overflow-y-auto px-4 py-3">
           <MembersSection

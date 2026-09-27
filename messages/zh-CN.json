@@ -20,6 +20,9 @@
     "create": "创建消费",
     "createFirst": "创建首个消费",
     "noExpenses": "你的群组内目前没有任何消费。",
+    "noSearchResults": "未找到匹配的支出。",
+    "loadError": "加载支出列表失败。",
+    "retry": "重试",
     "export": "Export",
     "exportJson": "导出到JSON",
     "exportCsv": "导出到CSV",
@@ -75,19 +78,60 @@
   },
   "ExpenseCard": {
     "paidBy": "<strong>{paidBy}</strong> 为 <paidFor></paidFor> 支付。",
+    "paidByMultiple": "<strong>{paidBy}</strong> 为 <paidFor></paidFor> 支付。",
     "everyone": "everyone",
     "receivedBy": "<strong>{paidBy}</strong> 为 <paidFor></paidFor> 接收。",
     "yourBalance": "你的余额：",
     "notInvolved": "You are not involved",
     "close": "关闭",
-    "paidByMultiple": "<strong>{paidBy}</strong> 为 <paidFor></paidFor> 支付。",
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
   "ExpenseDetail": {
+    "backToExpenses": "返回支出列表",
+    "backToFriend": "返回 {name}",
+    "copy": "复制支出",
+    "delete": "删除",
+    "edit": "编辑",
+    "payment": "付款",
+    "expense": "支出",
+    "onDate": "{date}",
+    "addedBy": "由 {name} 添加于 {date}",
+    "addedByYou": "由你添加于 {date}",
+    "lastUpdatedBy": "最后由 {name} 更新于 {date}",
+    "lastUpdatedByYou": "最后由你更新于 {date}",
+    "trendsTitle": "{contextName} 支出趋势 :: {categoryName}",
+    "trendsSeeMore": "查看更多",
+    "generalCategory": "常规",
+    "editCategory": "编辑分类",
+    "categoryUpdateError": "更新分类失败。",
+    "attachReceipt": "附加收据",
+    "receiptUploadSuccess": "收据上传成功。",
+    "paidAmount": "{name} 支付了 {amount}",
+    "youPaidAmount": "你支付了 {amount}",
+    "paidAmountMultiple": "{name} 支付了 {amount}",
+    "youPaidAmountMultiple": "你支付了 {amount}",
+    "multiPayerSeparator": "、",
+    "paidYou": "{name} 向你支付了 {amount}",
+    "youPaidRecipient": "你向 {name} 支付了 {amount}",
+    "payerPaidPayee": "{payer} 向 {payee} 支付了 {amount}",
+    "someone": "某人",
+    "youOwe": "你欠 {amount}",
+    "participantOwes": "{name} 欠 {amount}",
+    "yourShare": "你的分摊金额 {amount}",
+    "participantShare": "{name}: {amount}",
+    "notes": "备注",
     "activity": "活动",
-    "noActivity": "这笔消费还没有任何活动记录。",
-    "viewGroupExpense": "View group expense"
+    "noActivity": "暂无活动记录。",
+    "paymentDisclaimer": "这是一笔用于结清群组余额的双人还款记录。",
+    "consolidationDisclaimer": "此付款是合并结算的一部分。",
+    "readOnlyNotice": "此支出为只读，无法直接编辑。",
+    "deleteConfirm": "确定要删除这笔支出吗？",
+    "deletePaymentConfirm": "确定要删除这笔付款吗？",
+    "deleteDescription": "此操作将从所有群组成员的记录中删除此支出。此操作无法撤销。",
+    "cancel": "取消",
+    "deleting": "正在删除…",
+    "viewGroupExpense": "查看群组支出"
   },
   "Groups": {
     "myGroups": "我的群组",
@@ -151,6 +195,12 @@
       "label": "简化债务",
       "description": "通过合并成员之间的余额来减少付款次数（类似 Splitwise Pro）。关闭后，每人只欠为其份额付款的人。"
     },
+    "FriendsField": {
+      "label": "好友",
+      "description": "选择现有好友或邀请新成员。",
+      "placeholder": "选择好友…",
+      "remove": "移除 {name}"
+    },
     "Participants": {
       "title": "群组成员",
       "description": "输入每位成员的名字。",
@@ -205,6 +255,7 @@
         "description": "选择收入是为谁而收。"
       },
       "splitModeDescription": "选择如何划分这笔收入。",
+      "notesDescription": "添加有关收入的补充说明或备注。",
       "attachDescription": "查看并为这笔收入附加收据。"
     },
     "Expense": {
@@ -227,7 +278,7 @@
       "paidByField": {
         "label": "支付自",
         "placeholder": "Select a participant",
-        "description": "Select who provided the money and how much each payer contributed."
+        "description": "选择谁支付了费用以及各付款人承担的金额。"
       },
       "recurrenceRule": {
         "label": "Expense Recurrence",
@@ -238,23 +289,29 @@
         "monthly": "Monthly"
       },
       "paidFor": {
-        "title": "支付给",
-        "description": "选择消费是为谁而支出。"
+        "title": "分摊对象",
+        "description": "选择如何分摊支出以及哪些人参与。"
       },
       "splitModeDescription": "选择如何划分这笔消费。",
+      "notesDescription": "添加有关支出的补充说明或备注。",
       "attachDescription": "查看并为这笔消费附加收据。"
     },
     "amountField": {
-      "label": "金额"
+      "label": "金额",
+      "description": "输入支出总金额。",
+      "convertedDescription": "请输入群组货币的金额。"
     },
     "conversionUnavailable": "要为每笔支出设置不同货币并转换金额，请为群组选择非自定义货币。",
     "originalAmountField": {
-      "label": "待转换金额"
+      "label": "待转换金额",
+      "description": "换算前的原始金额。"
     },
     "conversionRateField": {
       "useApi": "使用 Frankfurter 汇率",
       "useCustom": "使用自定义汇率",
-      "label": "汇率"
+      "label": "汇率",
+      "description": "用于换算的汇率。",
+      "collapsibleDescription": "如有需要，可自定义汇率。"
     },
     "conversionRateState": {
       "loading": "正在获取汇率…",
@@ -279,6 +336,13 @@
     },
     "selectNone": "取消选中",
     "selectAll": "全选",
+    "resetSplit": "重置分摊",
+    "evenlySplit": "均分: {amount} × {count}",
+    "totalWeight": "总权重: {count, plural, other {# 份}}",
+    "matchesPercent": "匹配 100%。",
+    "matchesAmount": "匹配 {amount}",
+    "decreaseShares": "减少份额",
+    "increaseShares": "增加份额",
     "noLongerInGroup": "已不在此群组中",
     "shares": "份额",
     "advancedOptions": "高级分账选项……",
@@ -294,6 +358,43 @@
       "byPercentageDescription": "Split using percentages that add up to 100%",
       "byAmountDescription": "Split using fixed amounts for each participant"
     },
+    "itemized": {
+      "toggleLabel": "按明细拆分",
+      "toggleDescription": "将收据中的单个项目分别指派给不同成员。",
+      "noItems": "尚未添加任何明细项目。",
+      "addItem": "添加项目",
+      "removeItem": "移除项目",
+      "itemTitleLabel": "项目名称",
+      "itemTitlePlaceholder": "例如：主菜",
+      "itemUnitPriceLabel": "单价",
+      "itemQuantityLabel": "数量",
+      "itemLineTotalLabel": "小计",
+      "itemAmountLabel": "金额",
+      "sectionTitle": "按项目明细拆分",
+      "sectionDescription": "输入收据中的各个单项并分配给对应成员。",
+      "assignTo": "分配给成员",
+      "otherLabel": "其他费用",
+      "otherDerivedNote": "剩余金额由其他参与者均分。",
+      "itemsExceedTotal": "明细项目总和超出了总支出金额。",
+      "setAmountFromItems": "根据明细项总计设置金额",
+      "total": "明细总计",
+      "addItemsAction": "添加项目",
+      "documentationNote": "项目明细有助于参与者清晰了解各自消费内容。",
+      "authoritativeNote": "各项目金额之和将决定支出总金额。",
+      "leaveAction": "退出明细拆分",
+      "switchDialog": {
+        "title": "更改分摊方式？",
+        "description": "切换分摊方式将重置明细拆分。",
+        "confirm": "更改分摊方式",
+        "cancel": "取消"
+      },
+      "leaveDialog": {
+        "title": "放弃明细拆分？",
+        "description": "如果退出明细拆分，已输入的项目明细将会丢失。",
+        "confirm": "放弃明细",
+        "cancel": "取消"
+      }
+    },
     "DeletePopup": {
       "label": "删除",
       "title": "要删除这项消费吗？",
@@ -301,7 +402,7 @@
       "yes": "确定",
       "cancel": "取消"
     },
-    "attachDocuments": "附加文档",
+    "attachDocuments": "附加图片",
     "create": "创建",
     "creating": "创建中……",
     "save": "保存",
@@ -317,7 +418,7 @@
       "postSaveTitle": "Expense split across group and direct records",
       "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
       "postSaveGroupHalfLine": "The group expense is {amount}",
-      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "singlePayerNote": "添加群组外成员（如 {names}）时，支出会被一分为二，因此只能有一位付款人。",
       "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
       "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
       "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
@@ -326,7 +427,16 @@
       "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
+  "ExpenseTitleInput": {
+    "noSuggestions": "暂无建议",
+    "clear": "清除"
+  },
   "ExpenseDocumentsInput": {
+    "addImage": "添加图片",
+    "addDocumentHint": "你可以添加图片或收据。",
+    "previewDocument": "预览 {name}",
+    "removeDocument": "移除 {name}",
+    "uploadingDocument": "正在上传文档…",
     "TooBigToast": {
       "title": "文件过大",
       "description": "可上传的最大文件大小为{maxSize}，你的文件为{size}。"
@@ -388,6 +498,8 @@
       "noOneOwesYou": "本组中没有人欠你。",
       "youOweNoOne": "你不欠本组中任何人。",
       "confirmSettle": "记录你向{name}支付了{amount}？",
+      "confirmSettleReceived": "确认记录 {name} 向你支付了 {amount}？",
+      "settleReceivedTooltip": "记录收到的付款",
       "youAreOwed": "{name}欠你{amount}",
       "youOwe": "你欠{name} {amount}",
       "allSettled": "你在本组中已结清。",
@@ -522,16 +634,27 @@
   "Activity": {
     "title": "活动",
     "description": "该群组所有活动总览",
+    "globalTitle": "动态",
+    "globalDescription": "您所有群组的动态概览。",
+    "globalListTitle": "活动历史",
+    "globalListDescription": "所有群组的最新变动。",
+    "globalNoActivity": "您的群组中暂无动态。",
     "noActivity": "你的群组目前没有任何活动。",
+    "error": "加载动态失败。",
+    "retry": "重试",
     "someone": "某人",
     "settingsModified": "群组设定已被<strong>{participant}</strong>更改。",
     "expenseCreated": "消费 <em>{expense}</em> 由 <strong>{participant}</strong> 创建。",
     "expenseUpdated": "消费 <em>{expense}</em> 由 <strong>{participant}</strong> 更新。",
     "expenseDeleted": "消费 <em>{expense}</em> 由 <strong>{participant}</strong> 删除。",
+    "paymentRecorded": "<strong>{participant}</strong> 记录了一笔付款。",
+    "paymentUpdated": "<strong>{participant}</strong> 更新了一笔付款。",
+    "paymentDeleted": "<strong>{participant}</strong> 删除了笔付款。",
     "expenseCreatedDetail": "由 <strong>{participant}</strong> 创建。",
     "expenseUpdatedDetail": "由 <strong>{participant}</strong> 更新。",
     "paymentRecordedDetail": "由 <strong>{participant}</strong> 记录。",
     "paymentUpdatedDetail": "由 <strong>{participant}</strong> 更新。",
+    "reimbursement": "付款",
     "Groups": {
       "today": "今天",
       "yesterday": "昨天",
@@ -563,10 +686,7 @@
     "showLess": "收起",
     "yes": "是",
     "no": "否",
-    "fieldChangesCount": "{count} 项字段更改",
-    "globalTitle": "动态",
-    "globalDescription": "您所有群组的动态概览。",
-    "globalNoActivity": "您的群组中暂无动态。"
+    "fieldChangesCount": "{count} 项字段更改"
   },
   "Information": {
     "title": "信息",
@@ -590,6 +710,7 @@
     "max50": "输入至少50个字符。",
     "duplicateParticipantName": "此名字已被另一位群组成员占用。",
     "titleRequired": "请输入标题。",
+    "paymentCategoryNotAllowed": "付款不是支出的有效分类。",
     "invalidNumber": "无效数值。",
     "invalidExpression": "无效的表达式。请使用数字和 +、-、*、/ 运算符。",
     "amountRequired": "你必须输入一个金额。",
@@ -597,14 +718,27 @@
     "amountTenMillion": "金额必须小于10,000,000。",
     "ratePositive": "汇率必须严格大于零。",
     "paidByRequired": "你必须选择一个群组成员。",
+    "paidToRequired": "必须选择谁收到了付款。",
+    "paidToDifferent": "付款人与收款人必须是不同的人。",
     "paidForMin1": "这项消费必须支付给至少1名群组成员。",
-    "noZeroShares": "所有份额必须大于0。",
-    "amountSum": "金额之和必须等于消费的金额。",
-    "percentageSum": "百分比之和必须等于100。",
     "paidByAmountPositive": "Each payer's amount must be greater than zero.",
     "paidByAmountSum": "Payer amounts must sum to the expense total.",
     "paidByDuplicateParticipants": "Each payer can only appear once.",
-    "reimbursementSinglePayer": "Reimbursements support only a single payer."
+    "reimbursementSinglePayer": "Reimbursements support only a single payer.",
+    "noZeroShares": "所有份额必须大于0。",
+    "amountSum": "金额之和必须等于消费的金额。",
+    "percentageSum": "百分比之和必须等于100。",
+    "itemsRequired": "请至少添加一个项目，或关闭按明细拆分。",
+    "itemNeedsAssignment": "每个项目必须至少分配给一个人。",
+    "itemTitleRequired": "请输入项目名称。",
+    "itemAmountNonNegative": "项目金额不能为负数。",
+    "itemQuantityPositive": "数量必须是大于或等于 1 的整数。",
+    "taxNonNegative": "税费不能为负数。",
+    "tipNonNegative": "小费不能为负数。",
+    "itemAssignmentUnknownParticipant": "项目被分配给了不在分摊中的人员。",
+    "itemizationNotAllowedHere": "还款和定期支出不能进行按明细拆分。",
+    "itemsExceedAmount": "明细项目总和超出了总支出金额。",
+    "remainderShareUnknownParticipant": "剩余分摊包含了不属于此支出的成员。"
   },
   "Categories": {
     "search": "搜寻类别……",
@@ -688,6 +822,64 @@
       "heading": "Other currencies"
     }
   },
+  "ExpenseImport": {
+    "button": "导入支出",
+    "fromKnots": "从 Knots 导入",
+    "fromSplitwise": "从 Splitwise 导入"
+  },
+  "KnotsImport": {
+    "title": "从 Knots 导入",
+    "description": "上传 Knots 导出文件。如果文件包含尚未加入此群组的人员，你可以在导入前先在这里添加他们。",
+    "fileLabel": "Knots 导出文件",
+    "previewLabel": "预览（前 10 行）",
+    "clear": "清除",
+    "cancel": "取消",
+    "import": "导入支出",
+    "addAndImport": "添加成员并导入",
+    "importing": "正在导入...",
+    "analyzing": "正在分析导出文件…",
+    "expenseCount": "{count, plural, one {找到 # 笔支出} other {找到 # 笔支出}}",
+    "matchedParticipants": "已在群组中：{names}",
+    "missingParticipantsLabel": "要添加到此群组的人员",
+    "missingParticipantsDescription": "为每个人输入电子邮件。新账户会自动创建并关联到此群组。如果他们已有账户，则会被添加为成员。",
+    "expenseReferences": "{count, plural, one {# 笔支出} other {# 笔支出}}",
+    "emailLabel": "电子邮件",
+    "emailPlaceholder": "name@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "他们稍后可以使用此电子邮件注册以访问该群组。",
+    "errors": {
+      "invalidJson": "无效的 JSON 文件。",
+      "invalidFormat": "此文件不是有效的 Knots 导出。",
+      "noExpenses": "导出中没有支出。"
+    },
+    "toast": {
+      "invalidFileType": {
+        "title": "文件类型无效",
+        "description": "请选择 JSON 或 CSV 格式的 Knots 导出文件。"
+      },
+      "noContent": {
+        "title": "文件没有内容",
+        "description": "请先选择一个 Knots 导出文件。"
+      },
+      "missingEmail": {
+        "title": "需要电子邮件",
+        "description": "请输入 {name} 的电子邮件。"
+      },
+      "success": {
+        "title": "导入成功",
+        "description": "已成功从 Knots 导入 {count} 笔支出。"
+      },
+      "error": {
+        "title": "导入失败",
+        "description": "无法导入 Knots 导出文件。"
+      },
+      "cancelled": {
+        "title": "导入已取消",
+        "description": "导入在完成前已停止。"
+      }
+    }
+  },
   "SplitwiseImport": {
     "button": "Import from Splitwise",
     "title": "Import from Splitwise",
@@ -698,6 +890,20 @@
     "cancel": "Cancel",
     "import": "Import Expenses",
     "importing": "Importing...",
+    "analyzing": "Analyzing CSV…",
+    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
+    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
+    "participantMappingLabel": "Match Splitwise names",
+    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
+    "mapToMemberLabel": "Group member",
+    "mapToMemberPlaceholder": "Select a member",
+    "addNewMemberOption": "Add new member by email",
+    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "They can register later with this email to access the group.",
     "toast": {
       "invalidFileType": {
         "title": "Invalid file type",
@@ -706,6 +912,14 @@
       "noContent": {
         "title": "No CSV content",
         "description": "Please select a CSV file first."
+      },
+      "missingEmail": {
+        "title": "Email required",
+        "description": "Enter an email for {name}."
+      },
+      "incompleteMapping": {
+        "title": "Mapping incomplete",
+        "description": "Choose a member or email for {name}."
       },
       "success": {
         "title": "Import successful",
@@ -718,91 +932,219 @@
       "cancelled": {
         "title": "导入已取消",
         "description": "导入在完成前已停止。"
-      },
-      "missingEmail": {
-        "title": "Email required",
-        "description": "Enter an email for {name}."
-      },
-      "incompleteMapping": {
-        "title": "Mapping incomplete",
-        "description": "Choose a member or email for {name}."
       }
-    },
-    "analyzing": "Analyzing CSV…",
-    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
-    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
-    "participantMappingLabel": "Match Splitwise names",
-    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
-    "mapToMemberLabel": "Group member",
-    "mapToMemberPlaceholder": "Select a member",
-    "addNewMemberOption": "Add new member by email",
-    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
-    "emailLabel": "Email",
-    "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group.",
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
+    }
   },
   "ProfileSettings": {
-    "title": "个人资料设置",
-    "emailTitle": "电子邮件",
-    "emailDescription": "您的电子邮件地址无法更改。",
+    "title": "账户设置",
+    "back": "返回",
+    "Profile": {
+      "photoLabel": "个人头像",
+      "photoDescription": "上传在好友和群组中展示的头像。",
+      "photoAlt": "你的头像",
+      "choosePhoto": "选择照片",
+      "removePhoto": "移除照片",
+      "photoUpdatedToast": "头像已更新。",
+      "photoRemovedToast": "头像已移除。",
+      "photoUnavailableToast": "头像存储未配置。",
+      "photoInvalidToast": "请选择小于 5MB 的有效图片文件（PNG、JPG、WebP）。",
+      "photoFailedToast": "上传头像失败。",
+      "nameLabel": "显示名称",
+      "namePlaceholder": "你的姓名",
+      "nameError": "请输入有效的姓名。",
+      "nameUpdatedToast": "显示名称已更新。",
+      "saveChanges": "保存更改",
+      "saving": "正在保存…"
+    },
+    "profileTitle": "个人资料",
+    "appPreferencesTitle": "应用偏好",
+    "notificationsTitle": "通知渠道",
+    "notificationsDescription": "管理你接收群组活动通知的方式。",
+    "notifications": {
+      "masterSwitchAria": "通知总开关",
+      "saving": "正在保存设置…",
+      "saveSuccess": "通知设置已保存。",
+      "saveError": "无法保存通知设置。",
+      "comingSoon": "即将推出",
+      "done": "完成",
+      "channelSelectorAria": "{category} 的通知渠道",
+      "emailNeedsVerification": "验证你的电子邮箱以启用邮件通知。",
+      "channelLabel": {
+        "off": "关闭",
+        "email": "邮件",
+        "push": "推送",
+        "emailAndPush": "邮件与推送"
+      },
+      "pushDisabled": {
+        "unsupported": "此浏览器不支持推送通知。",
+        "unconfigured": "服务器未配置推送通知。",
+        "iosInstall": "在 iOS 上将 Knots 添加到主屏幕以接收推送通知。",
+        "denied": "通知权限已被拒绝。请在浏览器设置中启用。"
+      },
+      "thisDevice": {
+        "title": "在此设备上的推送通知",
+        "description": "有新活动时在此浏览器中接收即时提醒。",
+        "checking": "正在检查订阅状态…",
+        "enabledLabel": "此设备已启用推送通知。",
+        "disabledLabel": "此设备已禁用推送通知。",
+        "pushSelectedWarning": "你已为某些分类选择了推送通知，但此设备尚未订阅。",
+        "enable": "在此设备上启用",
+        "disable": "在此设备上禁用",
+        "error": "更新推送订阅失败。"
+      },
+      "groups": {
+        "groups-and-friends": "群组与好友",
+        "expenses": "支出",
+        "summaries": "摘要"
+      },
+      "categories": {
+        "added-to-group": "被添加到群组",
+        "friend-added": "添加了好友",
+        "budget-alert": "预算预警",
+        "expense-created": "支出已创建",
+        "recurring-expense-created": "定期支出已创建",
+        "expense-changed": "支出已修改或删除",
+        "expense-comment": "支出留言",
+        "weekly-summary": "每周摘要"
+      },
+      "categoryDescriptions": {
+        "weekly-summary": "每周支出与余额概览。"
+      }
+    },
+    "emailTitle": "电子邮箱",
+    "emailDescription": "用于通知和登录。",
     "displayNameTitle": "显示名称",
+    "usernameTitle": "用户名",
+    "usernameDescription": "你在 Knots 上的唯一标识符。",
     "passwordTitle": "密码",
+    "passkeyTitle": "通行密钥 (Passkeys)",
+    "Email": {
+      "description": "修改邮箱地址需要向新邮箱发送验证码进行验证。",
+      "changeButton": "更改邮箱",
+      "dialogTitle": "更改电子邮箱",
+      "dialogDescription": "输入新的邮箱地址。我们将向该地址发送验证码。",
+      "newEmailLabel": "新邮箱地址",
+      "newEmailPlaceholder": "you@example.com",
+      "sendCode": "发送验证码",
+      "cancel": "取消",
+      "otpTitle": "输入验证码",
+      "otpDescription": "我们已向 {email} 发送了6位验证码。请在下方输入。",
+      "codeLabel": "验证码",
+      "resend": "重新发送",
+      "resendIn": "{seconds} 秒后可重新发送",
+      "useDifferentEmail": "使用其他邮箱",
+      "verify": "验证并更改",
+      "successToast": "邮箱地址已更新。",
+      "errorInUse": "该邮箱地址已被使用。",
+      "errorInvalid": "请输入有效的邮箱地址。",
+      "errorSame": "新邮箱地址不能与当前邮箱相同。",
+      "errorInvalidCode": "验证码无效。",
+      "errorExpired": "验证码已过期，请重新获取。",
+      "errorRateLimited": "尝试过于频繁，请稍后再试。",
+      "errorSendFailed": "发送验证邮件失败，请重试。"
+    },
+    "Password": {
+      "description": "更改密码，或者在仅使用通行密钥登录时设置新密码。",
+      "noPasswordDescription": "你可以使用邮件链接或通行密钥登录。如果你希望有另一种登录方式，请添加密码。",
+      "changeButton": "更改密码",
+      "setButton": "设置密码",
+      "removeButton": "移除密码",
+      "changeDialogTitle": "更改密码",
+      "changeDialogDescription": "输入当前密码并设置新密码。",
+      "setDialogTitle": "设置密码",
+      "setDialogDescription": "添加密码以支持邮箱和密码登录。",
+      "setSuccessToast": "密码设置成功。",
+      "removeDialogTitle": "移除密码",
+      "removeDialogDescription": "你仍可以使用邮件链接或通行密钥登录。请输入当前密码以确认。",
+      "currentLabel": "当前密码",
+      "newLabel": "新密码",
+      "confirmLabel": "确认新密码",
+      "cancel": "取消",
+      "removeConfirm": "移除",
+      "changeSuccessToast": "密码修改成功。",
+      "removeSuccessToast": "密码已移除。",
+      "errorCurrentRequired": "必须输入当前密码。",
+      "errorMismatch": "两次输入的密码不一致。",
+      "errorRequirements": "密码长度至少为 8 位。",
+      "errorSame": "新密码不能与当前密码相同。",
+      "errorCurrentIncorrect": "当前密码不正确。",
+      "forgotPrefix": "忘记密码？",
+      "forgotLink": "点此重置",
+      "rule_TOO_SHORT": "至少 8 个字符",
+      "rule_MISSING_UPPERCASE": "至少一个大写字母",
+      "rule_MISSING_LOWERCASE": "至少一个小写字母",
+      "rule_MISSING_DIGIT": "至少一个数字"
+    },
+    "Passkey": {
+      "description": "使用生物识别、安全密钥或屏幕锁实现安全免密登录。",
+      "unavailable": "此设备上无法使用通行密钥。",
+      "addButton": "添加通行密钥",
+      "empty": "暂无注册的通行密钥。",
+      "created": "创建于 {date}",
+      "badgeSynced": "已同步",
+      "badgeDeviceBound": "仅限设备",
+      "badgeBackedUp": "已备份",
+      "addDialogTitle": "添加通行密钥",
+      "addDialogDescription": "输入易于识别的名称，并按照设备上的提示操作。",
+      "nicknameLabel": "名称（可选）",
+      "nicknamePlaceholder": "例如：我的笔记本电脑",
+      "confirmPasswordLabel": "当前密码",
+      "confirmPasswordHint": "确认密码以添加通行密钥。",
+      "addConfirm": "添加通行密钥",
+      "cancel": "取消",
+      "addSuccessToast": "通行密钥已添加。",
+      "addFailedToast": "添加通行密钥失败。",
+      "errorPasswordRequired": "请输入当前密码。",
+      "deleteAria": "删除 {name}",
+      "deleteDialogTitle": "删除通行密钥？",
+      "deleteDialogDescription": "“{name}” 将不再可用于登录你的账户。",
+      "deleteConfirm": "删除",
+      "deleteSuccessToast": "通行密钥已删除。",
+      "deleteFailedToast": "删除通行密钥失败。",
+      "reauthTitle": "重新登录以添加通行密钥",
+      "reauthDescription": "你的上次登录已超过 30 天。请使用密码、邮件链接或通行密钥重新登录，然后返回此处。",
+      "reauthConfirm": "重新登录"
+    },
     "preferencesTitle": "偏好设置",
-    "preferencesDescription": "自定义语言和外观。",
+    "preferencesDescription": "自定义语言、主题和默认货币。",
     "languageLabel": "语言",
     "themeLabel": "主题",
+    "blockedUsersTitle": "已屏蔽用户",
+    "blockedUsersDescription": "管理你已屏蔽的用户。",
+    "blockedUsersRowLabel": "已屏蔽用户",
+    "blockedUsersRowDescription": "查看和管理已屏蔽用户。",
     "accountTitle": "账户",
     "signOut": "退出登录",
+    "signOutDescription": "从当前设备注销登录。",
+    "signOutAllTitle": "从所有设备退出登录",
+    "signOutAllDescription": "结束所有设备上的活跃会话。",
     "signingOut": "正在退出…",
-    "NameForm": {
-      "nameRequired": "名称为必填项",
-      "nameMaxLength": "名称最多 100 个字符",
-      "successToast": "显示名称已成功更新。",
-      "label": "显示名称",
-      "placeholder": "输入您的显示名称",
-      "saving": "保存中…",
-      "submit": "保存名称"
-    },
-    "PasswordForm": {
-      "currentPasswordRequired": "当前密码为必填项",
-      "newPasswordRequired": "新密码为必填项",
-      "confirmPasswordRequired": "请确认您的新密码",
-      "passwordsDoNotMatch": "密码不匹配",
-      "successToast": "密码已成功更改。",
-      "currentPasswordIncorrect": "当前密码不正确",
-      "newPasswordSameAsCurrent": "新密码必须与当前密码不同",
-      "passwordRequirementsNotMet": "密码不符合要求",
-      "currentPasswordLabel": "当前密码",
-      "newPasswordLabel": "新密码",
-      "confirmPasswordLabel": "确认新密码",
-      "passwordHint": "最少 8 个、最多 128 个字符。须包含至少一个大写字母、一个小写字母和一个数字。",
-      "changingPassword": "正在更改密码…",
-      "submit": "更改密码",
-      "errorTooShort": "至少需要 8 个字符",
-      "errorTooLong": "最多 128 个字符",
-      "errorMissingUppercase": "须包含至少一个大写字母",
-      "errorMissingLowercase": "须包含至少一个小写字母",
-      "errorMissingDigit": "须包含至少一个数字"
-    },
-    "blockedUsersTitle": "黑名单",
-    "blockedUsersDescription": "管理您已屏蔽的用户。被屏蔽的用户无法将您拉入群组，也无法向您发送好友请求。",
     "Preferences": {
       "timezoneLabel": "时区",
       "timezoneSelect": "选择时区…",
       "timezoneSearch": "搜索时区…",
       "timezoneEmpty": "未找到相关时区。",
       "timezoneSaved": "时区已更新。",
+      "timezoneHelp": "设置新支出和定期支出的默认时间基准。",
+      "languageSearch": "搜索语言…",
+      "languageEmpty": "未找到语言。",
+      "languageCommon": "常用语言",
+      "languageOther": "其他语言",
       "currencyLabel": "默认货币",
       "currencySaved": "默认货币已更新。"
     },
+    "appPreferencesDescription": "自定义你的账户语言、主题和默认货币。",
+    "preferencesSaving": "正在保存设置…",
+    "themeSaved": "主题已更新。",
+    "themeLight": "浅色",
+    "themeDark": "深色",
+    "themeSystem": "系统",
     "SignOutAll": {
       "button": "退出所有设备的登录",
       "dialogTitle": "退出所有设备的登录？",
       "dialogDescription": "这将结束包括当前设备在内的所有活动会话。您将被重定向到登录页面。",
       "cancel": "取消",
-      "confirm": "在所有设备上退出登录",
+      "confirm": "全部退出",
       "signingOut": "正在退出登录…",
       "successToast": "所有已登录的会话均已终止。"
     },
@@ -816,13 +1158,51 @@
       "emailPlaceholder": "name@example.com",
       "block": "屏蔽",
       "unblock": "解除屏蔽",
-      "empty": "您尚未屏蔽任何人。",
+      "empty": "你尚未屏蔽任何用户。",
       "blockedToast": "用户屏蔽成功。",
       "unblockedToast": "用户已解除屏蔽。",
       "confirmBlockTitle": "屏蔽该好友？",
       "confirmBlockDescription": "屏蔽 {name} 将同时将其从您的好友列表中移除。系统不会通知对方此屏蔽操作。",
       "confirmBlockCancel": "取消",
       "confirmBlockAction": "屏蔽并移除好友"
+    },
+    "NameForm": {
+      "nameRequired": "显示名称为必填项。",
+      "nameMaxLength": "名称最多 100 个字符",
+      "successToast": "显示名称已成功更新。",
+      "label": "显示名称",
+      "placeholder": "输入您的显示名称",
+      "saving": "正在保存…",
+      "submit": "保存名称"
+    },
+    "UsernameForm": {
+      "successToast": "用户名已更新。",
+      "label": "用户名",
+      "placeholder": "your-username",
+      "description": "用于你的个人资料链接。仅限小写字母、数字和连字符。",
+      "saving": "正在保存…",
+      "submit": "保存用户名"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "必须输入当前密码。",
+      "newPasswordRequired": "必须输入新密码。",
+      "confirmPasswordRequired": "请确认新密码。",
+      "passwordsDoNotMatch": "两次输入的密码不一致。",
+      "successToast": "密码已成功更改。",
+      "currentPasswordIncorrect": "当前密码不正确。",
+      "newPasswordSameAsCurrent": "新密码不能与当前密码相同。",
+      "passwordRequirementsNotMet": "密码不满足安全要求。",
+      "currentPasswordLabel": "当前密码",
+      "newPasswordLabel": "新密码",
+      "confirmPasswordLabel": "确认新密码",
+      "passwordHint": "8 到 128 个字符。必须包含至少一个大写字母、一个小写字母和一个数字。",
+      "changingPassword": "正在修改密码…",
+      "submit": "更改密码",
+      "errorTooShort": "至少需要 8 个字符",
+      "errorTooLong": "最多 128 个字符",
+      "errorMissingUppercase": "须包含至少一个大写字母",
+      "errorMissingLowercase": "须包含至少一个小写字母",
+      "errorMissingDigit": "须包含至少一个数字"
     }
   },
   "Friends": {
@@ -908,6 +1288,7 @@
       "title": "Expenses with {name}",
       "description": "All expenses you share with this friend, across groups.",
       "backToFriends": "Back to friends",
+      "backToFriend": "返回 {name}",
       "listTitle": "Expense history",
       "listDescription": "Direct expenses and expenses from shared groups.",
       "create": "Add expense",
@@ -950,6 +1331,10 @@
       "friendOwesYou": "{name} 欠你 {amount}",
       "youOweFriend": "你欠 {name} {amount}",
       "paid": "{payer} 向 {payee} 支付了 {amount}",
+      "deletePayment": "删除",
+      "deletePaymentConfirm": "确定要删除这笔付款吗？",
+      "deletePaymentSuccess": "付款删除成功",
+      "deletePaymentError": "删除付款失败",
       "groups": {
         "upcoming": "即将到来",
         "thisWeek": "本周",
@@ -965,14 +1350,15 @@
       "paid": "{payer} 向 {payee} 付款",
       "addedBy": "由 {name} 于 {date} 添加",
       "disclaimer": "此付款通过“记录付款”功能记录，实际未进行转账。",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "readOnlyNotice": "此付款属于合并结算的一部分，无法单独编辑或删除。",
       "edit": "编辑",
       "delete": "删除",
       "deleteConfirm": "删除此付款？",
       "deleteDescription": "这将调整余额，如同付款从未发生。",
+      "deleting": "Deleting...",
       "notFound": "未找到付款。",
-      "backToFriend": "返回 {name}",
-      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
-      "deleting": "Deleting..."
+      "backToFriend": "返回 {name}"
     },
     "DirectExpense": {
       "title": "添加支出",
@@ -984,12 +1370,19 @@
       "paidByYou": "你",
       "splitEqually": "由 {payer} 支付并平分",
       "dateLabel": "日期",
+      "attachLabel": "附加图片或 PDF",
+      "notesLabel": "备注",
+      "notesPlaceholder": "添加备注（可选）",
       "save": "保存",
       "saving": "保存中…",
       "cancel": "取消",
       "success": "支出已添加。",
       "error": "无法添加支出。",
       "persistError": "无法保存表单数据。导航不可用。"
+    },
+    "Settings": {
+      "currencyTitle": "主要货币",
+      "currencyDescription": "用于与好友的直接支出和付款。"
     },
     "SettleAll": {
       "button": "全部结清",
@@ -1013,6 +1406,7 @@
     "memberPromoted": "成员已提升为所有者。",
     "memberDemoted": "成员已降为普通成员。",
     "addMember": "添加成员",
+    "pickFriend": "Choose from your friends or enter an email.",
     "adding": "添加中…",
     "add": "添加",
     "cancel": "取消",
@@ -1021,8 +1415,7 @@
     "leave": "离开",
     "removeFromGroup": "从群组中移除",
     "promoteToOwner": "提升为所有者",
-    "demoteToMember": "降为成员",
-    "pickFriend": "Choose from your friends or enter an email."
+    "demoteToMember": "降为成员"
   },
   "MyGroups": {
     "title": "我的群组",
@@ -1032,7 +1425,9 @@
     "noGroupsHint": "创建群组以开始与他人分摊支出。",
     "createGroup": "创建群组",
     "createGroupTitle": "创建新群组",
-    "createGroupDescription": "输入群组名称。创建后可以邀请成员。",
+    "createGroupDescription": "输入群组名称和货币。创建后你可以邀请成员加入。",
+    "invalidCurrency": "请选择有效的货币。",
+    "currencySymbolRequired": "请输入货币符号。",
     "groupNameLabel": "群组名称",
     "characters": "个字符",
     "leaveGroup": "离开群组",
@@ -1052,100 +1447,6 @@
     "deleteGroupConfirmCancel": "取消",
     "deleteGroupConfirmAction": "永久删除"
   },
-  "UserMenu": {
-    "profileSettings": "账户设置",
-    "signingOut": "正在退出…",
-    "signOut": "退出登录"
-  },
-  "Notifications": {
-    "settings": "通知设置",
-    "subscribe": "启用通知",
-    "unsubscribe": "禁用通知",
-    "selectParticipant": "通知我其他人的更改",
-    "noParticipant": "所有更改",
-    "permissionDenied": "通知权限被拒绝。请在浏览器设置中启用。",
-    "notSupported": "此设备不支持推送通知。",
-    "expenseCreated": "{actor} 添加了「{title}」",
-    "expenseUpdated": "{actor} 更新了「{title}」",
-    "expenseDeleted": "{actor} 删除了「{title}」",
-    "groupUpdated": "{actor} 更新了群组「{group}」",
-    "notificationTitle": "Knots – {group}",
-    "defaultBody": "您的群组有新活动",
-    "filterHint": "选择要接收谁的通知以及哪些事件。",
-    "subscribeError": "无法启用通知。请重试。",
-    "membersLabel": "通知我关于",
-    "notifyAllMembers": "群组所有人",
-    "notifySpecificMembers": "或仅这些成员：",
-    "eventsLabel": "事件",
-    "eventCreate": "已创建支出",
-    "eventUpdate": "已更新支出",
-    "eventDelete": "已删除支出",
-    "selectAtLeastOneFilter": "请至少选择一名成员或一种事件。",
-    "channelsLabel": "渠道",
-    "pushLabel": "推送通知",
-    "pushUnavailable": "此部署中无法使用推送通知。",
-    "emailLabel": "电子邮件通知",
-    "enableChannelHint": "启用一个渠道以配置你要接收谁以及哪些内容的通知。",
-    "pushSyncWarning": "偏好设置已保存，但推送通知筛选器同步失败。"
-  },
-  "ExpenseImport": {
-    "button": "导入支出",
-    "fromKnots": "从 Knots 导入",
-    "fromSplitwise": "从 Splitwise 导入"
-  },
-  "KnotsImport": {
-    "title": "从 Knots 导入",
-    "description": "上传 Knots 导出文件。如果文件包含尚未加入此群组的人员，你可以在导入前先在这里添加他们。",
-    "fileLabel": "Knots 导出文件",
-    "previewLabel": "预览（前 10 行）",
-    "clear": "清除",
-    "cancel": "取消",
-    "import": "导入支出",
-    "addAndImport": "添加成员并导入",
-    "importing": "正在导入...",
-    "analyzing": "正在分析导出文件…",
-    "expenseCount": "{count, plural, one {找到 # 笔支出} other {找到 # 笔支出}}",
-    "matchedParticipants": "已在群组中：{names}",
-    "missingParticipantsLabel": "要添加到此群组的人员",
-    "missingParticipantsDescription": "为每个人输入电子邮件。新账户会自动创建并关联到此群组。如果他们已有账户，则会被添加为成员。",
-    "expenseReferences": "{count, plural, one {# 笔支出} other {# 笔支出}}",
-    "emailLabel": "电子邮件",
-    "emailPlaceholder": "name@example.com",
-    "softCreateHint": "他们稍后可以使用此电子邮件注册以访问该群组。",
-    "toast": {
-      "invalidFileType": {
-        "title": "文件类型无效",
-        "description": "请选择 JSON 或 CSV 格式的 Knots 导出文件。"
-      },
-      "noContent": {
-        "title": "文件没有内容",
-        "description": "请先选择一个 Knots 导出文件。"
-      },
-      "missingEmail": {
-        "title": "需要电子邮件",
-        "description": "请输入 {name} 的电子邮件。"
-      },
-      "success": {
-        "title": "导入成功",
-        "description": "已成功从 Knots 导入 {count} 笔支出。"
-      },
-      "error": {
-        "title": "导入失败",
-        "description": "无法导入 Knots 导出文件。"
-      },
-      "cancelled": {
-        "title": "导入已取消",
-        "description": "导入在完成前已停止。"
-      }
-    },
-    "errors": {
-      "invalidJson": "无效的 JSON 文件。",
-      "invalidFormat": "此文件不是有效的 Knots 导出。",
-      "noExpenses": "导出中没有支出。"
-    },
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
-  },
   "GroupDangerZone": {
     "title": "群组管理",
     "description": "归档会将此群组从你的列表中隐藏，但不会删除数据。删除会为所有人永久移除此群组。",
@@ -1159,6 +1460,109 @@
     "deleteConfirmDescription": "这将为所有成员永久删除“{name}”及其所有支出、余额和历史记录。此操作无法撤销。",
     "cancel": "取消",
     "deleteConfirmAction": "永久删除"
+  },
+  "UserMenu": {
+    "menuLabel": "用户菜单",
+    "profileSettings": "账户设置",
+    "theme": "主题",
+    "themeLight": "浅色",
+    "themeDark": "深色",
+    "themeSystem": "系统",
+    "signingOut": "正在退出…",
+    "signOut": "退出登录"
+  },
+  "Notifications": {
+    "settings": "通知设置",
+    "subscribe": "启用通知",
+    "unsubscribe": "禁用通知",
+    "selectParticipant": "通知我其他人的更改",
+    "noParticipant": "所有更改",
+    "permissionDenied": "通知权限被拒绝。请在浏览器设置中启用。",
+    "notSupported": "此设备不支持推送通知。",
+    "expenseCreated": "{actor} 在 {group} 中添加了“{title}”",
+    "expenseUpdated": "{actor} 在 {group} 中编辑了“{title}”",
+    "expenseDeleted": "{actor} 在 {group} 中删除了“{title}”",
+    "groupUpdated": "{actor} 更新了群组「{group}」",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "您的群组有新活动",
+    "filterHint": "选择要接收谁的通知以及哪些事件。",
+    "membersLabel": "通知我关于",
+    "notifyAllMembers": "群组所有人",
+    "notifySpecificMembers": "或仅这些成员：",
+    "eventsLabel": "事件",
+    "eventCreate": "已创建支出",
+    "eventUpdate": "已更新支出",
+    "eventDelete": "已删除支出",
+    "selectAtLeastOneFilter": "请至少选择一名成员或一种事件。",
+    "subscribeError": "无法启用通知。请重试。",
+    "channelsLabel": "渠道",
+    "pushLabel": "推送通知",
+    "pushUnavailable": "此部署中无法使用推送通知。",
+    "emailLabel": "电子邮件通知",
+    "enableChannelHint": "启用一个渠道以配置你要接收谁以及哪些内容的通知。",
+    "pushSyncWarning": "偏好设置已保存，但推送通知筛选器同步失败。"
+  },
+  "AppError": {
+    "title": "出错了",
+    "description": "应用本地数据已清除。你的登录会话也将结束，以便从首页重新开始。",
+    "recover": "返回首页",
+    "recovering": "正在重定向…"
+  },
+  "PaymentForm": {
+    "dateLabel": "付款日期",
+    "dateDescription": "输入付款日期。",
+    "amountLabel": "金额",
+    "amountDescription": "输入付款金额。",
+    "paidByLabel": "付款人",
+    "paidByDescription": "选择谁支付了此款项。",
+    "paidToLabel": "收款人",
+    "paidToDescription": "选择谁收到了此款项。",
+    "notesLabel": "备注",
+    "notesPlaceholder": "添加备注（可选）",
+    "participantPlaceholder": "选择成员",
+    "disclaimer": "记录两人之间结清余额的还款。这并非分摊支出。"
+  },
+  "FloatingCreateExpense": {
+    "addExpense": "添加支出",
+    "dialogTitle": "创建支出或付款",
+    "editDialogTitle": "编辑支出",
+    "createPaymentDialogTitle": "记录付款",
+    "editPaymentDialogTitle": "编辑付款",
+    "withWho": "你与他们:",
+    "back": "返回",
+    "searchPlaceholder": "搜索好友或群组…",
+    "descriptionPlaceholder": "这笔支出用于什么？",
+    "amountPlaceholder": "0.00",
+    "paidByLabel": "付款人",
+    "you": "你",
+    "splitEqually": "均分",
+    "save": "保存",
+    "saving": "正在保存…",
+    "cancel": "取消",
+    "successToast": "支出创建成功。",
+    "updateSuccessToast": "支出更新成功。",
+    "paymentSuccessToast": "付款记录成功。",
+    "paymentUpdateSuccessToast": "付款更新成功。",
+    "errorToast": "创建支出失败。",
+    "paymentErrorToast": "记录付款失败。",
+    "updateErrorToast": "更新支出失败。",
+    "paymentUpdateErrorToast": "更新付款失败。",
+    "lockedPaymentToast": "无法直接编辑此付款。",
+    "noFriendOrGroupFound": "未找到好友或群组。",
+    "groupsHeader": "群组",
+    "friendsHeader": "好友",
+    "selectGroupText": "群组: {name}",
+    "pickerTitle": "与谁一起？",
+    "pickerDone": "完成",
+    "selectParticipants": "选择好友或群组",
+    "selectParticipantsHint": "选择群组或好友以开始。",
+    "singleGroupAlertTitle": "仅限一个群组",
+    "singleGroupAlertDescription": "一次只能选择一个群组。请先移除当前群组，然后再选择其他群组。",
+    "singleGroupAlertOk": "知道了",
+    "advancedOptions": "高级选项",
+    "splitDetails": "分摊详情",
+    "notesPlaceholder": "添加备注…",
+    "viewGroupExpense": "查看群组支出"
   },
   "DuplicateExpense": {
     "title": "检测到可能的重复支出",
@@ -1183,7 +1587,47 @@
   "CurrencyAmountInput": {
     "expressionHint": "或 10+5"
   },
-  "ExpenseTitleInput": {
-    "clear": "清除"
+  "Login": {
+    "title": "登录",
+    "description": "使用通行密钥、邮件链接或密码登录。",
+    "orContinueWithEmail": "或使用邮箱继续",
+    "methodMagicLink": "快捷登录链接",
+    "methodPassword": "密码",
+    "sendSignInLink": "发送登录链接",
+    "signInWithPassword": "使用密码登录",
+    "usePasskey": "使用通行密钥",
+    "passkeyFailed": "无法使用该通行密钥登录，请重试。",
+    "forgotPassword": "忘记密码？",
+    "noAccount": "还没有账户？",
+    "signUp": "注册",
+    "magicLinkButton": "发送登录链接",
+    "magicLinkEmailRequired": "请输入你的邮箱地址。",
+    "magicLinkSendFailed": "无法发送登录邮件，请重试。",
+    "magicLinkSentTitle": "请查收你的邮箱",
+    "magicLinkSentDescription": "如果该地址存在对应账户，我们已发送了登录链接。该链接仅可使用一次，且在 15 分钟后失效。",
+    "magicLinkSigningIn": "正在登录…",
+    "magicLinkFailedTitle": "无法登录",
+    "magicLinkInvalid": "此登录链接无效或已过期。",
+    "backToLogin": "返回登录"
+  },
+  "Register": {
+    "title": "创建账户",
+    "description": "使用邮件链接或密码注册。",
+    "signUpWithPassword": "使用密码创建账户",
+    "confirmPassword": "确认密码",
+    "hasAccount": "已有账户？",
+    "signIn": "登录",
+    "creating": "正在创建账户…",
+    "passwordMismatch": "两次输入的密码不一致",
+    "ruleLength": "8 个字符",
+    "ruleLowercase": "小写字母",
+    "ruleUppercase": "大写字母",
+    "ruleNumber": "数字",
+    "successTitle": "注册成功",
+    "successDescription": "你的账户已成功创建",
+    "successAlertTitle": "请查收你的邮箱",
+    "successAlertDescription": "我们已向你的邮箱发送了验证链接。请在登录前点击该链接完成验证。",
+    "goToLogin": "前往登录",
+    "failedTitle": "注册失败"
   }
 }

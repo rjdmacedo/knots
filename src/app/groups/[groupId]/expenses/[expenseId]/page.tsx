@@ -12,9 +12,5 @@ export const metadata: Metadata = {
 export default async function GroupExpenseDetailPage({ params }: Props) {
   const { groupId, expenseId } = await params
 
-  return (
-    <div className="px-4 py-6">
-      <ExpenseDetail scope="group" groupId={groupId} expenseId={expenseId} />
-    </div>
-  )
+  return <ExpenseDetail scope="group" groupId={groupId} expenseId={expenseId} />
 }

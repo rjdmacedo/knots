@@ -149,7 +149,7 @@ export function AccountPreferences({
     initialLocale ?? activeLocale,
   )
   const [currencyValue, setCurrencyValue] = useState<string>(
-    preferredCurrency ?? 'EUR',
+    preferredCurrency ?? 'USD',
   )
   const [timezoneValue, setTimezoneValue] = useState<string>(
     timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone,

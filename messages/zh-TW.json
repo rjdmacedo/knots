@@ -20,6 +20,9 @@
     "create": "新增消費紀錄",
     "createFirst": "新增第一筆消費紀錄",
     "noExpenses": "你的群組內目前沒有任何消費紀錄。",
+    "noSearchResults": "找不到符合的支出。",
+    "loadError": "載入支出列表失敗。",
+    "retry": "重試",
     "export": "Export",
     "exportJson": "匯出為 JSON",
     "exportCsv": "匯出為 CSV",
@@ -75,19 +78,60 @@
   },
   "ExpenseCard": {
     "paidBy": "由 <strong>{paidBy}</strong> 支付 <paidFor></paidFor>。",
+    "paidByMultiple": "由 <strong>{paidBy}</strong> 支付 <paidFor></paidFor>。",
     "everyone": "everyone",
     "receivedBy": "由 <strong>{paidBy}</strong> 收取 <paidFor></paidFor>。",
     "yourBalance": "你的餘額：",
     "notInvolved": "You are not involved",
     "close": "關閉",
-    "paidByMultiple": "由 <strong>{paidBy}</strong> 支付 <paidFor></paidFor>。",
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
   "ExpenseDetail": {
+    "backToExpenses": "返回支出列表",
+    "backToFriend": "返回 {name}",
+    "copy": "複製支出",
+    "delete": "刪除",
+    "edit": "編輯",
+    "payment": "付款",
+    "expense": "支出",
+    "onDate": "{date}",
+    "addedBy": "由 {name} 新增於 {date}",
+    "addedByYou": "由你新增於 {date}",
+    "lastUpdatedBy": "最後由 {name} 更新於 {date}",
+    "lastUpdatedByYou": "最後由你更新於 {date}",
+    "trendsTitle": "{contextName} 支出趨勢 :: {categoryName}",
+    "trendsSeeMore": "查看更多",
+    "generalCategory": "一般",
+    "editCategory": "編輯分類",
+    "categoryUpdateError": "更新分類失敗。",
+    "attachReceipt": "附加收據",
+    "receiptUploadSuccess": "收據上傳成功。",
+    "paidAmount": "{name} 支付了 {amount}",
+    "youPaidAmount": "你支付了 {amount}",
+    "paidAmountMultiple": "{name} 支付了 {amount}",
+    "youPaidAmountMultiple": "你支付了 {amount}",
+    "multiPayerSeparator": "、",
+    "paidYou": "{name} 向你支付了 {amount}",
+    "youPaidRecipient": "你向 {name} 支付了 {amount}",
+    "payerPaidPayee": "{payer} 向 {payee} 支付了 {amount}",
+    "someone": "某人",
+    "youOwe": "你欠 {amount}",
+    "participantOwes": "{name} 欠 {amount}",
+    "yourShare": "你的分攤金額 {amount}",
+    "participantShare": "{name}: {amount}",
+    "notes": "備註",
     "activity": "活動",
-    "noActivity": "這筆消費尚無任何活動記錄。",
-    "viewGroupExpense": "View group expense"
+    "noActivity": "尚無活動紀錄。",
+    "paymentDisclaimer": "這是一筆用於結清群組餘額的雙人還款紀錄。",
+    "consolidationDisclaimer": "此付款為合併結算的一部分。",
+    "readOnlyNotice": "此支出為唯讀，無法直接編輯。",
+    "deleteConfirm": "確定要刪除這筆支出嗎？",
+    "deletePaymentConfirm": "確定要刪除這筆付款嗎？",
+    "deleteDescription": "此操作將從所有群組成員的紀錄中刪除此支出。此操作無法復原。",
+    "cancel": "取消",
+    "deleting": "正在刪除…",
+    "viewGroupExpense": "檢視群組支出"
   },
   "Groups": {
     "myGroups": "我的群組",
@@ -151,6 +195,12 @@
       "label": "簡化債務",
       "description": "透過合併成員之間的餘額來減少付款次數（類似 Splitwise Pro）。關閉後，每人只欠為其份額付款的人。"
     },
+    "FriendsField": {
+      "label": "好友",
+      "description": "選擇現有好友或邀請新成員。",
+      "placeholder": "選擇好友…",
+      "remove": "移除 {name}"
+    },
     "Participants": {
       "title": "群組成員",
       "description": "輸入每位成員的名稱。",
@@ -205,6 +255,7 @@
         "description": "選擇應參與此筆收入的成員。"
       },
       "splitModeDescription": "選擇如何分配此筆收入。",
+      "notesDescription": "新增有關收入的補充說明或備註。",
       "attachDescription": "查看／附上此筆收入的收據。"
     },
     "Expense": {
@@ -227,7 +278,7 @@
       "paidByField": {
         "label": "支付人",
         "placeholder": "Select a participant",
-        "description": "Select who provided the money and how much each payer contributed."
+        "description": "選擇誰支付了費用以及各付款人承擔的金額。"
       },
       "recurrenceRule": {
         "label": "Expense Recurrence",
@@ -238,23 +289,29 @@
         "monthly": "Monthly"
       },
       "paidFor": {
-        "title": "應支付人",
-        "description": "選擇需參與此筆消費的成員。"
+        "title": "分攤對象",
+        "description": "選擇如何分攤支出以及哪些人參與。"
       },
       "splitModeDescription": "選擇如何分配此筆消費。",
+      "notesDescription": "新增有關支出的補充說明或備註。",
       "attachDescription": "查看／附上此筆消費的收據。"
     },
     "amountField": {
-      "label": "金額"
+      "label": "金額",
+      "description": "輸入支出總金額。",
+      "convertedDescription": "請輸入群組貨幣的金額。"
     },
     "conversionUnavailable": "若要為每筆支出設定不同貨幣並轉換金額，請為群組選擇非自訂貨幣。",
     "originalAmountField": {
-      "label": "待轉換金額"
+      "label": "待轉換金額",
+      "description": "換算前的原始金額。"
     },
     "conversionRateField": {
       "useApi": "使用 Frankfurter 匯率",
       "useCustom": "使用自訂匯率",
-      "label": "匯率"
+      "label": "匯率",
+      "description": "用於換算的匯率。",
+      "collapsibleDescription": "如有需要，可自訂匯率。"
     },
     "conversionRateState": {
       "loading": "正在取得匯率…",
@@ -279,6 +336,13 @@
     },
     "selectNone": "取消全選",
     "selectAll": "全選",
+    "resetSplit": "重設分攤",
+    "evenlySplit": "均分: {amount} × {count}",
+    "totalWeight": "總權重: {count, plural, other {# 份}}",
+    "matchesPercent": "符合 100%。",
+    "matchesAmount": "符合 {amount}",
+    "decreaseShares": "減少份額",
+    "increaseShares": "增加份額",
     "noLongerInGroup": "已不在此群組中",
     "shares": "份額",
     "advancedOptions": "進階分帳選項……",
@@ -294,6 +358,43 @@
       "byPercentageDescription": "Split using percentages that add up to 100%",
       "byAmountDescription": "Split using fixed amounts for each participant"
     },
+    "itemized": {
+      "toggleLabel": "按明細拆分",
+      "toggleDescription": "將收據中的個別項目分別指派給不同成員。",
+      "noItems": "尚未新增任何明細項目。",
+      "addItem": "新增項目",
+      "removeItem": "移除項目",
+      "itemTitleLabel": "項目名稱",
+      "itemTitlePlaceholder": "例如：主餐",
+      "itemUnitPriceLabel": "單價",
+      "itemQuantityLabel": "數量",
+      "itemLineTotalLabel": "小計",
+      "itemAmountLabel": "金額",
+      "sectionTitle": "按項目明細拆分",
+      "sectionDescription": "輸入收據中的各個單項並指派給對應成員。",
+      "assignTo": "指派給成員",
+      "otherLabel": "其他費用",
+      "otherDerivedNote": "剩餘金額由其他參與成員均分。",
+      "itemsExceedTotal": "明細項目總和超出了總支出金額。",
+      "setAmountFromItems": "根據明細項總計設定金額",
+      "total": "明細總計",
+      "addItemsAction": "新增項目",
+      "documentationNote": "項目明細有助於參與成員清楚瞭解各自消費內容。",
+      "authoritativeNote": "各項目金額之和將決定支出總金額。",
+      "leaveAction": "結束明細拆分",
+      "switchDialog": {
+        "title": "變更分攤方式？",
+        "description": "切換分攤方式將重設明細拆分。",
+        "confirm": "變更分攤方式",
+        "cancel": "取消"
+      },
+      "leaveDialog": {
+        "title": "捨棄明細拆分？",
+        "description": "如果結束明細拆分，已輸入的項目明細將會遺失。",
+        "confirm": "捨棄明細",
+        "cancel": "取消"
+      }
+    },
     "DeletePopup": {
       "label": "刪除",
       "title": "要刪除這筆消費嗎？",
@@ -301,7 +402,7 @@
       "yes": "確定",
       "cancel": "取消"
     },
-    "attachDocuments": "附件",
+    "attachDocuments": "附加圖片",
     "create": "新增",
     "creating": "新增中……",
     "save": "儲存",
@@ -317,7 +418,7 @@
       "postSaveTitle": "Expense split across group and direct records",
       "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
       "postSaveGroupHalfLine": "The group expense is {amount}",
-      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "singlePayerNote": "新增群組外成員（如 {names}）時，支出會被一分為二，因此只能有一位付款人。",
       "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
       "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
       "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
@@ -326,7 +427,16 @@
       "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
+  "ExpenseTitleInput": {
+    "noSuggestions": "暫無建議",
+    "clear": "清除"
+  },
   "ExpenseDocumentsInput": {
+    "addImage": "新增圖片",
+    "addDocumentHint": "你可以新增圖片或收據。",
+    "previewDocument": "預覽 {name}",
+    "removeDocument": "移除 {name}",
+    "uploadingDocument": "正在上傳檔案…",
     "TooBigToast": {
       "title": "文件過大",
       "description": "可以上傳的最大文件大小為 {maxSize}。這份文件大小為 {size}。"
@@ -388,6 +498,8 @@
       "noOneOwesYou": "本群組中沒有人欠你。",
       "youOweNoOne": "你不欠本群組中任何人。",
       "confirmSettle": "記錄你向{name}支付了{amount}？",
+      "confirmSettleReceived": "確認記錄 {name} 向你支付了 {amount}？",
+      "settleReceivedTooltip": "記錄收到的付款",
       "youAreOwed": "{name}欠你{amount}",
       "youOwe": "你欠{name} {amount}",
       "allSettled": "你在本群組中已結清。",
@@ -522,16 +634,27 @@
   "Activity": {
     "title": "明細",
     "description": "群組所有活動總覽",
+    "globalTitle": "動態",
+    "globalDescription": "您所有群組的動態概覽。",
+    "globalListTitle": "活動紀錄",
+    "globalListDescription": "所有群組的最新變更。",
+    "globalNoActivity": "您的群組中暫無動態。",
     "noActivity": "你的全組目前沒有任何活動",
+    "error": "載入動態失敗。",
+    "retry": "重試",
     "someone": "某人",
     "settingsModified": "群組設定已被<strong>{participant}</strong>更改。",
     "expenseCreated": "消費 <em>{expense}</em> 由 <strong>{participant}</strong> 新增。",
     "expenseUpdated": "消費 <em>{expense}</em> 由 <strong>{participant}</strong> 更新。",
     "expenseDeleted": "消費 <em>{expense}</em> 由 <strong>{participant}</strong> 刪除。",
+    "paymentRecorded": "<strong>{participant}</strong> 記錄了一筆付款。",
+    "paymentUpdated": "<strong>{participant}</strong> 更新了一筆付款。",
+    "paymentDeleted": "<strong>{participant}</strong> 刪除了一筆付款。",
     "expenseCreatedDetail": "由 <strong>{participant}</strong> 新增。",
     "expenseUpdatedDetail": "由 <strong>{participant}</strong> 更新。",
     "paymentRecordedDetail": "由 <strong>{participant}</strong> 記錄。",
     "paymentUpdatedDetail": "由 <strong>{participant}</strong> 更新。",
+    "reimbursement": "付款",
     "Groups": {
       "today": "今天",
       "yesterday": "昨天",
@@ -563,10 +686,7 @@
     "showLess": "收合",
     "yes": "是",
     "no": "否",
-    "fieldChangesCount": "{count} 項欄位變更",
-    "globalTitle": "動態",
-    "globalDescription": "您所有群組的動態概覽。",
-    "globalNoActivity": "您的群組中暫無動態。"
+    "fieldChangesCount": "{count} 項欄位變更"
   },
   "Information": {
     "title": "資訊",
@@ -590,6 +710,7 @@
     "max50": "請輸入至少 50 個字。",
     "duplicateParticipantName": "此名稱已被使用",
     "titleRequired": "請輸入標題。",
+    "paymentCategoryNotAllowed": "付款不是支出的有效分類。",
     "invalidNumber": "數值無效。",
     "invalidExpression": "無效的運算式。請使用數字和 +、-、*、/ 運算子。",
     "amountRequired": "必須輸入一個金額。",
@@ -597,14 +718,27 @@
     "amountTenMillion": "金額需小於 10,000,000。",
     "ratePositive": "匯率必須嚴格大於零。",
     "paidByRequired": "必須選擇一個成員。",
+    "paidToRequired": "必須選擇誰收到了付款。",
+    "paidToDifferent": "付款人與收款人必須是不同的人。",
     "paidForMin1": "這筆消費必須包含至少一個成員。",
-    "noZeroShares": "份額需大於 0。",
-    "amountSum": "金額總計必須等於消費金額。",
-    "percentageSum": "百分比加總必須等於 100。",
     "paidByAmountPositive": "Each payer's amount must be greater than zero.",
     "paidByAmountSum": "Payer amounts must sum to the expense total.",
     "paidByDuplicateParticipants": "Each payer can only appear once.",
-    "reimbursementSinglePayer": "Reimbursements support only a single payer."
+    "reimbursementSinglePayer": "Reimbursements support only a single payer.",
+    "noZeroShares": "份額需大於 0。",
+    "amountSum": "金額總計必須等於消費金額。",
+    "percentageSum": "百分比加總必須等於 100。",
+    "itemsRequired": "請至少新增一個項目，或關閉按明細拆分。",
+    "itemNeedsAssignment": "每個項目必須至少指派給一個人。",
+    "itemTitleRequired": "請輸入項目名稱。",
+    "itemAmountNonNegative": "項目金額不能為負數。",
+    "itemQuantityPositive": "數量必須是大於或等於 1 的整數。",
+    "taxNonNegative": "稅費不能為負數。",
+    "tipNonNegative": "小費不能為負數。",
+    "itemAssignmentUnknownParticipant": "項目被指派給了不在分攤中的成員。",
+    "itemizationNotAllowedHere": "還款和定期支出不能進行按明細拆分。",
+    "itemsExceedAmount": "明細項目總和超出了總支出金額。",
+    "remainderShareUnknownParticipant": "剩餘分攤包含了不屬於此支出的成員。"
   },
   "Categories": {
     "search": "搜尋類別……",
@@ -688,6 +822,64 @@
       "heading": "Other currencies"
     }
   },
+  "ExpenseImport": {
+    "button": "匯入支出",
+    "fromKnots": "從 Knots 匯入",
+    "fromSplitwise": "從 Splitwise 匯入"
+  },
+  "KnotsImport": {
+    "title": "從 Knots 匯入",
+    "description": "上傳 Knots 匯出檔案。如果檔案包含尚未加入此群組的人員，你可以在匯入前先在這裡新增他們。",
+    "fileLabel": "Knots 匯出檔案",
+    "previewLabel": "預覽（前 10 行）",
+    "clear": "清除",
+    "cancel": "取消",
+    "import": "匯入支出",
+    "addAndImport": "新增成員並匯入",
+    "importing": "正在匯入...",
+    "analyzing": "正在分析匯出檔…",
+    "expenseCount": "{count, plural, one {找到 # 筆支出} other {找到 # 筆支出}}",
+    "matchedParticipants": "已在群組中：{names}",
+    "missingParticipantsLabel": "要新增到此群組的人員",
+    "missingParticipantsDescription": "為每個人輸入電子郵件。新帳號會自動建立並連結到此群組。如果他們已經有帳號，則會被新增為成員。",
+    "expenseReferences": "{count, plural, one {# 筆支出} other {# 筆支出}}",
+    "emailLabel": "電子郵件",
+    "emailPlaceholder": "name@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "他們之後可以使用此電子郵件註冊以存取群組。",
+    "errors": {
+      "invalidJson": "無效的 JSON 檔案。",
+      "invalidFormat": "此檔案不是有效的 Knots 匯出。",
+      "noExpenses": "匯出中沒有支出。"
+    },
+    "toast": {
+      "invalidFileType": {
+        "title": "檔案類型無效",
+        "description": "請選擇 JSON 或 CSV 格式的 Knots 匯出檔案。"
+      },
+      "noContent": {
+        "title": "檔案沒有內容",
+        "description": "請先選擇 Knots 匯出檔案。"
+      },
+      "missingEmail": {
+        "title": "需要電子郵件",
+        "description": "請輸入 {name} 的電子郵件。"
+      },
+      "success": {
+        "title": "匯入成功",
+        "description": "已成功從 Knots 匯入 {count} 筆支出。"
+      },
+      "error": {
+        "title": "匯入失敗",
+        "description": "無法匯入 Knots 匯出檔案。"
+      },
+      "cancelled": {
+        "title": "匯入已取消",
+        "description": "匯入在完成前已停止。"
+      }
+    }
+  },
   "SplitwiseImport": {
     "button": "Import from Splitwise",
     "title": "Import from Splitwise",
@@ -698,6 +890,20 @@
     "cancel": "Cancel",
     "import": "Import Expenses",
     "importing": "Importing...",
+    "analyzing": "Analyzing CSV…",
+    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
+    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
+    "participantMappingLabel": "Match Splitwise names",
+    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
+    "mapToMemberLabel": "Group member",
+    "mapToMemberPlaceholder": "Select a member",
+    "addNewMemberOption": "Add new member by email",
+    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "They can register later with this email to access the group.",
     "toast": {
       "invalidFileType": {
         "title": "Invalid file type",
@@ -706,6 +912,14 @@
       "noContent": {
         "title": "No CSV content",
         "description": "Please select a CSV file first."
+      },
+      "missingEmail": {
+        "title": "Email required",
+        "description": "Enter an email for {name}."
+      },
+      "incompleteMapping": {
+        "title": "Mapping incomplete",
+        "description": "Choose a member or email for {name}."
       },
       "success": {
         "title": "Import successful",
@@ -718,91 +932,219 @@
       "cancelled": {
         "title": "匯入已取消",
         "description": "匯入在完成前已停止。"
-      },
-      "missingEmail": {
-        "title": "Email required",
-        "description": "Enter an email for {name}."
-      },
-      "incompleteMapping": {
-        "title": "Mapping incomplete",
-        "description": "Choose a member or email for {name}."
       }
-    },
-    "analyzing": "Analyzing CSV…",
-    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
-    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
-    "participantMappingLabel": "Match Splitwise names",
-    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
-    "mapToMemberLabel": "Group member",
-    "mapToMemberPlaceholder": "Select a member",
-    "addNewMemberOption": "Add new member by email",
-    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
-    "emailLabel": "Email",
-    "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group.",
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
+    }
   },
   "ProfileSettings": {
-    "title": "個人資料設定",
+    "title": "帳號設定",
+    "back": "返回",
+    "Profile": {
+      "photoLabel": "個人頭像",
+      "photoDescription": "上傳在好友和群組中顯示的個人頭像。",
+      "photoAlt": "你的頭像",
+      "choosePhoto": "選擇相片",
+      "removePhoto": "移除相片",
+      "photoUpdatedToast": "頭像已更新。",
+      "photoRemovedToast": "頭像已移除。",
+      "photoUnavailableToast": "相片儲存空間未設定。",
+      "photoInvalidToast": "請選擇小於 5MB 的有效圖片檔案（PNG、JPG、WebP）。",
+      "photoFailedToast": "上傳頭像失敗。",
+      "nameLabel": "顯示名稱",
+      "namePlaceholder": "你的姓名",
+      "nameError": "請輸入有效的姓名。",
+      "nameUpdatedToast": "顯示名稱已更新。",
+      "saveChanges": "儲存變更",
+      "saving": "正在儲存…"
+    },
+    "profileTitle": "個人資料",
+    "appPreferencesTitle": "應用程式偏好",
+    "notificationsTitle": "通知管道",
+    "notificationsDescription": "管理你接收群組活動通知的方式。",
+    "notifications": {
+      "masterSwitchAria": "通知總開關",
+      "saving": "正在儲存設定…",
+      "saveSuccess": "通知設定已儲存。",
+      "saveError": "無法儲存通知設定。",
+      "comingSoon": "即將推出",
+      "done": "完成",
+      "channelSelectorAria": "{category} 的通知管道",
+      "emailNeedsVerification": "驗證你的電子郵件以啟用郵件通知。",
+      "channelLabel": {
+        "off": "關閉",
+        "email": "郵件",
+        "push": "推播",
+        "emailAndPush": "郵件與推播"
+      },
+      "pushDisabled": {
+        "unsupported": "此瀏覽器不支援推播通知。",
+        "unconfigured": "伺服器未設定推播通知。",
+        "iosInstall": "在 iOS 上將 Knots 新增到主畫面以接收推播通知。",
+        "denied": "通知權限已被拒絕。請在瀏覽器設定中啟用。"
+      },
+      "thisDevice": {
+        "title": "在此裝置上的推播通知",
+        "description": "有新活動時在此瀏覽器中接收即時提醒。",
+        "checking": "正在檢查訂閱狀態…",
+        "enabledLabel": "此裝置已啟用推播通知。",
+        "disabledLabel": "此裝置已停用推播通知。",
+        "pushSelectedWarning": "你已為某些分類選擇了推播通知，但此裝置尚未訂閱。",
+        "enable": "在此裝置上啟用",
+        "disable": "在此裝置上停用",
+        "error": "更新推播訂閱失敗。"
+      },
+      "groups": {
+        "groups-and-friends": "群組與好友",
+        "expenses": "支出",
+        "summaries": "摘要"
+      },
+      "categories": {
+        "added-to-group": "被新增到群組",
+        "friend-added": "新增了好友",
+        "budget-alert": "預算提醒",
+        "expense-created": "支出已建立",
+        "recurring-expense-created": "定期支出已建立",
+        "expense-changed": "支出已修改或刪除",
+        "expense-comment": "支出留言",
+        "weekly-summary": "每週摘要"
+      },
+      "categoryDescriptions": {
+        "weekly-summary": "每週支出與餘額概覽。"
+      }
+    },
     "emailTitle": "電子郵件",
-    "emailDescription": "您的電子郵件地址無法變更。",
+    "emailDescription": "用於通知和登入。",
     "displayNameTitle": "顯示名稱",
+    "usernameTitle": "使用者名稱",
+    "usernameDescription": "你在 Knots 上的唯一識別碼。",
     "passwordTitle": "密碼",
+    "passkeyTitle": "通行密鑰 (Passkeys)",
+    "Email": {
+      "description": "修改電子郵件地址需要向新信箱傳送驗證碼進行驗證。",
+      "changeButton": "更改電子郵件",
+      "dialogTitle": "更改電子郵件",
+      "dialogDescription": "輸入新的電子郵件地址。我們將向該地址傳送驗證碼。",
+      "newEmailLabel": "新電子郵件地址",
+      "newEmailPlaceholder": "you@example.com",
+      "sendCode": "傳送驗證碼",
+      "cancel": "取消",
+      "otpTitle": "輸入驗證碼",
+      "otpDescription": "我們已向 {email} 傳送了6位驗證碼。請在下方輸入。",
+      "codeLabel": "驗證碼",
+      "resend": "重新傳送",
+      "resendIn": "{seconds} 秒後可重新傳送",
+      "useDifferentEmail": "使用其他電子郵件",
+      "verify": "驗證並更改",
+      "successToast": "電子郵件地址已更新。",
+      "errorInUse": "該電子郵件地址已被使用。",
+      "errorInvalid": "請輸入有效的電子郵件地址。",
+      "errorSame": "新電子郵件地址不能與目前信箱相同。",
+      "errorInvalidCode": "驗證碼無效。",
+      "errorExpired": "驗證碼已過期，請重新索取。",
+      "errorRateLimited": "嘗試次數過多，請稍後再試。",
+      "errorSendFailed": "傳送驗證郵件失敗，請重試。"
+    },
+    "Password": {
+      "description": "變更密碼，或者在僅使用通行密鑰登入時設定新密碼。",
+      "noPasswordDescription": "你可以使用郵件連結或通行密鑰登入。如果你想要另一種登入方式，請新增密碼。",
+      "changeButton": "變更密碼",
+      "setButton": "設定密碼",
+      "removeButton": "移除密碼",
+      "changeDialogTitle": "變更密碼",
+      "changeDialogDescription": "輸入目前密碼並設定新密碼。",
+      "setDialogTitle": "設定密碼",
+      "setDialogDescription": "新增密碼以支援電子郵件和密碼登入。",
+      "setSuccessToast": "密碼設定成功。",
+      "removeDialogTitle": "移除密碼",
+      "removeDialogDescription": "你仍可以使用郵件連結或通行密鑰登入。請輸入目前密碼以確認。",
+      "currentLabel": "目前密碼",
+      "newLabel": "新密碼",
+      "confirmLabel": "確認新密碼",
+      "cancel": "取消",
+      "removeConfirm": "移除",
+      "changeSuccessToast": "密碼變更成功。",
+      "removeSuccessToast": "密碼已移除。",
+      "errorCurrentRequired": "必須輸入目前密碼。",
+      "errorMismatch": "兩次輸入的密碼不一致。",
+      "errorRequirements": "密碼長度至少為 8 個字元。",
+      "errorSame": "新密碼不能與目前密碼相同。",
+      "errorCurrentIncorrect": "目前密碼不正確。",
+      "forgotPrefix": "忘記密碼？",
+      "forgotLink": "點此重設",
+      "rule_TOO_SHORT": "至少 8 個字元",
+      "rule_MISSING_UPPERCASE": "至少一個大寫字母",
+      "rule_MISSING_LOWERCASE": "至少一個小寫字母",
+      "rule_MISSING_DIGIT": "至少一個數字"
+    },
+    "Passkey": {
+      "description": "使用生物辨識、安全密鑰或螢幕鎖定進行安全免密碼登入。",
+      "unavailable": "此裝置上無法使用通行密鑰。",
+      "addButton": "新增通行密鑰",
+      "empty": "尚無註冊的通行密鑰。",
+      "created": "建立於 {date}",
+      "badgeSynced": "已同步",
+      "badgeDeviceBound": "僅限裝置",
+      "badgeBackedUp": "已備份",
+      "addDialogTitle": "新增通行密鑰",
+      "addDialogDescription": "輸入易於識別的名稱，並按照裝置上的指示操作。",
+      "nicknameLabel": "名稱（選填）",
+      "nicknamePlaceholder": "例如：我的筆記型電腦",
+      "confirmPasswordLabel": "目前密碼",
+      "confirmPasswordHint": "確認密碼以新增通行密鑰。",
+      "addConfirm": "新增通行密鑰",
+      "cancel": "取消",
+      "addSuccessToast": "通行密鑰已新增。",
+      "addFailedToast": "新增通行密鑰失敗。",
+      "errorPasswordRequired": "請輸入目前密碼。",
+      "deleteAria": "刪除 {name}",
+      "deleteDialogTitle": "刪除通行密鑰？",
+      "deleteDialogDescription": "「{name}」將不再可用於登入你的帳號。",
+      "deleteConfirm": "刪除",
+      "deleteSuccessToast": "通行密鑰已刪除。",
+      "deleteFailedToast": "刪除通行密鑰失敗。",
+      "reauthTitle": "重新登入以新增通行密鑰",
+      "reauthDescription": "你的上次登入已超過 30 天。請使用密碼、郵件連結或通行密鑰重新登入，然後返回此處。",
+      "reauthConfirm": "重新登入"
+    },
     "preferencesTitle": "偏好設定",
-    "preferencesDescription": "自訂語言與外觀。",
+    "preferencesDescription": "自訂語言、主題和預設貨幣。",
     "languageLabel": "語言",
     "themeLabel": "主題",
-    "accountTitle": "帳戶",
+    "blockedUsersTitle": "已封鎖使用者",
+    "blockedUsersDescription": "管理你已封鎖的使用者。",
+    "blockedUsersRowLabel": "已封鎖使用者",
+    "blockedUsersRowDescription": "檢視和管理已封鎖使用者。",
+    "accountTitle": "帳號",
     "signOut": "登出",
-    "signingOut": "登出中…",
-    "NameForm": {
-      "nameRequired": "名稱為必填",
-      "nameMaxLength": "名稱最多 100 個字元",
-      "successToast": "顯示名稱已成功更新。",
-      "label": "顯示名稱",
-      "placeholder": "輸入您的顯示名稱",
-      "saving": "儲存中…",
-      "submit": "儲存名稱"
-    },
-    "PasswordForm": {
-      "currentPasswordRequired": "目前密碼為必填",
-      "newPasswordRequired": "新密碼為必填",
-      "confirmPasswordRequired": "請確認您的新密碼",
-      "passwordsDoNotMatch": "密碼不相符",
-      "successToast": "密碼已成功變更。",
-      "currentPasswordIncorrect": "目前密碼不正確",
-      "newPasswordSameAsCurrent": "新密碼必須與目前密碼不同",
-      "passwordRequirementsNotMet": "密碼不符合要求",
-      "currentPasswordLabel": "目前密碼",
-      "newPasswordLabel": "新密碼",
-      "confirmPasswordLabel": "確認新密碼",
-      "passwordHint": "最少 8 個、最多 128 個字元。須包含至少一個大寫字母、一個小寫字母和一個數字。",
-      "changingPassword": "正在變更密碼…",
-      "submit": "變更密碼",
-      "errorTooShort": "至少需要 8 個字元",
-      "errorTooLong": "最多 128 個字元",
-      "errorMissingUppercase": "須包含至少一個大寫字母",
-      "errorMissingLowercase": "須包含至少一個小寫字母",
-      "errorMissingDigit": "須包含至少一個數字"
-    },
-    "blockedUsersTitle": "黑名單",
-    "blockedUsersDescription": "管理您已封鎖的用户。被封鎖的用戶無法將您加入群組，也無法向您發送好友邀請。",
+    "signOutDescription": "從目前裝置登出。",
+    "signOutAllTitle": "從所有裝置登出",
+    "signOutAllDescription": "結束所有裝置上的作用中工作階段。",
+    "signingOut": "正在登出…",
     "Preferences": {
       "timezoneLabel": "時區",
       "timezoneSelect": "選擇時區…",
       "timezoneSearch": "搜尋時區…",
       "timezoneEmpty": "未找到相關時區。",
       "timezoneSaved": "時區已更新。",
+      "timezoneHelp": "設定新支出和週期性支出的預設時間基準。",
+      "languageSearch": "搜尋語言…",
+      "languageEmpty": "找不到語言。",
+      "languageCommon": "常用語言",
+      "languageOther": "其他語言",
       "currencyLabel": "預設貨幣",
       "currencySaved": "預設貨幣已更新。"
     },
+    "appPreferencesDescription": "自訂你的帳號語言、主題和預設貨幣。",
+    "preferencesSaving": "正在儲存設定…",
+    "themeSaved": "主題已更新。",
+    "themeLight": "淺色",
+    "themeDark": "深色",
+    "themeSystem": "系統",
     "SignOutAll": {
       "button": "登出所有裝置",
       "dialogTitle": "要登出所有裝置嗎？",
       "dialogDescription": "這將結束包括當前裝置在内的所有活動工作階段。您將被重定向到登入頁面。",
       "cancel": "取消",
-      "confirm": "在所有裝置上登出",
+      "confirm": "全部登出",
       "signingOut": "正在登出…",
       "successToast": "所有已登入的工作階段均已終止。"
     },
@@ -816,13 +1158,51 @@
       "emailPlaceholder": "name@example.com",
       "block": "封鎖",
       "unblock": "解除封鎖",
-      "empty": "您尚未封鎖任何人。",
+      "empty": "你尚未封鎖任何使用者。",
       "blockedToast": "用戶封鎖成功。",
       "unblockedToast": "用戶已解除封鎖。",
       "confirmBlockTitle": "封鎖該好友？",
       "confirmBlockDescription": "封鎖 {name} 將同時將其從您的好友名單中移除。系統不會通知對方此封鎖操作。",
       "confirmBlockCancel": "取消",
       "confirmBlockAction": "封鎖並移除好友"
+    },
+    "NameForm": {
+      "nameRequired": "顯示名稱為必填項。",
+      "nameMaxLength": "名稱最多 100 個字元",
+      "successToast": "顯示名稱已成功更新。",
+      "label": "顯示名稱",
+      "placeholder": "輸入您的顯示名稱",
+      "saving": "正在儲存…",
+      "submit": "儲存名稱"
+    },
+    "UsernameForm": {
+      "successToast": "使用者名稱已更新。",
+      "label": "使用者名稱",
+      "placeholder": "your-username",
+      "description": "用於你的個人檔案連結。僅限小寫字母、數字與連字號。",
+      "saving": "正在儲存…",
+      "submit": "儲存使用者名稱"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "必須輸入目前密碼。",
+      "newPasswordRequired": "必須輸入新密碼。",
+      "confirmPasswordRequired": "請確認新密碼。",
+      "passwordsDoNotMatch": "兩次輸入的密碼不一致。",
+      "successToast": "密碼已成功變更。",
+      "currentPasswordIncorrect": "目前密碼不正確。",
+      "newPasswordSameAsCurrent": "新密碼不能與目前密碼相同。",
+      "passwordRequirementsNotMet": "密碼不符合安全要求。",
+      "currentPasswordLabel": "目前密碼",
+      "newPasswordLabel": "新密碼",
+      "confirmPasswordLabel": "確認新密碼",
+      "passwordHint": "8 到 128 個字元。必須包含至少一個大寫字母、一個小寫字母和一個數字。",
+      "changingPassword": "正在變更密碼…",
+      "submit": "變更密碼",
+      "errorTooShort": "至少需要 8 個字元",
+      "errorTooLong": "最多 128 個字元",
+      "errorMissingUppercase": "須包含至少一個大寫字母",
+      "errorMissingLowercase": "須包含至少一個小寫字母",
+      "errorMissingDigit": "須包含至少一個數字"
     }
   },
   "Friends": {
@@ -908,6 +1288,7 @@
       "title": "Expenses with {name}",
       "description": "All expenses you share with this friend, across groups.",
       "backToFriends": "Back to friends",
+      "backToFriend": "返回 {name}",
       "listTitle": "Expense history",
       "listDescription": "Direct expenses and expenses from shared groups.",
       "create": "Add expense",
@@ -950,6 +1331,10 @@
       "friendOwesYou": "{name} 欠你 {amount}",
       "youOweFriend": "你欠 {name} {amount}",
       "paid": "{payer} 向 {payee} 支付了 {amount}",
+      "deletePayment": "刪除",
+      "deletePaymentConfirm": "確定要刪除這筆付款嗎？",
+      "deletePaymentSuccess": "付款刪除成功",
+      "deletePaymentError": "刪除付款失敗",
       "groups": {
         "upcoming": "即將到來",
         "thisWeek": "本週",
@@ -965,14 +1350,15 @@
       "paid": "{payer} 向 {payee} 付款",
       "addedBy": "由 {name} 於 {date} 新增",
       "disclaimer": "此付款透過「記錄付款」功能記錄，實際未進行轉帳。",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "readOnlyNotice": "此付款屬於合併結算的一部分，無法單獨編輯或刪除。",
       "edit": "編輯",
       "delete": "刪除",
       "deleteConfirm": "刪除此付款？",
       "deleteDescription": "這將調整餘額，如同付款從未發生。",
+      "deleting": "Deleting...",
       "notFound": "未找到付款。",
-      "backToFriend": "返回 {name}",
-      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
-      "deleting": "Deleting..."
+      "backToFriend": "返回 {name}"
     },
     "DirectExpense": {
       "title": "新增支出",
@@ -984,12 +1370,19 @@
       "paidByYou": "你",
       "splitEqually": "由 {payer} 支付並平分",
       "dateLabel": "日期",
+      "attachLabel": "附加圖片或 PDF",
+      "notesLabel": "備註",
+      "notesPlaceholder": "新增備註（選填）",
       "save": "儲存",
       "saving": "儲存中…",
       "cancel": "取消",
       "success": "支出已新增。",
       "error": "無法新增支出。",
       "persistError": "無法儲存表單資料。導覽無法使用。"
+    },
+    "Settings": {
+      "currencyTitle": "主要貨幣",
+      "currencyDescription": "用於與好友的直接支出和付款。"
     },
     "SettleAll": {
       "button": "全部結清",
@@ -1013,6 +1406,7 @@
     "memberPromoted": "成員已升為擁有者。",
     "memberDemoted": "成員已降為一般成員。",
     "addMember": "新增成員",
+    "pickFriend": "Choose from your friends or enter an email.",
     "adding": "新增中…",
     "add": "新增",
     "cancel": "取消",
@@ -1021,8 +1415,7 @@
     "leave": "離開",
     "removeFromGroup": "從群組中移除",
     "promoteToOwner": "升為擁有者",
-    "demoteToMember": "降為成員",
-    "pickFriend": "Choose from your friends or enter an email."
+    "demoteToMember": "降為成員"
   },
   "MyGroups": {
     "title": "我的群組",
@@ -1032,7 +1425,9 @@
     "noGroupsHint": "建立群組以開始與他人分攤支出。",
     "createGroup": "建立群組",
     "createGroupTitle": "建立新群組",
-    "createGroupDescription": "輸入群組名稱。建立後可以邀請成員。",
+    "createGroupDescription": "輸入群組名稱和貨幣。建立後你可以邀請成員加入。",
+    "invalidCurrency": "請選擇有效的貨幣。",
+    "currencySymbolRequired": "請輸入貨幣符號。",
     "groupNameLabel": "群組名稱",
     "characters": "個字元",
     "leaveGroup": "離開群組",
@@ -1052,100 +1447,6 @@
     "deleteGroupConfirmCancel": "取消",
     "deleteGroupConfirmAction": "永久刪除"
   },
-  "UserMenu": {
-    "profileSettings": "帳戶設定",
-    "signingOut": "正在登出…",
-    "signOut": "登出"
-  },
-  "Notifications": {
-    "settings": "通知設定",
-    "subscribe": "啟用通知",
-    "unsubscribe": "停用通知",
-    "selectParticipant": "通知我其他人的變更",
-    "noParticipant": "所有變更",
-    "permissionDenied": "通知權限被拒絕。請在瀏覽器設定中啟用。",
-    "notSupported": "此裝置不支援推播通知。",
-    "expenseCreated": "{actor} 新增了「{title}」",
-    "expenseUpdated": "{actor} 更新了「{title}」",
-    "expenseDeleted": "{actor} 刪除了「{title}」",
-    "groupUpdated": "{actor} 更新了群組「{group}」",
-    "notificationTitle": "Knots – {group}",
-    "defaultBody": "您的群組有新活動",
-    "filterHint": "選擇要接收誰的通知以及哪些事件。",
-    "subscribeError": "無法啟用通知。請重試。",
-    "membersLabel": "通知我關於",
-    "notifyAllMembers": "群組所有人",
-    "notifySpecificMembers": "或僅這些成員：",
-    "eventsLabel": "事件",
-    "eventCreate": "已新增支出",
-    "eventUpdate": "已更新支出",
-    "eventDelete": "已刪除支出",
-    "selectAtLeastOneFilter": "請至少選擇一名成員或一種事件。",
-    "channelsLabel": "管道",
-    "pushLabel": "推播通知",
-    "pushUnavailable": "此部署無法使用推播通知。",
-    "emailLabel": "電子郵件通知",
-    "enableChannelHint": "啟用一個管道以設定你要接收誰以及哪些內容的通知。",
-    "pushSyncWarning": "偏好設定已儲存，但推播通知篩選器同步失敗。"
-  },
-  "ExpenseImport": {
-    "button": "匯入支出",
-    "fromKnots": "從 Knots 匯入",
-    "fromSplitwise": "從 Splitwise 匯入"
-  },
-  "KnotsImport": {
-    "title": "從 Knots 匯入",
-    "description": "上傳 Knots 匯出檔案。如果檔案包含尚未加入此群組的人員，你可以在匯入前先在這裡新增他們。",
-    "fileLabel": "Knots 匯出檔案",
-    "previewLabel": "預覽（前 10 行）",
-    "clear": "清除",
-    "cancel": "取消",
-    "import": "匯入支出",
-    "addAndImport": "新增成員並匯入",
-    "importing": "正在匯入...",
-    "analyzing": "正在分析匯出檔…",
-    "expenseCount": "{count, plural, one {找到 # 筆支出} other {找到 # 筆支出}}",
-    "matchedParticipants": "已在群組中：{names}",
-    "missingParticipantsLabel": "要新增到此群組的人員",
-    "missingParticipantsDescription": "為每個人輸入電子郵件。新帳號會自動建立並連結到此群組。如果他們已經有帳號，則會被新增為成員。",
-    "expenseReferences": "{count, plural, one {# 筆支出} other {# 筆支出}}",
-    "emailLabel": "電子郵件",
-    "emailPlaceholder": "name@example.com",
-    "softCreateHint": "他們之後可以使用此電子郵件註冊以存取群組。",
-    "toast": {
-      "invalidFileType": {
-        "title": "檔案類型無效",
-        "description": "請選擇 JSON 或 CSV 格式的 Knots 匯出檔案。"
-      },
-      "noContent": {
-        "title": "檔案沒有內容",
-        "description": "請先選擇 Knots 匯出檔案。"
-      },
-      "missingEmail": {
-        "title": "需要電子郵件",
-        "description": "請輸入 {name} 的電子郵件。"
-      },
-      "success": {
-        "title": "匯入成功",
-        "description": "已成功從 Knots 匯入 {count} 筆支出。"
-      },
-      "error": {
-        "title": "匯入失敗",
-        "description": "無法匯入 Knots 匯出檔案。"
-      },
-      "cancelled": {
-        "title": "匯入已取消",
-        "description": "匯入在完成前已停止。"
-      }
-    },
-    "errors": {
-      "invalidJson": "無效的 JSON 檔案。",
-      "invalidFormat": "此檔案不是有效的 Knots 匯出。",
-      "noExpenses": "匯出中沒有支出。"
-    },
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
-  },
   "GroupDangerZone": {
     "title": "群組管理",
     "description": "封存會將此群組從你的清單中隱藏，但不會刪除資料。刪除會為所有人永久移除此群組。",
@@ -1159,6 +1460,109 @@
     "deleteConfirmDescription": "這會為所有成員永久刪除「{name}」及其所有支出、餘額和歷史紀錄。此操作無法復原。",
     "cancel": "取消",
     "deleteConfirmAction": "永久刪除"
+  },
+  "UserMenu": {
+    "menuLabel": "使用者選單",
+    "profileSettings": "帳戶設定",
+    "theme": "主題",
+    "themeLight": "淺色",
+    "themeDark": "深色",
+    "themeSystem": "系統",
+    "signingOut": "正在登出…",
+    "signOut": "登出"
+  },
+  "Notifications": {
+    "settings": "通知設定",
+    "subscribe": "啟用通知",
+    "unsubscribe": "停用通知",
+    "selectParticipant": "通知我其他人的變更",
+    "noParticipant": "所有變更",
+    "permissionDenied": "通知權限被拒絕。請在瀏覽器設定中啟用。",
+    "notSupported": "此裝置不支援推播通知。",
+    "expenseCreated": "{actor} 在 {group} 中新增了「{title}」",
+    "expenseUpdated": "{actor} 在 {group} 中編輯了「{title}」",
+    "expenseDeleted": "{actor} 在 {group} 中刪除了「{title}」",
+    "groupUpdated": "{actor} 更新了群組「{group}」",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "您的群組有新活動",
+    "filterHint": "選擇要接收誰的通知以及哪些事件。",
+    "membersLabel": "通知我關於",
+    "notifyAllMembers": "群組所有人",
+    "notifySpecificMembers": "或僅這些成員：",
+    "eventsLabel": "事件",
+    "eventCreate": "已新增支出",
+    "eventUpdate": "已更新支出",
+    "eventDelete": "已刪除支出",
+    "selectAtLeastOneFilter": "請至少選擇一名成員或一種事件。",
+    "subscribeError": "無法啟用通知。請重試。",
+    "channelsLabel": "管道",
+    "pushLabel": "推播通知",
+    "pushUnavailable": "此部署無法使用推播通知。",
+    "emailLabel": "電子郵件通知",
+    "enableChannelHint": "啟用一個管道以設定你要接收誰以及哪些內容的通知。",
+    "pushSyncWarning": "偏好設定已儲存，但推播通知篩選器同步失敗。"
+  },
+  "AppError": {
+    "title": "發生錯誤",
+    "description": "應用程式本地資料已清除。你的登入工作階段也將結束，以便從首頁重新開始。",
+    "recover": "返回首頁",
+    "recovering": "正在重新導向…"
+  },
+  "PaymentForm": {
+    "dateLabel": "付款日期",
+    "dateDescription": "輸入付款日期。",
+    "amountLabel": "金額",
+    "amountDescription": "輸入付款金額。",
+    "paidByLabel": "付款人",
+    "paidByDescription": "選擇誰支付了此款項。",
+    "paidToLabel": "收款人",
+    "paidToDescription": "選擇誰收到了此款項。",
+    "notesLabel": "備註",
+    "notesPlaceholder": "新增備註（選填）",
+    "participantPlaceholder": "選擇成員",
+    "disclaimer": "記錄兩人之間結清餘額的還款。這並非分攤支出。"
+  },
+  "FloatingCreateExpense": {
+    "addExpense": "新增支出",
+    "dialogTitle": "建立支出或付款",
+    "editDialogTitle": "編輯支出",
+    "createPaymentDialogTitle": "記錄付款",
+    "editPaymentDialogTitle": "編輯付款",
+    "withWho": "你與他們:",
+    "back": "返回",
+    "searchPlaceholder": "搜尋好友或群組…",
+    "descriptionPlaceholder": "這筆支出用於什麼？",
+    "amountPlaceholder": "0.00",
+    "paidByLabel": "付款人",
+    "you": "你",
+    "splitEqually": "均分",
+    "save": "儲存",
+    "saving": "正在儲存…",
+    "cancel": "取消",
+    "successToast": "支出建立成功。",
+    "updateSuccessToast": "支出更新成功。",
+    "paymentSuccessToast": "付款記錄成功。",
+    "paymentUpdateSuccessToast": "付款更新成功。",
+    "errorToast": "建立支出失敗。",
+    "paymentErrorToast": "記錄付款失敗。",
+    "updateErrorToast": "更新支出失敗。",
+    "paymentUpdateErrorToast": "更新付款失敗。",
+    "lockedPaymentToast": "無法直接編輯此付款。",
+    "noFriendOrGroupFound": "找不到好友或群組。",
+    "groupsHeader": "群組",
+    "friendsHeader": "好友",
+    "selectGroupText": "群組: {name}",
+    "pickerTitle": "與誰分攤？",
+    "pickerDone": "完成",
+    "selectParticipants": "選擇好友或群組",
+    "selectParticipantsHint": "選擇群組或好友以開始。",
+    "singleGroupAlertTitle": "僅限一個群組",
+    "singleGroupAlertDescription": "一次只能選擇一個群組。請先移除目前群組，然後再選擇其他群組。",
+    "singleGroupAlertOk": "知道了",
+    "advancedOptions": "進階選項",
+    "splitDetails": "分攤詳情",
+    "notesPlaceholder": "新增備註…",
+    "viewGroupExpense": "檢視群組支出"
   },
   "DuplicateExpense": {
     "title": "偵測到可能的重複支出",
@@ -1183,7 +1587,47 @@
   "CurrencyAmountInput": {
     "expressionHint": "或 10+5"
   },
-  "ExpenseTitleInput": {
-    "clear": "清除"
+  "Login": {
+    "title": "登入",
+    "description": "使用通行密鑰、電子郵件連結或密碼登入。",
+    "orContinueWithEmail": "或使用電子郵件繼續",
+    "methodMagicLink": "快速登入連結",
+    "methodPassword": "密碼",
+    "sendSignInLink": "傳送登入連結",
+    "signInWithPassword": "使用密碼登入",
+    "usePasskey": "使用通行密鑰",
+    "passkeyFailed": "無法使用該通行密鑰登入，請重試。",
+    "forgotPassword": "忘記密碼？",
+    "noAccount": "還沒有帳號？",
+    "signUp": "註冊",
+    "magicLinkButton": "傳送登入連結",
+    "magicLinkEmailRequired": "請輸入你的電子郵件地址。",
+    "magicLinkSendFailed": "無法傳送登入郵件，請重試。",
+    "magicLinkSentTitle": "請檢查你的電子郵件",
+    "magicLinkSentDescription": "如果該地址存在對應帳號，我們已傳送了登入連結。該連結僅可使用一次，並在 15 分鐘後失效。",
+    "magicLinkSigningIn": "正在登入…",
+    "magicLinkFailedTitle": "無法登入",
+    "magicLinkInvalid": "此登入連結無效或已過期。",
+    "backToLogin": "返回登入"
+  },
+  "Register": {
+    "title": "建立帳號",
+    "description": "使用電子郵件連結或密碼註冊。",
+    "signUpWithPassword": "使用密碼建立帳號",
+    "confirmPassword": "確認密碼",
+    "hasAccount": "已有帳號？",
+    "signIn": "登入",
+    "creating": "正在建立帳號…",
+    "passwordMismatch": "兩次輸入的密碼不一致",
+    "ruleLength": "8 個字元",
+    "ruleLowercase": "小寫字母",
+    "ruleUppercase": "大寫字母",
+    "ruleNumber": "數字",
+    "successTitle": "註冊成功",
+    "successDescription": "你的帳號已成功建立",
+    "successAlertTitle": "請檢查你的電子郵件",
+    "successAlertDescription": "我們已向你的電子郵件傳送了驗證連結。請在登入前點擊該連結完成驗證。",
+    "goToLogin": "前往登入",
+    "failedTitle": "註冊失敗"
   }
 }

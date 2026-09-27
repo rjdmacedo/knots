@@ -20,6 +20,9 @@
     "create": "Maak uitgave",
     "createFirst": "Maak de eerste",
     "noExpenses": "Je groep heeft nog geen uitgaven.",
+    "noSearchResults": "Geen uitgaven gevonden die aan je zoekopdracht voldoen.",
+    "loadError": "Uitgaven konden niet worden geladen.",
+    "retry": "Opnieuw proberen",
     "export": "Exporteren",
     "exportJson": "Exporteren naar JSON",
     "exportCsv": "Exporteren naar CSV",
@@ -75,19 +78,60 @@
   },
   "ExpenseCard": {
     "paidBy": "Betaald door <strong>{paidBy}</strong> voor <paidFor></paidFor>",
+    "paidByMultiple": "Betaald door <strong>{paidBy}</strong> voor <paidFor></paidFor>",
     "everyone": "iedereen",
     "receivedBy": "Ontvangen door <strong>{paidBy}</strong> voor <paidFor></paidFor>",
     "yourBalance": "Jouw balans:",
     "notInvolved": "Je bent hier niet bij betrokken",
     "close": "Sluiten",
-    "paidByMultiple": "Betaald door <strong>{paidBy}</strong> voor <paidFor></paidFor>",
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
   "ExpenseDetail": {
+    "backToExpenses": "Terug naar uitgaven",
+    "backToFriend": "Terug naar {name}",
+    "copy": "Uitgave kopiëren",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "payment": "Betaling",
+    "expense": "Uitgave",
+    "onDate": "Op {date}",
+    "addedBy": "Toegevoegd door {name} op {date}",
+    "addedByYou": "Toegevoegd door jou op {date}",
+    "lastUpdatedBy": "Laatst bijgewerkt door {name} op {date}",
+    "lastUpdatedByYou": "Laatst bijgewerkt door jou op {date}",
+    "trendsTitle": "Uitgaventrends in {contextName} :: {categoryName}",
+    "trendsSeeMore": "Meer details bekijken",
+    "generalCategory": "Algemeen",
+    "editCategory": "Categorie bewerken",
+    "categoryUpdateError": "Categorie kon niet worden bijgewerkt.",
+    "attachReceipt": "Bonnetje bijvoegen",
+    "receiptUploadSuccess": "Bonnetje bijgevoegd.",
+    "paidAmount": "{name} heeft {amount} betaald",
+    "youPaidAmount": "Je hebt {amount} betaald",
+    "paidAmountMultiple": "{name} heeft {amount} betaald",
+    "youPaidAmountMultiple": "Je hebt {amount} betaald",
+    "multiPayerSeparator": ", ",
+    "paidYou": "{name} heeft jou {amount} betaald",
+    "youPaidRecipient": "Je hebt {amount} betaald aan {name}",
+    "payerPaidPayee": "{payer} heeft {amount} betaald aan {payee}",
+    "someone": "Iemand",
+    "youOwe": "Je bent {amount} verschuldigd",
+    "participantOwes": "{name} is {amount} verschuldigd",
+    "yourShare": "Jouw aandeel {amount}",
+    "participantShare": "Deel van {name} {amount}",
+    "notes": "Notities",
     "activity": "Gebeurtenissen",
-    "noActivity": "Er zijn nog geen gebeurtenissen voor deze uitgave.",
-    "viewGroupExpense": "View group expense"
+    "noActivity": "Nog geen wijzigingen vastgelegd.",
+    "paymentDisclaimer": "Deze betaling is geregistreerd via \"Betaling registreren\". Er is geen echt geld overgemaakt.",
+    "consolidationDisclaimer": "Deze betaling maakt deel uit van een samengevoegde vereffening.",
+    "readOnlyNotice": "Deze betaling kan niet afzonderlijk worden bewerkt of verwijderd omdat deze deel uitmaakt van een saldo-afrekening.",
+    "deleteConfirm": "Deze uitgave verwijderen?",
+    "deletePaymentConfirm": "Deze betaling verwijderen?",
+    "deleteDescription": "Dit verwijdert de uitgave voor alle groepsleden. Deze actie kan niet ongedaan worden gemaakt.",
+    "cancel": "Annuleren",
+    "deleting": "Verwijderen…",
+    "viewGroupExpense": "Groepsuitgave bekijken"
   },
   "Groups": {
     "myGroups": "Mijn groepen",
@@ -151,6 +195,12 @@
       "label": "Schulden vereenvoudigen",
       "description": "Vermindert het aantal betalingen door saldi tussen leden te combineren (zoals Splitwise Pro). Uit: iedereen is alleen verschuldigd aan wie hun deel betaalde."
     },
+    "FriendsField": {
+      "label": "Vrienden",
+      "description": "Kies bestaande vrienden of nodig iemand nieuw uit.",
+      "placeholder": "Selecteer een vriend…",
+      "remove": "{name} verwijderen"
+    },
     "Participants": {
       "title": "Deelnemers",
       "description": "Voer de naam in van de deelnemers in de groep.",
@@ -205,6 +255,7 @@
         "description": "Selecteer voor wie het inkomen is ontvangen."
       },
       "splitModeDescription": "Selecteer hoe het inkomen verdeeld moet worden.",
+      "notesDescription": "Voeg optionele details toe over deze inkomst.",
       "attachDescription": "Bekijk en voeg bijlagen toe aan het inkomen."
     },
     "Expense": {
@@ -227,7 +278,7 @@
       "paidByField": {
         "label": "Betaald door",
         "placeholder": "Selecteer een deelnemer",
-        "description": "Select who provided the money and how much each payer contributed."
+        "description": "Selecteer wie het geld heeft ingelegd en hoeveel elke betaler heeft bijgedragen."
       },
       "recurrenceRule": {
         "label": "Terugkerende uitgave",
@@ -238,23 +289,29 @@
         "monthly": "Maandelijks"
       },
       "paidFor": {
-        "title": "Betaald voor",
-        "description": "Selecteer voor wie de uitgave is gedaan."
+        "title": "Verdeeld tussen",
+        "description": "Kies hoe de uitgave wordt verdeeld en wie is inbegrepen."
       },
       "splitModeDescription": "Selecteer hoe de uitgave verdeeld moet worden.",
+      "notesDescription": "Voeg optionele details toe over deze uitgave.",
       "attachDescription": "Bekijk en voeg bijlagen toe aan de uitgave."
     },
     "amountField": {
-      "label": "Bedrag"
+      "label": "Bedrag",
+      "description": "Voer het totale bedrag van de uitgave in.",
+      "convertedDescription": "Voer het bedrag in de groepsvaluta in."
     },
     "conversionUnavailable": "Om per uitgave een andere valuta in te stellen en bedragen om te rekenen, selecteer een niet-aangepaste valuta voor de groep.",
     "originalAmountField": {
-      "label": "Om te rekenen bedrag"
+      "label": "Om te rekenen bedrag",
+      "description": "Voer het bedrag in de oorspronkelijke valuta in."
     },
     "conversionRateField": {
       "useApi": "Koersen van Frankfurter gebruiken",
       "useCustom": "Aangepaste koers gebruiken",
-      "label": "Wisselkoers"
+      "label": "Wisselkoers",
+      "description": "De wisselkoers om het oorspronkelijke bedrag om te rekenen naar de groepsvaluta.",
+      "collapsibleDescription": "Automatische Frankfurter-wisselkoers overschrijven"
     },
     "conversionRateState": {
       "loading": "Wisselkoersen ophalen…",
@@ -279,6 +336,13 @@
     },
     "selectNone": "Selecteer niemand",
     "selectAll": "Selecteer iedereen",
+    "resetSplit": "Opnieuw instellen",
+    "evenlySplit": "Gelijkmatig verdeeld: {amount} × {count}",
+    "totalWeight": "Totaal gewicht: {count, plural, one {# aandeel} other {# aandelen}}",
+    "matchesPercent": "Komt overeen met 100%",
+    "matchesAmount": "Komt overeen met {amount}",
+    "decreaseShares": "Aandelen verlagen",
+    "increaseShares": "Aandelen verhogen",
     "noLongerInGroup": "niet meer in deze groep",
     "shares": "deel/delen",
     "advancedOptions": "Andere split-opties…",
@@ -294,6 +358,43 @@
       "byPercentageDescription": "Split using percentages that add up to 100%",
       "byAmountDescription": "Split using fixed amounts for each participant"
     },
+    "itemized": {
+      "toggleLabel": "Verdelen per item",
+      "toggleDescription": "Voeg items toe, wijs toe aan wie meedeed en verdeel belasting en fooi naar verhouding.",
+      "noItems": "Nog geen items. Voeg de regels van je bonnetje toe.",
+      "addItem": "Item toevoegen",
+      "removeItem": "Item verwijderen",
+      "itemTitleLabel": "Item",
+      "itemTitlePlaceholder": "bijv. Burger",
+      "itemUnitPriceLabel": "Prijs",
+      "itemQuantityLabel": "Aantal",
+      "itemLineTotalLabel": "Regeltotaal",
+      "itemAmountLabel": "Bedrag",
+      "sectionTitle": "Items",
+      "sectionDescription": "Verdeel het bonnetje in regels. Wijs elke regel toe aan wie het gedeeld heeft.",
+      "assignTo": "Gedeeld door",
+      "otherLabel": "Overig (belasting, fooi, service)",
+      "otherDerivedNote": "Het verschil tussen het totaal en je items, verdeeld over iedereen.",
+      "itemsExceedTotal": "De items overschrijden het totale uitgavebedrag.",
+      "setAmountFromItems": "Totaal berekenen uit items",
+      "total": "Totaal",
+      "addItemsAction": "Items toevoegen",
+      "documentationNote": "Deze items zijn alleen ter referentie. Wijs een item toe om de uitgave per item te splitsen.",
+      "authoritativeNote": "Deze uitgave is opgesplitst op basis van de items.",
+      "leaveAction": "Normale verdeling gebruiken",
+      "switchDialog": {
+        "title": "Verdelen per item?",
+        "description": "Het toewijzen van items bepaalt wie wat verschuldigd is. Je huidige verdeling wordt vervangen.",
+        "confirm": "Verdelen per item",
+        "cancel": "Annuleren"
+      },
+      "leaveDialog": {
+        "title": "Normale verdeling gebruiken?",
+        "description": "De uitgave keert terug naar een normale verdeling. Je items blijven bewaard als referentie.",
+        "confirm": "Normale verdeling gebruiken",
+        "cancel": "Annuleren"
+      }
+    },
     "DeletePopup": {
       "label": "Verwijderen",
       "title": "Deze uitgave verwijderen?",
@@ -301,7 +402,7 @@
       "yes": "Ja",
       "cancel": "Annuleer"
     },
-    "attachDocuments": "Voeg documenten toe",
+    "attachDocuments": "Afbeeldingen bijvoegen",
     "create": "Maken",
     "creating": "Aan het maken…",
     "save": "Opslaan",
@@ -317,7 +418,7 @@
       "postSaveTitle": "Expense split across group and direct records",
       "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
       "postSaveGroupHalfLine": "The group expense is {amount}",
-      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "singlePayerNote": "Wanneer je mensen van buiten de groep toevoegt (bijv. {names}), wordt de uitgave in tweeën gesplitst, waardoor slechts één persoon kan betalen.",
       "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
       "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
       "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
@@ -326,7 +427,16 @@
       "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
+  "ExpenseTitleInput": {
+    "noSuggestions": "Geen suggesties gevonden.",
+    "clear": "Wissen"
+  },
   "ExpenseDocumentsInput": {
+    "addImage": "Afbeelding toevoegen",
+    "addDocumentHint": "PNG of JPG · tot 5 MB",
+    "previewDocument": "Voorbeeld van {name}",
+    "removeDocument": "{name} verwijderen",
+    "uploadingDocument": "Uploaden…",
     "TooBigToast": {
       "title": "Het bestand is te groot",
       "description": "De maximum bestandsgrootte {maxSize}. Jouw bestand is {size}."
@@ -388,6 +498,8 @@
       "noOneOwesYou": "Niemand is je iets schuldig in deze groep.",
       "youOweNoOne": "Je bent niemand iets schuldig in deze groep.",
       "confirmSettle": "Registreren dat je {amount} aan {name} hebt betaald?",
+      "confirmSettleReceived": "Registreren dat {name} jou {amount} heeft betaald?",
+      "settleReceivedTooltip": "Ontvangen betaling registreren",
       "youAreOwed": "{name} is je {amount} schuldig",
       "youOwe": "Je bent {name} {amount} schuldig",
       "allSettled": "Je bent verrekend in deze groep.",
@@ -522,16 +634,27 @@
   "Activity": {
     "title": "Gebeurtenissen",
     "description": "Overzicht van de gebeurtenissen in je groep.",
+    "globalTitle": "Activiteit",
+    "globalDescription": "Overzicht van alle activiteiten in jouw groepen.",
+    "globalListTitle": "Activiteitengeschiedenis",
+    "globalListDescription": "Recente wijzigingen in al je groepen.",
+    "globalNoActivity": "Er is nog geen activiteit in je groepen.",
     "noActivity": "Er zijn geen gebeurtenissen in deze groep.",
+    "error": "Activiteit kon niet worden geladen.",
+    "retry": "Opnieuw proberen",
     "someone": "Iemand",
     "settingsModified": "Groepsinstellingen zijn aangepast door <strong>{participant}</strong>.",
     "expenseCreated": "Uitgave <em>{expense}</em> gemaakt door <strong>{participant}</strong>.",
     "expenseUpdated": "Uitgave <em>{expense}</em> bewerkt door <strong>{participant}</strong>.",
     "expenseDeleted": "Uitgave <em>{expense}</em> verwijderd door <strong>{participant}</strong>.",
+    "paymentRecorded": "Betaling geregistreerd door <strong>{participant}</strong>.",
+    "paymentUpdated": "Betaling bijgewerkt door <strong>{participant}</strong>.",
+    "paymentDeleted": "Betaling verwijderd door <strong>{participant}</strong>.",
     "expenseCreatedDetail": "Gemaakt door <strong>{participant}</strong>.",
     "expenseUpdatedDetail": "Bewerkt door <strong>{participant}</strong>.",
     "paymentRecordedDetail": "Vastgelegd door <strong>{participant}</strong>.",
     "paymentUpdatedDetail": "Bewerkt door <strong>{participant}</strong>.",
+    "reimbursement": "Betaling",
     "Groups": {
       "today": "Vandaag",
       "yesterday": "Gisteren",
@@ -563,10 +686,7 @@
     "showLess": "Minder tonen",
     "yes": "Ja",
     "no": "Nee",
-    "fieldChangesCount": "{count} veldwijzigingen",
-    "globalTitle": "Activiteit",
-    "globalDescription": "Overzicht van alle activiteiten in jouw groepen.",
-    "globalNoActivity": "Er is nog geen activiteit in je groepen."
+    "fieldChangesCount": "{count} veldwijzigingen"
   },
   "Information": {
     "title": "Informatie",
@@ -590,6 +710,7 @@
     "max50": "Vul maximaal 50 karakters in.",
     "duplicateParticipantName": "Er is al een deelnemer met deze naam.",
     "titleRequired": "Vul een titel in.",
+    "paymentCategoryNotAllowed": "Betaling is geen geldige categorie voor uitgaven.",
     "invalidNumber": "Ongeldig getal.",
     "invalidExpression": "Ongeldige uitdrukking. Gebruik getallen en +, -, *, / operatoren.",
     "amountRequired": "Vul een bedrag in.",
@@ -597,14 +718,27 @@
     "amountTenMillion": "Het bedrag mag niet hoger zijn dan 10,000,000.",
     "ratePositive": "De koers moet strikt groter zijn dan nul.",
     "paidByRequired": "Selecteer een deelnemer die de uitgave heeft gedaan.",
+    "paidToRequired": "Je moet selecteren wie de betaling heeft ontvangen.",
+    "paidToDifferent": "De betaler en de ontvanger moeten verschillende personen zijn.",
     "paidForMin1": "De uitgave moet voor ten minste één deelnemer zijn gedaan.",
-    "noZeroShares": "Een deel mag niet 0 zijn.",
-    "amountSum": "Het totaalbedrag moet gelijk zijn aan het uitgavebedrag.",
-    "percentageSum": "Het totaalpercentage moet gelijk zijn aan 100%.",
     "paidByAmountPositive": "Each payer's amount must be greater than zero.",
     "paidByAmountSum": "Payer amounts must sum to the expense total.",
     "paidByDuplicateParticipants": "Each payer can only appear once.",
-    "reimbursementSinglePayer": "Reimbursements support only a single payer."
+    "reimbursementSinglePayer": "Reimbursements support only a single payer.",
+    "noZeroShares": "Een deel mag niet 0 zijn.",
+    "amountSum": "Het totaalbedrag moet gelijk zijn aan het uitgavebedrag.",
+    "percentageSum": "Het totaalpercentage moet gelijk zijn aan 100%.",
+    "itemsRequired": "Voeg ten minste één item toe of schakel verdelen per item uit.",
+    "itemNeedsAssignment": "Wijs elk item toe aan minimaal één persoon.",
+    "itemTitleRequired": "Voer een naam in voor het item.",
+    "itemAmountNonNegative": "Het bedrag van het item kan niet negatief zijn.",
+    "itemQuantityPositive": "Het aantal moet een geheel getal zijn van minimaal 1.",
+    "taxNonNegative": "Belasting kan niet negatief zijn.",
+    "tipNonNegative": "Fooi kan niet negatief zijn.",
+    "itemAssignmentUnknownParticipant": "Een item is toegewezen aan iemand die niet in de verdeling zit.",
+    "itemizationNotAllowedHere": "Terugbetalingen en terugkerende uitgaven kunnen niet per item worden verdeeld.",
+    "itemsExceedAmount": "De items tellen op tot meer dan het totale uitgavebedrag.",
+    "remainderShareUnknownParticipant": "De overige verdeling bevat iemand die niet bij de uitgave hoort."
   },
   "Categories": {
     "search": "Categorie zoeken…",
@@ -688,6 +822,64 @@
       "heading": "Andere valuta"
     }
   },
+  "ExpenseImport": {
+    "button": "Uitgaven importeren",
+    "fromKnots": "Importeren uit Knots",
+    "fromSplitwise": "Importeren uit Splitwise"
+  },
+  "KnotsImport": {
+    "title": "Importeren uit Knots",
+    "description": "Upload een Knots-exportbestand. Als het bestand personen bevat die nog niet in deze groep zitten, kun je ze hier toevoegen voordat je importeert.",
+    "fileLabel": "Knots-exportbestand",
+    "previewLabel": "Voorbeeld (eerste 10 regels)",
+    "clear": "Wissen",
+    "cancel": "Annuleren",
+    "import": "Uitgaven importeren",
+    "addAndImport": "Leden toevoegen en importeren",
+    "importing": "Importeren...",
+    "analyzing": "Export analyseren…",
+    "expenseCount": "{count, plural, one {# uitgave gevonden} other {# uitgaven gevonden}}",
+    "matchedParticipants": "Al in de groep: {names}",
+    "missingParticipantsLabel": "Personen om aan deze groep toe te voegen",
+    "missingParticipantsDescription": "Voer voor elke persoon een e-mailadres in. Nieuwe accounts worden automatisch aangemaakt en aan deze groep gekoppeld. Als ze al een account hebben, worden ze als leden toegevoegd.",
+    "expenseReferences": "{count, plural, one {# uitgave} other {# uitgaven}}",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "naam@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "Ze kunnen zich later met dit e-mailadres registreren om toegang tot de groep te krijgen.",
+    "errors": {
+      "invalidJson": "Ongeldig JSON-bestand.",
+      "invalidFormat": "Dit bestand is geen geldige Knots-export.",
+      "noExpenses": "De export bevat geen uitgaven."
+    },
+    "toast": {
+      "invalidFileType": {
+        "title": "Ongeldig bestandstype",
+        "description": "Selecteer een Knots-exportbestand in JSON- of CSV-formaat."
+      },
+      "noContent": {
+        "title": "Geen bestandsinhoud",
+        "description": "Selecteer eerst een Knots-exportbestand."
+      },
+      "missingEmail": {
+        "title": "E-mail verplicht",
+        "description": "Voer een e-mailadres in voor {name}."
+      },
+      "success": {
+        "title": "Import geslaagd",
+        "description": "{count} uitgaven succesvol geïmporteerd uit Knots."
+      },
+      "error": {
+        "title": "Import mislukt",
+        "description": "Het Knots-exportbestand kon niet worden geïmporteerd."
+      },
+      "cancelled": {
+        "title": "Import geannuleerd",
+        "description": "De import is gestopt voordat deze klaar was."
+      }
+    }
+  },
   "SplitwiseImport": {
     "button": "Import from Splitwise",
     "title": "Import from Splitwise",
@@ -698,6 +890,20 @@
     "cancel": "Cancel",
     "import": "Import Expenses",
     "importing": "Importing...",
+    "analyzing": "Analyzing CSV…",
+    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
+    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
+    "participantMappingLabel": "Match Splitwise names",
+    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
+    "mapToMemberLabel": "Group member",
+    "mapToMemberPlaceholder": "Select a member",
+    "addNewMemberOption": "Add new member by email",
+    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "They can register later with this email to access the group.",
     "toast": {
       "invalidFileType": {
         "title": "Invalid file type",
@@ -706,6 +912,14 @@
       "noContent": {
         "title": "No CSV content",
         "description": "Please select a CSV file first."
+      },
+      "missingEmail": {
+        "title": "Email required",
+        "description": "Enter an email for {name}."
+      },
+      "incompleteMapping": {
+        "title": "Mapping incomplete",
+        "description": "Choose a member or email for {name}."
       },
       "success": {
         "title": "Import successful",
@@ -718,91 +932,219 @@
       "cancelled": {
         "title": "Import geannuleerd",
         "description": "De import is gestopt voordat deze klaar was."
-      },
-      "missingEmail": {
-        "title": "Email required",
-        "description": "Enter an email for {name}."
-      },
-      "incompleteMapping": {
-        "title": "Mapping incomplete",
-        "description": "Choose a member or email for {name}."
       }
-    },
-    "analyzing": "Analyzing CSV…",
-    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
-    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
-    "participantMappingLabel": "Match Splitwise names",
-    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
-    "mapToMemberLabel": "Group member",
-    "mapToMemberPlaceholder": "Select a member",
-    "addNewMemberOption": "Add new member by email",
-    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
-    "emailLabel": "Email",
-    "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group.",
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
+    }
   },
   "ProfileSettings": {
-    "title": "Profielinstellingen",
-    "emailTitle": "E-mail",
-    "emailDescription": "Je e-mailadres kan niet worden gewijzigd.",
+    "title": "Accountinstellingen",
+    "back": "Terug",
+    "Profile": {
+      "photoLabel": "Profielfoto",
+      "photoDescription": "Upload een profielfoto die zichtbaar is voor vrienden en groepsleden.",
+      "photoAlt": "Je profielfoto",
+      "choosePhoto": "Kies foto",
+      "removePhoto": "Verwijder foto",
+      "photoUpdatedToast": "Profielfoto bijgewerkt.",
+      "photoRemovedToast": "Profielfoto verwijderd.",
+      "photoUnavailableToast": "Foto-opslag is niet geconfigureerd.",
+      "photoInvalidToast": "Kies een geldig afbeeldingsbestand (PNG, JPG, WebP) onder 5 MB.",
+      "photoFailedToast": "Uploaden van profielfoto mislukt.",
+      "nameLabel": "Weergavenaam",
+      "namePlaceholder": "Jouw naam",
+      "nameError": "Voer een geldige weergavenaam in.",
+      "nameUpdatedToast": "Weergavenaam bijgewerkt.",
+      "saveChanges": "Wijzigingen opslaan",
+      "saving": "Opslaan…"
+    },
+    "profileTitle": "Profiel",
+    "appPreferencesTitle": "App-voorkeuren",
+    "notificationsTitle": "Meldingskanalen",
+    "notificationsDescription": "Beheer hoe je meldingen ontvangt over activiteit in je groepen.",
+    "notifications": {
+      "masterSwitchAria": "Meldingen",
+      "saving": "Voorkeuren opslaan…",
+      "saveSuccess": "Meldingsvoorkeuren opgeslagen.",
+      "saveError": "Meldingsvoorkeuren konden niet worden opgeslagen.",
+      "comingSoon": "Binnenkort beschikbaar",
+      "done": "Klaar",
+      "channelSelectorAria": "Afleverkanalen voor {category}",
+      "emailNeedsVerification": "Verifieer je e-mailadres om e-mailmeldingen in te schakelen.",
+      "channelLabel": {
+        "off": "Uit",
+        "email": "E-mail",
+        "push": "Push",
+        "emailAndPush": "E-mail en Push"
+      },
+      "pushDisabled": {
+        "unsupported": "Pushmeldingen worden niet ondersteund in deze browser.",
+        "unconfigured": "Pushmeldingen zijn niet geconfigureerd op deze server.",
+        "iosInstall": "Voeg Knots op iOS toe aan je startscherm om pushmeldingen in te schakelen.",
+        "denied": "Meldingsmachtiging geweigerd. Schakel deze in via je browserinstellingen."
+      },
+      "thisDevice": {
+        "title": "Pushmeldingen op dit apparaat",
+        "description": "Ontvang directe meldingen in deze browser wanneer er activiteit is.",
+        "checking": "Abonnement controleren…",
+        "enabledLabel": "Pushmeldingen zijn ingeschakeld op dit apparaat.",
+        "disabledLabel": "Pushmeldingen zijn uitgeschakeld op dit apparaat.",
+        "pushSelectedWarning": "Je hebt pushmeldingen geselecteerd voor sommige categorieën, maar dit apparaat is niet geabonneerd.",
+        "enable": "Inschakelen op dit apparaat",
+        "disable": "Uitschakelen op dit apparaat",
+        "error": "Push-abonnement kon niet worden bijgewerkt."
+      },
+      "groups": {
+        "groups-and-friends": "Groepen & Vrienden",
+        "expenses": "Uitgaven",
+        "summaries": "Overzichten"
+      },
+      "categories": {
+        "added-to-group": "Toegevoegd aan een groep",
+        "friend-added": "Vriend toegevoegd",
+        "budget-alert": "Budgetwaarschuwing",
+        "expense-created": "Uitgave aangemaakt",
+        "recurring-expense-created": "Terugkerende uitgave aangemaakt",
+        "expense-changed": "Uitgave gewijzigd of verwijderd",
+        "expense-comment": "Reactie op uitgave",
+        "weekly-summary": "Wekelijks overzicht"
+      },
+      "categoryDescriptions": {
+        "weekly-summary": "Een wekelijkse samenvatting van je uitgaven en saldi."
+      }
+    },
+    "emailTitle": "E-mailadres",
+    "emailDescription": "Adres gebruikt voor meldingen en inloggen.",
     "displayNameTitle": "Weergavenaam",
+    "usernameTitle": "Gebruikersnaam",
+    "usernameDescription": "Je unieke identificatie op Knots.",
     "passwordTitle": "Wachtwoord",
+    "passkeyTitle": "Passkeys",
+    "Email": {
+      "description": "Voor het wijzigen van je e-mailadres is een bevestigingscode naar het nieuwe adres vereist.",
+      "changeButton": "E-mail wijzigen",
+      "dialogTitle": "E-mailadres wijzigen",
+      "dialogDescription": "Voer het nieuwe adres in. We sturen een bevestigingscode.",
+      "newEmailLabel": "Nieuwe e-mail",
+      "newEmailPlaceholder": "jij@voorbeeld.nl",
+      "sendCode": "Code verzenden",
+      "cancel": "Annuleren",
+      "otpTitle": "Voer bevestigingscode in",
+      "otpDescription": "We hebben een 6-cijferige code naar {email} gestuurd. Voer deze hieronder in.",
+      "codeLabel": "Bevestigingscode",
+      "resend": "Code opnieuw verzenden",
+      "resendIn": "Opnieuw verzenden over {seconds}s",
+      "useDifferentEmail": "Ander e-mailadres gebruiken",
+      "verify": "Verifiëren en wijzigen",
+      "successToast": "E-mailadres succesvol bijgewerkt.",
+      "errorInUse": "Dit e-mailadres is al in gebruik.",
+      "errorInvalid": "Voer een geldig e-mailadres in.",
+      "errorSame": "Het nieuwe adres moet anders zijn dan het huidige.",
+      "errorInvalidCode": "Ongeldige bevestigingscode.",
+      "errorExpired": "Bevestigingscode is verlopen. Vraag een nieuwe aan.",
+      "errorRateLimited": "Te veel pogingen. Wacht even voordat je het opnieuw probeert.",
+      "errorSendFailed": "Bevestigingsmail kon niet worden verzonden. Probeer het opnieuw."
+    },
+    "Password": {
+      "description": "Wijzig je wachtwoord of stel er een in als je nu alleen passkeys gebruikt.",
+      "noPasswordDescription": "Je kunt je aanmelden met een e-maillink of een passkey. Voeg een wachtwoord toe als je een andere manier wilt om in te loggen.",
+      "changeButton": "Wachtwoord wijzigen",
+      "setButton": "Wachtwoord instellen",
+      "removeButton": "Wachtwoord verwijderen",
+      "changeDialogTitle": "Wachtwoord wijzigen",
+      "changeDialogDescription": "Voer je huidige wachtwoord in en kies een nieuw wachtwoord.",
+      "setDialogTitle": "Wachtwoord instellen",
+      "setDialogDescription": "Voeg een wachtwoord toe om in te loggen met e-mail en wachtwoord.",
+      "setSuccessToast": "Wachtwoord succesvol ingesteld.",
+      "removeDialogTitle": "Wachtwoord verwijderen",
+      "removeDialogDescription": "Je kunt je nog steeds aanmelden met een e-maillink of een passkey. Voer je huidige wachtwoord in om te bevestigen.",
+      "currentLabel": "Huidig wachtwoord",
+      "newLabel": "Nieuw wachtwoord",
+      "confirmLabel": "Bevestig nieuw wachtwoord",
+      "cancel": "Annuleren",
+      "removeConfirm": "Verwijderen",
+      "changeSuccessToast": "Wachtwoord succesvol gewijzigd.",
+      "removeSuccessToast": "Wachtwoord succesvol verwijderd.",
+      "errorCurrentRequired": "Huidig wachtwoord is verplicht.",
+      "errorMismatch": "Wachtwoorden komen niet overeen.",
+      "errorRequirements": "Wachtwoord moet minimaal 8 tekens bevatten.",
+      "errorSame": "Het nieuwe wachtwoord moet anders zijn dan het huidige.",
+      "errorCurrentIncorrect": "Je huidige wachtwoord is onjuist.",
+      "forgotPrefix": "Wachtwoord vergeten?",
+      "forgotLink": "Hier opnieuw instellen",
+      "rule_TOO_SHORT": "Minimaal 8 tekens",
+      "rule_MISSING_UPPERCASE": "Eén hoofdletter",
+      "rule_MISSING_LOWERCASE": "Eén kleine letter",
+      "rule_MISSING_DIGIT": "Eén cijfer"
+    },
+    "Passkey": {
+      "description": "Log veilig in met biometrie, beveiligingssleutel of schermvergrendeling zonder wachtwoord.",
+      "unavailable": "Passkeys zijn niet beschikbaar op dit apparaat.",
+      "addButton": "Passkey toevoegen",
+      "empty": "Nog geen passkeys geregistreerd.",
+      "created": "Toegevoegd op {date}",
+      "badgeSynced": "Gesynchroniseerd",
+      "badgeDeviceBound": "Apparaatgebonden",
+      "badgeBackedUp": "Geback-upt",
+      "addDialogTitle": "Een passkey toevoegen",
+      "addDialogDescription": "Geef een optionele naam op en volg de instructies op je apparaat.",
+      "nicknameLabel": "Bijnaam (optioneel)",
+      "nicknamePlaceholder": "bijv. Mijn laptop",
+      "confirmPasswordLabel": "Huidig wachtwoord",
+      "confirmPasswordHint": "Bevestig je wachtwoord om een passkey toe te voegen.",
+      "addConfirm": "Passkey toevoegen",
+      "cancel": "Annuleren",
+      "addSuccessToast": "Passkey toegevoegd.",
+      "addFailedToast": "Passkey kon niet worden toegevoegd.",
+      "errorPasswordRequired": "Voer je huidige wachtwoord in.",
+      "deleteAria": "{name} verwijderen",
+      "deleteDialogTitle": "Passkey verwijderen?",
+      "deleteDialogDescription": "\"{name}\" kan niet meer worden gebruikt om in te loggen op je account.",
+      "deleteConfirm": "Verwijderen",
+      "deleteSuccessToast": "Passkey verwijderd.",
+      "deleteFailedToast": "Passkey kon niet worden verwijderd.",
+      "reauthTitle": "Meld je opnieuw aan om een passkey toe te voegen",
+      "reauthDescription": "Je laatste aanmelding is ouder dan 30 dagen. Meld je opnieuw aan met je wachtwoord, een e-maillink of een passkey en kom dan hier terug.",
+      "reauthConfirm": "Opnieuw aanmelden"
+    },
     "preferencesTitle": "Voorkeuren",
-    "preferencesDescription": "Pas taal en weergave aan.",
+    "preferencesDescription": "Pas taal, thema en standaardvaluta aan.",
     "languageLabel": "Taal",
     "themeLabel": "Thema",
+    "blockedUsersTitle": "Geblokkeerde gebruikers",
+    "blockedUsersDescription": "Beheer gebruikers die je hebt geblokkeerd.",
+    "blockedUsersRowLabel": "Geblokkeerde gebruikers",
+    "blockedUsersRowDescription": "Geblokkeerde gebruikers bekijken en beheren.",
     "accountTitle": "Account",
     "signOut": "Uitloggen",
+    "signOutDescription": "Log uit op dit apparaat.",
+    "signOutAllTitle": "Uitloggen op alle apparaten",
+    "signOutAllDescription": "Beëindig alle actieve sessies overal.",
     "signingOut": "Uitloggen…",
-    "NameForm": {
-      "nameRequired": "Naam is verplicht",
-      "nameMaxLength": "Naam mag maximaal 100 tekens bevatten",
-      "successToast": "Weergavenaam succesvol bijgewerkt.",
-      "label": "Weergavenaam",
-      "placeholder": "Voer je weergavenaam in",
-      "saving": "Opslaan…",
-      "submit": "Naam opslaan"
-    },
-    "PasswordForm": {
-      "currentPasswordRequired": "Huidig wachtwoord is verplicht",
-      "newPasswordRequired": "Nieuw wachtwoord is verplicht",
-      "confirmPasswordRequired": "Bevestig je nieuwe wachtwoord",
-      "passwordsDoNotMatch": "Wachtwoorden komen niet overeen",
-      "successToast": "Wachtwoord succesvol gewijzigd.",
-      "currentPasswordIncorrect": "Huidig wachtwoord is onjuist",
-      "newPasswordSameAsCurrent": "Nieuw wachtwoord moet verschillen van het huidige",
-      "passwordRequirementsNotMet": "Wachtwoord voldoet niet aan de vereisten",
-      "currentPasswordLabel": "Huidig wachtwoord",
-      "newPasswordLabel": "Nieuw wachtwoord",
-      "confirmPasswordLabel": "Bevestig nieuw wachtwoord",
-      "passwordHint": "Min. 8 tekens, max. 128. Moet minstens één hoofdletter, één kleine letter en één cijfer bevatten.",
-      "changingPassword": "Wachtwoord wijzigen…",
-      "submit": "Wachtwoord wijzigen",
-      "errorTooShort": "Moet minstens 8 tekens bevatten",
-      "errorTooLong": "Mag maximaal 128 tekens bevatten",
-      "errorMissingUppercase": "Moet minstens één hoofdletter bevatten",
-      "errorMissingLowercase": "Moet minstens één kleine letter bevatten",
-      "errorMissingDigit": "Moet minstens één cijfer bevatten"
-    },
-    "blockedUsersTitle": "Geblokkeerde gebruikers",
-    "blockedUsersDescription": "Beheer de gebruikers die je hebt geblokkeerd. Geblokkeerde gebruikers kunnen je niet toevoegen aan groepen of vriendschapsverzoeken sturen.",
     "Preferences": {
       "timezoneLabel": "Tijdzone",
       "timezoneSelect": "Selecteer tijdzone…",
       "timezoneSearch": "Zoek tijdzone…",
       "timezoneEmpty": "Geen tijdzone gevonden.",
       "timezoneSaved": "Tijdzone bijgewerkt.",
-      "currencyLabel": "Standaard valuta",
-      "currencySaved": "Standaard valuta bijgewerkt."
+      "timezoneHelp": "Stelt de standaard in voor nieuwe uitgavetijden en herhaalschema's, en formatteert tijdstempels.",
+      "languageSearch": "Zoek taal…",
+      "languageEmpty": "Geen taal gevonden.",
+      "languageCommon": "Meest voorkomend",
+      "languageOther": "Andere talen",
+      "currencyLabel": "Standaardvaluta",
+      "currencySaved": "Standaardvaluta bijgewerkt."
     },
+    "appPreferencesDescription": "Pas taal, thema en standaardvaluta van je account aan.",
+    "preferencesSaving": "Voorkeuren opslaan…",
+    "themeSaved": "Thema bijgewerkt.",
+    "themeLight": "Licht",
+    "themeDark": "Donker",
+    "themeSystem": "Systeem",
     "SignOutAll": {
       "button": "Meld af op alle apparaten",
       "dialogTitle": "Afmelden op alle apparaten?",
       "dialogDescription": "Dit beëindigt alle actieve sessies, inclusief deze. Je wordt doorgestuurd naar de inlogpagina.",
       "cancel": "Annuleren",
-      "confirm": "Overal afmelden",
+      "confirm": "Alles uitloggen",
       "signingOut": "Afmelden…",
       "successToast": "Alle sessies zijn beëindigd."
     },
@@ -816,13 +1158,51 @@
       "emailPlaceholder": "naam@voorbeeld.nl",
       "block": "Blokkeren",
       "unblock": "Deblokkeren",
-      "empty": "Je hebt niemand geblokkeerd.",
+      "empty": "Je hebt geen geblokkeerde gebruikers.",
       "blockedToast": "Gebruiker succesvol geblokkeerd.",
       "unblockedToast": "Gebruiker gedeblokkeerd.",
       "confirmBlockTitle": "Deze vriend blokkeren?",
       "confirmBlockDescription": "Het blokkeren van {name} verwijdert deze persoon ook uit je vriendenlijst. Diegene krijgt hier geen melding van.",
       "confirmBlockCancel": "Annuleren",
       "confirmBlockAction": "Blokkeren en vriend verwijderen"
+    },
+    "NameForm": {
+      "nameRequired": "Weergavenaam is verplicht.",
+      "nameMaxLength": "Naam mag maximaal 100 tekens bevatten",
+      "successToast": "Weergavenaam succesvol bijgewerkt.",
+      "label": "Weergavenaam",
+      "placeholder": "Voer je weergavenaam in",
+      "saving": "Opslaan…",
+      "submit": "Naam opslaan"
+    },
+    "UsernameForm": {
+      "successToast": "Gebruikersnaam succesvol bijgewerkt.",
+      "label": "Gebruikersnaam",
+      "placeholder": "jouw-gebruikersnaam",
+      "description": "Gebruikt in je profiel-URL. Alleen kleine letters, cijfers en koppeltekens.",
+      "saving": "Opslaan…",
+      "submit": "Gebruikersnaam opslaan"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "Huidig wachtwoord is verplicht.",
+      "newPasswordRequired": "Nieuw wachtwoord is verplicht.",
+      "confirmPasswordRequired": "Bevestig nieuw wachtwoord.",
+      "passwordsDoNotMatch": "Wachtwoorden komen niet overeen.",
+      "successToast": "Wachtwoord succesvol gewijzigd.",
+      "currentPasswordIncorrect": "Het huidige wachtwoord is onjuist.",
+      "newPasswordSameAsCurrent": "Het nieuwe wachtwoord moet anders zijn dan het huidige.",
+      "passwordRequirementsNotMet": "Wachtwoord voldoet niet aan de vereisten.",
+      "currentPasswordLabel": "Huidig wachtwoord",
+      "newPasswordLabel": "Nieuw wachtwoord",
+      "confirmPasswordLabel": "Bevestig nieuw wachtwoord",
+      "passwordHint": "Minimaal 8 tekens, maximaal 128. Moet ten minste één hoofdletter, één kleine letter en één cijfer bevatten.",
+      "changingPassword": "Wachtwoord wijzigen…",
+      "submit": "Wachtwoord wijzigen",
+      "errorTooShort": "Moet minstens 8 tekens bevatten",
+      "errorTooLong": "Mag maximaal 128 tekens bevatten",
+      "errorMissingUppercase": "Moet minstens één hoofdletter bevatten",
+      "errorMissingLowercase": "Moet minstens één kleine letter bevatten",
+      "errorMissingDigit": "Moet minstens één cijfer bevatten"
     }
   },
   "Friends": {
@@ -908,6 +1288,7 @@
       "title": "Expenses with {name}",
       "description": "All expenses you share with this friend, across groups.",
       "backToFriends": "Back to friends",
+      "backToFriend": "Terug naar {name}",
       "listTitle": "Expense history",
       "listDescription": "Direct expenses and expenses from shared groups.",
       "create": "Add expense",
@@ -950,6 +1331,10 @@
       "friendOwesYou": "{name} is je {amount} schuldig",
       "youOweFriend": "Je bent {name} {amount} schuldig",
       "paid": "{payer} betaalde {payee} {amount}",
+      "deletePayment": "Verwijderen",
+      "deletePaymentConfirm": "Weet je zeker dat je deze betaling wilt verwijderen?",
+      "deletePaymentSuccess": "Betaling succesvol verwijderd",
+      "deletePaymentError": "Verwijderen van betaling mislukt",
       "groups": {
         "upcoming": "Aankomend",
         "thisWeek": "Deze week",
@@ -965,14 +1350,15 @@
       "paid": "{payer} betaalde {payee}",
       "addedBy": "Toegevoegd door {name} op {date}",
       "disclaimer": "Deze betaling is geregistreerd via \"Betaling vastleggen\". Er is geen geld overgemaakt.",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "readOnlyNotice": "Deze betaling kan niet afzonderlijk worden bewerkt of verwijderd omdat deze deel uitmaakt van een saldo-afrekening.",
       "edit": "Bewerken",
       "delete": "Verwijderen",
       "deleteConfirm": "Deze betaling verwijderen?",
       "deleteDescription": "Dit past de saldi aan alsof de betaling nooit heeft plaatsgevonden.",
+      "deleting": "Deleting...",
       "notFound": "Betaling niet gevonden.",
-      "backToFriend": "Terug naar {name}",
-      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
-      "deleting": "Deleting..."
+      "backToFriend": "Terug naar {name}"
     },
     "DirectExpense": {
       "title": "Uitgave toevoegen",
@@ -984,12 +1370,19 @@
       "paidByYou": "Jij",
       "splitEqually": "Betaald door {payer} en gelijk verdeeld",
       "dateLabel": "Datum",
+      "attachLabel": "Afbeelding of PDF bijvoegen",
+      "notesLabel": "Notities",
+      "notesPlaceholder": "Notities toevoegen (optioneel)",
       "save": "Opslaan",
       "saving": "Opslaan…",
       "cancel": "Annuleren",
       "success": "Uitgave toegevoegd.",
       "error": "Kon uitgave niet toevoegen.",
       "persistError": "Kon formuliergegevens niet opslaan. Navigatie is niet beschikbaar."
+    },
+    "Settings": {
+      "currencyTitle": "Hoofdvaluta",
+      "currencyDescription": "Gebruikt voor directe uitgaven en betalingen met vrienden."
     },
     "SettleAll": {
       "button": "Alles verrekenen",
@@ -1013,6 +1406,7 @@
     "memberPromoted": "Lid bevorderd tot eigenaar.",
     "memberDemoted": "Lid gedegradeerd tot regulier lid.",
     "addMember": "Lid toevoegen",
+    "pickFriend": "Choose from your friends or enter an email.",
     "adding": "Toevoegen…",
     "add": "Toevoegen",
     "cancel": "Annuleren",
@@ -1021,8 +1415,7 @@
     "leave": "Verlaten",
     "removeFromGroup": "Uit groep verwijderen",
     "promoteToOwner": "Bevorderen tot eigenaar",
-    "demoteToMember": "Degraderen tot lid",
-    "pickFriend": "Choose from your friends or enter an email."
+    "demoteToMember": "Degraderen tot lid"
   },
   "MyGroups": {
     "title": "Mijn groepen",
@@ -1032,7 +1425,9 @@
     "noGroupsHint": "Maak een groep om uitgaven met anderen te delen.",
     "createGroup": "Groep maken",
     "createGroupTitle": "Nieuwe groep maken",
-    "createGroupDescription": "Voer een naam in voor je groep. Je kunt na het aanmaken leden uitnodigen.",
+    "createGroupDescription": "Voer een naam en valuta in voor je groep. Je kunt na het aanmaken leden uitnodigen.",
+    "invalidCurrency": "Kies een geldige valuta.",
+    "currencySymbolRequired": "Voer een valutasymbool in.",
     "groupNameLabel": "Groepsnaam",
     "characters": "tekens",
     "leaveGroup": "Groep verlaten",
@@ -1052,100 +1447,6 @@
     "deleteGroupConfirmCancel": "Annuleren",
     "deleteGroupConfirmAction": "Permanent verwijderen"
   },
-  "UserMenu": {
-    "profileSettings": "Accountinstellingen",
-    "signingOut": "Uitloggen…",
-    "signOut": "Uitloggen"
-  },
-  "Notifications": {
-    "settings": "Meldinginstellingen",
-    "subscribe": "Meldingen inschakelen",
-    "unsubscribe": "Meldingen uitschakelen",
-    "selectParticipant": "Meld mij over wijzigingen van anderen",
-    "noParticipant": "Alle wijzigingen",
-    "permissionDenied": "Toestemming voor meldingen is geweigerd. Schakel het in via je browserinstellingen.",
-    "notSupported": "Pushmeldingen worden niet ondersteund op dit apparaat.",
-    "expenseCreated": "{actor} heeft \"{title}\" toegevoegd",
-    "expenseUpdated": "{actor} heeft \"{title}\" bijgewerkt",
-    "expenseDeleted": "{actor} heeft \"{title}\" verwijderd",
-    "groupUpdated": "{actor} heeft de groep \"{group}\" bijgewerkt",
-    "notificationTitle": "Knots – {group}",
-    "defaultBody": "Nieuwe activiteit in je groep",
-    "filterHint": "Kies van wie je meldingen wilt ontvangen en welke gebeurtenissen.",
-    "subscribeError": "Kon meldingen niet inschakelen. Probeer het opnieuw.",
-    "membersLabel": "Stuur mij meldingen over",
-    "notifyAllMembers": "Iedereen in de groep",
-    "notifySpecificMembers": "Of alleen deze leden:",
-    "eventsLabel": "Gebeurtenissen",
-    "eventCreate": "Uitgave aangemaakt",
-    "eventUpdate": "Uitgave bijgewerkt",
-    "eventDelete": "Uitgave verwijderd",
-    "selectAtLeastOneFilter": "Selecteer minstens één lid of gebeurtenis.",
-    "channelsLabel": "Kanalen",
-    "pushLabel": "Pushmeldingen",
-    "pushUnavailable": "Pushmeldingen zijn niet beschikbaar in deze omgeving.",
-    "emailLabel": "E-mailmeldingen",
-    "enableChannelHint": "Schakel een kanaal in om in te stellen over wie en wat je meldingen ontvangt.",
-    "pushSyncWarning": "Voorkeuren opgeslagen, maar het synchroniseren van het pushmeldingenfilter is mislukt."
-  },
-  "ExpenseImport": {
-    "button": "Uitgaven importeren",
-    "fromKnots": "Importeren uit Knots",
-    "fromSplitwise": "Importeren uit Splitwise"
-  },
-  "KnotsImport": {
-    "title": "Importeren uit Knots",
-    "description": "Upload een Knots-exportbestand. Als het bestand personen bevat die nog niet in deze groep zitten, kun je ze hier toevoegen voordat je importeert.",
-    "fileLabel": "Knots-exportbestand",
-    "previewLabel": "Voorbeeld (eerste 10 regels)",
-    "clear": "Wissen",
-    "cancel": "Annuleren",
-    "import": "Uitgaven importeren",
-    "addAndImport": "Leden toevoegen en importeren",
-    "importing": "Importeren...",
-    "analyzing": "Export analyseren…",
-    "expenseCount": "{count, plural, one {# uitgave gevonden} other {# uitgaven gevonden}}",
-    "matchedParticipants": "Al in de groep: {names}",
-    "missingParticipantsLabel": "Personen om aan deze groep toe te voegen",
-    "missingParticipantsDescription": "Voer voor elke persoon een e-mailadres in. Nieuwe accounts worden automatisch aangemaakt en aan deze groep gekoppeld. Als ze al een account hebben, worden ze als leden toegevoegd.",
-    "expenseReferences": "{count, plural, one {# uitgave} other {# uitgaven}}",
-    "emailLabel": "E-mail",
-    "emailPlaceholder": "naam@example.com",
-    "softCreateHint": "Ze kunnen zich later met dit e-mailadres registreren om toegang tot de groep te krijgen.",
-    "toast": {
-      "invalidFileType": {
-        "title": "Ongeldig bestandstype",
-        "description": "Selecteer een Knots-exportbestand in JSON- of CSV-formaat."
-      },
-      "noContent": {
-        "title": "Geen bestandsinhoud",
-        "description": "Selecteer eerst een Knots-exportbestand."
-      },
-      "missingEmail": {
-        "title": "E-mail verplicht",
-        "description": "Voer een e-mailadres in voor {name}."
-      },
-      "success": {
-        "title": "Import geslaagd",
-        "description": "{count} uitgaven succesvol geïmporteerd uit Knots."
-      },
-      "error": {
-        "title": "Import mislukt",
-        "description": "Het Knots-exportbestand kon niet worden geïmporteerd."
-      },
-      "cancelled": {
-        "title": "Import geannuleerd",
-        "description": "De import is gestopt voordat deze klaar was."
-      }
-    },
-    "errors": {
-      "invalidJson": "Ongeldig JSON-bestand.",
-      "invalidFormat": "Dit bestand is geen geldige Knots-export.",
-      "noExpenses": "De export bevat geen uitgaven."
-    },
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
-  },
   "GroupDangerZone": {
     "title": "Groepsbeheer",
     "description": "Archiveren verbergt deze groep in je lijst zonder gegevens te verwijderen. Verwijderen verwijdert de groep permanent voor iedereen.",
@@ -1159,6 +1460,109 @@
     "deleteConfirmDescription": "Dit verwijdert “{name}” permanent, inclusief alle uitgaven, saldi en geschiedenis voor alle leden. Dit kan niet ongedaan worden gemaakt.",
     "cancel": "Annuleren",
     "deleteConfirmAction": "Permanent verwijderen"
+  },
+  "UserMenu": {
+    "menuLabel": "Gebruikersmenu",
+    "profileSettings": "Accountinstellingen",
+    "theme": "Thema",
+    "themeLight": "Licht",
+    "themeDark": "Donker",
+    "themeSystem": "Systeem",
+    "signingOut": "Uitloggen…",
+    "signOut": "Uitloggen"
+  },
+  "Notifications": {
+    "settings": "Meldinginstellingen",
+    "subscribe": "Meldingen inschakelen",
+    "unsubscribe": "Meldingen uitschakelen",
+    "selectParticipant": "Meld mij over wijzigingen van anderen",
+    "noParticipant": "Alle wijzigingen",
+    "permissionDenied": "Toestemming voor meldingen is geweigerd. Schakel het in via je browserinstellingen.",
+    "notSupported": "Pushmeldingen worden niet ondersteund op dit apparaat.",
+    "expenseCreated": "{actor} heeft \"{title}\" toegevoegd in groep {group}",
+    "expenseUpdated": "{actor} heeft \"{title}\" bijgewerkt in groep {group}",
+    "expenseDeleted": "{actor} heeft \"{title}\" verwijderd in groep {group}",
+    "groupUpdated": "{actor} heeft de groep \"{group}\" bijgewerkt",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "Nieuwe activiteit in je groep",
+    "filterHint": "Kies van wie je meldingen wilt ontvangen en welke gebeurtenissen.",
+    "membersLabel": "Stuur mij meldingen over",
+    "notifyAllMembers": "Iedereen in de groep",
+    "notifySpecificMembers": "Of alleen deze leden:",
+    "eventsLabel": "Gebeurtenissen",
+    "eventCreate": "Uitgave aangemaakt",
+    "eventUpdate": "Uitgave bijgewerkt",
+    "eventDelete": "Uitgave verwijderd",
+    "selectAtLeastOneFilter": "Selecteer minstens één lid of gebeurtenis.",
+    "subscribeError": "Kon meldingen niet inschakelen. Probeer het opnieuw.",
+    "channelsLabel": "Kanalen",
+    "pushLabel": "Pushmeldingen",
+    "pushUnavailable": "Pushmeldingen zijn niet beschikbaar in deze omgeving.",
+    "emailLabel": "E-mailmeldingen",
+    "enableChannelHint": "Schakel een kanaal in om in te stellen over wie en wat je meldingen ontvangt.",
+    "pushSyncWarning": "Voorkeuren opgeslagen, maar het synchroniseren van het pushmeldingenfilter is mislukt."
+  },
+  "AppError": {
+    "title": "Er is iets misgegaan",
+    "description": "Lokale app-gegevens zijn gewist. Je sessie wordt ook beëindigd, zodat je opnieuw kunt beginnen vanaf de startpagina.",
+    "recover": "Ga naar startpagina",
+    "recovering": "Doorverwijzen…"
+  },
+  "PaymentForm": {
+    "dateLabel": "Betalingsdatum",
+    "dateDescription": "Voer de datum in waarop de betaling is gedaan.",
+    "amountLabel": "Bedrag",
+    "amountDescription": "Voer het betalingsbedrag in.",
+    "paidByLabel": "Betaald door",
+    "paidByDescription": "Selecteer wie de betaling heeft gedaan.",
+    "paidToLabel": "Betaald aan",
+    "paidToDescription": "Selecteer wie de betaling heeft ontvangen.",
+    "notesLabel": "Notities",
+    "notesPlaceholder": "Notities toevoegen (optioneel)",
+    "participantPlaceholder": "Selecteer een deelnemer",
+    "disclaimer": "Dit registreert een betaling tussen personen om saldi te vereffenen. Het is geen gedeelde uitgave."
+  },
+  "FloatingCreateExpense": {
+    "addExpense": "Uitgave toevoegen",
+    "dialogTitle": "Uitgave toevoegen",
+    "editDialogTitle": "Uitgave bewerken",
+    "createPaymentDialogTitle": "Betaling registreren",
+    "editPaymentDialogTitle": "Betaling bewerken",
+    "withWho": "Met jou en:",
+    "back": "Terug",
+    "searchPlaceholder": "Zoek vrienden of groepen…",
+    "descriptionPlaceholder": "Voer een beschrijving in",
+    "amountPlaceholder": "0,00",
+    "paidByLabel": "Betaald door",
+    "you": "jij",
+    "splitEqually": "gelijkmatig verdeeld",
+    "save": "Opslaan",
+    "saving": "Opslaan…",
+    "cancel": "Annuleren",
+    "successToast": "Uitgave succesvol aangemaakt.",
+    "updateSuccessToast": "Uitgave succesvol bijgewerkt.",
+    "paymentSuccessToast": "Betaling succesvol geregistreerd.",
+    "paymentUpdateSuccessToast": "Betaling succesvol bijgewerkt.",
+    "errorToast": "Uitgave kon niet worden aangemaakt.",
+    "paymentErrorToast": "Betaling kon niet worden geregistreerd.",
+    "updateErrorToast": "Uitgave kon niet worden bijgewerkt.",
+    "paymentUpdateErrorToast": "Betaling kon niet worden bijgewerkt.",
+    "lockedPaymentToast": "Deze betaling maakt deel uit van een saldo-afrekening en kan niet worden bewerkt.",
+    "noFriendOrGroupFound": "Geen vrienden of groepen gevonden.",
+    "groupsHeader": "Groepen",
+    "friendsHeader": "Vrienden",
+    "selectGroupText": "Groep: {name}",
+    "pickerTitle": "Met wie?",
+    "pickerDone": "Klaar",
+    "selectParticipants": "Selecteer vrienden of groep",
+    "selectParticipantsHint": "Selecteer een groep of vriend om te beginnen.",
+    "singleGroupAlertTitle": "Slechts één groep",
+    "singleGroupAlertDescription": "Je kunt maar één groep tegelijk selecteren. Verwijder de huidige groep voordat je een andere kiest.",
+    "singleGroupAlertOk": "OK",
+    "advancedOptions": "Geavanceerde opties",
+    "splitDetails": "Verdelingsdetails",
+    "notesPlaceholder": "Notities toevoegen (optioneel)",
+    "viewGroupExpense": "Groepsuitgave bekijken"
   },
   "DuplicateExpense": {
     "title": "Mogelijk duplicaat gedetecteerd",
@@ -1183,7 +1587,47 @@
   "CurrencyAmountInput": {
     "expressionHint": "of 10+5"
   },
-  "ExpenseTitleInput": {
-    "clear": "Wissen"
+  "Login": {
+    "title": "Aanmelden",
+    "description": "Meld je aan met een passkey, een e-maillink of je wachtwoord.",
+    "orContinueWithEmail": "OF GA VERDER MET E-MAIL",
+    "methodMagicLink": "Magic link",
+    "methodPassword": "Wachtwoord",
+    "sendSignInLink": "Stuur aanmeldlink",
+    "signInWithPassword": "Aanmelden met wachtwoord",
+    "usePasskey": "Gebruik een passkey",
+    "passkeyFailed": "Aanmelden met deze passkey is mislukt. Probeer het opnieuw.",
+    "forgotPassword": "Wachtwoord vergeten?",
+    "noAccount": "Nog geen account?",
+    "signUp": "Registreren",
+    "magicLinkButton": "Stuur aanmeldlink",
+    "magicLinkEmailRequired": "Voer je e-mailadres in.",
+    "magicLinkSendFailed": "We konden de aanmeld-e-mail niet verzenden. Probeer het opnieuw.",
+    "magicLinkSentTitle": "Controleer je e-mail",
+    "magicLinkSentDescription": "Als er een account bestaat voor dat adres, hebben we een aanmeldlink verzonden. Deze werkt eenmalig en verloopt na 15 minuten.",
+    "magicLinkSigningIn": "Je wordt aangemeld…",
+    "magicLinkFailedTitle": "Kon niet aanmelden",
+    "magicLinkInvalid": "Deze aanmeldlink is ongeldig of verlopen.",
+    "backToLogin": "Terug naar aanmelden"
+  },
+  "Register": {
+    "title": "Account aanmaken",
+    "description": "Meld je aan met een e-maillink of een wachtwoord.",
+    "signUpWithPassword": "Aanmelden met wachtwoord",
+    "confirmPassword": "Bevestig wachtwoord",
+    "hasAccount": "Heb je al een account?",
+    "signIn": "Aanmelden",
+    "creating": "Account aanmaken…",
+    "passwordMismatch": "Wachtwoorden komen niet overeen",
+    "ruleLength": "8 tekens",
+    "ruleLowercase": "Kleine letter",
+    "ruleUppercase": "Hoofdletter",
+    "ruleNumber": "Cijfer",
+    "successTitle": "Registratie geslaagd",
+    "successDescription": "Je account is aangemaakt",
+    "successAlertTitle": "Controleer je e-mail",
+    "successAlertDescription": "We hebben een verificatielink naar je e-mailadres gestuurd. Klik op de link om je account te verifiëren voordat je inlogt.",
+    "goToLogin": "Naar aanmelden",
+    "failedTitle": "Registratie mislukt"
   }
 }

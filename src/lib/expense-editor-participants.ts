@@ -107,3 +107,26 @@ export function deriveEditorParticipants(input: {
 
   return Array.from(byId.values())
 }
+
+/**
+ * Display names of selected friends who are not members of the group.
+ * These are the people who force a group expense down to a single payer.
+ */
+export function outsideFriendDisplayNames(
+  friends: readonly FriendLike[],
+  groupMembers: readonly MemberLike[],
+): string[] {
+  const memberIds = new Set(groupMembers.map((member) => member.id))
+  const names: string[] = []
+  const seen = new Set<string>()
+
+  for (const friend of friends) {
+    const id = resolveFriendId(friend)
+    if (memberIds.has(id) || seen.has(id)) continue
+    seen.add(id)
+    const name = friend.name?.trim()
+    if (name) names.push(name)
+  }
+
+  return names
+}

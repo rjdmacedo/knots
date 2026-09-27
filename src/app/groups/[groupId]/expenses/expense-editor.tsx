@@ -16,6 +16,7 @@ import {
 import {
   deriveEditorParticipants,
   isPaymentMode,
+  outsideFriendDisplayNames,
 } from '@/lib/expense-editor-participants'
 import { RuntimeFeatureFlags } from '@/lib/featureFlags'
 import { FriendListItem } from '@/lib/friends'
@@ -23,7 +24,11 @@ import { useMediaQuery } from '@/lib/hooks'
 import { invalidateActivityQueries } from '@/lib/invalidate-activity-queries'
 import { isConsolidatedPayment } from '@/lib/payments'
 import { ExpenseFormValues } from '@/lib/schemas'
-import { formatCurrency, getCurrencyFromGroup } from '@/lib/utils'
+import {
+  formatCurrency,
+  getCurrencyFromGroup,
+  sharesForGlobalExpense,
+} from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { AppRouterOutput } from '@/trpc/routers/_app'
 import { ExternalLink } from 'lucide-react'
@@ -278,7 +283,11 @@ export function ExpenseEditor({
           })),
           paidFor: values.paidFor.map((pf) => ({
             participant: pf.participant,
-            shares: pf.shares,
+            shares: sharesForGlobalExpense(
+              values.splitMode,
+              pf.shares,
+              currencyObj.decimal_digits,
+            ),
           })),
         })
 
@@ -428,6 +437,10 @@ export function ExpenseEditor({
           // Hybrid (group + outside friends) path only persists the first payer,
           // exactly as the dialog does when friends are selected.
           singlePayerOnly={selectedFriends.length > 0}
+          outsideFriendNames={outsideFriendDisplayNames(
+            selectedFriends,
+            group?.participants ?? [],
+          )}
           containedScroll={false}
         />
       )}

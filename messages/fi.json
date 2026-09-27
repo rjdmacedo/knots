@@ -20,6 +20,9 @@
     "create": "Lisää kulu",
     "createFirst": "Lisää ensimmäinen kulu",
     "noExpenses": "Ryhmälläsi ei ole vielä yhtään kulua.",
+    "noSearchResults": "Ei hakua vastaavia kuluja.",
+    "loadError": "Kulujen lataaminen epäonnistui.",
+    "retry": "Yritä uudelleen",
     "export": "Export",
     "exportJson": "Vie JSON-tiedostoon",
     "exportCsv": "Vie CSV-tiedostoon",
@@ -75,19 +78,60 @@
   },
   "ExpenseCard": {
     "paidBy": "<strong>{paidBy}</strong> maksoi {forCount, plural, =1 {henkilön} other {henkilöiden}} <paidFor></paidFor> puolesta",
+    "paidByMultiple": "<strong>{paidBy}</strong> maksoi {forCount, plural, =1 {henkilön} other {henkilöiden}} <paidFor></paidFor> puolesta",
     "everyone": "everyone",
     "receivedBy": "<strong>{paidBy}</strong> sai rahaa {forCount, plural, =1 {henkilön} other {henkilöiden}} <paidFor></paidFor> puolesta",
     "yourBalance": "Saldosi:",
     "notInvolved": "You are not involved",
     "close": "Sulje",
-    "paidByMultiple": "<strong>{paidBy}</strong> maksoi {forCount, plural, =1 {henkilön} other {henkilöiden}} <paidFor></paidFor> puolesta",
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
   "ExpenseDetail": {
+    "backToExpenses": "Takaisin kuluihin",
+    "backToFriend": "Takaisin kaveriin {name}",
+    "copy": "Kopioi kulu",
+    "delete": "Poista",
+    "edit": "Muokkaa",
+    "payment": "Maksu",
+    "expense": "Kulu",
+    "onDate": "{date}",
+    "addedBy": "Lisännyt {name}, {date}",
+    "addedByYou": "Lisäämäsi {date}",
+    "lastUpdatedBy": "Viimeksi päivittänyt {name}, {date}",
+    "lastUpdatedByYou": "Viimeksi päivittämäsi {date}",
+    "trendsTitle": "Kulutustrendit kohteessa {contextName} :: {categoryName}",
+    "trendsSeeMore": "Näytä enemmän",
+    "generalCategory": "Yleinen",
+    "editCategory": "Muokkaa kategoriaa",
+    "categoryUpdateError": "Kategorian päivittäminen epäonnistui.",
+    "attachReceipt": "Liitä kuitti",
+    "receiptUploadSuccess": "Kuitti ladattu onnistuneesti.",
+    "paidAmount": "{name} maksoi {amount}",
+    "youPaidAmount": "Sinä maksoit {amount}",
+    "paidAmountMultiple": "{name} maksoi {amount}",
+    "youPaidAmountMultiple": "Sinä maksoit {amount}",
+    "multiPayerSeparator": ", ",
+    "paidYou": "{name} maksoi sinulle {amount}",
+    "youPaidRecipient": "Maksoit käyttäjälle {name} {amount}",
+    "payerPaidPayee": "{payer} maksoi käyttäjälle {payee} {amount}",
+    "someone": "Joku",
+    "youOwe": "Olet velkaa {amount}",
+    "participantOwes": "{name} on velkaa {amount}",
+    "yourShare": "Oma osuutesi {amount}",
+    "participantShare": "{name}: {amount}",
+    "notes": "Muistiinpanot",
     "activity": "Tapahtumat",
-    "noActivity": "Tälle kululle ei ole vielä tapahtumia.",
-    "viewGroupExpense": "View group expense"
+    "noActivity": "Ei vielä toimintaa kirjattuna.",
+    "paymentDisclaimer": "Tämä on kahdenkeskinen maksu, jolla kuitataan ryhmän velkoja.",
+    "consolidationDisclaimer": "Tämä maksu on osa ryhmän velkojen selvitystä.",
+    "readOnlyNotice": "Tätä kulua ei voi muokata.",
+    "deleteConfirm": "Haluatko varmasti poistaa tämän kulun?",
+    "deletePaymentConfirm": "Haluatko varmasti poistaa tämän maksun?",
+    "deleteDescription": "Tämä poistaa kulun kaikilta ryhmän jäseniltä. Toimintoa ei voi kumota.",
+    "cancel": "Peruuta",
+    "deleting": "Poistetaan…",
+    "viewGroupExpense": "Näytä ryhmän kulu"
   },
   "Groups": {
     "myGroups": "Omat ryhmät",
@@ -151,6 +195,12 @@
       "label": "Yksinkertaista velat",
       "description": "Vähentää maksujen määrää yhdistämällä jäsenten saldot (kuten Splitwise Pro). Pois päältä: jokainen maksaa vain sille, joka maksoi hänen osuutensa."
     },
+    "FriendsField": {
+      "label": "Kaverit",
+      "description": "Valitse olemassa olevia kavereita tai kutsu uusia.",
+      "placeholder": "Valitse kaveri…",
+      "remove": "Poista {name}"
+    },
     "Participants": {
       "title": "Osallistujat",
       "description": "Syötä jokaisen osallistujan nimi.",
@@ -205,6 +255,7 @@
         "description": "Valitse kenelle tulo jaetaan."
       },
       "splitModeDescription": "Valitse miten tulo jaetaan osallistujien kesken.",
+      "notesDescription": "Lisää tuloon liittyviä lisätietoja tai muistiinpanoja.",
       "attachDescription": "Katso ja liitä tuloon liittyviä kuitteja."
     },
     "Expense": {
@@ -227,7 +278,7 @@
       "paidByField": {
         "label": "Maksaja",
         "placeholder": "Select a participant",
-        "description": "Select who provided the money and how much each payer contributed."
+        "description": "Valitse kuka maksoi ja kuinka paljon kukin maksaja suoritti."
       },
       "recurrenceRule": {
         "label": "Expense Recurrence",
@@ -238,23 +289,29 @@
         "monthly": "Monthly"
       },
       "paidFor": {
-        "title": "Kulun jakaminen",
-        "description": "Valitse ketkä osallistuvat kuluun."
+        "title": "Jaa osallistujien kesken",
+        "description": "Valitse miten kulu jaetaan ja ketkä ovat mukana."
       },
       "splitModeDescription": "Valitse miten kulu jaetaan osallistujien kesken.",
+      "notesDescription": "Lisää kuluun liittyviä lisätietoja tai muistiinpanoja.",
       "attachDescription": "Katso ja liitä kuluun liittyviä kuitteja."
     },
     "amountField": {
-      "label": "Summa"
+      "label": "Summa",
+      "description": "Syötä kulun kokonaissumma.",
+      "convertedDescription": "Syötä summa ryhmän valuutassa."
     },
     "conversionUnavailable": "Asettaaksesi eri valuutan kulua kohden ja muuntaaksesi summat, valitse ryhmälle muu kuin mukautettu valuutta.",
     "originalAmountField": {
-      "label": "Muunnettava summa"
+      "label": "Muunnettava summa",
+      "description": "Alkuperäinen summa ennen valuuttamuunnosta."
     },
     "conversionRateField": {
       "useApi": "Käytä Frankfurter-kursseja",
       "useCustom": "Käytä mukautettua kurssia",
-      "label": "Valuuttakurssi"
+      "label": "Valuuttakurssi",
+      "description": "Käytetty valuuttakurssi muuntamiseen.",
+      "collapsibleDescription": "Muunna valuuttakurssia tarvittaessa."
     },
     "conversionRateState": {
       "loading": "Haetaan valuuttakursseja…",
@@ -279,6 +336,13 @@
     },
     "selectNone": "Tyhjennä valinnat",
     "selectAll": "Valitse kaikki",
+    "resetSplit": "Palauta oletusjako",
+    "evenlySplit": "Tasan jaettu: {amount} × {count}",
+    "totalWeight": "Kokonaispaino: {count, plural, one {# osuus} other {# osuutta}}",
+    "matchesPercent": "Täsmää 100 prosenttiin.",
+    "matchesAmount": "Täsmää summaan {amount}",
+    "decreaseShares": "Vähennä osuuksia",
+    "increaseShares": "Lisää osuuksia",
     "noLongerInGroup": "ei enää tässä ryhmässä",
     "shares": "osuutta",
     "advancedOptions": "Lisäasetuksia jakamiseen…",
@@ -294,6 +358,43 @@
       "byPercentageDescription": "Split using percentages that add up to 100%",
       "byAmountDescription": "Split using fixed amounts for each participant"
     },
+    "itemized": {
+      "toggleLabel": "Erittely kohteittain",
+      "toggleDescription": "Jaa kuitin yksittäiset tuotteet eri henkilöille.",
+      "noItems": "Ei vielä lisättyjä kohteita.",
+      "addItem": "Lisää kohde",
+      "removeItem": "Poista kohde",
+      "itemTitleLabel": "Kohteen nimi",
+      "itemTitlePlaceholder": "esim. Pääruoka",
+      "itemUnitPriceLabel": "Yksikköhinta",
+      "itemQuantityLabel": "Määrä",
+      "itemLineTotalLabel": "Yhteensä",
+      "itemAmountLabel": "Summa",
+      "sectionTitle": "Kohteittainen erittely",
+      "sectionDescription": "Syötä yksittäiset kuitin kohteet ja jaa ne.",
+      "assignTo": "Kohdista osallistujille",
+      "otherLabel": "Muut kulut",
+      "otherDerivedNote": "Loput jaetaan tasan muiden osallistujien kesken.",
+      "itemsExceedTotal": "Kohteiden summa ylittää ilmoitetun summan.",
+      "setAmountFromItems": "Aseta summa kohteiden perusteella",
+      "total": "Kohteet yhteensä",
+      "addItemsAction": "Lisää kohteita",
+      "documentationNote": "Erittely auttaa osallistujia näkemään tarkan kulurakenteen.",
+      "authoritativeNote": "Kohteiden summa määrää kulun kokonaissumman.",
+      "leaveAction": "Poistu erittelystä",
+      "switchDialog": {
+        "title": "Vaihdetaanko jakotapaa?",
+        "description": "Jakotavan vaihtaminen nollaa kohteittaisen erittelyn.",
+        "confirm": "Vaihda jakotapaa",
+        "cancel": "Peruuta"
+      },
+      "leaveDialog": {
+        "title": "Hylätäänkö erittely?",
+        "description": "Jos poistut erittelystä, syötetyt kohteet menetetään.",
+        "confirm": "Hylkää erittely",
+        "cancel": "Peruuta"
+      }
+    },
     "DeletePopup": {
       "label": "Poista",
       "title": "Poistetaanko tämä kulu?",
@@ -301,7 +402,7 @@
       "yes": "Kyllä",
       "cancel": "Peruuta"
     },
-    "attachDocuments": "Liitä dokumenttejä",
+    "attachDocuments": "Liitä kuvia",
     "create": "Lisää kulu",
     "creating": "Luodaan kulua…",
     "save": "Tallenna",
@@ -317,7 +418,7 @@
       "postSaveTitle": "Expense split across group and direct records",
       "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
       "postSaveGroupHalfLine": "The group expense is {amount}",
-      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "singlePayerNote": "Kun lisäät ryhmän ulkopuolisia osallistujia ({names}), kulu jaetaan kahtia, joten vain yksi henkilö voi maksaa sen.",
       "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
       "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
       "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
@@ -326,7 +427,16 @@
       "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
+  "ExpenseTitleInput": {
+    "noSuggestions": "Ei ehdotuksia saatavilla",
+    "clear": "Tyhjennä"
+  },
   "ExpenseDocumentsInput": {
+    "addImage": "Lisää kuva",
+    "addDocumentHint": "Voit lisätä kuvia tai kuitteja.",
+    "previewDocument": "Esikatsele {name}",
+    "removeDocument": "Poista {name}",
+    "uploadingDocument": "Ladataan tiedostoa…",
     "TooBigToast": {
       "title": "Tiedosto on liian suuri",
       "description": "Maksimikoko ladattavalle tiedostolle on {maxSize}. Tiedostosi on {size}."
@@ -388,6 +498,8 @@
       "noOneOwesYou": "Kukaan ei ole sinulle velkaa tässä ryhmässä.",
       "youOweNoOne": "Et ole kenellekään velkaa tässä ryhmässä.",
       "confirmSettle": "Kirjataanko, että maksoit {amount} käyttäjälle {name}?",
+      "confirmSettleReceived": "Haluatko kirjata, että {name} maksoi sinulle {amount}?",
+      "settleReceivedTooltip": "Kirjaa vastaanotettu maksu",
       "youAreOwed": "{name} on sinulle velkaa {amount}",
       "youOwe": "Olet velkaa {name} {amount}",
       "allSettled": "Olet tasannut tässä ryhmässä.",
@@ -522,16 +634,27 @@
   "Activity": {
     "title": "Tapahtumat",
     "description": "Yleisnäkymä ryhmän kaikista tapahtumista.",
+    "globalTitle": "Tapahtumat",
+    "globalDescription": "Yleiskatsaus kaikista tapahtumista ryhmissäsi.",
+    "globalListTitle": "Toimintahistoria",
+    "globalListDescription": "Viimeisimmät päivitykset kaikissa ryhmissäsi.",
+    "globalNoActivity": "Ryhmissäsi ei ole vielä tapahtumia.",
     "noActivity": "Ryhmässäsi ei ole vielä tapahtumia.",
+    "error": "Toiminnan lataaminen epäonnistui.",
+    "retry": "Yritä uudelleen",
     "someone": "Tuntematon",
     "settingsModified": "<strong>{participant}</strong> muokkasi ryhmän asetuksia.",
     "expenseCreated": "<strong>{participant}</strong> lisäsi kulun <em>{expense}</em>.",
     "expenseUpdated": "<strong>{participant}</strong> muokkasi kulua <em>{expense}</em>.",
     "expenseDeleted": "<strong>{participant}</strong> poisti kulun <em>{expense}</em>.",
+    "paymentRecorded": "Käyttäjä <strong>{participant}</strong> kirjasi maksun.",
+    "paymentUpdated": "Käyttäjä <strong>{participant}</strong> päivitti maksun.",
+    "paymentDeleted": "Käyttäjä <strong>{participant}</strong> poisti maksun.",
     "expenseCreatedDetail": "Lisännyt <strong>{participant}</strong>.",
     "expenseUpdatedDetail": "Muokannut <strong>{participant}</strong>.",
     "paymentRecordedDetail": "Kirjannut <strong>{participant}</strong>.",
     "paymentUpdatedDetail": "Muokannut <strong>{participant}</strong>.",
+    "reimbursement": "Maksu",
     "Groups": {
       "today": "Tänään",
       "yesterday": "Eilen",
@@ -563,10 +686,7 @@
     "showLess": "Näytä vähemmän",
     "yes": "Kyllä",
     "no": "Ei",
-    "fieldChangesCount": "{count} kentän muutosta",
-    "globalTitle": "Tapahtumat",
-    "globalDescription": "Yleiskatsaus kaikista tapahtumista ryhmissäsi.",
-    "globalNoActivity": "Ryhmissäsi ei ole vielä tapahtumia."
+    "fieldChangesCount": "{count} kentän muutosta"
   },
   "Information": {
     "title": "Tiedot",
@@ -590,6 +710,7 @@
     "max50": "Syötä enintään 50 merkkiä.",
     "duplicateParticipantName": "Tämä nimi on jo toisella osallistujalla.",
     "titleRequired": "Otsikko puuttuu.",
+    "paymentCategoryNotAllowed": "Maksu ei ole sallittu kategoria kuluille.",
     "invalidNumber": "Epäkelpo numero.",
     "invalidExpression": "Virheellinen lauseke. Käytä numeroita ja operaattoreita +, -, *, /.",
     "amountRequired": "Summa puuttuu.",
@@ -597,14 +718,27 @@
     "amountTenMillion": "Summan pitää olla pienempi kuin 10 000 000.",
     "ratePositive": "Kurssin on oltava ehdottomasti suurempi kuin nolla.",
     "paidByRequired": "Osallistuja puuttuu.",
+    "paidToRequired": "Sinun on valittava maksun vastaanottaja.",
+    "paidToDifferent": "Maksajan ja vastaanottajan on oltava eri henkilöitä.",
     "paidForMin1": "Valitse vähintään yksi osallistuja.",
-    "noZeroShares": "Jokaisen osuuden täytyy olla suurempi kuin 0.",
-    "amountSum": "Osuuksien summan täytyy vastata kulun summaa.",
-    "percentageSum": "Prosenttiosuuksien summan täytyy olla 100.",
     "paidByAmountPositive": "Each payer's amount must be greater than zero.",
     "paidByAmountSum": "Payer amounts must sum to the expense total.",
     "paidByDuplicateParticipants": "Each payer can only appear once.",
-    "reimbursementSinglePayer": "Reimbursements support only a single payer."
+    "reimbursementSinglePayer": "Reimbursements support only a single payer.",
+    "noZeroShares": "Jokaisen osuuden täytyy olla suurempi kuin 0.",
+    "amountSum": "Osuuksien summan täytyy vastata kulun summaa.",
+    "percentageSum": "Prosenttiosuuksien summan täytyy olla 100.",
+    "itemsRequired": "Lisää vähintään yksi kohde tai poista erittely käytöstä.",
+    "itemNeedsAssignment": "Liitä kukin kohde vähintään yhdelle henkilölle.",
+    "itemTitleRequired": "Anna kohteelle nimi.",
+    "itemAmountNonNegative": "Kohteen summa ei voi olla negatiivinen.",
+    "itemQuantityPositive": "Määrän on oltava kokonaisluku vähintään 1.",
+    "taxNonNegative": "Vero ei voi olla negatiivinen.",
+    "tipNonNegative": "Tippi ei voi olla negatiivinen.",
+    "itemAssignmentUnknownParticipant": "Kohde on liitetty henkilölle, joka ei ole jaossa mukana.",
+    "itemizationNotAllowedHere": "Maksuja ja toistuvia kuluja ei voi eritellä kohteittain.",
+    "itemsExceedAmount": "Kohteiden summa ylittää kulun kokonaissumman.",
+    "remainderShareUnknownParticipant": "Jäljelle jäävä jako sisältää henkilön, joka ei ole mukana kulussa."
   },
   "Categories": {
     "search": "Etsi kategoriaa...",
@@ -688,6 +822,64 @@
       "heading": "Other currencies"
     }
   },
+  "ExpenseImport": {
+    "button": "Tuo kuluja",
+    "fromKnots": "Tuo Knotsista",
+    "fromSplitwise": "Tuo Splitwisesta"
+  },
+  "KnotsImport": {
+    "title": "Tuo Knotsista",
+    "description": "Lataa Knots-vientitiedosto. Jos tiedostossa on henkilöitä, jotka eivät vielä kuulu tähän ryhmään, voit lisätä heidät täällä ennen tuontia.",
+    "fileLabel": "Knots-vientitiedosto",
+    "previewLabel": "Esikatselu (ensimmäiset 10 riviä)",
+    "clear": "Tyhjennä",
+    "cancel": "Peruuta",
+    "import": "Tuo kulut",
+    "addAndImport": "Lisää jäsenet ja tuo",
+    "importing": "Tuodaan...",
+    "analyzing": "Analysoidaan vientiä…",
+    "expenseCount": "{count, plural, one {# kulu löytyi} other {# kulua löytyi}}",
+    "matchedParticipants": "Jo ryhmässä: {names}",
+    "missingParticipantsLabel": "Tähän ryhmään lisättävät henkilöt",
+    "missingParticipantsDescription": "Anna jokaiselle henkilölle sähköpostiosoite. Uudet tilit luodaan automaattisesti ja liitetään tähän ryhmään. Jos heillä on jo tili, heidät lisätään jäseniksi.",
+    "expenseReferences": "{count, plural, one {# kulu} other {# kulua}}",
+    "emailLabel": "Sähköposti",
+    "emailPlaceholder": "nimi@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "He voivat rekisteröityä myöhemmin tällä sähköpostilla päästäkseen ryhmään.",
+    "errors": {
+      "invalidJson": "Virheellinen JSON-tiedosto.",
+      "invalidFormat": "Tämä tiedosto ei ole kelvollinen Knots-vienti.",
+      "noExpenses": "Vienti ei sisällä kuluja."
+    },
+    "toast": {
+      "invalidFileType": {
+        "title": "Virheellinen tiedostotyyppi",
+        "description": "Valitse Knots-vientitiedosto JSON- tai CSV-muodossa."
+      },
+      "noContent": {
+        "title": "Ei tiedoston sisältöä",
+        "description": "Valitse ensin Knots-vientitiedosto."
+      },
+      "missingEmail": {
+        "title": "Sähköposti vaaditaan",
+        "description": "Anna sähköposti henkilölle {name}."
+      },
+      "success": {
+        "title": "Tuonti onnistui",
+        "description": "{count} kulua tuotiin onnistuneesti Knotsista."
+      },
+      "error": {
+        "title": "Tuonti epäonnistui",
+        "description": "Knots-vientitiedoston tuonti epäonnistui."
+      },
+      "cancelled": {
+        "title": "Tuonti peruutettu",
+        "description": "Tuonti pysäytettiin ennen valmistumista."
+      }
+    }
+  },
   "SplitwiseImport": {
     "button": "Import from Splitwise",
     "title": "Import from Splitwise",
@@ -698,6 +890,20 @@
     "cancel": "Cancel",
     "import": "Import Expenses",
     "importing": "Importing...",
+    "analyzing": "Analyzing CSV…",
+    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
+    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
+    "participantMappingLabel": "Match Splitwise names",
+    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
+    "mapToMemberLabel": "Group member",
+    "mapToMemberPlaceholder": "Select a member",
+    "addNewMemberOption": "Add new member by email",
+    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "They can register later with this email to access the group.",
     "toast": {
       "invalidFileType": {
         "title": "Invalid file type",
@@ -706,6 +912,14 @@
       "noContent": {
         "title": "No CSV content",
         "description": "Please select a CSV file first."
+      },
+      "missingEmail": {
+        "title": "Email required",
+        "description": "Enter an email for {name}."
+      },
+      "incompleteMapping": {
+        "title": "Mapping incomplete",
+        "description": "Choose a member or email for {name}."
       },
       "success": {
         "title": "Import successful",
@@ -718,85 +932,213 @@
       "cancelled": {
         "title": "Tuonti peruutettu",
         "description": "Tuonti pysäytettiin ennen valmistumista."
-      },
-      "missingEmail": {
-        "title": "Email required",
-        "description": "Enter an email for {name}."
-      },
-      "incompleteMapping": {
-        "title": "Mapping incomplete",
-        "description": "Choose a member or email for {name}."
       }
-    },
-    "analyzing": "Analyzing CSV…",
-    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
-    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
-    "participantMappingLabel": "Match Splitwise names",
-    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
-    "mapToMemberLabel": "Group member",
-    "mapToMemberPlaceholder": "Select a member",
-    "addNewMemberOption": "Add new member by email",
-    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
-    "emailLabel": "Email",
-    "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group.",
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
+    }
   },
   "ProfileSettings": {
-    "title": "Profiilin asetukset",
-    "emailTitle": "Sähköposti",
-    "emailDescription": "Sähköpostiosoitettasi ei voi muuttaa.",
+    "title": "Tilin asetukset",
+    "back": "Takaisin",
+    "Profile": {
+      "photoLabel": "Profiilikuva",
+      "photoDescription": "Lataa profiilikuva, joka näkyy kavereille ja ryhmille.",
+      "photoAlt": "Profiilikuvasi",
+      "choosePhoto": "Valitse kuva",
+      "removePhoto": "Poista kuva",
+      "photoUpdatedToast": "Profiilikuva päivitetty.",
+      "photoRemovedToast": "Profiilikuva poistettu.",
+      "photoUnavailableToast": "Kuvatallennus ei ole käytettävissä.",
+      "photoInvalidToast": "Valitse kelvollinen kuvatiedosto (PNG, JPG, WebP) alle 5 Mt.",
+      "photoFailedToast": "Kuvan lataaminen epäonnistui.",
+      "nameLabel": "Näyttönimi",
+      "namePlaceholder": "Oma nimesi",
+      "nameError": "Anna kelvollinen nimi.",
+      "nameUpdatedToast": "Näyttönimi päivitetty.",
+      "saveChanges": "Tallenna muutokset",
+      "saving": "Tallennetaan…"
+    },
+    "profileTitle": "Profiili",
+    "appPreferencesTitle": "Sovellusasetukset",
+    "notificationsTitle": "Ilmoituskanavat",
+    "notificationsDescription": "Hallitse, miten saat ilmoituksia toiminnasta ryhmissäsi.",
+    "notifications": {
+      "masterSwitchAria": "Ilmoitukset",
+      "saving": "Tallennetaan asetuksia…",
+      "saveSuccess": "Ilmoitusasetukset tallennettu.",
+      "saveError": "Ilmoitusasetusten tallentaminen epäonnistui.",
+      "comingSoon": "Tulossa pian",
+      "done": "Valmis",
+      "channelSelectorAria": "Toimituskanavat kohteelle {category}",
+      "emailNeedsVerification": "Vahvista sähköpostiosoitteesi ottaaksesi sähköposti-ilmoitukset käyttöön.",
+      "channelLabel": {
+        "off": "Pois",
+        "email": "Sähköposti",
+        "push": "Push",
+        "emailAndPush": "Sähköposti ja push"
+      },
+      "pushDisabled": {
+        "unsupported": "Tämä selain ei tue push-ilmoituksia.",
+        "unconfigured": "Push-ilmoituksia ei ole määritetty tälle palvelimelle.",
+        "iosInstall": "Lisää Knots kotivalikkoon iOS:ssä saadaksesi push-ilmoituksia.",
+        "denied": "Ilmoitusoikeus evätty. Ota se käyttöön selaimen asetuksista."
+      },
+      "thisDevice": {
+        "title": "Tämän laitteen push-ilmoitukset",
+        "description": "Vastaanota välittömiä ilmoituksia tässä selaimessa tapahtumista.",
+        "checking": "Tarkistetaan tilausta…",
+        "enabledLabel": "Push-ilmoitukset ovat käytössä tällä laitteella.",
+        "disabledLabel": "Push-ilmoitukset eivät ole käytössä tällä laitteella.",
+        "pushSelectedWarning": "Olet valinnut push-ilmoitukset tietyille kategorioille, mutta tämä laite ei ole tilannut niitä.",
+        "enable": "Ota käyttöön tällä laitteella",
+        "disable": "Poista käytöstä tällä laitteella",
+        "error": "Push-tilauksen päivittäminen epäonnistui."
+      },
+      "groups": {
+        "groups-and-friends": "Ryhmät ja kaverit",
+        "expenses": "Kulut",
+        "summaries": "Yhteenvedot"
+      },
+      "categories": {
+        "added-to-group": "Lisätty ryhmään",
+        "friend-added": "Kaveri lisätty",
+        "budget-alert": "Budjettivaroitus",
+        "expense-created": "Kulu luotu",
+        "recurring-expense-created": "Toistuva kulu luotu",
+        "expense-changed": "Kulu muuttunut tai poistettu",
+        "expense-comment": "Kulun kommentti",
+        "weekly-summary": "Viikoittainen yhteenveto"
+      },
+      "categoryDescriptions": {
+        "weekly-summary": "Viikoittainen katsaus kuluihisi ja saldoihisi."
+      }
+    },
+    "emailTitle": "Sähköpostiosoite",
+    "emailDescription": "Käytetään ilmoituksiin ja kirjautumiseen.",
     "displayNameTitle": "Näyttönimi",
+    "usernameTitle": "Käyttäjätunnus",
+    "usernameDescription": "Yksilöllinen tunnuksesi Knotsissa.",
     "passwordTitle": "Salasana",
+    "passkeyTitle": "Pääsyavaimet (Passkeys)",
+    "Email": {
+      "description": "Sähköpostiosoitteen vaihtaminen vaatii uuteen osoitteeseen lähetetyn vahvistuskoodin.",
+      "changeButton": "Vaihda sähköposti",
+      "dialogTitle": "Vaihda sähköpostiosoite",
+      "dialogDescription": "Anna uusi sähköpostiosoitteesi. Lähetämme siihen vahvistuskoodin.",
+      "newEmailLabel": "Uusi sähköposti",
+      "newEmailPlaceholder": "sinä@esimerkki.fi",
+      "sendCode": "Lähetä koodi",
+      "cancel": "Peruuta",
+      "otpTitle": "Syötä vahvistuskoodi",
+      "otpDescription": "Lähetimme 6-numeroisen koodin osoitteeseen {email}. Syötä se alle.",
+      "codeLabel": "Vahvistuskoodi",
+      "resend": "Lähetä uudelleen",
+      "resendIn": "Lähetä uudelleen ({seconds} s)",
+      "useDifferentEmail": "Käytä toista sähköpostia",
+      "verify": "Vahvista ja vaihda",
+      "successToast": "Sähköpostiosoite päivitetty.",
+      "errorInUse": "Tämä sähköpostiosoite on jo käytössä.",
+      "errorInvalid": "Anna kelvollinen sähköpostiosoite.",
+      "errorSame": "Uuden sähköpostin on oltava eri kuin nykyinen.",
+      "errorInvalidCode": "Virheellinen vahvistuskoodi.",
+      "errorExpired": "Vahvistuskoodi on vanhentunut. Pyydä uusi.",
+      "errorRateLimited": "Liian monta yritystä. Yritä hetken kuluttua uudelleen.",
+      "errorSendFailed": "Vahvistussähköpostin lähetys epäonnistui. Yritä uudelleen."
+    },
+    "Password": {
+      "description": "Vaihda salasanasi tai aseta salasana, jos käytät tällä hetkellä vain pääsyavaimia.",
+      "noPasswordDescription": "Voit kirjautua sisään sähköpostilinkillä tai pääsyavaimella. Lisää salasana, jos haluat toisen kirjautumistavan.",
+      "changeButton": "Vaihda salasana",
+      "setButton": "Aseta salasana",
+      "removeButton": "Poista salasana",
+      "changeDialogTitle": "Vaihda salasana",
+      "changeDialogDescription": "Syötä nykyinen salasanasi ja valitse uusi.",
+      "setDialogTitle": "Aseta salasana",
+      "setDialogDescription": "Lisää salasana kirjautuaksesi sähköpostilla ja salasanalla.",
+      "setSuccessToast": "Salasana asetettu onnistuneesti.",
+      "removeDialogTitle": "Poista salasana",
+      "removeDialogDescription": "Voit edelleen kirjautua sisään sähköpostilinkillä tai pääsyavaimella. Syötä nykyinen salasanasi vahvistaaksesi.",
+      "currentLabel": "Nykyinen salasana",
+      "newLabel": "Uusi salasana",
+      "confirmLabel": "Vahvista uusi salasana",
+      "cancel": "Peruuta",
+      "removeConfirm": "Poista",
+      "changeSuccessToast": "Salasana vaihdettu onnistuneesti.",
+      "removeSuccessToast": "Salasana poistettu.",
+      "errorCurrentRequired": "Nykyinen salasana vaaditaan.",
+      "errorMismatch": "Salasanat eivät täsmää.",
+      "errorRequirements": "Salasanan on oltava vähintään 8 merkkiä pitkä.",
+      "errorSame": "Uuden salasanan on oltava eri kuin nykyinen.",
+      "errorCurrentIncorrect": "Nykyinen salasana on väärin.",
+      "forgotPrefix": "Unohditko salasanasi?",
+      "forgotLink": "Nollaa täältä",
+      "rule_TOO_SHORT": "Vähintään 8 merkkiä",
+      "rule_MISSING_UPPERCASE": "Yksi iso kirjain",
+      "rule_MISSING_LOWERCASE": "Yksi pieni kirjain",
+      "rule_MISSING_DIGIT": "Yksi numero"
+    },
+    "Passkey": {
+      "description": "Kirjaudu turvallisesti sisään biometrisillä tunnisteilla tai laitteen lukituksella ilman salasanaa.",
+      "unavailable": "Pääsyavaimet eivät ole käytettävissä tällä laitteella.",
+      "addButton": "Lisää pääsyavain",
+      "empty": "Ei rekisteröityjä pääsyavaimia vielä.",
+      "created": "Lisätty {date}",
+      "badgeSynced": "Synkronoitu",
+      "badgeDeviceBound": "Laitesidonnainen",
+      "badgeBackedUp": "Varmuuskopioitu",
+      "addDialogTitle": "Lisää pääsyavain",
+      "addDialogDescription": "Anna pääsyavaimelle tunnistettava nimi ja noudata laitteesi ohjeita.",
+      "nicknameLabel": "Nimi (valinnainen)",
+      "nicknamePlaceholder": "esim. Oma kannettava",
+      "confirmPasswordLabel": "Nykyinen salasana",
+      "confirmPasswordHint": "Vahvista salasanasi lisätäksesi pääsyavaimen.",
+      "addConfirm": "Lisää pääsyavain",
+      "cancel": "Peruuta",
+      "addSuccessToast": "Pääsyavain lisätty.",
+      "addFailedToast": "Pääsyavaimen lisääminen epäonnistui.",
+      "errorPasswordRequired": "Anna nykyinen salasana.",
+      "deleteAria": "Poista {name}",
+      "deleteDialogTitle": "Poistetaanko pääsyavain?",
+      "deleteDialogDescription": "Pääsyavainta ”{name}” ei voi enää käyttää sisäänkirjautumiseen.",
+      "deleteConfirm": "Poista",
+      "deleteSuccessToast": "Pääsyavain poistettu.",
+      "deleteFailedToast": "Pääsyavaimen poistaminen epäonnistui.",
+      "reauthTitle": "Kirjaudu uudelleen lisätäksesi pääsyavaimen",
+      "reauthDescription": "Edellisestä sisäänkirjautumisestasi on yli 30 päivää. Kirjaudu uudelleen salasanalla, sähköpostilinkillä tai pääsyavaimella ja palaa sitten tänne.",
+      "reauthConfirm": "Kirjaudu uudelleen"
+    },
     "preferencesTitle": "Asetukset",
-    "preferencesDescription": "Mukauta kieltä ja ulkoasua.",
+    "preferencesDescription": "Muokkaa kieltä, teemaa ja oletusvaluuttaa.",
     "languageLabel": "Kieli",
     "themeLabel": "Teema",
+    "blockedUsersTitle": "Estetyt käyttäjät",
+    "blockedUsersDescription": "Hallitse käyttäjiä, jotka olet estänyt.",
+    "blockedUsersRowLabel": "Estetyt käyttäjät",
+    "blockedUsersRowDescription": "Näytä ja hallitse estettyjä käyttäjiä.",
     "accountTitle": "Tili",
     "signOut": "Kirjaudu ulos",
+    "signOutDescription": "Kirjaudu ulos tältä laitteelta.",
+    "signOutAllTitle": "Kirjaudu ulos kaikilta laitteilta",
+    "signOutAllDescription": "Päätä kaikki aktiiviset istunnot kaikilla laitteilla.",
     "signingOut": "Kirjaudutaan ulos…",
-    "NameForm": {
-      "nameRequired": "Nimi on pakollinen",
-      "nameMaxLength": "Nimi saa olla enintään 100 merkkiä",
-      "successToast": "Näyttönimi päivitetty onnistuneesti.",
-      "label": "Näyttönimi",
-      "placeholder": "Syötä näyttönimesi",
-      "saving": "Tallennetaan…",
-      "submit": "Tallenna nimi"
-    },
-    "PasswordForm": {
-      "currentPasswordRequired": "Nykyinen salasana on pakollinen",
-      "newPasswordRequired": "Uusi salasana on pakollinen",
-      "confirmPasswordRequired": "Vahvista uusi salasanasi",
-      "passwordsDoNotMatch": "Salasanat eivät täsmää",
-      "successToast": "Salasana vaihdettu onnistuneesti.",
-      "currentPasswordIncorrect": "Nykyinen salasana on virheellinen",
-      "newPasswordSameAsCurrent": "Uuden salasanan on oltava eri kuin nykyinen",
-      "passwordRequirementsNotMet": "Salasana ei täytä vaatimuksia",
-      "currentPasswordLabel": "Nykyinen salasana",
-      "newPasswordLabel": "Uusi salasana",
-      "confirmPasswordLabel": "Vahvista uusi salasana",
-      "passwordHint": "Vähintään 8, enintään 128 merkkiä. Sisältää vähintään yhden ison kirjaimen, pienen kirjaimen ja numeron.",
-      "changingPassword": "Vaihdetaan salasanaa…",
-      "submit": "Vaihda salasana",
-      "errorTooShort": "Vähintään 8 merkkiä",
-      "errorTooLong": "Enintään 128 merkkiä",
-      "errorMissingUppercase": "Sisältää vähintään yhden ison kirjaimen",
-      "errorMissingLowercase": "Sisältää vähintään yhden pienen kirjaimen",
-      "errorMissingDigit": "Sisältää vähintään yhden numeron"
-    },
-    "blockedUsersTitle": "Estetyt käyttäjät",
-    "blockedUsersDescription": "Hallitse estämiäsi käyttäjiä. Estetyt käyttäjät eivät voi lisätä sinua ryhmiin tai lähettää sinulle kaveripyyntöjä.",
     "Preferences": {
       "timezoneLabel": "Aikavyöhyke",
       "timezoneSelect": "Valitse aikavyöhyke…",
       "timezoneSearch": "Etsi aikavyöhykettä…",
       "timezoneEmpty": "Aikavyöhykettä ei löytynyt.",
       "timezoneSaved": "Aikavyöhyke päivitetty.",
+      "timezoneHelp": "Määrittää oletusajan uusille kuluille ja toistuville aikatauluille.",
+      "languageSearch": "Etsi kieltä…",
+      "languageEmpty": "Kieltä ei löytynyt.",
+      "languageCommon": "Yleiset kielet",
+      "languageOther": "Muut kielet",
       "currencyLabel": "Oletusvaluutta",
       "currencySaved": "Oletusvaluutta päivitetty."
     },
+    "appPreferencesDescription": "Mukauta tilisi kieltä, teemaa ja oletusvaluuttaa.",
+    "preferencesSaving": "Tallennetaan asetuksia…",
+    "themeSaved": "Teema päivitetty.",
+    "themeLight": "Vaalea",
+    "themeDark": "Tumma",
+    "themeSystem": "Järjestelmä",
     "SignOutAll": {
       "button": "Kirjaudu ulos kaikilta laitteilta",
       "dialogTitle": "Kirjaudutaanko ulos kaikilta laitteilta?",
@@ -815,14 +1157,52 @@
       "or": "tai estä sähköpostilla",
       "emailPlaceholder": "nimi@esimerkki.fi",
       "block": "Estä",
-      "unblock": "Poista esto",
-      "empty": "Et ole estänyt ketään.",
+      "unblock": "Kumoa esto",
+      "empty": "Sinulla ei ole estettyjä käyttäjiä.",
       "blockedToast": "Käyttäjä estetty onnistuneesti.",
       "unblockedToast": "Käyttäjän esto poistettu.",
       "confirmBlockTitle": "Estetäänkö tämä kaveri?",
       "confirmBlockDescription": "Käyttäjän {name} estäminen poistaa hänet myös kaverilistaltasi. Hänelle ei ilmoiteta estosta.",
       "confirmBlockCancel": "Peruuta",
       "confirmBlockAction": "Estä ja poista kaveri"
+    },
+    "NameForm": {
+      "nameRequired": "Näyttönimi vaaditaan.",
+      "nameMaxLength": "Nimi saa olla enintään 100 merkkiä",
+      "successToast": "Näyttönimi päivitetty onnistuneesti.",
+      "label": "Näyttönimi",
+      "placeholder": "Syötä näyttönimesi",
+      "saving": "Tallennetaan…",
+      "submit": "Tallenna nimi"
+    },
+    "UsernameForm": {
+      "successToast": "Käyttäjätunnus päivitetty.",
+      "label": "Käyttäjätunnus",
+      "placeholder": "oma-kayttajatunnus",
+      "description": "Käytetään profiilisi osoitteessa. Vain pieniä kirjaimia, numeroita ja yhdysmerkkejä.",
+      "saving": "Tallennetaan…",
+      "submit": "Tallenna käyttäjätunnus"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "Nykyinen salasana vaaditaan.",
+      "newPasswordRequired": "Uusi salasana vaaditaan.",
+      "confirmPasswordRequired": "Vahvista uusi salasana.",
+      "passwordsDoNotMatch": "Salasanat eivät täsmää.",
+      "successToast": "Salasana vaihdettu onnistuneesti.",
+      "currentPasswordIncorrect": "Nykyinen salasana on väärin.",
+      "newPasswordSameAsCurrent": "Uuden salasanan on oltava eri kuin nykyinen.",
+      "passwordRequirementsNotMet": "Salasana ei täytä vaatimuksia.",
+      "currentPasswordLabel": "Nykyinen salasana",
+      "newPasswordLabel": "Uusi salasana",
+      "confirmPasswordLabel": "Vahvista uusi salasana",
+      "passwordHint": "8–128 merkkiä. On sisällettävä vähintään yksi iso kirjain, yksi pieni kirjain ja yksi numero.",
+      "changingPassword": "Vaihdetaan salasanaa…",
+      "submit": "Vaihda salasana",
+      "errorTooShort": "Vähintään 8 merkkiä",
+      "errorTooLong": "Enintään 128 merkkiä",
+      "errorMissingUppercase": "Sisältää vähintään yhden ison kirjaimen",
+      "errorMissingLowercase": "Sisältää vähintään yhden pienen kirjaimen",
+      "errorMissingDigit": "Sisältää vähintään yhden numeron"
     }
   },
   "Friends": {
@@ -908,6 +1288,7 @@
       "title": "Expenses with {name}",
       "description": "All expenses you share with this friend, across groups.",
       "backToFriends": "Back to friends",
+      "backToFriend": "Takaisin kaveriin {name}",
       "listTitle": "Expense history",
       "listDescription": "Direct expenses and expenses from shared groups.",
       "create": "Add expense",
@@ -950,6 +1331,10 @@
       "friendOwesYou": "{name} on sinulle velkaa {amount}",
       "youOweFriend": "Olet velkaa {name} {amount}",
       "paid": "{payer} maksoi {payee} {amount}",
+      "deletePayment": "Poista",
+      "deletePaymentConfirm": "Haluatko varmasti poistaa tämän maksun?",
+      "deletePaymentSuccess": "Maksu poistettu onnistuneesti",
+      "deletePaymentError": "Maksun poistaminen epäonnistui",
       "groups": {
         "upcoming": "Tulossa",
         "thisWeek": "Tällä viikolla",
@@ -965,14 +1350,15 @@
       "paid": "{payer} maksoi {payee}",
       "addedBy": "Lisännyt {name} {date}",
       "disclaimer": "Tämä maksu kirjattiin \"Kirjaa maksu\" -toiminnolla. Rahaa ei siirretty.",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "readOnlyNotice": "Tätä maksua ei voi muokata tai poistaa erikseen, koska se on osa velkojen tasausta.",
       "edit": "Muokkaa",
       "delete": "Poista",
       "deleteConfirm": "Poistetaanko tämä maksu?",
       "deleteDescription": "Tämä muuttaa saldoja kuin maksua ei olisi koskaan tapahtunut.",
       "deleting": "Deleting…",
       "notFound": "Maksua ei löytynyt.",
-      "backToFriend": "Takaisin: {name}",
-      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group."
+      "backToFriend": "Takaisin: {name}"
     },
     "DirectExpense": {
       "title": "Lisää kulu",
@@ -986,13 +1372,17 @@
       "dateLabel": "Päivämäärä",
       "attachLabel": "Liitä kuva tai PDF",
       "notesLabel": "Muistiinpanot",
-      "notesPlaceholder": "Lisää muistiinpanot (valinnainen)",
+      "notesPlaceholder": "Lisää muistiinpanoja (valinnainen)",
       "save": "Tallenna",
       "saving": "Tallennetaan…",
       "cancel": "Peruuta",
       "success": "Kulu lisätty.",
       "error": "Kulua ei voitu lisätä.",
       "persistError": "Lomakkeen tietoja ei voitu tallentaa. Navigointi ei ole käytettävissä."
+    },
+    "Settings": {
+      "currencyTitle": "Päävaluutta",
+      "currencyDescription": "Käytetään suorissa kuluissa ja maksuissa kavereiden kesken."
     },
     "SettleAll": {
       "button": "Tasaa kaikki",
@@ -1016,6 +1406,7 @@
     "memberPromoted": "Jäsen ylennetty omistajaksi.",
     "memberDemoted": "Jäsen alennettu tavalliseksi jäseneksi.",
     "addMember": "Lisää jäsen",
+    "pickFriend": "Choose from your friends or enter an email.",
     "adding": "Lisätään…",
     "add": "Lisää",
     "cancel": "Peruuta",
@@ -1024,8 +1415,7 @@
     "leave": "Poistu",
     "removeFromGroup": "Poista ryhmästä",
     "promoteToOwner": "Ylennä omistajaksi",
-    "demoteToMember": "Alenna jäseneksi",
-    "pickFriend": "Choose from your friends or enter an email."
+    "demoteToMember": "Alenna jäseneksi"
   },
   "MyGroups": {
     "title": "Omat ryhmät",
@@ -1035,7 +1425,9 @@
     "noGroupsHint": "Luo ryhmä aloittaaksesi kulujen jakamisen muiden kanssa.",
     "createGroup": "Luo ryhmä",
     "createGroupTitle": "Luo uusi ryhmä",
-    "createGroupDescription": "Anna ryhmälle nimi. Voit kutsua jäseniä luomisen jälkeen.",
+    "createGroupDescription": "Anna ryhmälle nimi ja valuutta. Voit kutsua osallistujia luomisen jälkeen.",
+    "invalidCurrency": "Valitse kelvollinen valuutta.",
+    "currencySymbolRequired": "Anna valuuttasymboli.",
     "groupNameLabel": "Ryhmän nimi",
     "characters": "merkkiä",
     "leaveGroup": "Poistu ryhmästä",
@@ -1055,100 +1447,6 @@
     "deleteGroupConfirmCancel": "Peruuta",
     "deleteGroupConfirmAction": "Poista pysyvästi"
   },
-  "UserMenu": {
-    "profileSettings": "Tilin asetukset",
-    "signingOut": "Kirjaudutaan ulos…",
-    "signOut": "Kirjaudu ulos"
-  },
-  "Notifications": {
-    "settings": "Ilmoitusasetukset",
-    "subscribe": "Ota ilmoitukset käyttöön",
-    "unsubscribe": "Poista ilmoitukset käytöstä",
-    "selectParticipant": "Ilmoita muiden tekemistä muutoksista",
-    "noParticipant": "Kaikki muutokset",
-    "permissionDenied": "Ilmoituslupa evättiin. Ota se käyttöön selaimen asetuksista.",
-    "notSupported": "Push-ilmoituksia ei tueta tällä laitteella.",
-    "expenseCreated": "{actor} lisäsi \"{title}\"",
-    "expenseUpdated": "{actor} päivitti \"{title}\"",
-    "expenseDeleted": "{actor} poisti \"{title}\"",
-    "groupUpdated": "{actor} päivitti ryhmän \"{group}\"",
-    "notificationTitle": "Knots – {group}",
-    "defaultBody": "Uutta toimintaa ryhmässäsi",
-    "filterHint": "Valitse, keneltä haluat ilmoituksia ja mitkä tapahtumat.",
-    "subscribeError": "Ilmoitusten käyttöönotto epäonnistui. Yritä uudelleen.",
-    "membersLabel": "Ilmoita minulle",
-    "notifyAllMembers": "Kaikki ryhmässä",
-    "notifySpecificMembers": "Tai vain nämä jäsenet:",
-    "eventsLabel": "Tapahtumat",
-    "eventCreate": "Kulu luotu",
-    "eventUpdate": "Kulu päivitetty",
-    "eventDelete": "Kulu poistettu",
-    "selectAtLeastOneFilter": "Valitse vähintään yksi jäsen tai tapahtuma.",
-    "channelsLabel": "Kanavat",
-    "pushLabel": "Push-ilmoitukset",
-    "pushUnavailable": "Push-ilmoitukset eivät ole käytettävissä tässä asennuksessa.",
-    "emailLabel": "Sähköposti-ilmoitukset",
-    "enableChannelHint": "Ota kanava käyttöön, jotta voit määrittää, kenestä ja mistä saat ilmoituksia.",
-    "pushSyncWarning": "Asetukset tallennettiin, mutta push-ilmoitussuodattimen synkronointi epäonnistui."
-  },
-  "ExpenseImport": {
-    "button": "Tuo kuluja",
-    "fromKnots": "Tuo Knotsista",
-    "fromSplitwise": "Tuo Splitwisesta"
-  },
-  "KnotsImport": {
-    "title": "Tuo Knotsista",
-    "description": "Lataa Knots-vientitiedosto. Jos tiedostossa on henkilöitä, jotka eivät vielä kuulu tähän ryhmään, voit lisätä heidät täällä ennen tuontia.",
-    "fileLabel": "Knots-vientitiedosto",
-    "previewLabel": "Esikatselu (ensimmäiset 10 riviä)",
-    "clear": "Tyhjennä",
-    "cancel": "Peruuta",
-    "import": "Tuo kulut",
-    "addAndImport": "Lisää jäsenet ja tuo",
-    "importing": "Tuodaan...",
-    "analyzing": "Analysoidaan vientiä…",
-    "expenseCount": "{count, plural, one {# kulu löytyi} other {# kulua löytyi}}",
-    "matchedParticipants": "Jo ryhmässä: {names}",
-    "missingParticipantsLabel": "Tähän ryhmään lisättävät henkilöt",
-    "missingParticipantsDescription": "Anna jokaiselle henkilölle sähköpostiosoite. Uudet tilit luodaan automaattisesti ja liitetään tähän ryhmään. Jos heillä on jo tili, heidät lisätään jäseniksi.",
-    "expenseReferences": "{count, plural, one {# kulu} other {# kulua}}",
-    "emailLabel": "Sähköposti",
-    "emailPlaceholder": "nimi@example.com",
-    "softCreateHint": "He voivat rekisteröityä myöhemmin tällä sähköpostilla päästäkseen ryhmään.",
-    "toast": {
-      "invalidFileType": {
-        "title": "Virheellinen tiedostotyyppi",
-        "description": "Valitse Knots-vientitiedosto JSON- tai CSV-muodossa."
-      },
-      "noContent": {
-        "title": "Ei tiedoston sisältöä",
-        "description": "Valitse ensin Knots-vientitiedosto."
-      },
-      "missingEmail": {
-        "title": "Sähköposti vaaditaan",
-        "description": "Anna sähköposti henkilölle {name}."
-      },
-      "success": {
-        "title": "Tuonti onnistui",
-        "description": "{count} kulua tuotiin onnistuneesti Knotsista."
-      },
-      "error": {
-        "title": "Tuonti epäonnistui",
-        "description": "Knots-vientitiedoston tuonti epäonnistui."
-      },
-      "cancelled": {
-        "title": "Tuonti peruutettu",
-        "description": "Tuonti pysäytettiin ennen valmistumista."
-      }
-    },
-    "errors": {
-      "invalidJson": "Virheellinen JSON-tiedosto.",
-      "invalidFormat": "Tämä tiedosto ei ole kelvollinen Knots-vienti.",
-      "noExpenses": "Vienti ei sisällä kuluja."
-    },
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
-  },
   "GroupDangerZone": {
     "title": "Ryhmän hallinta",
     "description": "Arkistointi piilottaa ryhmän listaltasi poistamatta tietoja. Poistaminen poistaa ryhmän pysyvästi kaikilta.",
@@ -1162,6 +1460,109 @@
     "deleteConfirmDescription": "Tämä poistaa pysyvästi ryhmän “{name}” sekä kaikki sen kulut, saldot ja historian kaikilta jäseniltä. Tätä ei voi kumota.",
     "cancel": "Peruuta",
     "deleteConfirmAction": "Poista pysyvästi"
+  },
+  "UserMenu": {
+    "menuLabel": "Käyttäjävalikko",
+    "profileSettings": "Tilin asetukset",
+    "theme": "Teema",
+    "themeLight": "Vaalea",
+    "themeDark": "Tumma",
+    "themeSystem": "Järjestelmä",
+    "signingOut": "Kirjaudutaan ulos…",
+    "signOut": "Kirjaudu ulos"
+  },
+  "Notifications": {
+    "settings": "Ilmoitusasetukset",
+    "subscribe": "Ota ilmoitukset käyttöön",
+    "unsubscribe": "Poista ilmoitukset käytöstä",
+    "selectParticipant": "Ilmoita muiden tekemistä muutoksista",
+    "noParticipant": "Kaikki muutokset",
+    "permissionDenied": "Ilmoituslupa evättiin. Ota se käyttöön selaimen asetuksista.",
+    "notSupported": "Push-ilmoituksia ei tueta tällä laitteella.",
+    "expenseCreated": "{actor} lisäsi kulun \"{title}\" ryhmässä {group}",
+    "expenseUpdated": "{actor} muokkasi kulua \"{title}\" ryhmässä {group}",
+    "expenseDeleted": "{actor} poisti kulun \"{title}\" ryhmässä {group}",
+    "groupUpdated": "{actor} päivitti ryhmän \"{group}\"",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "Uutta toimintaa ryhmässäsi",
+    "filterHint": "Valitse, keneltä haluat ilmoituksia ja mitkä tapahtumat.",
+    "membersLabel": "Ilmoita minulle",
+    "notifyAllMembers": "Kaikki ryhmässä",
+    "notifySpecificMembers": "Tai vain nämä jäsenet:",
+    "eventsLabel": "Tapahtumat",
+    "eventCreate": "Kulu luotu",
+    "eventUpdate": "Kulu päivitetty",
+    "eventDelete": "Kulu poistettu",
+    "selectAtLeastOneFilter": "Valitse vähintään yksi jäsen tai tapahtuma.",
+    "subscribeError": "Ilmoitusten käyttöönotto epäonnistui. Yritä uudelleen.",
+    "channelsLabel": "Kanavat",
+    "pushLabel": "Push-ilmoitukset",
+    "pushUnavailable": "Push-ilmoitukset eivät ole käytettävissä tässä asennuksessa.",
+    "emailLabel": "Sähköposti-ilmoitukset",
+    "enableChannelHint": "Ota kanava käyttöön, jotta voit määrittää, kenestä ja mistä saat ilmoituksia.",
+    "pushSyncWarning": "Asetukset tallennettiin, mutta push-ilmoitussuodattimen synkronointi epäonnistui."
+  },
+  "AppError": {
+    "title": "Jokin meni pieleen",
+    "description": "Sovelluksen paikalliset tiedot on tyhjennetty. Istuntosi päätetään myös, jotta voit aloittaa alusta kotisivulta.",
+    "recover": "Palaa etusivulle",
+    "recovering": "Uudelleenohjataan…"
+  },
+  "PaymentForm": {
+    "dateLabel": "Maksupäivä",
+    "dateDescription": "Syötä maksupäivä.",
+    "amountLabel": "Summa",
+    "amountDescription": "Syötä maksun summa.",
+    "paidByLabel": "Maksaja",
+    "paidByDescription": "Valitse kuka maksoi.",
+    "paidToLabel": "Vastaanottaja",
+    "paidToDescription": "Valitse kuka vastaanotti maksun.",
+    "notesLabel": "Muistiinpanot",
+    "notesPlaceholder": "Lisää muistiinpanoja (valinnainen)",
+    "participantPlaceholder": "Valitse osallistuja",
+    "disclaimer": "Kirjaa maksu henkilöiden välillä velkojen tasaamiseksi. Tämä ei ole jaettu kulu."
+  },
+  "FloatingCreateExpense": {
+    "addExpense": "Lisää kulu",
+    "dialogTitle": "Luo kulu tai maksu",
+    "editDialogTitle": "Muokkaa kulua",
+    "createPaymentDialogTitle": "Kirjaa maksu",
+    "editPaymentDialogTitle": "Muokkaa maksua",
+    "withWho": "Sinun ja heidän kanssaan:",
+    "back": "Takaisin",
+    "searchPlaceholder": "Etsi kavereita tai ryhmiä…",
+    "descriptionPlaceholder": "Mistä kulussa oli kyse?",
+    "amountPlaceholder": "0,00",
+    "paidByLabel": "Maksaja",
+    "you": "sinä",
+    "splitEqually": "jaettu tasan",
+    "save": "Tallenna",
+    "saving": "Tallennetaan…",
+    "cancel": "Peruuta",
+    "successToast": "Kulu luotu onnistuneesti.",
+    "updateSuccessToast": "Kulu päivitetty onnistuneesti.",
+    "paymentSuccessToast": "Maksu kirjattu onnistuneesti.",
+    "paymentUpdateSuccessToast": "Maksu päivitetty onnistuneesti.",
+    "errorToast": "Kulun luominen epäonnistui.",
+    "paymentErrorToast": "Maksun kirjaaminen epäonnistui.",
+    "updateErrorToast": "Kulun päivittäminen epäonnistui.",
+    "paymentUpdateErrorToast": "Maksun päivittäminen epäonnistui.",
+    "lockedPaymentToast": "Tätä maksua ei voi muokata suoraan.",
+    "noFriendOrGroupFound": "Ryhmää tai kaveria ei löytynyt.",
+    "groupsHeader": "Ryhmät",
+    "friendsHeader": "Kaverit",
+    "selectGroupText": "Ryhmä: {name}",
+    "pickerTitle": "Kenen kanssa?",
+    "pickerDone": "Valmis",
+    "selectParticipants": "Valitse kavereita tai ryhmä",
+    "selectParticipantsHint": "Aloita valitsemalla ryhmä tai kaveri.",
+    "singleGroupAlertTitle": "Vain yksi ryhmä",
+    "singleGroupAlertDescription": "Voit valita vain yhden ryhmän kerrallaan. Poista nykyinen ryhmä valitaksesi toisen.",
+    "singleGroupAlertOk": "Selvä",
+    "advancedOptions": "Lisäasetukset",
+    "splitDetails": "Jakamisen tiedot",
+    "notesPlaceholder": "Lisää muistiinpanoja…",
+    "viewGroupExpense": "Näytä ryhmän kulu"
   },
   "DuplicateExpense": {
     "title": "Mahdollinen kaksoiskappale havaittu",
@@ -1186,7 +1587,47 @@
   "CurrencyAmountInput": {
     "expressionHint": "tai 10+5"
   },
-  "ExpenseTitleInput": {
-    "clear": "Tyhjennä"
+  "Login": {
+    "title": "Kirjaudu sisään",
+    "description": "Kirjaudu sisään pääsyavaimella, sähköpostilinkillä tai salasanallasi.",
+    "orContinueWithEmail": "TAI JATKA SÄHKÖPOSTILLA",
+    "methodMagicLink": "Kirjautumislinkki",
+    "methodPassword": "Salasana",
+    "sendSignInLink": "Lähetä kirjautumislinkki",
+    "signInWithPassword": "Kirjaudu salasanalla",
+    "usePasskey": "Käytä pääsyavainta",
+    "passkeyFailed": "Sisäänkirjautuminen tällä pääsyavaimella epäonnistui. Yritä uudelleen.",
+    "forgotPassword": "Unohditko salasanasi?",
+    "noAccount": "Eikö sinulla ole tiliä?",
+    "signUp": "Luo tili",
+    "magicLinkButton": "Lähetä kirjautumislinkki",
+    "magicLinkEmailRequired": "Syötä sähköpostiosoitteesi.",
+    "magicLinkSendFailed": "Kirjautumissähköpostin lähetys epäonnistui. Yritä uudelleen.",
+    "magicLinkSentTitle": "Tarkista sähköpostisi",
+    "magicLinkSentDescription": "Jos tälle osoitteelle on olemassa tili, lähetimme kirjautumislinkin. Se toimii kerran ja vanhenee 15 minuutissa.",
+    "magicLinkSigningIn": "Kirjaudutaan sisään…",
+    "magicLinkFailedTitle": "Kirjautuminen epäonnistui",
+    "magicLinkInvalid": "Tämä kirjautumislinkki on virheellinen tai se on vanhentunut.",
+    "backToLogin": "Takaisin kirjautumiseen"
+  },
+  "Register": {
+    "title": "Luo tili",
+    "description": "Rekisteröidy sähköpostilinkillä tai salasanalla.",
+    "signUpWithPassword": "Luo tili salasanalla",
+    "confirmPassword": "Vahvista salasana",
+    "hasAccount": "Onko sinulla jo tili?",
+    "signIn": "Kirjaudu sisään",
+    "creating": "Luodaan tiliä…",
+    "passwordMismatch": "Salasanat eivät täsmää",
+    "ruleLength": "8 merkkiä",
+    "ruleLowercase": "Pieni kirjain",
+    "ruleUppercase": "Iso kirjain",
+    "ruleNumber": "Numero",
+    "successTitle": "Rekisteröinti onnistui",
+    "successDescription": "Tilisi on luotu onnistuneesti",
+    "successAlertTitle": "Tarkista sähköpostisi",
+    "successAlertDescription": "Olemme lähettäneet vahvistuslinkin sähköpostiisi. Klikkaa linkkiä vahvistaaksesi tilisi ennen sisäänkirjautumista.",
+    "goToLogin": "Siirry kirjautumiseen",
+    "failedTitle": "Rekisteröinti epäonnistui"
   }
 }

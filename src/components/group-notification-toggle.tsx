@@ -11,9 +11,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { usePushNotificationSubscription } from '@/lib/push/use-push-notification-subscription'
-import { trpc } from '@/trpc/client'
-import { Bell, BellOff } from 'lucide-react'
+import { Bell } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useId } from 'react'
 import { NotificationSettingsPopover } from './notification-settings-popover'
@@ -31,22 +29,6 @@ export function GroupNotificationToggle({
 }: GroupNotificationToggleProps) {
   const t = useTranslations('Notifications')
   const panelId = useId()
-
-  // Load email preference to derive icon state
-  const { data: prefsData } =
-    trpc.groupMembership.getNotificationPreferences.useQuery(
-      { groupId },
-      { enabled: !!currentUserId },
-    )
-
-  // Derive push channel state
-  const { isSubscribed: pushEnabled } = usePushNotificationSubscription(
-    groupId,
-    currentUserId,
-  )
-
-  const emailEnabled = prefsData?.emailNotificationsEnabled ?? false
-  const anyChannelEnabled = pushEnabled || emailEnabled
 
   return (
     <Popover>
@@ -66,11 +48,7 @@ export function GroupNotificationToggle({
             />
           }
         >
-          {anyChannelEnabled ? (
-            <Bell className="size-4" />
-          ) : (
-            <BellOff className="size-4" />
-          )}
+          <Bell className="size-4" />
         </TooltipTrigger>
         <TooltipContent>
           <p>{t('settings')}</p>

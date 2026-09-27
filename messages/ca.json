@@ -20,6 +20,9 @@
     "create": "Afegir despesa",
     "createFirst": "Crea la primera",
     "noExpenses": "El teu grup encara no té despeses.",
+    "noSearchResults": "Cap despesa coincideix amb la teva cerca.",
+    "loadError": "No s'han pogut carregar les despeses.",
+    "retry": "Torna-ho a provar",
     "export": "Export",
     "exportJson": "Exportar a JSON",
     "exportCsv": "Exportar a CSV",
@@ -75,19 +78,60 @@
   },
   "ExpenseCard": {
     "paidBy": "Pagada per <strong>{paidBy}</strong> per a <paidFor></paidFor>",
+    "paidByMultiple": "Pagada per <strong>{paidBy}</strong> per a <paidFor></paidFor>",
     "everyone": "everyone",
     "receivedBy": "Debuda per <strong>{paidBy}</strong> para <paidFor></paidFor>",
     "yourBalance": "El teu balanç: balance:",
     "notInvolved": "You are not involved",
     "close": "Tanca",
-    "paidByMultiple": "Pagada per <strong>{paidBy}</strong> per a <paidFor></paidFor>",
     "multiPayerLabel": "{first}, {second}",
     "multiPayerLabelOverflow": "{first} +{count}"
   },
   "ExpenseDetail": {
+    "backToExpenses": "Torna a les despeses",
+    "backToFriend": "Torna a {name}",
+    "copy": "Copia la despesa",
+    "delete": "Suprimeix",
+    "edit": "Edita",
+    "payment": "Pagament",
+    "expense": "Despesa",
+    "onDate": "El {date}",
+    "addedBy": "Afegit per {name} el {date}",
+    "addedByYou": "Afegit per tu el {date}",
+    "lastUpdatedBy": "Darrera actualització per {name} el {date}",
+    "lastUpdatedByYou": "Darrera actualització per tu el {date}",
+    "trendsTitle": "Tendències de despesa a {contextName} :: {categoryName}",
+    "trendsSeeMore": "Veure més detalls",
+    "generalCategory": "General",
+    "editCategory": "Edita la categoria",
+    "categoryUpdateError": "No s'ha pogut actualitzar la categoria.",
+    "attachReceipt": "Adjuntar rebut",
+    "receiptUploadSuccess": "Rebut adjuntat.",
+    "paidAmount": "{name} ha pagat {amount}",
+    "youPaidAmount": "Has pagat {amount}",
+    "paidAmountMultiple": "{name} ha pagat {amount}",
+    "youPaidAmountMultiple": "Has pagat {amount}",
+    "multiPayerSeparator": ", ",
+    "paidYou": "{name} t'ha pagat {amount}",
+    "youPaidRecipient": "Has pagat {amount} a {name}",
+    "payerPaidPayee": "{payer} ha pagat {amount} a {payee}",
+    "someone": "Algú",
+    "youOwe": "Deus {amount}",
+    "participantOwes": "{name} deu {amount}",
+    "yourShare": "La teva part {amount}",
+    "participantShare": "Part de {name} {amount}",
+    "notes": "Notes",
     "activity": "Activitat",
-    "noActivity": "Encara no hi ha activitat registrada per a aquesta despesa.",
-    "viewGroupExpense": "View group expense"
+    "noActivity": "Encara no s'ha registrat cap canvi.",
+    "paymentDisclaimer": "Aquest pagament s'ha registrat utilitzant \"Registrar un pagament\". No s'han transferit diners reals.",
+    "consolidationDisclaimer": "Aquest pagament forma part d'una liquidació combinada.",
+    "readOnlyNotice": "Aquest pagament no es pot editar ni suprimir individualment perquè forma part d'una liquidació de balanç.",
+    "deleteConfirm": "Vols suprimir aquesta despesa?",
+    "deletePaymentConfirm": "Vols suprimir aquest pagament?",
+    "deleteDescription": "Això suprimirà la despesa per a tots els membres del grup. Aquesta acció no es pot desfer.",
+    "cancel": "Cancel·lar",
+    "deleting": "Suprimint…",
+    "viewGroupExpense": "Veure despesa del grup"
   },
   "Groups": {
     "myGroups": "Els meus grups",
@@ -151,6 +195,12 @@
       "label": "Simplifica els deutes",
       "description": "Redueix el nombre de pagaments combinant saldos entre membres (com Splitwise Pro). Desactivat, cada persona només deu a qui va pagar la seva part."
     },
+    "FriendsField": {
+      "label": "Amics",
+      "description": "Tria persones que ja siguin amics o convida algú nou.",
+      "placeholder": "Selecciona un amic…",
+      "remove": "Elimina {name}"
+    },
     "Participants": {
       "title": "Participants",
       "description": "Afegeix el nom de totes les participants.",
@@ -205,6 +255,7 @@
         "description": "Selecciona per a qui s'ha efectuat el pagament."
       },
       "splitModeDescription": "Selecciona com vols dividir la despesa.",
+      "notesDescription": "Afegeix detalls opcionals sobre aquest ingrés.",
       "attachDescription": "Veure i adjuntar tiquets a la despesa."
     },
     "Expense": {
@@ -227,7 +278,7 @@
       "paidByField": {
         "label": "Pagat per",
         "placeholder": "Select a participant",
-        "description": "Select who provided the money and how much each payer contributed."
+        "description": "Selecciona qui ha aportat els diners i quant ha contribuït cada pagador."
       },
       "recurrenceRule": {
         "label": "Expense Recurrence",
@@ -238,23 +289,29 @@
         "monthly": "Monthly"
       },
       "paidFor": {
-        "title": "Pagado per a",
-        "description": "Sleecciona per a qui s'ha pagat la despesa."
+        "title": "Dividit entre",
+        "description": "Tria com dividir la despesa i qui hi està inclòs."
       },
       "splitModeDescription": "Selecciona com vols dividir la despesa.",
+      "notesDescription": "Afegeix detalls opcionals sobre aquesta despesa.",
       "attachDescription": "eure i adjuntar tiquets a la despesa."
     },
     "amountField": {
-      "label": "Quantitat"
+      "label": "Quantitat",
+      "description": "Introdueix l'import total de la despesa.",
+      "convertedDescription": "Introdueix l'import en la moneda del grup."
     },
     "conversionUnavailable": "Per definir una moneda diferent per despesa i convertir imports, selecciona una moneda no personalitzada per al grup.",
     "originalAmountField": {
-      "label": "Import a convertir"
+      "label": "Import a convertir",
+      "description": "Introdueix l'import en la moneda original."
     },
     "conversionRateField": {
       "useApi": "Utilitza els tipus de Frankfurter",
       "useCustom": "Utilitza un tipus personalitzat",
-      "label": "Tipus de canvi"
+      "label": "Tipus de canvi",
+      "description": "El tipus de canvi utilitzat per convertir l'import original a la moneda del grup.",
+      "collapsibleDescription": "Anul·la el tipus de canvi automàtic de Frankfurter"
     },
     "conversionRateState": {
       "loading": "Obtenint tipus de canvi…",
@@ -279,6 +336,13 @@
     },
     "selectNone": "No en seleccionis cap",
     "selectAll": "Selecciona'ls tots",
+    "resetSplit": "Restableix",
+    "evenlySplit": "Dividit a parts iguals: {amount} × {count}",
+    "totalWeight": "Pes total: {count, plural, one {# part} other {# parts}}",
+    "matchesPercent": "Coincideix amb el 100%",
+    "matchesAmount": "Coincideix amb {amount}",
+    "decreaseShares": "Redueix les parts",
+    "increaseShares": "Augmenta les parts",
     "noLongerInGroup": "ja no forma part d'aquest grup",
     "shares": "parts",
     "advancedOptions": "Opciones avanzadas",
@@ -294,6 +358,43 @@
       "byPercentageDescription": "Split using percentages that add up to 100%",
       "byAmountDescription": "Split using fixed amounts for each participant"
     },
+    "itemized": {
+      "toggleLabel": "Divideix per elements",
+      "toggleDescription": "Afegeix elements, assigna cadascun a qui l'ha compartit i divideix impostos i propines proporcionalment.",
+      "noItems": "Encara no hi ha elements. Afegeix les línies del teu tiquet.",
+      "addItem": "Afegeix element",
+      "removeItem": "Suprimeix element",
+      "itemTitleLabel": "Element",
+      "itemTitlePlaceholder": "p. ex., Hamburguesa",
+      "itemUnitPriceLabel": "Preu",
+      "itemQuantityLabel": "Quant.",
+      "itemLineTotalLabel": "Total línia",
+      "itemAmountLabel": "Import",
+      "sectionTitle": "Elements",
+      "sectionDescription": "Divideix el tiquet en línies. Assigna cadascuna a qui l'ha compartit.",
+      "assignTo": "Compartit per",
+      "otherLabel": "Altres (impostos, propina, servei)",
+      "otherDerivedNote": "La diferència entre el total i els teus elements, dividida entre tothom.",
+      "itemsExceedTotal": "Els elements sumen més que el total de la despesa.",
+      "setAmountFromItems": "Estableix el total a partir dels elements",
+      "total": "Total",
+      "addItemsAction": "Afegeix elements",
+      "documentationNote": "Aquests elements són només de referència. Assigna un element per dividir la despesa per elements.",
+      "authoritativeNote": "Aquesta despesa es divideix pels seus elements.",
+      "leaveAction": "Utilitza divisió normal",
+      "switchDialog": {
+        "title": "Vols dividir per elements?",
+        "description": "Assignar elements decidirà qui deu què. La teva divisió actual es reemplaçarà.",
+        "confirm": "Divideix per elements",
+        "cancel": "Cancel·lar"
+      },
+      "leaveDialog": {
+        "title": "Vols utilitzar la divisió normal?",
+        "description": "La despesa tornarà a una divisió normal. Els teus elements es conservaran com a referència.",
+        "confirm": "Utilitza divisió normal",
+        "cancel": "Cancel·lar"
+      }
+    },
     "DeletePopup": {
       "label": "Esborrar",
       "title": "Esborrar la despesa?",
@@ -301,7 +402,7 @@
       "yes": "Sí",
       "cancel": "Cancel·lar"
     },
-    "attachDocuments": "Adjuntar documents",
+    "attachDocuments": "Adjuntar imatges",
     "create": "Crear",
     "creating": "Creant",
     "save": "Desar",
@@ -317,7 +418,7 @@
       "postSaveTitle": "Expense split across group and direct records",
       "postSaveNonMemberLine": "{name}: {amount} saved as a direct expense",
       "postSaveGroupHalfLine": "The group expense is {amount}",
-      "singlePayerNote": "Expenses with non-members can only have one payer.",
+      "singlePayerNote": "Quan afegeixes persones de fora del grup (p. ex., {names}), la despesa es divideix en dues, de manera que només una persona pot pagar.",
       "groupHalfAuditNote": "Original total at creation: {amount}. This reflects the state at decomposition time and may differ from current values if either half has been independently edited.",
       "directHalfAuditNote": "This expense is part of a split that also includes a group expense.",
       "groupHalfIndependentEditWarning": "Editing or deleting this expense does not automatically update the associated direct expenses.",
@@ -326,7 +427,16 @@
       "recurringNonMemberError": "Recurring expenses cannot include participants who are not group members."
     }
   },
+  "ExpenseTitleInput": {
+    "noSuggestions": "No s'han trobat suggeriments.",
+    "clear": "Esborra"
+  },
   "ExpenseDocumentsInput": {
+    "addImage": "Afegeix imatge",
+    "addDocumentHint": "PNG o JPG · fins a 5 MB",
+    "previewDocument": "Previsualització de {name}",
+    "removeDocument": "Suprimeix {name}",
+    "uploadingDocument": "Pujant…",
     "TooBigToast": {
       "title": "L'arxiu és massa gran",
       "description": "La mida màxima que pot tenir l'arxiu és de {maxSize}. El teu pesa {size}."
@@ -388,6 +498,8 @@
       "noOneOwesYou": "Ningú et deu en aquest grup.",
       "youOweNoOne": "No deus a ningú en aquest grup.",
       "confirmSettle": "Registrar que has pagat {amount} a {name}?",
+      "confirmSettleReceived": "Vols registrar que {name} t'ha pagat {amount}?",
+      "settleReceivedTooltip": "Registra el pagament rebut",
       "youAreOwed": "{name} et deu {amount}",
       "youOwe": "Deus {amount} a {name}",
       "allSettled": "Estàs al dia en aquest grup.",
@@ -522,16 +634,27 @@
   "Activity": {
     "title": "Activitat",
     "description": "Aquí trobaràs totes les activitats recents del grup.",
+    "globalTitle": "Activitat",
+    "globalDescription": "Resum de tota l'activitat de tots els teus grups.",
+    "globalListTitle": "Historial d'activitat",
+    "globalListDescription": "Canvis recents a tots els teus grups.",
+    "globalNoActivity": "Encara no hi ha cap activitat als teus grups.",
     "noActivity": "No hi ha activitat recent a aquest grup.",
+    "error": "No s'ha pogut carregar l'activitat.",
+    "retry": "Torna-ho a provar",
     "someone": "Algú",
     "settingsModified": "La configuració del grup ha estat modificada per <strong>{participant}</strong>.",
     "expenseCreated": "Despesa <em>{expense}</em> creada per <strong>{participant}</strong>.",
     "expenseUpdated": "Despesa <em>{expense}</em> actualitzada per <strong>{participant}</strong>.",
     "expenseDeleted": "Despesa <em>{expense}</em> esborrada per <strong>{participant}</strong>.",
+    "paymentRecorded": "Pagament registrat per <strong>{participant}</strong>.",
+    "paymentUpdated": "Pagament actualitzat per <strong>{participant}</strong>.",
+    "paymentDeleted": "Pagament suprimit per <strong>{participant}</strong>.",
     "expenseCreatedDetail": "Creada per <strong>{participant}</strong>.",
     "expenseUpdatedDetail": "Actualitzada per <strong>{participant}</strong>.",
     "paymentRecordedDetail": "Registrat per <strong>{participant}</strong>.",
     "paymentUpdatedDetail": "Actualitzat per <strong>{participant}</strong>.",
+    "reimbursement": "Pagament",
     "Groups": {
       "today": "Avui",
       "yesterday": "Ahir",
@@ -563,10 +686,7 @@
     "showLess": "Mostra menys",
     "yes": "Sí",
     "no": "No",
-    "fieldChangesCount": "{count} canvis de camps",
-    "globalTitle": "Activitat",
-    "globalDescription": "Resum de tota l'activitat de tots els teus grups.",
-    "globalNoActivity": "Encara no hi ha cap activitat als teus grups."
+    "fieldChangesCount": "{count} canvis de camps"
   },
   "Information": {
     "title": "Informació",
@@ -590,6 +710,7 @@
     "max50": "Introdueix com a màxim cinquanta caràcters.",
     "duplicateParticipantName": "Una altra participant ja té el mateix nom",
     "titleRequired": "Si us plau, afegeix un títol",
+    "paymentCategoryNotAllowed": "Pagament no és una categoria vàlida per a despeses.",
     "invalidNumber": "Número invàlid",
     "invalidExpression": "Expressió no vàlida. Usa nombres i els operadors +, -, *, /.",
     "amountRequired": "Cal introduïr un import",
@@ -597,14 +718,27 @@
     "amountTenMillion": "L'import ha de ser inferior a 10.000.000.",
     "ratePositive": "El tipus ha de ser estrictament superior a zero.",
     "paidByRequired": "Cal seleccionar una participant",
+    "paidToRequired": "Has de seleccionar qui ha rebut el pagament.",
+    "paidToDifferent": "El pagador i el destinatari han de ser persones diferents.",
     "paidForMin1": "La despesa ha de ser pagada com a mínim per a una participant",
-    "noZeroShares": "Totes les participacions han de ser superiors a 0",
-    "amountSum": "La suma dels imports ha de ser igual a la suma de la despesa",
-    "percentageSum": "La suma dels percentatges ha de ser igual a 100",
     "paidByAmountPositive": "Each payer's amount must be greater than zero.",
     "paidByAmountSum": "Payer amounts must sum to the expense total.",
     "paidByDuplicateParticipants": "Each payer can only appear once.",
-    "reimbursementSinglePayer": "Reimbursements support only a single payer."
+    "reimbursementSinglePayer": "Reimbursements support only a single payer.",
+    "noZeroShares": "Totes les participacions han de ser superiors a 0",
+    "amountSum": "La suma dels imports ha de ser igual a la suma de la despesa",
+    "percentageSum": "La suma dels percentatges ha de ser igual a 100",
+    "itemsRequired": "Afegeix almenys un element o desactiva la divisió per elements.",
+    "itemNeedsAssignment": "Assigna cada element com a mínim a una persona.",
+    "itemTitleRequired": "Introdueix un nom per a l'element.",
+    "itemAmountNonNegative": "L'import de l'element no pot ser negatiu.",
+    "itemQuantityPositive": "La quantitat ha de ser un nombre enter d'almenys 1.",
+    "taxNonNegative": "Els impostos no poden ser negatius.",
+    "tipNonNegative": "La propina no pot ser negativa.",
+    "itemAssignmentUnknownParticipant": "Un element està assignat a algú que no forma part de la divisió.",
+    "itemizationNotAllowedHere": "Els reemborsaments i despeses recurrents no es poden dividir per elements.",
+    "itemsExceedAmount": "Els elements sumen més que el total de la despesa.",
+    "remainderShareUnknownParticipant": "La divisió d'Altres inclou algú que no és a la despesa."
   },
   "Categories": {
     "search": "Cercar categoria...",
@@ -688,6 +822,64 @@
       "heading": "Other currencies"
     }
   },
+  "ExpenseImport": {
+    "button": "Importa despeses",
+    "fromKnots": "Importa des de Knots",
+    "fromSplitwise": "Importa des de Splitwise"
+  },
+  "KnotsImport": {
+    "title": "Importa des de Knots",
+    "description": "Puja un fitxer exportat de Knots. Si el fitxer inclou persones que encara no són al grup, les pots afegir aquí abans d’importar.",
+    "fileLabel": "Fitxer d’exportació de Knots",
+    "previewLabel": "Previsualització (primeres 10 línies)",
+    "clear": "Esborra",
+    "cancel": "Cancel·la",
+    "import": "Importa despeses",
+    "addAndImport": "Afegeix membres i importa",
+    "importing": "Important...",
+    "analyzing": "Analitzant l’exportació…",
+    "expenseCount": "{count, plural, one {S’ha trobat # despesa} other {S’han trobat # despeses}}",
+    "matchedParticipants": "Ja són al grup: {names}",
+    "missingParticipantsLabel": "Persones per afegir a aquest grup",
+    "missingParticipantsDescription": "Introdueix un correu electrònic per a cada persona. Els comptes nous es creen automàticament i s’enllacen amb aquest grup. Si ja tenen compte, s’afegeixen com a membres.",
+    "expenseReferences": "{count, plural, one {# despesa} other {# despeses}}",
+    "emailLabel": "Correu electrònic",
+    "emailPlaceholder": "nom@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "Es podran registrar més endavant amb aquest correu per accedir al grup.",
+    "errors": {
+      "invalidJson": "Fitxer JSON no vàlid.",
+      "invalidFormat": "Aquest fitxer no és una exportació de Knots vàlida.",
+      "noExpenses": "L'exportació no conté despeses."
+    },
+    "toast": {
+      "invalidFileType": {
+        "title": "Tipus de fitxer no vàlid",
+        "description": "Selecciona un fitxer JSON o CSV exportat de Knots."
+      },
+      "noContent": {
+        "title": "Fitxer sense contingut",
+        "description": "Selecciona primer un fitxer d’exportació de Knots."
+      },
+      "missingEmail": {
+        "title": "Cal un correu electrònic",
+        "description": "Introdueix el correu electrònic de {name}."
+      },
+      "success": {
+        "title": "Importació completada",
+        "description": "S’han importat {count} despeses de Knots."
+      },
+      "error": {
+        "title": "Ha fallat la importació",
+        "description": "No s’ha pogut importar el fitxer de Knots."
+      },
+      "cancelled": {
+        "title": "Importació cancel·lada",
+        "description": "La importació s’ha aturat abans d’acabar."
+      }
+    }
+  },
   "SplitwiseImport": {
     "button": "Import from Splitwise",
     "title": "Import from Splitwise",
@@ -698,6 +890,20 @@
     "cancel": "Cancel",
     "import": "Import Expenses",
     "importing": "Importing...",
+    "analyzing": "Analyzing CSV…",
+    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
+    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
+    "participantMappingLabel": "Match Splitwise names",
+    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
+    "mapToMemberLabel": "Group member",
+    "mapToMemberPlaceholder": "Select a member",
+    "addNewMemberOption": "Add new member by email",
+    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
+    "emailLabel": "Email",
+    "emailPlaceholder": "name@example.com",
+    "friendLabel": "Friend",
+    "friendPlaceholder": "Select a friend…",
+    "softCreateHint": "They can register later with this email to access the group.",
     "toast": {
       "invalidFileType": {
         "title": "Invalid file type",
@@ -706,6 +912,14 @@
       "noContent": {
         "title": "No CSV content",
         "description": "Please select a CSV file first."
+      },
+      "missingEmail": {
+        "title": "Email required",
+        "description": "Enter an email for {name}."
+      },
+      "incompleteMapping": {
+        "title": "Mapping incomplete",
+        "description": "Choose a member or email for {name}."
       },
       "success": {
         "title": "Import successful",
@@ -718,91 +932,219 @@
       "cancelled": {
         "title": "Importació cancel·lada",
         "description": "La importació s’ha aturat abans d’acabar."
-      },
-      "missingEmail": {
-        "title": "Email required",
-        "description": "Enter an email for {name}."
-      },
-      "incompleteMapping": {
-        "title": "Mapping incomplete",
-        "description": "Choose a member or email for {name}."
       }
-    },
-    "analyzing": "Analyzing CSV…",
-    "expenseCount": "{count, plural, one {# expense} other {# expenses}} found",
-    "autoMatchedCount": "{count, plural, one {# name matched automatically} other {# names matched automatically}}",
-    "participantMappingLabel": "Match Splitwise names",
-    "participantMappingDescription": "Each column in the CSV is a person from Splitwise. Link them to members in this group, or add new members by email.",
-    "mapToMemberLabel": "Group member",
-    "mapToMemberPlaceholder": "Select a member",
-    "addNewMemberOption": "Add new member by email",
-    "expenseReferences": "{count, plural, one {# expense} other {# expenses}}",
-    "emailLabel": "Email",
-    "emailPlaceholder": "name@example.com",
-    "softCreateHint": "They can register later with this email to access the group.",
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
+    }
   },
   "ProfileSettings": {
-    "title": "Configuració del perfil",
+    "title": "Configuració del compte",
+    "back": "Enrere",
+    "Profile": {
+      "photoLabel": "Foto de perfil",
+      "photoDescription": "Puja una foto de perfil visible per als teus amics i membres del grup.",
+      "photoAlt": "La teva foto de perfil",
+      "choosePhoto": "Tria una foto",
+      "removePhoto": "Suprimeix la foto",
+      "photoUpdatedToast": "Foto de perfil actualitzada.",
+      "photoRemovedToast": "Foto de perfil suprimida.",
+      "photoUnavailableToast": "L'emmagatzematge de fotos no està configurat.",
+      "photoInvalidToast": "Tria un fitxer d'imatge vàlid (PNG, JPG, WebP) de menys de 5 MB.",
+      "photoFailedToast": "No s'ha pogut pujar la foto de perfil.",
+      "nameLabel": "Nom visible",
+      "namePlaceholder": "El teu nom",
+      "nameError": "Introdueix un nom visible vàlid.",
+      "nameUpdatedToast": "Nom visible actualitzat.",
+      "saveChanges": "Desa els canvis",
+      "saving": "Desant…"
+    },
+    "profileTitle": "Perfil",
+    "appPreferencesTitle": "Preferències de l'aplicació",
+    "notificationsTitle": "Canals de notificació",
+    "notificationsDescription": "Gestiona com reps notificacions d'activitat als teus grups.",
+    "notifications": {
+      "masterSwitchAria": "Notificacions",
+      "saving": "Desant preferències…",
+      "saveSuccess": "Preferències de notificació desades.",
+      "saveError": "No s'han pogut desar les preferències de notificació.",
+      "comingSoon": "Properament",
+      "done": "Fet",
+      "channelSelectorAria": "Canals d'entrega per a {category}",
+      "emailNeedsVerification": "Verifica el teu correu electrònic per habilitar les notificacions per correu.",
+      "channelLabel": {
+        "off": "Desactivat",
+        "email": "Correu",
+        "push": "Push",
+        "emailAndPush": "Correu i Push"
+      },
+      "pushDisabled": {
+        "unsupported": "Les notificacions push no són compatibles amb aquest navegador.",
+        "unconfigured": "Les notificacions push no estan configurades en aquest servidor.",
+        "iosInstall": "A iOS, afegeix Knots a la pantalla d'inici per rebre notificacions push.",
+        "denied": "Permís de notificació denegat. Habilita'l a la configuració del teu navegador."
+      },
+      "thisDevice": {
+        "title": "Notificacions push en aquest dispositiu",
+        "description": "Rep alertes instantànies en aquest navegador quan hi hagi activitat.",
+        "checking": "Comprovant subscripció…",
+        "enabledLabel": "Les notificacions push estan habilitades en aquest dispositiu.",
+        "disabledLabel": "Les notificacions push estan desactivades en aquest dispositiu.",
+        "pushSelectedWarning": "Has seleccionat notificacions push per a algunes categories, però aquest dispositiu no està subscrit.",
+        "enable": "Habilita en aquest dispositiu",
+        "disable": "Deshabilita en aquest dispositiu",
+        "error": "No s'ha pogut actualitzar la subscripció push."
+      },
+      "groups": {
+        "groups-and-friends": "Grups i amics",
+        "expenses": "Despeses",
+        "summaries": "Resums"
+      },
+      "categories": {
+        "added-to-group": "Afegit a un grup",
+        "friend-added": "Amic afegit",
+        "budget-alert": "Alerta de pressupost",
+        "expense-created": "Despesa creada",
+        "recurring-expense-created": "Despesa recurrent creada",
+        "expense-changed": "Despesa modificada o suprimida",
+        "expense-comment": "Comentari en despesa",
+        "weekly-summary": "Resum setmanal"
+      },
+      "categoryDescriptions": {
+        "weekly-summary": "Un resum setmanal de les teves despeses i balanços."
+      }
+    },
     "emailTitle": "Correu electrònic",
-    "emailDescription": "La teva adreça de correu no es pot canviar.",
-    "displayNameTitle": "Nom per mostrar",
+    "emailDescription": "Adreça utilitzada per a notificacions i inici de sessió.",
+    "displayNameTitle": "Nom visible",
+    "usernameTitle": "Nom d'usuari",
+    "usernameDescription": "El teu identificador únic a Knots.",
     "passwordTitle": "Contrasenya",
+    "passkeyTitle": "Claus d'accés (Passkeys)",
+    "Email": {
+      "description": "Canviar el teu correu requereix un codi de confirmació enviat a la nova adreça.",
+      "changeButton": "Canvia el correu",
+      "dialogTitle": "Canvia l'adreça de correu electrònic",
+      "dialogDescription": "Introdueix la nova adreça. T'enviarem un codi de confirmació.",
+      "newEmailLabel": "Nou correu",
+      "newEmailPlaceholder": "tu@exemple.cat",
+      "sendCode": "Envia el codi",
+      "cancel": "Cancel·lar",
+      "otpTitle": "Introdueix el codi de confirmació",
+      "otpDescription": "Hem enviat un codi de 6 dígits a {email}. Introdueix-lo a continuació per confirmar el canvi.",
+      "codeLabel": "Codi de confirmació",
+      "resend": "Reenvia el codi",
+      "resendIn": "Reenvia en {seconds} s",
+      "useDifferentEmail": "Utilitza un correu diferent",
+      "verify": "Verifica i canvia",
+      "successToast": "Correu electrònic actualitzat correctament.",
+      "errorInUse": "Aquesta adreça de correu ja està en ús.",
+      "errorInvalid": "Introdueix una adreça de correu vàlida.",
+      "errorSame": "La nova adreça ha de ser diferent de l'actual.",
+      "errorInvalidCode": "Codi de confirmació no vàlid.",
+      "errorExpired": "El codi de confirmació ha caducat. Sol·licita'n un de nou.",
+      "errorRateLimited": "Massa intents. Espera uns moments abans de tornar-ho a provar.",
+      "errorSendFailed": "No s'ha pogut enviar el correu de confirmació. Torna-ho a provar."
+    },
+    "Password": {
+      "description": "Canvia la teva contrasenya o defineix-ne una si només fas servir claus d'accés (passkeys).",
+      "noPasswordDescription": "Pots iniciar sessió amb un enllaç per correu o una clau d'accés. Afegeix una contrasenya si vols una altra manera d'entrar.",
+      "changeButton": "Canvia la contrasenya",
+      "setButton": "Estableix la contrasenya",
+      "removeButton": "Suprimeix la contrasenya",
+      "changeDialogTitle": "Canvia la contrasenya",
+      "changeDialogDescription": "Introdueix la teva contrasenya actual i tria'n una de nova.",
+      "setDialogTitle": "Estableix una contrasenya",
+      "setDialogDescription": "Afegeix una contrasenya per poder iniciar sessió amb correu i contrasenya.",
+      "setSuccessToast": "Contrasenya establerta correctament.",
+      "removeDialogTitle": "Suprimeix la contrasenya",
+      "removeDialogDescription": "Encara podràs iniciar sessió amb un enllaç per correu o una clau d'accés. Introdueix la teva contrasenya actual per confirmar.",
+      "currentLabel": "Contrasenya actual",
+      "newLabel": "Nova contrasenya",
+      "confirmLabel": "Confirma la nova contrasenya",
+      "cancel": "Cancel·lar",
+      "removeConfirm": "Suprimeix",
+      "changeSuccessToast": "Contrasenya canviada correctament.",
+      "removeSuccessToast": "Contrasenya suprimida correctament.",
+      "errorCurrentRequired": "Es requereix la contrasenya actual.",
+      "errorMismatch": "Les contrasenyes no coincideixen.",
+      "errorRequirements": "La contrasenya ha de tenir com a mínim 8 caràcters.",
+      "errorSame": "La nova contrasenya ha de ser diferent de l'actual.",
+      "errorCurrentIncorrect": "La teva contrasenya actual és incorrecta.",
+      "forgotPrefix": "Has oblidat la contrasenya?",
+      "forgotLink": "Restableix-la aquí",
+      "rule_TOO_SHORT": "Almenys 8 caràcters",
+      "rule_MISSING_UPPERCASE": "Una lletra majúscula",
+      "rule_MISSING_LOWERCASE": "Una lletra minúscula",
+      "rule_MISSING_DIGIT": "Un dígit"
+    },
+    "Passkey": {
+      "description": "Inicia sessió de manera segura amb dades biomètriques, clau de seguretat o bloqueig de pantalla sense introduir contrasenya.",
+      "unavailable": "Les claus d'accés no estan disponibles en aquest dispositiu.",
+      "addButton": "Afegeix clau d'accés",
+      "empty": "Encara no hi ha claus d'accés registrades.",
+      "created": "Afegida el {date}",
+      "badgeSynced": "Sincronitzada",
+      "badgeDeviceBound": "Vinculada al dispositiu",
+      "badgeBackedUp": "Amb còpia de seguretat",
+      "addDialogTitle": "Afegeix una clau d'accés",
+      "addDialogDescription": "Posa-li un nom opcional i segueix les instruccions del teu dispositiu.",
+      "nicknameLabel": "Sobrenom (opcional)",
+      "nicknamePlaceholder": "p. ex., El meu portàtil",
+      "confirmPasswordLabel": "Contrasenya actual",
+      "confirmPasswordHint": "Confirma la teva contrasenya per afegir una clau d'accés.",
+      "addConfirm": "Afegeix clau d'accés",
+      "cancel": "Cancel·lar",
+      "addSuccessToast": "Clau d'accés afegida.",
+      "addFailedToast": "No s'ha pogut afegir la clau d'accés.",
+      "errorPasswordRequired": "Introdueix la teva contrasenya actual.",
+      "deleteAria": "Suprimeix {name}",
+      "deleteDialogTitle": "Vols suprimir la clau d'accés?",
+      "deleteDialogDescription": "\"{name}\" ja no podrà iniciar sessió al teu compte.",
+      "deleteConfirm": "Suprimeix",
+      "deleteSuccessToast": "Clau d'accés suprimida.",
+      "deleteFailedToast": "No s'ha pogut suprimir la clau d'accés.",
+      "reauthTitle": "Inicia sessió de nou per afegir una clau d'accés",
+      "reauthDescription": "El teu últim inici de sessió té més de 30 dies. Inicia sessió de nou amb la teva contrasenya, un enllaç per correu o una clau d'accés, i torna aquí.",
+      "reauthConfirm": "Inicia sessió de nou"
+    },
     "preferencesTitle": "Preferències",
-    "preferencesDescription": "Personalitza l'idioma i l'aparença.",
+    "preferencesDescription": "Personalitza l'idioma, el tema i la moneda predeterminada.",
     "languageLabel": "Idioma",
     "themeLabel": "Tema",
-    "accountTitle": "Compte",
-    "signOut": "Tancar sessió",
-    "signingOut": "Tancant sessió…",
-    "NameForm": {
-      "nameRequired": "El nom és obligatori",
-      "nameMaxLength": "El nom ha de tenir com a màxim 100 caràcters",
-      "successToast": "Nom per mostrar actualitzat correctament.",
-      "label": "Nom per mostrar",
-      "placeholder": "Introdueix el teu nom per mostrar",
-      "saving": "Desant…",
-      "submit": "Desa el nom"
-    },
-    "PasswordForm": {
-      "currentPasswordRequired": "La contrasenya actual és obligatòria",
-      "newPasswordRequired": "La contrasenya nova és obligatòria",
-      "confirmPasswordRequired": "Confirma la contrasenya nova",
-      "passwordsDoNotMatch": "Les contrasenyes no coincideixen",
-      "successToast": "Contrasenya canviada correctament.",
-      "currentPasswordIncorrect": "La contrasenya actual és incorrecta",
-      "newPasswordSameAsCurrent": "La contrasenya nova ha de ser diferent de l'actual",
-      "passwordRequirementsNotMet": "La contrasenya no compleix els requisits",
-      "currentPasswordLabel": "Contrasenya actual",
-      "newPasswordLabel": "Contrasenya nova",
-      "confirmPasswordLabel": "Confirma la contrasenya nova",
-      "passwordHint": "Mín. 8 caràcters, màx. 128. Ha d'incloure almenys una majúscula, una minúscula i un dígit.",
-      "changingPassword": "Canviant la contrasenya…",
-      "submit": "Canvia la contrasenya",
-      "errorTooShort": "Ha de tenir almenys 8 caràcters",
-      "errorTooLong": "Ha de tenir com a màxim 128 caràcters",
-      "errorMissingUppercase": "Ha de contenir almenys una majúscula",
-      "errorMissingLowercase": "Ha de contenir almenys una minúscula",
-      "errorMissingDigit": "Ha de contenir almenys un dígit"
-    },
     "blockedUsersTitle": "Usuaris bloquejats",
-    "blockedUsersDescription": "Gestiona els usuaris que has bloquejat. Els usuaris bloquejats no et poden afegir a grups ni enviar-te sol·licituds d'amistat.",
+    "blockedUsersDescription": "Gestiona els usuaris que has bloquejat.",
+    "blockedUsersRowLabel": "Usuaris bloquejats",
+    "blockedUsersRowDescription": "Veure i gestionar usuaris bloquejats.",
+    "accountTitle": "Compte",
+    "signOut": "Tanca la sessió",
+    "signOutDescription": "Tanca la sessió en aquest dispositiu.",
+    "signOutAllTitle": "Tanca la sessió a tots els dispositius",
+    "signOutAllDescription": "Tanca totes les sessions actives a tot arreu.",
+    "signingOut": "Tancant la sessió…",
     "Preferences": {
       "timezoneLabel": "Zona horària",
       "timezoneSelect": "Selecciona la zona horària…",
       "timezoneSearch": "Cerca zona horària…",
       "timezoneEmpty": "No s'ha trobat cap zona horària.",
       "timezoneSaved": "Zona horària actualitzada.",
-      "currencyLabel": "Moneda per defecte",
-      "currencySaved": "Moneda per defecte actualitzada."
+      "timezoneHelp": "Estableix el valor predeterminat per a les hores de noves despeses i programacions periòdiques, i formata les dates.",
+      "languageSearch": "Cerca idioma…",
+      "languageEmpty": "No s'ha trobat cap idioma.",
+      "languageCommon": "Més comuns",
+      "languageOther": "Altres idiomes",
+      "currencyLabel": "Moneda predeterminada",
+      "currencySaved": "Moneda predeterminada actualitzada."
     },
+    "appPreferencesDescription": "Ajusta l'idioma, el tema i la moneda predeterminada del teu compte.",
+    "preferencesSaving": "Desant preferències…",
+    "themeSaved": "Tema actualitzat.",
+    "themeLight": "Clar",
+    "themeDark": "Fosc",
+    "themeSystem": "Sistema",
     "SignOutAll": {
       "button": "Tanca la sessió a tots els dispositius",
       "dialogTitle": "Vols tancar la sessió a tots els dispositius?",
       "dialogDescription": "Això finalitzarà totes les sessions actives, inclosa aquesta. Se us redirigirà a la pàgina d'inici de sessió.",
       "cancel": "Cancel·lar",
-      "confirm": "Tanca la sessió a tot arreu",
+      "confirm": "Tanca totes les sessions",
       "signingOut": "Tancant la sessió…",
       "successToast": "S'han tancat totes les sessions."
     },
@@ -815,14 +1157,52 @@
       "or": "o bloquejar per correu electrònic",
       "emailPlaceholder": "correu@exemple.com",
       "block": "Bloquejar",
-      "unblock": "Desbloquejar",
-      "empty": "No has bloquejat ningú.",
+      "unblock": "Desbloqueja",
+      "empty": "No tens cap usuari bloquejat.",
       "blockedToast": "Usuari bloquejat correctament.",
       "unblockedToast": "Usuari desbloquejat.",
       "confirmBlockTitle": "Bloquejar aquest amic?",
       "confirmBlockDescription": "Bloquejar a {name} també el suprimirà de la teva llista d'amics. No rebrà cap notificació sobre el bloqueig.",
       "confirmBlockCancel": "Cancel·lar",
       "confirmBlockAction": "Bloquejar i suprimir amic"
+    },
+    "NameForm": {
+      "nameRequired": "El nom visible és obligatori.",
+      "nameMaxLength": "El nom ha de tenir com a màxim 100 caràcters",
+      "successToast": "Nom per mostrar actualitzat correctament.",
+      "label": "Nom per mostrar",
+      "placeholder": "Introdueix el teu nom per mostrar",
+      "saving": "Desant…",
+      "submit": "Desa el nom"
+    },
+    "UsernameForm": {
+      "successToast": "Nom d'usuari actualitzat correctament.",
+      "label": "Nom d'usuari",
+      "placeholder": "el-teu-nom-d-usuari",
+      "description": "S'utilitza a l'URL del teu perfil. Només lletres minúscules, números i guions.",
+      "saving": "Desant…",
+      "submit": "Desa el nom d'usuari"
+    },
+    "PasswordForm": {
+      "currentPasswordRequired": "La contrasenya actual és obligatòria.",
+      "newPasswordRequired": "La nova contrasenya és obligatòria.",
+      "confirmPasswordRequired": "Confirma la nova contrasenya.",
+      "passwordsDoNotMatch": "Les contrasenyes no coincideixen.",
+      "successToast": "Contrasenya canviada correctament.",
+      "currentPasswordIncorrect": "La contrasenya actual és incorrecta.",
+      "newPasswordSameAsCurrent": "La nova contrasenya ha de ser diferent de l'actual.",
+      "passwordRequirementsNotMet": "La contrasenya no compleix els requisits.",
+      "currentPasswordLabel": "Contrasenya actual",
+      "newPasswordLabel": "Nova contrasenya",
+      "confirmPasswordLabel": "Confirma la nova contrasenya",
+      "passwordHint": "Mínim 8 caràcters, màxim 128. Ha d'incloure almenys una lletra majúscula, una minúscula i un número.",
+      "changingPassword": "Canviant la contrasenya…",
+      "submit": "Canvia la contrasenya",
+      "errorTooShort": "Ha de tenir almenys 8 caràcters",
+      "errorTooLong": "Ha de tenir com a màxim 128 caràcters",
+      "errorMissingUppercase": "Ha de contenir almenys una majúscula",
+      "errorMissingLowercase": "Ha de contenir almenys una minúscula",
+      "errorMissingDigit": "Ha de contenir almenys un dígit"
     }
   },
   "Friends": {
@@ -908,6 +1288,7 @@
       "title": "Expenses with {name}",
       "description": "All expenses you share with this friend, across groups.",
       "backToFriends": "Back to friends",
+      "backToFriend": "Torna a {name}",
       "listTitle": "Expense history",
       "listDescription": "Direct expenses and expenses from shared groups.",
       "create": "Add expense",
@@ -950,6 +1331,10 @@
       "friendOwesYou": "{name} et deu {amount}",
       "youOweFriend": "Deus {amount} a {name}",
       "paid": "{payer} ha pagat a {payee} {amount}",
+      "deletePayment": "Suprimeix",
+      "deletePaymentConfirm": "Segur que vols suprimir aquest pagament?",
+      "deletePaymentSuccess": "Pagament suprimit correctament",
+      "deletePaymentError": "No s'ha pogut suprimir el pagament",
       "groups": {
         "upcoming": "Pròxims",
         "thisWeek": "Aquesta setmana",
@@ -965,14 +1350,15 @@
       "paid": "{payer} ha pagat a {payee}",
       "addedBy": "Afegit per {name} el {date}",
       "disclaimer": "Aquest pagament es va registrar amb \"Registrar un pagament\". No es va transferir cap diners.",
+      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group.",
+      "readOnlyNotice": "Aquest pagament no es pot editar ni suprimir individualment perquè forma part d'una liquidació de balanços.",
       "edit": "Editar",
       "delete": "Eliminar",
       "deleteConfirm": "Eliminar aquest pagament?",
       "deleteDescription": "Això ajustarà els saldos com si el pagament mai hagués passat.",
       "deleting": "Deleting…",
       "notFound": "Pagament no trobat.",
-      "backToFriend": "Tornar a {name}",
-      "consolidationDisclaimer": "This payment is part of a full balance settlement. Knots decomposed it into individual settlements per group."
+      "backToFriend": "Tornar a {name}"
     },
     "DirectExpense": {
       "title": "Afegir una despesa",
@@ -984,15 +1370,19 @@
       "paidByYou": "Tu",
       "splitEqually": "Pagat per {payer} i dividit a parts iguals",
       "dateLabel": "Data",
-      "attachLabel": "Adjuntar imatge o PDF",
+      "attachLabel": "Adjunta imatge o PDF",
       "notesLabel": "Notes",
-      "notesPlaceholder": "Afegir notes (opcional)",
+      "notesPlaceholder": "Afegeix notes (opcional)",
       "save": "Desar",
       "saving": "Desant…",
       "cancel": "Cancel·lar",
       "success": "Despesa afegida.",
       "error": "No s'ha pogut afegir la despesa.",
       "persistError": "No s'han pogut desar les dades del formulari. La navegació no està disponible."
+    },
+    "Settings": {
+      "currencyTitle": "Moneda principal",
+      "currencyDescription": "Utilitzada per a despeses directes i pagaments amb amics."
     },
     "SettleAll": {
       "button": "Liquidar tot",
@@ -1016,6 +1406,7 @@
     "memberPromoted": "Membre promogut a propietari.",
     "memberDemoted": "Membre degradat a membre regular.",
     "addMember": "Afegeix un membre",
+    "pickFriend": "Choose from your friends or enter an email.",
     "adding": "Afegint…",
     "add": "Afegeix",
     "cancel": "Cancel·la",
@@ -1024,8 +1415,7 @@
     "leave": "Abandona",
     "removeFromGroup": "Elimina del grup",
     "promoteToOwner": "Promou a propietari",
-    "demoteToMember": "Degrada a membre",
-    "pickFriend": "Choose from your friends or enter an email."
+    "demoteToMember": "Degrada a membre"
   },
   "MyGroups": {
     "title": "Els meus grups",
@@ -1035,7 +1425,9 @@
     "noGroupsHint": "Crea un grup per començar a repartir despeses amb altres.",
     "createGroup": "Crea un grup",
     "createGroupTitle": "Crea un grup nou",
-    "createGroupDescription": "Introdueix un nom per al grup. Pots convidar membres després de crear-lo.",
+    "createGroupDescription": "Introdueix un nom i una moneda per al grup. Pots convidar membres després de crear-lo.",
+    "invalidCurrency": "Tria una moneda vàlida.",
+    "currencySymbolRequired": "Introdueix un símbol de moneda.",
     "groupNameLabel": "Nom del grup",
     "characters": "caràcters",
     "leaveGroup": "Abandona el grup",
@@ -1055,100 +1447,6 @@
     "deleteGroupConfirmCancel": "Cancel·la",
     "deleteGroupConfirmAction": "Suprimeix definitivament"
   },
-  "UserMenu": {
-    "profileSettings": "Configuració del compte",
-    "signingOut": "Tancant la sessió…",
-    "signOut": "Tanca la sessió"
-  },
-  "Notifications": {
-    "settings": "Configuració de notificacions",
-    "subscribe": "Activa les notificacions",
-    "unsubscribe": "Desactiva les notificacions",
-    "selectParticipant": "Notifica'm dels canvis d'altres",
-    "noParticipant": "Tots els canvis",
-    "permissionDenied": "El permís de notificacions ha estat denegat. Activa'l a la configuració del navegador.",
-    "notSupported": "Les notificacions push no estan disponibles en aquest dispositiu.",
-    "expenseCreated": "{actor} ha afegit \"{title}\"",
-    "expenseUpdated": "{actor} ha actualitzat \"{title}\"",
-    "expenseDeleted": "{actor} ha eliminat \"{title}\"",
-    "groupUpdated": "{actor} ha actualitzat el grup \"{group}\"",
-    "notificationTitle": "Knots – {group}",
-    "defaultBody": "Nova activitat al teu grup",
-    "filterHint": "Tria de qui vols rebre alertes i quins esdeveniments vols rebre.",
-    "subscribeError": "No s'han pogut activar les notificacions. Torna-ho a provar.",
-    "membersLabel": "Notifica'm sobre",
-    "notifyAllMembers": "Tothom del grup",
-    "notifySpecificMembers": "O només aquests membres:",
-    "eventsLabel": "Esdeveniments",
-    "eventCreate": "Despesa creada",
-    "eventUpdate": "Despesa actualitzada",
-    "eventDelete": "Despesa eliminada",
-    "selectAtLeastOneFilter": "Selecciona almenys un membre o un esdeveniment.",
-    "channelsLabel": "Canals",
-    "pushLabel": "Notificacions push",
-    "pushUnavailable": "Les notificacions push no estan disponibles en aquest desplegament.",
-    "emailLabel": "Notificacions per correu electrònic",
-    "enableChannelHint": "Activa un canal per configurar de qui i de què vols rebre notificacions.",
-    "pushSyncWarning": "Les preferències s'han desat, però la sincronització del filtre de notificacions push ha fallat."
-  },
-  "ExpenseImport": {
-    "button": "Importa despeses",
-    "fromKnots": "Importa des de Knots",
-    "fromSplitwise": "Importa des de Splitwise"
-  },
-  "KnotsImport": {
-    "title": "Importa des de Knots",
-    "description": "Puja un fitxer exportat de Knots. Si el fitxer inclou persones que encara no són al grup, les pots afegir aquí abans d’importar.",
-    "fileLabel": "Fitxer d’exportació de Knots",
-    "previewLabel": "Previsualització (primeres 10 línies)",
-    "clear": "Esborra",
-    "cancel": "Cancel·la",
-    "import": "Importa despeses",
-    "addAndImport": "Afegeix membres i importa",
-    "importing": "Important...",
-    "analyzing": "Analitzant l’exportació…",
-    "expenseCount": "{count, plural, one {S’ha trobat # despesa} other {S’han trobat # despeses}}",
-    "matchedParticipants": "Ja són al grup: {names}",
-    "missingParticipantsLabel": "Persones per afegir a aquest grup",
-    "missingParticipantsDescription": "Introdueix un correu electrònic per a cada persona. Els comptes nous es creen automàticament i s’enllacen amb aquest grup. Si ja tenen compte, s’afegeixen com a membres.",
-    "expenseReferences": "{count, plural, one {# despesa} other {# despeses}}",
-    "emailLabel": "Correu electrònic",
-    "emailPlaceholder": "nom@example.com",
-    "softCreateHint": "Es podran registrar més endavant amb aquest correu per accedir al grup.",
-    "toast": {
-      "invalidFileType": {
-        "title": "Tipus de fitxer no vàlid",
-        "description": "Selecciona un fitxer JSON o CSV exportat de Knots."
-      },
-      "noContent": {
-        "title": "Fitxer sense contingut",
-        "description": "Selecciona primer un fitxer d’exportació de Knots."
-      },
-      "missingEmail": {
-        "title": "Cal un correu electrònic",
-        "description": "Introdueix el correu electrònic de {name}."
-      },
-      "success": {
-        "title": "Importació completada",
-        "description": "S’han importat {count} despeses de Knots."
-      },
-      "error": {
-        "title": "Ha fallat la importació",
-        "description": "No s’ha pogut importar el fitxer de Knots."
-      },
-      "cancelled": {
-        "title": "Importació cancel·lada",
-        "description": "La importació s’ha aturat abans d’acabar."
-      }
-    },
-    "errors": {
-      "invalidJson": "Fitxer JSON no vàlid.",
-      "invalidFormat": "Aquest fitxer no és una exportació de Knots vàlida.",
-      "noExpenses": "L'exportació no conté despeses."
-    },
-    "friendLabel": "Friend",
-    "friendPlaceholder": "Select a friend…"
-  },
   "GroupDangerZone": {
     "title": "Gestió del grup",
     "description": "Arxivar amaga aquest grup de la teva llista sense esborrar-ne les dades. Suprimir elimina el grup definitivament per a tothom.",
@@ -1163,9 +1461,115 @@
     "cancel": "Cancel·la",
     "deleteConfirmAction": "Suprimeix definitivament"
   },
+  "UserMenu": {
+    "menuLabel": "Menú d'usuari",
+    "profileSettings": "Configuració del compte",
+    "theme": "Tema",
+    "themeLight": "Clar",
+    "themeDark": "Fosc",
+    "themeSystem": "Sistema",
+    "signingOut": "Tancant la sessió…",
+    "signOut": "Tanca la sessió"
+  },
+  "Notifications": {
+    "settings": "Configuració de notificacions",
+    "subscribe": "Activa les notificacions",
+    "unsubscribe": "Desactiva les notificacions",
+    "selectParticipant": "Notifica'm dels canvis d'altres",
+    "noParticipant": "Tots els canvis",
+    "permissionDenied": "El permís de notificacions ha estat denegat. Activa'l a la configuració del navegador.",
+    "notSupported": "Les notificacions push no estan disponibles en aquest dispositiu.",
+    "expenseCreated": "{actor} ha afegit \"{title}\" al grup {group}",
+    "expenseUpdated": "{actor} ha modificat \"{title}\" al grup {group}",
+    "expenseDeleted": "{actor} ha suprimit \"{title}\" al grup {group}",
+    "groupUpdated": "{actor} ha actualitzat el grup \"{group}\"",
+    "notificationTitle": "Knots – {group}",
+    "defaultBody": "Nova activitat al teu grup",
+    "filterHint": "Tria de qui vols rebre alertes i quins esdeveniments vols rebre.",
+    "membersLabel": "Notifica'm sobre",
+    "notifyAllMembers": "Tothom del grup",
+    "notifySpecificMembers": "O només aquests membres:",
+    "eventsLabel": "Esdeveniments",
+    "eventCreate": "Despesa creada",
+    "eventUpdate": "Despesa actualitzada",
+    "eventDelete": "Despesa eliminada",
+    "selectAtLeastOneFilter": "Selecciona almenys un membre o un esdeveniment.",
+    "subscribeError": "No s'han pogut activar les notificacions. Torna-ho a provar.",
+    "channelsLabel": "Canals",
+    "pushLabel": "Notificacions push",
+    "pushUnavailable": "Les notificacions push no estan disponibles en aquest desplegament.",
+    "emailLabel": "Notificacions per correu electrònic",
+    "enableChannelHint": "Activa un canal per configurar de qui i de què vols rebre notificacions.",
+    "pushSyncWarning": "Les preferències s'han desat, però la sincronització del filtre de notificacions push ha fallat."
+  },
+  "AppError": {
+    "title": "Alguna cosa ha anat malament",
+    "description": "S'han esborrat les dades locals de l'aplicació. La teva sessió es tancarà per tal que puguis començar de nou des de la pàgina principal.",
+    "recover": "Ves a la pàgina principal",
+    "recovering": "Redirigint…"
+  },
+  "PaymentForm": {
+    "dateLabel": "Data de pagament",
+    "dateDescription": "Introdueix la data en què es va fer el pagament.",
+    "amountLabel": "Import",
+    "amountDescription": "Introdueix l'import del pagament.",
+    "paidByLabel": "Pagat per",
+    "paidByDescription": "Selecciona qui ha fet el pagament.",
+    "paidToLabel": "Pagat a",
+    "paidToDescription": "Selecciona qui ha rebut el pagament.",
+    "notesLabel": "Notes",
+    "notesPlaceholder": "Afegeix notes (opcional)",
+    "participantPlaceholder": "Selecciona un participant",
+    "disclaimer": "Això registra un pagament entre persones per saldar balanços. No és una despesa compartida."
+  },
+  "FloatingCreateExpense": {
+    "addExpense": "Afegeix despesa",
+    "dialogTitle": "Afegeix una despesa",
+    "editDialogTitle": "Edita la despesa",
+    "createPaymentDialogTitle": "Registra un pagament",
+    "editPaymentDialogTitle": "Edita el pagament",
+    "withWho": "Amb tu i:",
+    "back": "Enrere",
+    "searchPlaceholder": "Cerca amics o grups…",
+    "descriptionPlaceholder": "Introdueix una descripció",
+    "amountPlaceholder": "0,00",
+    "paidByLabel": "Pagat per",
+    "you": "tu",
+    "splitEqually": "dividit a parts iguals",
+    "save": "Desar",
+    "saving": "Desant…",
+    "cancel": "Cancel·lar",
+    "successToast": "Despesa creada correctament.",
+    "updateSuccessToast": "Despesa actualitzada correctament.",
+    "paymentSuccessToast": "Pagament registrat correctament.",
+    "paymentUpdateSuccessToast": "Pagament actualitzat correctament.",
+    "errorToast": "No s'ha pogut crear la despesa.",
+    "paymentErrorToast": "No s'ha pogut registrar el pagament.",
+    "updateErrorToast": "No s'ha pogut actualitzar la despesa.",
+    "paymentUpdateErrorToast": "No s'ha pogut actualitzar el pagament.",
+    "lockedPaymentToast": "Aquest pagament forma part d'una liquidació de balanços i no es pot editar.",
+    "noFriendOrGroupFound": "No s'han trobat amics ni grups.",
+    "groupsHeader": "Grups",
+    "friendsHeader": "Amics",
+    "selectGroupText": "Grup: {name}",
+    "pickerTitle": "Amb qui?",
+    "pickerDone": "Fet",
+    "selectParticipants": "Selecciona amics o grup",
+    "selectParticipantsHint": "Selecciona un grup o amic per començar.",
+    "singleGroupAlertTitle": "Només un grup",
+    "singleGroupAlertDescription": "Només pots seleccionar un grup a la vegada. Treu el grup actual abans de triar-ne un altre.",
+    "singleGroupAlertOk": "D'acord",
+    "advancedOptions": "Opcions avançades",
+    "splitDetails": "Detalls de la divisió",
+    "notesPlaceholder": "Afegeix notes (opcional)",
+    "viewGroupExpense": "Veure despesa del grup"
+  },
   "DuplicateExpense": {
     "title": "Possible duplicat detectat",
     "description": "La despesa que estàs desant sembla similar a una existent. Compara-les a sota i decideix si vols continuar.",
+    "cancel": "Cancel·lar",
+    "confirm": "Desa igualment",
+    "persistError": "No s'han pogut desar les dades del formulari. La navegació no està disponible.",
     "yours": "La teva",
     "existing": "Existent",
     "fields": {
@@ -1173,9 +1577,6 @@
       "amount": "Import",
       "date": "Data"
     },
-    "cancel": "Cancel·lar",
-    "confirm": "Desa igualment",
-    "persistError": "No s'han pogut desar les dades del formulari. La navegació no està disponible.",
     "indicators": {
       "similar-title": "Títol similar",
       "same-amount": "Mateix import",
@@ -1186,7 +1587,47 @@
   "CurrencyAmountInput": {
     "expressionHint": "o 10+5"
   },
-  "ExpenseTitleInput": {
-    "clear": "Esborra"
+  "Login": {
+    "title": "Inicia la sessió",
+    "description": "Entra amb una clau d'accés, un enllaç per correu o la teva contrasenya.",
+    "orContinueWithEmail": "O CONTINUA AMB EL CORREU",
+    "methodMagicLink": "Enllaç màgic",
+    "methodPassword": "Contrasenya",
+    "sendSignInLink": "Envia l'enllaç d'accés",
+    "signInWithPassword": "Inicia sessió amb contrasenya",
+    "usePasskey": "Utilitza una clau d'accés",
+    "passkeyFailed": "No s'ha pogut iniciar sessió amb aquesta clau d'accés. Torna-ho a provar.",
+    "forgotPassword": "Has oblidat la contrasenya?",
+    "noAccount": "No tens un compte?",
+    "signUp": "Registra't",
+    "magicLinkButton": "Envia l'enllaç d'accés",
+    "magicLinkEmailRequired": "Introdueix la teva adreça de correu electrònic.",
+    "magicLinkSendFailed": "No s'ha pogut enviar el correu d'accés. Torna-ho a provar.",
+    "magicLinkSentTitle": "Comprova el teu correu",
+    "magicLinkSentDescription": "Si existeix un compte amb aquesta adreça, hem enviat un enllaç d'accés. Funciona una vegada i caduca en 15 minuts.",
+    "magicLinkSigningIn": "Iniciant sessió…",
+    "magicLinkFailedTitle": "No s'ha pogut iniciar sessió",
+    "magicLinkInvalid": "Aquest enllaç d'accés no és vàlid o ha caducat.",
+    "backToLogin": "Torna a l'inici de sessió"
+  },
+  "Register": {
+    "title": "Crea un compte",
+    "description": "Registra’t amb un enllaç per correu o una contrasenya.",
+    "signUpWithPassword": "Crea un compte amb contrasenya",
+    "confirmPassword": "Confirma la contrasenya",
+    "hasAccount": "Ja tens un compte?",
+    "signIn": "Inicia la sessió",
+    "creating": "Creant el compte…",
+    "passwordMismatch": "Les contrasenyes no coincideixen",
+    "ruleLength": "8 caràcters",
+    "ruleLowercase": "Minúscula",
+    "ruleUppercase": "Majúscula",
+    "ruleNumber": "Número",
+    "successTitle": "Registre completat amb èxit",
+    "successDescription": "El teu compte s’ha creat correctament",
+    "successAlertTitle": "Comprova el teu correu",
+    "successAlertDescription": "Hem enviat un enllaç de verificació al teu correu. Fes clic a l’enllaç per verificar el compte abans d’iniciar sessió.",
+    "goToLogin": "Ves a l'inici de sessió",
+    "failedTitle": "Ha fallat el registre"
   }
 }

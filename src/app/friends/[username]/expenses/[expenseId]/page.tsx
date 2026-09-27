@@ -13,8 +13,6 @@ export default async function DirectExpenseDetailPage({ params }: Props) {
   const { username, expenseId } = await params
 
   return (
-    <div className="px-4 py-6">
-      <ExpenseDetail scope="direct" username={username} expenseId={expenseId} />
-    </div>
+    <ExpenseDetail scope="direct" username={username} expenseId={expenseId} />
   )
 }

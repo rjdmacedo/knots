@@ -2,8 +2,8 @@
 
 import { DocumentThumbnail } from '@/components/expense-documents-input'
 import { toast } from '@/components/ui/toast'
-import { randomId } from '@/lib/api'
 import { invalidateActivityQueries } from '@/lib/invalidate-activity-queries'
+import { randomId } from '@/lib/random-id'
 import { cn, formatFileSize } from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import { Camera, Loader2 } from 'lucide-react'
@@ -128,6 +128,7 @@ export function ExpenseDetailReceiptUpload(props: Props) {
           documents={documents}
           deleteDocument={() => undefined}
           readOnly
+          layout="thumbnail"
         />
       </div>
     )
