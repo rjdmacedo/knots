@@ -1,3 +1,10 @@
+# [1.60.0](https://github.com/rjdmacedo/knots/compare/v1.59.0...v1.60.0) (2026-09-27)
+
+
+### Features
+
+* warn when account push is selected but this device is off ([456bd4c](https://github.com/rjdmacedo/knots/commit/456bd4c459bc6cde72e38ce1692f841bd1363650))
+
 # [1.59.0](https://github.com/rjdmacedo/knots/compare/v1.58.1...v1.59.0) (2026-09-27)
 
 
