@@ -1,3 +1,15 @@
+# [1.59.0](https://github.com/rjdmacedo/knots/compare/v1.58.1...v1.59.0) (2026-09-27)
+
+
+### Bug Fixes
+
+* toast push subscribe failures instead of throwing in the UI ([ff96c04](https://github.com/rjdmacedo/knots/commit/ff96c041c8e77ebed907476a43c7e895d5a7ad01))
+
+
+### Features
+
+* register one push subscription per browser on the account ([75c03f1](https://github.com/rjdmacedo/knots/commit/75c03f105a91cda7bebc1dd3bba81c37e580dc44))
+
 ## [1.58.1](https://github.com/rjdmacedo/knots/compare/v1.58.0...v1.58.1) (2026-09-27)
 
 
