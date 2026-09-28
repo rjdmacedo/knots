@@ -1,3 +1,10 @@
+# [1.62.0](https://github.com/rjdmacedo/knots/compare/v1.61.0...v1.62.0) (2026-09-28)
+
+
+### Features
+
+* add worker service, update Docker and compose files, translations, and dependencies ([a930a39](https://github.com/rjdmacedo/knots/commit/a930a399c6a22349def07b2d8ddbeb71a7a8c79d))
+
 # [1.61.0](https://github.com/rjdmacedo/knots/compare/v1.60.0...v1.61.0) (2026-09-27)
 
 
