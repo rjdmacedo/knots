@@ -18,12 +18,15 @@ const PBT_NUM_RUNS = 100
 
 const EXPENSE_ACTIVITY_TYPES = [
   ActivityType.CREATE_EXPENSE,
+  ActivityType.CREATE_RECURRING_EXPENSE,
   ActivityType.UPDATE_EXPENSE,
   ActivityType.DELETE_EXPENSE,
 ] as const
 
 const EXPECTED_LOCALE_KEYS: Record<ActivityType, string> = {
   [ActivityType.CREATE_EXPENSE]: 'notifications.expenseCreated',
+  [ActivityType.CREATE_RECURRING_EXPENSE]:
+    'notifications.recurringExpenseCreated',
   [ActivityType.UPDATE_EXPENSE]: 'notifications.expenseUpdated',
   [ActivityType.DELETE_EXPENSE]: 'notifications.expenseDeleted',
   [ActivityType.UPDATE_GROUP]: 'notifications.groupUpdated',

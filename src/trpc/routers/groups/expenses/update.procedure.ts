@@ -1,10 +1,8 @@
 import { updateExpense } from '@/lib/api'
 import { upsertCategoryMapping } from '@/lib/category-mapping'
 import { prisma } from '@/lib/prisma'
-import { notifyOnActivity } from '@/lib/push/notify-on-activity'
 import { expenseFormSchema } from '@/lib/schemas'
 import { groupMemberProcedure } from '@/trpc/init'
-import { ActivityType } from '@prisma/client'
 import { z } from 'zod'
 import { applyItemizedConversion } from './apply-itemized-conversion'
 import { resolveUpdateConversion } from './resolve-update-conversion'
@@ -74,10 +72,6 @@ export const updateGroupExpenseProcedure = groupMemberProcedure
         expenseFormValues,
         user.id,
       )
-      notifyOnActivity(groupId, ActivityType.UPDATE_EXPENSE, {
-        userId: user.id,
-        expenseId: expense.id,
-      })
 
       // Upsert category mapping (secondary operation - must not block the main update)
       try {

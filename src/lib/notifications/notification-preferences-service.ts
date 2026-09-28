@@ -11,11 +11,14 @@
  */
 
 import {
-  LIVE_NOTIFICATION_CATEGORIES,
-  type NotificationChannels,
   defaultChannelsFor,
+  EXPENSE_NOTIFICATION_CATEGORY_IDS,
+  isExpenseNotificationCategory,
   isLiveCategory,
-} from '@/app/account/settings/notification-category-metadata'
+  LIVE_NOTIFICATION_CATEGORIES,
+  type ExpenseNotificationCategoryId,
+  type NotificationChannels,
+} from '@/lib/notifications/categories'
 import { prisma } from '@/lib/prisma'
 
 export type NotificationPreferencesResult = {
@@ -27,6 +30,20 @@ export type NotificationPreferencesResult = {
    */
   categories: Record<string, NotificationChannels>
 }
+
+export type GroupNotificationCategory = NotificationChannels & {
+  isOverride: boolean
+}
+
+export type GroupNotificationPreferencesResult = {
+  notificationsEnabled: boolean
+  categories: Record<ExpenseNotificationCategoryId, GroupNotificationCategory>
+}
+
+export type GroupNotificationOverrides = Map<
+  string,
+  Map<string, NotificationChannels>
+>
 
 export type SaveNotificationCategoryError = {
   code: 'UNKNOWN_CATEGORY'
@@ -69,6 +86,98 @@ export async function getNotificationPreferences(
     notificationsEnabled: user?.notificationsEnabled ?? true,
     categories,
   }
+}
+
+export async function getGroupNotificationPreferences(
+  userId: string,
+  membershipId: string,
+): Promise<GroupNotificationPreferencesResult> {
+  const [account, overrides] = await Promise.all([
+    getNotificationPreferences(userId),
+    prisma.groupNotificationOverride.findMany({
+      where: { membershipId },
+      select: { category: true, email: true, push: true },
+    }),
+  ])
+
+  const stored = new Map(
+    overrides.map((row) => [
+      row.category,
+      { email: row.email, push: row.push },
+    ]),
+  )
+  const categories = {} as Record<
+    ExpenseNotificationCategoryId,
+    GroupNotificationCategory
+  >
+
+  for (const category of EXPENSE_NOTIFICATION_CATEGORY_IDS) {
+    const override = stored.get(category)
+    categories[category] = {
+      ...(override ?? account.categories[category]),
+      isOverride: override !== undefined,
+    }
+  }
+
+  return {
+    notificationsEnabled: account.notificationsEnabled,
+    categories,
+  }
+}
+
+export async function saveGroupNotificationCategory(
+  membershipId: string,
+  category: string,
+  channels: NotificationChannels,
+): Promise<boolean> {
+  if (!isExpenseNotificationCategory(category)) {
+    return false
+  }
+
+  await prisma.groupNotificationOverride.upsert({
+    where: { membershipId_category: { membershipId, category } },
+    create: { membershipId, category, ...channels },
+    update: channels,
+  })
+  return true
+}
+
+export async function resetGroupNotificationOverrides(
+  membershipId: string,
+): Promise<void> {
+  await prisma.groupNotificationOverride.deleteMany({
+    where: {
+      membershipId,
+      category: { in: [...EXPENSE_NOTIFICATION_CATEGORY_IDS] },
+    },
+  })
+}
+
+export async function getGroupNotificationOverrides(
+  membershipIds: string[],
+): Promise<GroupNotificationOverrides> {
+  const distinct = Array.from(new Set(membershipIds))
+  const result: GroupNotificationOverrides = new Map()
+  if (distinct.length === 0) return result
+
+  const rows = await prisma.groupNotificationOverride.findMany({
+    where: {
+      membershipId: { in: distinct },
+      category: { in: [...EXPENSE_NOTIFICATION_CATEGORY_IDS] },
+    },
+    select: { membershipId: true, category: true, email: true, push: true },
+  })
+
+  for (const row of rows) {
+    let byCategory = result.get(row.membershipId)
+    if (!byCategory) {
+      byCategory = new Map()
+      result.set(row.membershipId, byCategory)
+    }
+    byCategory.set(row.category, { email: row.email, push: row.push })
+  }
+
+  return result
 }
 
 /**
@@ -196,6 +305,24 @@ export function isCategoryChannelAllowed(
   }
   const channels = prefs.categories[category] ?? defaultChannelsFor(category)
   return channels[channel]
+}
+
+export function isGroupCategoryChannelAllowed(
+  prefs: NotificationPreferencesResult | undefined,
+  override: NotificationChannels | undefined,
+  category: string | null,
+  channel: 'email' | 'push',
+): boolean {
+  if (prefs && !prefs.notificationsEnabled) {
+    return false
+  }
+  if (category === null) {
+    return true
+  }
+  if (override) {
+    return override[channel]
+  }
+  return isCategoryChannelAllowed(prefs, category, channel)
 }
 
 /** Sets the master notification switch for a user. */

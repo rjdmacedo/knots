@@ -111,6 +111,12 @@ describe('notification-category-metadata', () => {
       )
     })
 
+    it('maps CREATE_RECURRING_EXPENSE to recurring-expense-created', () => {
+      expect(
+        activityTypeToNotificationCategory('CREATE_RECURRING_EXPENSE'),
+      ).toBe('recurring-expense-created')
+    })
+
     it('maps UPDATE_EXPENSE and DELETE_EXPENSE to expense-changed', () => {
       expect(activityTypeToNotificationCategory('UPDATE_EXPENSE')).toBe(
         'expense-changed',

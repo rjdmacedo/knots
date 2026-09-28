@@ -3,8 +3,8 @@
  * Handles creation, acceptance, revocation, and validation of invitations.
  */
 
+import { planAccountNotification } from '@/lib/notifications/planner'
 import { prisma } from '@/lib/prisma'
-import { emailService } from './email-service'
 
 export type InvitationError =
   | 'EXPIRED'
@@ -86,29 +86,41 @@ function createInvitationService(): InvitationService {
       // Create invitation with 7-day expiry
       const expiresAt = new Date(Date.now() + INVITATION_EXPIRY_MS)
 
-      const invitation = await prisma.invitation.create({
-        data: {
-          groupId,
-          email: normalizedEmail,
-          invitedById: invitedBy,
-          status: 'PENDING',
-          expiresAt,
-        },
-        include: {
-          group: { select: { name: true } },
-        },
-      })
-
-      // Construct invite link and send email
       const baseUrl = getBaseUrl()
-      const inviteLink = `${baseUrl}/invite/${invitation.id}`
-
-      await emailService.sendInvitationEmail(
-        normalizedEmail,
-        invitation.group.name,
-        inviteLink,
-      )
-
+      const invitation = await prisma.$transaction(async (tx) => {
+        const created = await tx.invitation.create({
+          data: {
+            groupId,
+            email: normalizedEmail,
+            invitedById: invitedBy,
+            status: 'PENDING',
+            expiresAt,
+          },
+          include: {
+            group: { select: { name: true } },
+          },
+        })
+        const recipient = await tx.user.findUnique({
+          where: { email: normalizedEmail },
+          select: { id: true, email: true, locale: true },
+        })
+        const inviteLink = `${baseUrl}/invite/${created.id}`
+        await planAccountNotification(tx, {
+          eventKey: `group-invitation:${created.id}`,
+          category: 'added-to-group',
+          recipient: recipient
+            ? {
+                userId: recipient.id,
+                email: recipient.email,
+                locale: recipient.locale,
+              }
+            : { email: normalizedEmail },
+          template: 'group-invitation',
+          url: inviteLink,
+          params: { groupName: created.group.name },
+        })
+        return created
+      })
       return { ok: true, invitationId: invitation.id }
     },
 

@@ -1,10 +1,8 @@
 import { createExpense } from '@/lib/api'
 import { upsertCategoryMapping } from '@/lib/category-mapping'
 import { prisma } from '@/lib/prisma'
-import { notifyOnActivity } from '@/lib/push/notify-on-activity'
 import { expenseFormSchema } from '@/lib/schemas'
 import { groupMemberProcedure } from '@/trpc/init'
-import { ActivityType } from '@prisma/client'
 import { z } from 'zod'
 import { applyItemizedConversion } from './apply-itemized-conversion'
 import { resolveConversion } from './resolve-conversion'
@@ -62,10 +60,6 @@ export const createGroupExpenseProcedure = groupMemberProcedure
     )
 
     const expense = await createExpense(expenseFormValues, groupId, userId)
-    notifyOnActivity(groupId, ActivityType.CREATE_EXPENSE, {
-      userId,
-      expenseId: expense.id,
-    })
 
     // Upsert category mapping (secondary operation - must not block expense creation)
     try {

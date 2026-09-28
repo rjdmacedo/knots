@@ -28,6 +28,11 @@ export interface EmailService {
     groupName: string,
     inviteLink: string,
   ): Promise<{ ok: true } | { ok: false; error: string }>
+  sendAddedToGroupEmail(
+    to: string,
+    groupName: string,
+    groupLink: string,
+  ): Promise<{ ok: true } | { ok: false; error: string }>
   sendFriendInviteEmail(
     to: string,
     inviterName: string,
@@ -57,6 +62,8 @@ export interface EmailService {
     actorName: string,
     groupName: string,
     activityLink: string,
+    expenseTitle?: string,
+    activityType?: string,
   ): Promise<{ ok: true } | { ok: false; error: string }>
   sendEmailChangeCodeEmail(
     to: string,
@@ -256,6 +263,30 @@ export function buildInvitationEmailHtml(
     footnote:
       'If you did not expect this invitation, you can safely ignore this email.',
   })
+}
+
+export function buildAddedToGroupEmailHtml(
+  groupName: string,
+  groupLink: string,
+): string {
+  return buildAuthEmailHtml({
+    previewText: `You've been added to ${groupName} on ${APP_NAME}`,
+    title: `Welcome to ${groupName}`,
+    intro: `You have been added to this group on ${APP_NAME}.`,
+    cta: { label: 'Open group', href: groupLink },
+  })
+}
+
+export function buildAddedToGroupEmailText(
+  groupName: string,
+  groupLink: string,
+): string {
+  return [
+    `You've been added to "${groupName}" on ${APP_NAME}`,
+    '',
+    'Open the group:',
+    groupLink,
+  ].join('\n')
 }
 
 export function buildInvitationEmailText(
@@ -513,15 +544,31 @@ export function buildGroupActivityDigestEmailHtml(
   actorName: string,
   groupName: string,
   activityLink: string,
+  expenseTitle?: string,
+  activityType?: string,
 ): string {
   const safeActor = escapeHtml(actorName)
   const safeGroup = escapeHtml(groupName)
+  const safeExpense = expenseTitle ? escapeHtml(expenseTitle) : ''
+  const action =
+    activityType === 'DELETE_EXPENSE'
+      ? 'deleted'
+      : activityType === 'UPDATE_EXPENSE'
+        ? 'updated'
+        : activityType === 'CREATE_RECURRING_EXPENSE'
+          ? 'created the recurring expense'
+          : 'added'
+  const intro = safeExpense
+    ? `<strong style="color:#09090b;">${safeActor}</strong> ${action} <strong style="color:#09090b;">${safeExpense}</strong> in <strong style="color:#09090b;">${safeGroup}</strong>.`
+    : `<strong style="color:#09090b;">${safeActor}</strong> made changes in the group <strong style="color:#09090b;">${safeGroup}</strong>.`
 
   return buildTransactionalEmailHtml({
     appName: APP_NAME,
-    previewText: `${actorName} made changes in ${groupName}`,
+    previewText: expenseTitle
+      ? `${actorName} ${action} ${expenseTitle} in ${groupName}`
+      : `${actorName} made changes in ${groupName}`,
     title: 'Group activity',
-    intro: `<strong style="color:#09090b;">${safeActor}</strong> made changes in the group <strong style="color:#09090b;">${safeGroup}</strong>.`,
+    intro,
     detailsTitle: 'Activity',
     details: [
       { label: 'Changed by', value: actorName },
@@ -534,7 +581,11 @@ export function buildGroupActivityDigestEmailHtml(
 export function buildGroupActivityDigestEmailSubject(
   actorName: string,
   groupName: string,
+  expenseTitle?: string,
 ): string {
+  if (expenseTitle) {
+    return `${actorName}: "${expenseTitle}" in "${groupName}" on ${APP_NAME}`
+  }
   return `${actorName} made changes in "${groupName}" on ${APP_NAME}`
 }
 
@@ -542,11 +593,23 @@ export function buildGroupActivityDigestEmailText(
   actorName: string,
   groupName: string,
   activityLink: string,
+  expenseTitle?: string,
+  activityType?: string,
 ): string {
+  const action =
+    activityType === 'DELETE_EXPENSE'
+      ? 'deleted'
+      : activityType === 'UPDATE_EXPENSE'
+        ? 'updated'
+        : activityType === 'CREATE_RECURRING_EXPENSE'
+          ? 'created the recurring expense'
+          : 'added'
   return [
     `Group activity on ${APP_NAME}`,
     '',
-    `${actorName} made changes in the group "${groupName}".`,
+    expenseTitle
+      ? `${actorName} ${action} "${expenseTitle}" in the group "${groupName}".`
+      : `${actorName} made changes in the group "${groupName}".`,
     '',
     'View activity:',
     activityLink,
@@ -682,6 +745,33 @@ function createEmailService(): EmailService {
           message,
         )
         return { ok: false, error: message }
+      }
+    },
+
+    async sendAddedToGroupEmail(to, groupName, groupLink) {
+      const resend = await getResendClient()
+      const from = getFromAddress()
+      const subject = `You've been added to "${groupName}" on ${APP_NAME}`
+
+      try {
+        const { error } = await resend.emails.send({
+          from,
+          to,
+          subject,
+          html: buildAddedToGroupEmailHtml(groupName, groupLink),
+          text: buildAddedToGroupEmailText(groupName, groupLink),
+          attachments: [emailLogoAttachment()],
+        })
+        if (error) return { ok: false, error: error.message }
+        return { ok: true }
+      } catch (error) {
+        return {
+          ok: false,
+          error:
+            error instanceof Error
+              ? error.message
+              : 'Unknown email delivery error',
+        }
       }
     },
 
@@ -852,19 +942,34 @@ function createEmailService(): EmailService {
       }
     },
 
-    async sendGroupActivityDigestEmail(to, actorName, groupName, activityLink) {
+    async sendGroupActivityDigestEmail(
+      to,
+      actorName,
+      groupName,
+      activityLink,
+      expenseTitle,
+      activityType,
+    ) {
       const resend = await getResendClient()
       const from = getFromAddress()
-      const subject = buildGroupActivityDigestEmailSubject(actorName, groupName)
+      const subject = buildGroupActivityDigestEmailSubject(
+        actorName,
+        groupName,
+        expenseTitle,
+      )
       const html = buildGroupActivityDigestEmailHtml(
         actorName,
         groupName,
         activityLink,
+        expenseTitle,
+        activityType,
       )
       const text = buildGroupActivityDigestEmailText(
         actorName,
         groupName,
         activityLink,
+        expenseTitle,
+        activityType,
       )
 
       try {

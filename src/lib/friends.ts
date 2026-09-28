@@ -1,4 +1,4 @@
-import { emailService } from '@/lib/auth/email-service'
+import { planAccountNotification } from '@/lib/notifications/planner'
 import { prisma } from '@/lib/prisma'
 import { isBlockedByEmail } from '@/lib/profile/block-check'
 import { TRPCError } from '@trpc/server'
@@ -147,7 +147,7 @@ export async function addFriendByEmail(input: {
 
   const existingUser = await prisma.user.findUnique({
     where: { email: normalizedEmail },
-    select: { id: true },
+    select: { id: true, email: true, locale: true },
   })
 
   const existingFriend = await prisma.friend.findUnique({
@@ -157,50 +157,49 @@ export async function addFriendByEmail(input: {
     select: { id: true },
   })
 
-  const friend = await prisma.friend.upsert({
-    where: {
-      userId_email: { userId: input.userId, email: normalizedEmail },
-    },
-    create: {
-      userId: input.userId,
-      email: normalizedEmail,
-      name: input.name?.trim() || null,
-      friendUserId: existingUser?.id ?? null,
-    },
-    update: {
-      ...(input.name?.trim() ? { name: input.name.trim() } : {}),
-      ...(existingUser ? { friendUserId: existingUser.id } : {}),
-    },
-    include: friendInclude,
-  })
+  const blocked = existingFriend
+    ? false
+    : await isBlockedByEmail(input.userId, normalizedEmail)
+  const friend = await prisma.$transaction(async (tx) => {
+    const saved = await tx.friend.upsert({
+      where: {
+        userId_email: { userId: input.userId, email: normalizedEmail },
+      },
+      create: {
+        userId: input.userId,
+        email: normalizedEmail,
+        name: input.name?.trim() || null,
+        friendUserId: existingUser?.id ?? null,
+      },
+      update: {
+        ...(input.name?.trim() ? { name: input.name.trim() } : {}),
+        ...(existingUser ? { friendUserId: existingUser.id } : {}),
+      },
+      include: friendInclude,
+    })
 
-  if (!existingFriend) {
-    // If the target user has blocked this user, silently skip the notification
-    const blocked = await isBlockedByEmail(input.userId, normalizedEmail)
-
-    if (!blocked) {
-      const baseUrl = getBaseUrl()
+    if (!existingFriend && !blocked) {
       const hasAccount = existingUser !== null
       const inviteLink = hasAccount
-        ? `${baseUrl}/login?callbackUrl=${encodeURIComponent('/friends')}`
-        : `${baseUrl}/register?email=${encodeURIComponent(normalizedEmail)}`
-
-      const emailResult = await emailService.sendFriendInviteEmail(
-        normalizedEmail,
-        owner.name,
-        inviteLink,
-        hasAccount,
-      )
-
-      if (!emailResult.ok) {
-        console.error(
-          `[Friends] Failed to send friend invite email to ${normalizedEmail}:`,
-          emailResult.error,
-        )
-      }
+        ? `${getBaseUrl()}/login?callbackUrl=${encodeURIComponent('/friends')}`
+        : `${getBaseUrl()}/register?email=${encodeURIComponent(normalizedEmail)}`
+      await planAccountNotification(tx, {
+        eventKey: `friend:${saved.id}`,
+        category: 'friend-added',
+        recipient: existingUser
+          ? {
+              userId: existingUser.id,
+              email: existingUser.email,
+              locale: existingUser.locale,
+            }
+          : { email: normalizedEmail },
+        template: 'friend-invite',
+        url: inviteLink,
+        params: { inviterName: owner.name, hasAccount },
+      })
     }
-  }
-
+    return saved
+  })
   const [result] = await enrichFriendsWithStatus(input.userId, [friend])
   return result!
 }

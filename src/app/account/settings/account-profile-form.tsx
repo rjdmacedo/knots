@@ -288,7 +288,7 @@ export function ProfileSection({
               <div className="flex w-full flex-col items-center gap-3 sm:w-auto sm:flex-row sm:items-center">
                 <span
                   className={cn(
-                    'flex size-50 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-7xl font-medium text-primary',
+                    'flex size-50 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-7xl font-medium text-primary sm:text-2xl sm:size-24',
                   )}
                 >
                   {currentImage ? (

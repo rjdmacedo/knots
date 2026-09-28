@@ -1,4 +1,5 @@
 import { upsertFriendByEmail } from '@/lib/friends'
+import { planAccountNotification } from '@/lib/notifications/planner'
 import { prisma } from '@/lib/prisma'
 import { isBlockedBy } from '@/lib/profile/block-check'
 import { MembershipRole } from '@prisma/client'
@@ -132,12 +133,33 @@ export async function addGroupMember(
     })
   }
 
-  await prisma.groupMembership.create({
-    data: {
-      userId: targetUser.id,
-      groupId,
-      role: MembershipRole.MEMBER,
-    },
+  const baseUrl =
+    process.env.NEXTAUTH_URL ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    'http://localhost:3000'
+  await prisma.$transaction(async (tx) => {
+    const membership = await tx.groupMembership.create({
+      data: {
+        userId: targetUser.id,
+        groupId,
+        role: MembershipRole.MEMBER,
+      },
+      include: { group: { select: { name: true } } },
+    })
+    if (targetUser.id !== requesterUserId) {
+      await planAccountNotification(tx, {
+        eventKey: `group-membership:${membership.id}`,
+        category: 'added-to-group',
+        recipient: {
+          userId: targetUser.id,
+          email: targetUser.email,
+          locale: targetUser.locale,
+        },
+        template: 'added-to-group',
+        url: `${baseUrl}/groups/${groupId}`,
+        params: { groupName: membership.group.name },
+      })
+    }
   })
 
   return {

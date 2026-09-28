@@ -62,7 +62,10 @@ function useSummary(
   summaryContext: 'feed' | 'expense' = 'feed',
 ) {
   const t = useTranslations('Activity')
-  const participant = participantName ?? t('someone')
+  const participant =
+    activity.activityType === ActivityType.CREATE_RECURRING_EXPENSE
+      ? 'Knots'
+      : (participantName ?? t('someone'))
   const expense = activity.data?.trim() || t('reimbursement')
   const isPayment = isPaymentActivity(activity)
 
@@ -75,7 +78,10 @@ function useSummary(
     })
 
   if (summaryContext === 'expense') {
-    if (activity.activityType == ActivityType.CREATE_EXPENSE) {
+    if (
+      activity.activityType == ActivityType.CREATE_EXPENSE ||
+      activity.activityType == ActivityType.CREATE_RECURRING_EXPENSE
+    ) {
       return (
         <>{tr(isPayment ? 'paymentRecordedDetail' : 'expenseCreatedDetail')}</>
       )
@@ -89,7 +95,10 @@ function useSummary(
 
   if (activity.activityType == ActivityType.UPDATE_GROUP) {
     return <>{tr('settingsModified')}</>
-  } else if (activity.activityType == ActivityType.CREATE_EXPENSE) {
+  } else if (
+    activity.activityType == ActivityType.CREATE_EXPENSE ||
+    activity.activityType == ActivityType.CREATE_RECURRING_EXPENSE
+  ) {
     return <>{tr(isPayment ? 'paymentRecorded' : 'expenseCreated')}</>
   } else if (activity.activityType == ActivityType.UPDATE_EXPENSE) {
     return <>{tr(isPayment ? 'paymentUpdated' : 'expenseUpdated')}</>
@@ -109,6 +118,7 @@ function ActivityTypeIcon({
 
   switch (activityType) {
     case ActivityType.CREATE_EXPENSE:
+    case ActivityType.CREATE_RECURRING_EXPENSE:
       return isPayment ? (
         <Banknote className={className} />
       ) : (

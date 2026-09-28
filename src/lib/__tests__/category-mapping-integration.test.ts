@@ -19,7 +19,6 @@
 const mockCreateExpense = jest.fn()
 const mockUpdateExpense = jest.fn()
 const mockUpsertCategoryMapping = jest.fn()
-const mockNotifyOnActivity = jest.fn()
 
 jest.mock('../api', () => ({
   createExpense: (...args: unknown[]) => mockCreateExpense(...args),
@@ -29,10 +28,6 @@ jest.mock('../api', () => ({
 jest.mock('../category-mapping', () => ({
   upsertCategoryMapping: (...args: unknown[]) =>
     mockUpsertCategoryMapping(...args),
-}))
-
-jest.mock('../push/notify-on-activity', () => ({
-  notifyOnActivity: (...args: unknown[]) => mockNotifyOnActivity(...args),
 }))
 
 // Mock the tRPC init to avoid superjson ESM import issues
