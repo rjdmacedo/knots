@@ -1,3 +1,10 @@
+# [1.63.0](https://github.com/rjdmacedo/knots/compare/v1.62.0...v1.63.0) (2026-09-28)
+
+
+### Features
+
+* **export:** improve CSV export with explicit payers, beneficiaries, net balances, and settlements ([c901735](https://github.com/rjdmacedo/knots/commit/c901735963b0297aa8dd0236fdb63212a0083bac))
+
 # [1.62.0](https://github.com/rjdmacedo/knots/compare/v1.61.0...v1.62.0) (2026-09-28)
 
 
