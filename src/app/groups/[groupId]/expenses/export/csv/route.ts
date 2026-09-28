@@ -1,24 +1,7 @@
-import { getDecimalDigits } from '@/lib/currency-conversion'
+import { generateGroupExpensesCsv } from '@/lib/csv-export'
 import { prisma } from '@/lib/prisma'
-import { formatAmountAsDecimal, getCurrencyFromGroup } from '@/lib/utils'
-import { Parser } from '@json2csv/plainjs'
 import { create as contentDisposition } from 'content-disposition'
 import { NextResponse } from 'next/server'
-
-const splitModeLabel = {
-  EVENLY: 'Evenly',
-  BY_SHARES: 'Unevenly – By shares',
-  BY_PERCENTAGE: 'Unevenly – By percentage',
-  BY_AMOUNT: 'Unevenly – By amount',
-}
-
-function formatDate(isoDateString: Date): string {
-  const date = new Date(isoDateString)
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0') // Months are zero-based
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}` // YYYY-MM-DD format
-}
 
 export async function GET(
   req: Request,
@@ -42,11 +25,25 @@ export async function GET(
           originalCurrency: true,
           conversionRate: true,
           paidById: true,
-          paidFor: { select: { userId: true, shares: true } },
-          payers: { select: { userId: true, amount: true } },
+          paidBy: { select: { id: true, name: true } },
+          paidFor: {
+            select: {
+              userId: true,
+              shares: true,
+              user: { select: { id: true, name: true } },
+            },
+          },
+          payers: {
+            select: {
+              userId: true,
+              amount: true,
+              user: { select: { id: true, name: true } },
+            },
+          },
           isReimbursement: true,
           splitMode: true,
         },
+        orderBy: [{ expenseDate: 'asc' }, { createdAt: 'asc' }],
       },
       memberships: {
         include: { user: { select: { id: true, name: true } } },
@@ -58,141 +55,19 @@ export async function GET(
     return NextResponse.json({ error: 'Invalid group ID' }, { status: 404 })
   }
 
-  // Map memberships to participants shape for backward compatibility
+  // Map memberships to participants shape
   const participants = group.memberships.map((m) => ({
     id: m.user.id,
     name: m.user.name,
   }))
 
-  /*
-
-  CSV Columns:
-  - Date: The date of the expense.
-  - Description: A brief description of the expense.
-  - Category: The category of the expense (e.g., Food, Travel, etc.).
-  - Currency: The currency in which the expense is recorded.
-  - Cost: The amount spent.
-  - Original cost: The amount spent in the original currency.
-  - Original currency: The currency the amount was originally spent in.
-  - Conversion rate: The rate used to convert the amount.
-  - Is Reimbursement: Whether the expense is a reimbursement or not.
-  - Split mode: The method used to split the expense (e.g., Evenly, By shares, By percentage, By amount).
-  - UserA, UserB: User-specific data or balances (e.g., amount owed or contributed by each user).
-
-  Example Table:
-  +------------+------------------+----------+----------+----------+---------------+-------------------+-----------------+------------------+----------------------+--------+-----------+
-  | Date       | Description      | Category | Currency | Cost     | Original cost | Original currency | Conversion rate | Is reinbursement | Split mode           | User A | User B    |
-  +------------+------------------+----------+----------+----------+---------------+-------------------+-----------------+------------------+----------------------+--------+-----------+
-  | 2025-01-06 | Dinner with team | Food     | INR      | 5000     |               |                   |                 | No               | Evenly               | 2500   | -2500     |
-  +------------+------------------+----------+----------+----------+---------------+-------------------+-----------------+------------------+----------------------+--------+-----------+
-  | 2025-02-07 | Plane tickets    | Travel   | INR      | 97264.09 | 1000          | EUR               | 97.2641         | No               | Unevenly - By amount | -80000 | -17264.09 |
-  +------------+------------------+----------+----------+----------+---------------+-------------------+-----------------+------------------+----------------------+--------+-----------+
-
-  */
-
-  const fields = [
-    { label: 'Date', value: 'date' },
-    { label: 'Description', value: 'title' },
-    { label: 'Category', value: 'categoryName' },
-    { label: 'Currency', value: 'currency' },
-    { label: 'Cost', value: 'amount' },
-    { label: 'Original cost', value: 'originalAmount' },
-    { label: 'Original currency', value: 'originalCurrency' },
-    { label: 'Conversion rate', value: 'conversionRate' },
-    { label: 'Is Reimbursement', value: 'isReimbursement' },
-    { label: 'Split mode', value: 'splitMode' },
-    ...participants.map((participant) => ({
-      label: participant.name,
-      value: participant.name,
-    })),
-  ]
-
-  const currency = getCurrencyFromGroup(group)
-
-  const expenses = group.expenses.map((expense) => ({
-    date: formatDate(expense.expenseDate),
-    title: expense.title,
-    categoryName: expense.category?.name || '',
-    currency: group.currencyCode ?? group.currency,
-    amount: formatAmountAsDecimal(expense.amount, currency),
-    originalAmount:
-      expense.originalAmount != null && expense.originalCurrency
-        ? (
-            expense.originalAmount /
-            Math.pow(10, getDecimalDigits(expense.originalCurrency))
-          ).toFixed(getDecimalDigits(expense.originalCurrency))
-        : '',
-    originalCurrency: expense.originalCurrency ?? '',
-    conversionRate: expense.conversionRate
-      ? expense.conversionRate.toString()
-      : '',
-    isReimbursement: expense.isReimbursement ? 'Yes' : 'No',
-    splitMode: splitModeLabel[expense.splitMode],
-    ...Object.fromEntries(
-      participants.map((participant) => {
-        // Compute beneficiary debit from paidFor shares
-        const { totalShares, participantShare } = expense.paidFor.reduce(
-          (acc, { userId, shares }) => {
-            acc.totalShares += shares
-            if (userId === participant.id) {
-              acc.participantShare = shares
-            }
-            return acc
-          },
-          { totalShares: 0, participantShare: 0 },
-        )
-
-        const isSinglePayer = expense.payers.length <= 1
-
-        if (isSinglePayer) {
-          // Single-payer: preserve backward-compatible format
-          // Payer column = +share, non-payer column = -share
-          const isPaidByParticipant =
-            (expense.payers.length === 1 &&
-              expense.payers[0].userId === participant.id) ||
-            (expense.payers.length === 0 && expense.paidById === participant.id)
-          const participantAmountShare =
-            totalShares === 0
-              ? 0
-              : +formatAmountAsDecimal(
-                  (expense.amount / totalShares) * participantShare,
-                  currency,
-                )
-
-          return [
-            participant.name,
-            participantAmountShare * (isPaidByParticipant ? 1 : -1),
-          ]
-        }
-
-        // Multi-payer: net position = payer credit - beneficiary debit
-        const debit =
-          totalShares === 0
-            ? 0
-            : (expense.amount / totalShares) * participantShare
-
-        // Compute payer credit from payers array
-        const payerEntry = expense.payers.find(
-          (p) => p.userId === participant.id,
-        )
-        const credit = payerEntry ? payerEntry.amount : 0
-
-        // Net amount: payer credit (positive) minus beneficiary debit (negative)
-        const net = credit - debit
-        const netFormatted = +formatAmountAsDecimal(net, currency)
-
-        return [participant.name, netFormatted]
-      }),
-    ),
-  }))
-
-  const json2csvParser = new Parser({ fields })
-  const csv = json2csvParser.parse(expenses)
+  const csv = generateGroupExpensesCsv(group, participants, group.expenses)
 
   const date = new Date().toISOString().split('T')[0]
   const filename = `Knots Export - ${group.name} - ${date}.csv`
 
-  // \uFEFF character is added at the beginning of the CSV content to ensure that it is interpreted as UTF-8 with BOM (Byte Order Mark), which helps some applications correctly interpret the encoding.
+  // \uFEFF character is added at the beginning of the CSV content to ensure that it is interpreted
+  // as UTF-8 with BOM (Byte Order Mark), which helps applications like Excel correctly interpret encoding.
   return new NextResponse(`\uFEFF${csv}`, {
     headers: {
       'Content-Type': 'text/csv; charset=utf-8',

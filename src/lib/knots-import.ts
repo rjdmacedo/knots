@@ -127,6 +127,10 @@ const KNOTS_CSV_STANDARD_COLUMNS = [
   'Category',
   'Currency',
   'Cost',
+  'Paid by',
+  'Paid By',
+  'Split with',
+  'Split With',
   'Original cost',
   'Original currency',
   'Conversion rate',
@@ -361,7 +365,12 @@ function parseKnotsCSV(content: string): KnotsExport {
 
     const row = parseCSVLine(line)
     const description = row[headers.indexOf('Description')]?.trim() ?? ''
-    if (!description || description.toLowerCase().includes('total')) {
+    if (
+      !description ||
+      description.toLowerCase().includes('total') ||
+      description.toLowerCase().includes('balance') ||
+      description.toLowerCase().includes('settlement')
+    ) {
       continue
     }
 
