@@ -1,349 +1,170 @@
-/**
- * Property-based tests for NotificationSettingsPopover.
- *
- * Feature: unified-group-notifications
- * - Property 2: Filter sections visibility tracks channel state
- * - Property 6: Validation guard blocks invalid filter saves
- *
- * Validates: Requirements 2.4, 2.5, 5.7
- */
-
 import '@testing-library/jest-dom'
-import { render, screen } from '@testing-library/react'
-import fc from 'fast-check'
-import React from 'react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 
-// ---------------------------------------------------------------------------
-// Mocks
-// ---------------------------------------------------------------------------
+Object.defineProperty(window, 'PointerEvent', {
+  configurable: true,
+  value: MouseEvent,
+})
 
-const mockMutateAsync = jest.fn().mockResolvedValue({})
-const mockSubscribe = jest.fn().mockResolvedValue(undefined)
-const mockUnsubscribe = jest.fn().mockResolvedValue(undefined)
-const mockUpdatePreferences = jest.fn().mockResolvedValue(undefined)
-const mockClearError = jest.fn()
+const mockSetData = jest.fn()
+const mockSave = jest.fn()
+const mockReset = jest.fn()
+const mockQuery = jest.fn()
 
-// next-intl: return the key as the translation so we can match on key names
 jest.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
 }))
 
-// Push notification subscription hook
-jest.mock('@/lib/push/use-push-notification-subscription', () => ({
-  isPushSupported: () => false,
-  usePushNotificationSubscription: jest.fn(),
+jest.mock('@/lib/push/push-availability', () => ({
+  detectPushDisabledReason: () => null,
 }))
 
-// tRPC client
 jest.mock('@/trpc/client', () => ({
   trpc: {
     useUtils: () => ({
       groupMembership: {
-        getNotificationPreferences: {
-          setData: jest.fn(),
+        getGroupNotificationPreferences: {
+          setData: (...args: unknown[]) => mockSetData(...args),
         },
       },
     }),
     groupMembership: {
-      getNotificationPreferences: {
-        useQuery: jest.fn(),
+      getGroupNotificationPreferences: {
+        useQuery: (...args: unknown[]) => mockQuery(...args),
       },
-      setNotificationPreferences: {
-        useMutation: jest.fn(),
+      saveGroupNotificationCategory: {
+        useMutation: () => ({
+          mutateAsync: (...args: unknown[]) => mockSave(...args),
+        }),
+      },
+      resetGroupNotificationPreferences: {
+        useMutation: () => ({
+          mutateAsync: (...args: unknown[]) => mockReset(...args),
+        }),
       },
     },
   },
 }))
 
-import { usePushNotificationSubscription } from '@/lib/push/use-push-notification-subscription'
-import { trpc } from '@/trpc/client'
+import { NotificationSettingsPopover } from '../notification-settings-popover'
 
-const mockUsePush = usePushNotificationSubscription as jest.Mock
-const mockGetPrefsQuery = trpc.groupMembership.getNotificationPreferences
-  .useQuery as jest.Mock
-const mockSetPrefsMutation = trpc.groupMembership.setNotificationPreferences
-  .useMutation as jest.Mock
-
-// ---------------------------------------------------------------------------
-// Lazy import (after mocks are registered)
-// ---------------------------------------------------------------------------
-
-// We import the component inside beforeAll to ensure mocks are set first
-
-let NotificationSettingsPopover: React.ComponentType<{
-  groupId: string
-  members: Array<{ id: string; name: string }>
-  currentUserId: string | undefined
-}>
-
-beforeAll(async () => {
-  const mod = await import('../notification-settings-popover')
-  NotificationSettingsPopover = mod.NotificationSettingsPopover
-})
-
-// ---------------------------------------------------------------------------
-// Constants
-// ---------------------------------------------------------------------------
-
-const PBT_NUM_RUNS = 100
-const GROUP_ID = 'group-1'
-const USER_ID = 'user-1'
-const MEMBERS = [{ id: USER_ID, name: 'Alice' }]
-
-// ---------------------------------------------------------------------------
-// Helper: configure mocks for a given channel state
-// ---------------------------------------------------------------------------
-
-function setupMocks({
-  pushEnabled = false,
-  emailEnabled = false,
-  prefs = {},
-}: {
-  pushEnabled?: boolean
-  emailEnabled?: boolean
-  prefs?: Partial<{
-    notifyAllMembers: boolean
-    includedUserIds: string[]
-    notifyOnCreate: boolean
-    notifyOnUpdate: boolean
-    notifyOnDelete: boolean
-  }>
-} = {}) {
-  const defaultPrefs = {
-    emailNotificationsEnabled: emailEnabled,
-    notifyAllMembers: true,
-    includedUserIds: [] as string[],
-    notifyOnCreate: true,
-    notifyOnUpdate: true,
-    notifyOnDelete: true,
-    ...prefs,
-  }
-
-  mockUsePush.mockReturnValue({
-    isSubscribed: pushEnabled,
-    isLoading: false,
-    error: null,
-    subscribe: mockSubscribe,
-    unsubscribe: mockUnsubscribe,
-    updatePreferences: mockUpdatePreferences,
-    clearError: mockClearError,
-  })
-
-  mockGetPrefsQuery.mockReturnValue({
-    data: defaultPrefs,
-    isError: false,
-    isLoading: false,
-  })
-
-  mockSetPrefsMutation.mockReturnValue({
-    mutateAsync: mockMutateAsync,
-    isPending: false,
-  })
+const inheritedPreferences = {
+  notificationsEnabled: true,
+  categories: {
+    'expense-created': { email: true, push: true, isOverride: false },
+    'recurring-expense-created': {
+      email: true,
+      push: false,
+      isOverride: false,
+    },
+    'expense-changed': { email: false, push: false, isOverride: false },
+  },
 }
 
-// ---------------------------------------------------------------------------
-// P2: Filter sections visibility tracks channel state
-// ---------------------------------------------------------------------------
-
-// Feature: unified-group-notifications, Property 2: Filter sections stay visible without channel toggles
-describe('Property 2: Filter sections stay visible without channel toggles', () => {
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
-
-  /**
-   * Channel choice lives in account settings. The group popover always shows
-   * the member and event filters, and never the channel switches or the
-   * "enable a channel" hint.
-   */
-  it('shows Members and Events and hides channel controls', () => {
-    fc.assert(
-      fc.property(fc.boolean(), fc.boolean(), (pushEnabled, emailEnabled) => {
-        setupMocks({ pushEnabled, emailEnabled })
-
-        const { unmount } = render(
-          <NotificationSettingsPopover
-            groupId={GROUP_ID}
-            members={MEMBERS}
-            currentUserId={USER_ID}
-          />,
-        )
-
-        expect(screen.queryByText('membersLabel')).toBeInTheDocument()
-        expect(screen.queryByText('eventsLabel')).toBeInTheDocument()
-        expect(screen.queryByText('channelsLabel')).not.toBeInTheDocument()
-        expect(screen.queryByText('enableChannelHint')).not.toBeInTheDocument()
-        expect(
-          screen.queryByRole('switch', { name: 'pushLabel' }),
-        ).not.toBeInTheDocument()
-        expect(
-          screen.queryByRole('switch', { name: 'emailLabel' }),
-        ).not.toBeInTheDocument()
-
-        unmount()
-      }),
-      { numRuns: PBT_NUM_RUNS },
-    )
+beforeEach(() => {
+  jest.clearAllMocks()
+  mockQuery.mockReturnValue({
+    data: inheritedPreferences,
+    isLoading: false,
+    isError: false,
   })
 })
 
-// ---------------------------------------------------------------------------
-// P6: Validation guard blocks invalid filter saves
-// ---------------------------------------------------------------------------
-
-// Feature: unified-group-notifications, Property 6: Validation guard blocks invalid filter saves
-describe('Property 6: Validation guard blocks invalid filter saves', () => {
-  beforeEach(() => {
-    jest.clearAllMocks()
-  })
-
-  /**
-   * **Validates: Requirements 5.7**
-   *
-   * For any filter state where all three event flags are false,
-   * no setNotificationPreferences mutation SHALL be issued and
-   * the inline validation message SHALL be present.
-   *
-   * The validation guard operates at render time: when `isFilterValid` is false,
-   * the component shows the `selectAtLeastOneFilter` message and `saveFilters`
-   * early-returns without calling `mutateAsync`. We verify both invariants by
-   * inspecting the rendered output — no manual interaction is needed.
-   */
-  it('shows validation message and issues no mutation when all event flags are false', () => {
-    // Feature: unified-group-notifications, Property 6: Validation guard blocks invalid filter saves
-    fc.assert(
-      fc.property(fc.boolean(), (notifyAllOthers) => {
-        // Member part may be valid or invalid — either way, all-false events = invalid
-        const selectedMemberIds = notifyAllOthers ? [] : ['other-user-id']
-        setupMocks({
-          pushEnabled: true, // channel on so filters section is visible
-          prefs: {
-            notifyAllMembers: notifyAllOthers,
-            includedUserIds: selectedMemberIds,
-            notifyOnCreate: false,
-            notifyOnUpdate: false,
-            notifyOnDelete: false,
-          },
-        })
-
-        const { unmount } = render(
-          <NotificationSettingsPopover
-            groupId={GROUP_ID}
-            members={[
-              { id: USER_ID, name: 'Alice' },
-              { id: 'other-user-id', name: 'Bob' },
-            ]}
-            currentUserId={USER_ID}
-          />,
-        )
-
-        // The validation message is shown whenever isFilterValid is false
-        expect(screen.getByText('selectAtLeastOneFilter')).toBeInTheDocument()
-
-        // No mutation was issued during render (saveFilters is never called
-        // on mount — it is invoked only from change handlers, and when
-        // isFilterValid is false it early-returns before calling mutateAsync)
-        expect(mockMutateAsync).not.toHaveBeenCalled()
-
-        unmount()
-      }),
-      { numRuns: PBT_NUM_RUNS },
+describe('group notification overrides', () => {
+  it('shows the three expense categories and no member filters', () => {
+    render(
+      <NotificationSettingsPopover
+        groupId="group-1"
+        currentUserId="user-1"
+        emailVerified
+      />,
     )
+
+    expect(
+      screen.getByText('notifications.categories.expense-created'),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText('notifications.categories.recurring-expense-created'),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText('notifications.categories.expense-changed'),
+    ).toBeInTheDocument()
+    expect(screen.queryByText('membersLabel')).not.toBeInTheDocument()
+    expect(screen.queryByText('notifySpecificMembers')).not.toBeInTheDocument()
   })
 
-  /**
-   * **Validates: Requirements 5.7**
-   *
-   * For any filter state where notifyAllMembers=false and includedUserIds=[],
-   * no setNotificationPreferences mutation SHALL be issued and
-   * the inline validation message SHALL be present.
-   */
-  it('shows validation message and issues no mutation when notifyAllMembers=false and no members selected', () => {
-    // Feature: unified-group-notifications, Property 6: Validation guard blocks invalid filter saves
-    fc.assert(
-      fc.property(
-        fc.boolean(),
-        fc.boolean(),
-        fc.boolean(),
-        (notifyOnCreate, notifyOnUpdate, notifyOnDelete) => {
-          // At least one event flag true to isolate the member constraint
-          fc.pre(notifyOnCreate || notifyOnUpdate || notifyOnDelete)
-
-          setupMocks({
-            pushEnabled: true, // channel on so filters section is visible
-            prefs: {
-              notifyAllMembers: false,
-              includedUserIds: [], // empty — violates member constraint
-              notifyOnCreate,
-              notifyOnUpdate,
-              notifyOnDelete,
-            },
-          })
-
-          const { unmount } = render(
-            <NotificationSettingsPopover
-              groupId={GROUP_ID}
-              members={[
-                { id: USER_ID, name: 'Alice' },
-                { id: 'other-user-id', name: 'Bob' },
-              ]}
-              currentUserId={USER_ID}
-            />,
-          )
-
-          // Validation message visible because member constraint is violated
-          expect(screen.getByText('selectAtLeastOneFilter')).toBeInTheDocument()
-
-          // No mutation was issued (saveFilters would early-return if called)
-          expect(mockMutateAsync).not.toHaveBeenCalled()
-
-          unmount()
+  it('saves a category override when a channel changes', async () => {
+    mockSave.mockResolvedValue({
+      ...inheritedPreferences,
+      categories: {
+        ...inheritedPreferences.categories,
+        'expense-created': {
+          email: false,
+          push: true,
+          isOverride: true,
         },
-      ),
-      { numRuns: PBT_NUM_RUNS },
+      },
+    })
+
+    render(
+      <NotificationSettingsPopover
+        groupId="group-1"
+        currentUserId="user-1"
+        emailVerified
+      />,
+    )
+
+    fireEvent.click(
+      screen.getAllByRole('checkbox', {
+        name: 'notifications.channelLabel.email',
+      })[0],
+    )
+
+    await waitFor(() =>
+      expect(mockSave).toHaveBeenCalledWith({
+        groupId: 'group-1',
+        category: 'expense-created',
+        email: false,
+        push: true,
+      }),
     )
   })
 
-  /**
-   * **Validates: Requirements 5.7**
-   *
-   * Combined: both constraints simultaneously violated (all events false AND no members).
-   */
-  it('shows validation message and issues no mutation when both event and member constraints are violated', () => {
-    // Feature: unified-group-notifications, Property 6: Validation guard blocks invalid filter saves
-    fc.assert(
-      fc.property(fc.constant(null), () => {
-        setupMocks({
-          pushEnabled: true,
-          prefs: {
-            notifyAllMembers: false,
-            includedUserIds: [],
-            notifyOnCreate: false,
-            notifyOnUpdate: false,
-            notifyOnDelete: false,
-          },
-        })
-
-        const { unmount } = render(
-          <NotificationSettingsPopover
-            groupId={GROUP_ID}
-            members={[
-              { id: USER_ID, name: 'Alice' },
-              { id: 'other-user-id', name: 'Bob' },
-            ]}
-            currentUserId={USER_ID}
-          />,
-        )
-
-        // Validation message must always appear when both constraints are violated
-        expect(screen.getByText('selectAtLeastOneFilter')).toBeInTheDocument()
-
-        // No mutation was issued
-        expect(mockMutateAsync).not.toHaveBeenCalled()
-
-        unmount()
-      }),
-      { numRuns: PBT_NUM_RUNS },
+  it('enables reset only when a group override exists', () => {
+    const { rerender } = render(
+      <NotificationSettingsPopover
+        groupId="group-1"
+        currentUserId="user-1"
+        emailVerified
+      />,
     )
+
+    expect(screen.getByRole('button', { name: 'followAccount' })).toBeDisabled()
+
+    mockQuery.mockReturnValue({
+      data: {
+        ...inheritedPreferences,
+        categories: {
+          ...inheritedPreferences.categories,
+          'expense-created': {
+            email: false,
+            push: true,
+            isOverride: true,
+          },
+        },
+      },
+      isLoading: false,
+      isError: false,
+    })
+
+    rerender(
+      <NotificationSettingsPopover
+        groupId="group-1"
+        currentUserId="user-1"
+        emailVerified
+      />,
+    )
+
+    expect(screen.getByRole('button', { name: 'followAccount' })).toBeEnabled()
   })
 })

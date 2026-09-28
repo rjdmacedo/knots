@@ -51,6 +51,9 @@ COPY --from=runtime-deps /usr/app/node_modules ./node_modules
 COPY ./public ./public
 COPY ./scripts ./scripts
 COPY --from=base /usr/app/prisma ./prisma
+COPY --from=base /usr/app/src ./src
+COPY --from=base /usr/app/messages ./messages
+COPY --from=base /usr/app/tsconfig.json ./tsconfig.json
 COPY --from=base /usr/app/.next ./.next
 COPY ./CHANGELOG.md ./
 

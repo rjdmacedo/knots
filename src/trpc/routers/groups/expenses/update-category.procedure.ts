@@ -1,7 +1,5 @@
 import { updateExpenseCategory } from '@/lib/api'
-import { notifyOnActivity } from '@/lib/push/notify-on-activity'
 import { groupMemberProcedure } from '@/trpc/init'
-import { ActivityType } from '@prisma/client'
 import { z } from 'zod'
 
 export const updateGroupExpenseCategoryProcedure = groupMemberProcedure
@@ -20,11 +18,6 @@ export const updateGroupExpenseCategoryProcedure = groupMemberProcedure
         categoryId,
         user.id,
       )
-
-      notifyOnActivity(groupId, ActivityType.UPDATE_EXPENSE, {
-        userId: user.id,
-        expenseId: expense.id,
-      })
 
       return { expenseId: expense.id, categoryId: expense.categoryId }
     },

@@ -14,10 +14,6 @@ jest.mock('@/lib/api', () => {
   }
 })
 
-jest.mock('@/lib/push/notify-on-activity', () => ({
-  notifyOnActivity: jest.fn(),
-}))
-
 jest.mock('@/lib/friends', () => {
   const actual = jest.requireActual('@/lib/friends')
   return {

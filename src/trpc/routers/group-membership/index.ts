@@ -3,8 +3,14 @@
  * All procedures require authentication (protectedProcedure).
  * Group-specific operations verify membership before proceeding.
  */
+import { EXPENSE_NOTIFICATION_CATEGORY_IDS } from '@/app/account/settings/notification-category-metadata'
 import { groupService } from '@/lib/auth/group-service'
 import { invitationService } from '@/lib/auth/invitation-service'
+import {
+  getGroupNotificationPreferences,
+  resetGroupNotificationOverrides,
+  saveGroupNotificationCategory,
+} from '@/lib/notifications/notification-preferences-service'
 import { prisma } from '@/lib/prisma'
 import { isBlockedByEmail } from '@/lib/profile/block-check'
 import { createTRPCRouter, protectedProcedure } from '@/trpc/init'
@@ -204,12 +210,7 @@ export const groupMembershipRouter = createTRPCRouter({
       return invitationService.getPendingInvitations(input.groupId)
     }),
 
-  /**
-   * Get all notification preferences for the authenticated user in a group.
-   * Returns all six notification preference fields.
-   * Requirements: 10.2
-   */
-  getNotificationPreferences: protectedProcedure
+  getGroupNotificationPreferences: protectedProcedure
     .input(z.object({ groupId: z.string().min(1) }))
     .query(async ({ ctx, input }) => {
       const membership = await prisma.groupMembership.findUnique({
@@ -217,55 +218,6 @@ export const groupMembershipRouter = createTRPCRouter({
           userId_groupId: {
             userId: ctx.user.id,
             groupId: input.groupId,
-          },
-        },
-        select: {
-          emailNotificationsEnabled: true,
-          notifyAllMembers: true,
-          includedUserIds: true,
-          notifyOnCreate: true,
-          notifyOnUpdate: true,
-          notifyOnDelete: true,
-        },
-      })
-
-      if (!membership) {
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: 'You are not a member of this group.',
-        })
-      }
-
-      return membership
-    }),
-
-  /**
-   * Update any combination of notification preferences for the authenticated user in a group.
-   * Accepts partial input; only the provided fields are written to GroupMembership.
-   * Throws FORBIDDEN if the membership is not found.
-   * Returns all six notification preference fields (same shape as getNotificationPreferences).
-   * Requirements: 10.2, 10.3, 10.4
-   */
-  setNotificationPreferences: protectedProcedure
-    .input(
-      z.object({
-        groupId: z.string().min(1),
-        emailNotificationsEnabled: z.boolean().optional(),
-        notifyAllMembers: z.boolean().optional(),
-        includedUserIds: z.array(z.string()).optional(),
-        notifyOnCreate: z.boolean().optional(),
-        notifyOnUpdate: z.boolean().optional(),
-        notifyOnDelete: z.boolean().optional(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const { groupId, ...fields } = input
-
-      const membership = await prisma.groupMembership.findUnique({
-        where: {
-          userId_groupId: {
-            userId: ctx.user.id,
-            groupId,
           },
         },
         select: { id: true },
@@ -278,60 +230,16 @@ export const groupMembershipRouter = createTRPCRouter({
         })
       }
 
-      const updated = await prisma.groupMembership.update({
-        where: { id: membership.id },
-        data: fields,
-        select: {
-          emailNotificationsEnabled: true,
-          notifyAllMembers: true,
-          includedUserIds: true,
-          notifyOnCreate: true,
-          notifyOnUpdate: true,
-          notifyOnDelete: true,
-        },
-      })
-
-      return updated
+      return getGroupNotificationPreferences(ctx.user.id, membership.id)
     }),
 
-  /**
-   * Whether the authenticated member wants debounced email digests for this group.
-   * @deprecated Use getNotificationPreferences instead.
-   */
-  getEmailNotifications: protectedProcedure
-    .input(z.object({ groupId: z.string().min(1) }))
-    .query(async ({ ctx, input }) => {
-      const membership = await prisma.groupMembership.findUnique({
-        where: {
-          userId_groupId: {
-            userId: ctx.user.id,
-            groupId: input.groupId,
-          },
-        },
-        select: { emailNotificationsEnabled: true },
-      })
-
-      if (!membership) {
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: 'You are not a member of this group.',
-        })
-      }
-
-      return {
-        emailNotificationsEnabled: membership.emailNotificationsEnabled,
-      }
-    }),
-
-  /**
-   * Opt in/out of debounced email digests for this group.
-   * @deprecated Use setNotificationPreferences instead.
-   */
-  setEmailNotifications: protectedProcedure
+  saveGroupNotificationCategory: protectedProcedure
     .input(
       z.object({
         groupId: z.string().min(1),
-        enabled: z.boolean(),
+        category: z.enum(EXPENSE_NOTIFICATION_CATEGORY_IDS),
+        email: z.boolean(),
+        push: z.boolean(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -352,14 +260,34 @@ export const groupMembershipRouter = createTRPCRouter({
         })
       }
 
-      const updated = await prisma.groupMembership.update({
-        where: { id: membership.id },
-        data: { emailNotificationsEnabled: input.enabled },
-        select: { emailNotificationsEnabled: true },
+      await saveGroupNotificationCategory(membership.id, input.category, {
+        email: input.email,
+        push: input.push,
+      })
+      return getGroupNotificationPreferences(ctx.user.id, membership.id)
+    }),
+
+  resetGroupNotificationPreferences: protectedProcedure
+    .input(z.object({ groupId: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      const membership = await prisma.groupMembership.findUnique({
+        where: {
+          userId_groupId: {
+            userId: ctx.user.id,
+            groupId: input.groupId,
+          },
+        },
+        select: { id: true },
       })
 
-      return {
-        emailNotificationsEnabled: updated.emailNotificationsEnabled,
+      if (!membership) {
+        throw new TRPCError({
+          code: 'FORBIDDEN',
+          message: 'You are not a member of this group.',
+        })
       }
+
+      await resetGroupNotificationOverrides(membership.id)
+      return getGroupNotificationPreferences(ctx.user.id, membership.id)
     }),
 })

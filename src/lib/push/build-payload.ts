@@ -8,6 +8,8 @@ export interface PushNotificationPayload {
 
 const ACTIVITY_LOCALE_KEYS: Record<ActivityType, string> = {
   [ActivityType.CREATE_EXPENSE]: 'notifications.expenseCreated',
+  [ActivityType.CREATE_RECURRING_EXPENSE]:
+    'notifications.recurringExpenseCreated',
   [ActivityType.UPDATE_EXPENSE]: 'notifications.expenseUpdated',
   [ActivityType.DELETE_EXPENSE]: 'notifications.expenseDeleted',
   [ActivityType.UPDATE_GROUP]: 'notifications.groupUpdated',
@@ -15,6 +17,7 @@ const ACTIVITY_LOCALE_KEYS: Record<ActivityType, string> = {
 
 const EXPENSE_ACTIVITY_TYPES: Set<ActivityType> = new Set([
   ActivityType.CREATE_EXPENSE,
+  ActivityType.CREATE_RECURRING_EXPENSE,
   ActivityType.UPDATE_EXPENSE,
   ActivityType.DELETE_EXPENSE,
 ])
@@ -39,4 +42,19 @@ export function buildPushPayload(
     : `/groups/${groupId}`
 
   return { localeKey, params, url }
+}
+
+export function buildAccountPushPayload(
+  category: 'added-to-group' | 'friend-added',
+  params: Record<string, string>,
+  url: string,
+): PushNotificationPayload {
+  return {
+    localeKey:
+      category === 'added-to-group'
+        ? 'notifications.addedToGroup'
+        : 'notifications.friendAdded',
+    params,
+    url,
+  }
 }

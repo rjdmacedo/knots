@@ -10,6 +10,9 @@ const mockUserFindMany = jest.fn()
 const mockUserUpdate = jest.fn()
 const mockPrefFindMany = jest.fn()
 const mockPrefUpsert = jest.fn()
+const mockOverrideFindMany = jest.fn()
+const mockOverrideUpsert = jest.fn()
+const mockOverrideDeleteMany = jest.fn()
 
 jest.mock('@/lib/prisma', () => ({
   prisma: {
@@ -22,6 +25,11 @@ jest.mock('@/lib/prisma', () => ({
       findMany: (...args: unknown[]) => mockPrefFindMany(...args),
       upsert: (...args: unknown[]) => mockPrefUpsert(...args),
     },
+    groupNotificationOverride: {
+      findMany: (...args: unknown[]) => mockOverrideFindMany(...args),
+      upsert: (...args: unknown[]) => mockOverrideUpsert(...args),
+      deleteMany: (...args: unknown[]) => mockOverrideDeleteMany(...args),
+    },
   },
 }))
 
@@ -29,6 +37,9 @@ import {
   getNotificationPreferences,
   getNotificationPreferencesForUsers,
   isCategoryChannelAllowed,
+  isGroupCategoryChannelAllowed,
+  resetGroupNotificationOverrides,
+  saveGroupNotificationCategory,
   saveNotificationCategory,
   setNotificationsEnabled,
 } from './notification-preferences-service'
@@ -242,6 +253,100 @@ describe('isCategoryChannelAllowed', () => {
     expect(isCategoryChannelAllowed(prefs, 'expense-changed', 'push')).toBe(
       false,
     )
+  })
+})
+
+describe('isGroupCategoryChannelAllowed', () => {
+  const prefs = {
+    notificationsEnabled: true,
+    categories: {
+      'expense-created': { email: true, push: false },
+    },
+  }
+
+  it('uses a group override before the account category', () => {
+    expect(
+      isGroupCategoryChannelAllowed(
+        prefs,
+        { email: false, push: true },
+        'expense-created',
+        'push',
+      ),
+    ).toBe(true)
+  })
+
+  it('falls back to the account when there is no override', () => {
+    expect(
+      isGroupCategoryChannelAllowed(
+        prefs,
+        undefined,
+        'expense-created',
+        'push',
+      ),
+    ).toBe(false)
+  })
+
+  it('lets the account master switch block group overrides and unmapped events', () => {
+    const off = { notificationsEnabled: false, categories: {} }
+    expect(
+      isGroupCategoryChannelAllowed(
+        off,
+        { email: true, push: true },
+        'expense-created',
+        'push',
+      ),
+    ).toBe(false)
+    expect(isGroupCategoryChannelAllowed(off, undefined, null, 'email')).toBe(
+      false,
+    )
+  })
+})
+
+describe('group notification override persistence', () => {
+  it('upserts an override for an expense category', async () => {
+    mockOverrideUpsert.mockResolvedValue({})
+
+    await expect(
+      saveGroupNotificationCategory('membership-1', 'expense-created', {
+        email: false,
+        push: true,
+      }),
+    ).resolves.toBe(true)
+
+    expect(mockOverrideUpsert).toHaveBeenCalledWith({
+      where: {
+        membershipId_category: {
+          membershipId: 'membership-1',
+          category: 'expense-created',
+        },
+      },
+      create: {
+        membershipId: 'membership-1',
+        category: 'expense-created',
+        email: false,
+        push: true,
+      },
+      update: { email: false, push: true },
+    })
+  })
+
+  it('deletes every expense override when following the account again', async () => {
+    mockOverrideDeleteMany.mockResolvedValue({ count: 2 })
+
+    await resetGroupNotificationOverrides('membership-1')
+
+    expect(mockOverrideDeleteMany).toHaveBeenCalledWith({
+      where: {
+        membershipId: 'membership-1',
+        category: {
+          in: [
+            'expense-created',
+            'recurring-expense-created',
+            'expense-changed',
+          ],
+        },
+      },
+    })
   })
 })
 

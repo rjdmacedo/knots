@@ -18,14 +18,14 @@ import { NotificationSettingsPopover } from './notification-settings-popover'
 
 interface GroupNotificationToggleProps {
   groupId: string
-  members: Array<{ id: string; name: string }>
   currentUserId: string | undefined
+  emailVerified?: boolean
 }
 
 export function GroupNotificationToggle({
   groupId,
-  members,
   currentUserId,
+  emailVerified = false,
 }: GroupNotificationToggleProps) {
   const t = useTranslations('Notifications')
   const panelId = useId()
@@ -58,13 +58,13 @@ export function GroupNotificationToggle({
       <PopoverContent
         id={panelId}
         align="end"
-        className="w-80 p-0"
+        className="w-[min(24rem,calc(100vw-2rem))] p-0"
         initialFocus={false}
       >
         <NotificationSettingsPopover
           groupId={groupId}
-          members={members}
           currentUserId={currentUserId}
+          emailVerified={emailVerified}
         />
       </PopoverContent>
     </Popover>

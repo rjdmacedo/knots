@@ -36,7 +36,6 @@ import {
 } from '@/lib/friends'
 import { assertPaymentEditable } from '@/lib/payments'
 import { prisma } from '@/lib/prisma'
-import { notifyOnActivity } from '@/lib/push/notify-on-activity'
 import { expenseFormSchema, type ExpenseFormValues } from '@/lib/schemas'
 import { amountAsMinorUnits } from '@/lib/utils'
 import { createTRPCRouter, protectedProcedure } from '@/trpc/init'
@@ -1260,10 +1259,6 @@ export const friendsRouter = createTRPCRouter({
                 },
                 { field: 'paidBy', oldValue: null, newValue: paidByUserId },
               ],
-            })
-            notifyOnActivity(input.groupId, ActivityType.CREATE_EXPENSE, {
-              userId: ctx.user.id,
-              expenseId,
             })
 
             createdExpenseIds.push(expenseId)

@@ -1,4 +1,3 @@
-import { emailService } from '@/lib/auth/email-service'
 import {
   addFriendByEmail,
   findFriendByEmail,
@@ -10,6 +9,7 @@ import { TRPCError } from '@trpc/server'
 
 jest.mock('@/lib/prisma', () => ({
   prisma: {
+    $transaction: jest.fn(),
     user: { findUnique: jest.fn() },
     blockedUser: { findUnique: jest.fn() },
     friend: {
@@ -21,10 +21,8 @@ jest.mock('@/lib/prisma', () => ({
   },
 }))
 
-jest.mock('@/lib/auth/email-service', () => ({
-  emailService: {
-    sendFriendInviteEmail: jest.fn().mockResolvedValue({ ok: true }),
-  },
+jest.mock('@/lib/notifications/planner', () => ({
+  planAccountNotification: jest.fn().mockResolvedValue(1),
 }))
 
 const mockUserFindUnique = prisma.user.findUnique as jest.Mock
@@ -33,8 +31,11 @@ const mockFriendFindUnique = prisma.friend.findUnique as jest.Mock
 const mockFriendFindMany = prisma.friend.findMany as jest.Mock
 const mockFriendUpsert = prisma.friend.upsert as jest.Mock
 const mockFriendDelete = prisma.friend.delete as jest.Mock
-const mockSendFriendInviteEmail =
-  emailService.sendFriendInviteEmail as jest.Mock
+const mockTransaction = prisma.$transaction as jest.Mock
+const { planAccountNotification: mockPlanAccountNotification } =
+  jest.requireMock('@/lib/notifications/planner') as {
+    planAccountNotification: jest.Mock
+  }
 
 const ownerId = 'owner-1'
 const ownerEmail = 'owner@example.com'
@@ -67,6 +68,9 @@ function mockFriendRecord(overrides: Record<string, unknown> = {}) {
 describe('friends', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockTransaction.mockImplementation(
+      (callback: (tx: typeof prisma) => unknown) => callback(prisma),
+    )
     mockFriendFindMany.mockResolvedValue([])
     mockBlockedUserFindUnique.mockResolvedValue(null)
   })
@@ -94,7 +98,13 @@ describe('friends', () => {
       expect(result.friendUserId).toBe('friend-user-1')
       expect(result.hasAccount).toBe(true)
       expect(result.name).toBe('Friend User')
-      expect(mockSendFriendInviteEmail).toHaveBeenCalled()
+      expect(mockPlanAccountNotification).toHaveBeenCalledWith(
+        prisma,
+        expect.objectContaining({
+          eventKey: 'friend:friend-1',
+          category: 'friend-added',
+        }),
+      )
     })
 
     it('keeps friendUserId null for email-only contacts', async () => {
@@ -149,7 +159,7 @@ describe('friends', () => {
         email: 'friend@example.com',
       })
 
-      expect(mockSendFriendInviteEmail).not.toHaveBeenCalled()
+      expect(mockPlanAccountNotification).not.toHaveBeenCalled()
     })
   })
 

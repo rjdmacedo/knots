@@ -3,7 +3,6 @@ import { emailService } from '@/lib/auth/email-service'
 import { upsertCategoryMapping } from '@/lib/category-mapping'
 import { prisma } from '@/lib/prisma'
 import { isBlockedBy } from '@/lib/profile/block-check'
-import { notifyOnActivity } from '@/lib/push/notify-on-activity'
 import {
   buildSettleBalancesUrl,
   buildSettlementFormValues,
@@ -14,7 +13,6 @@ import {
 } from '@/lib/settlements'
 import { getCurrencyFromGroup } from '@/lib/utils'
 import { protectedProcedure } from '@/trpc/init'
-import { ActivityType } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
@@ -131,11 +129,6 @@ export const recordSettlementProcedure = protectedProcedure
       input.groupId,
       ctx.user.id,
     )
-
-    notifyOnActivity(input.groupId, ActivityType.CREATE_EXPENSE, {
-      userId: ctx.user.id,
-      expenseId: expense.id,
-    })
 
     try {
       await upsertCategoryMapping({

@@ -12,6 +12,23 @@ services:
     networks:
       - knot_network
 
+  worker:
+    image: knots:latest
+    entrypoint: ['/bin/sh', '/usr/app/scripts/worker-entrypoint.sh']
+    env_file:
+      - container.env
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'test -f /tmp/knots-worker-ready']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    stop_grace_period: 35s
+    networks:
+      - knot_network
+
   db:
     image: postgres:latest
     expose:

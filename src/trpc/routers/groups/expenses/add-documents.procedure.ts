@@ -1,7 +1,5 @@
 import { addExpenseDocuments } from '@/lib/api'
-import { notifyOnActivity } from '@/lib/push/notify-on-activity'
 import { groupMemberProcedure } from '@/trpc/init'
-import { ActivityType } from '@prisma/client'
 import { z } from 'zod'
 
 const expenseDocumentSchema = z.object({
@@ -27,11 +25,6 @@ export const addGroupExpenseDocumentsProcedure = groupMemberProcedure
         documents,
         user.id,
       )
-
-      notifyOnActivity(groupId, ActivityType.UPDATE_EXPENSE, {
-        userId: user.id,
-        expenseId: expense.id,
-      })
 
       return { expenseId: expense.id }
     },

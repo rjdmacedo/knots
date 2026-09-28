@@ -43,10 +43,7 @@ export const GroupHeader = () => {
             <GroupNotificationToggle
               groupId={groupId}
               currentUserId={profile?.id}
-              members={group.participants.map((p) => ({
-                id: p.id,
-                name: p.name,
-              }))}
+              emailVerified={profile?.emailVerified != null}
             />
             <ShareButton group={group} />
           </>
