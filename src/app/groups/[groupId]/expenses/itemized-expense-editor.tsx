@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   FormControl,
+  FormField,
   FormItem,
   FormLabel,
   FormMessage,
@@ -209,6 +210,18 @@ export function ItemizedExpenseEditor({
     entryTotalField,
   ])
 
+  // When authoritative splitting is active and no expense total has been set yet
+  // (totalMajor === 0), automatically initialize the entry total to the items sum.
+  useEffect(() => {
+    if (!authoritative) return
+    if (totalMajor === 0 && itemsSumMinor > 0) {
+      form.setValue(entryTotalField, itemsSumMinor / factor, {
+        shouldDirty: true,
+        shouldValidate: true,
+      })
+    }
+  }, [authoritative, totalMajor, itemsSumMinor, factor, entryTotalField, form])
+
   const handleSetAmountFromItems = () => {
     // Set the Entry_Total (originalAmount under FX, else amount) to Σ items so
     // the remainder becomes zero. The FX effect derives the group `amount`.
@@ -241,105 +254,111 @@ export function ItemizedExpenseEditor({
           >
             <div className="flex flex-col gap-3 md:flex-row md:items-end md:gap-2">
               <div className="flex min-w-0 flex-1 items-start gap-2">
-                <FormItem className="min-w-0 flex-1">
-                  <FormLabel className="text-xs">
-                    {t('itemTitleLabel')}
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      className="text-sm"
-                      value={items[index]?.title ?? ''}
-                      onChange={(e) =>
-                        form.setValue(
-                          `itemization.items.${index}.title`,
-                          e.target.value,
-                          { shouldDirty: true, shouldValidate: true },
-                        )
-                      }
-                      placeholder={t('itemTitlePlaceholder')}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                <FormField
+                  control={form.control}
+                  name={`itemization.items.${index}.title`}
+                  render={({ field: titleField }) => (
+                    <FormItem className="min-w-0 flex-1">
+                      <FormLabel className="text-xs">
+                        {t('itemTitleLabel')}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          className="text-sm"
+                          value={titleField.value ?? ''}
+                          onChange={(e) => {
+                            titleField.onChange(e.target.value)
+                          }}
+                          placeholder={t('itemTitlePlaceholder')}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
               <div className="flex flex-col gap-3 md:flex-row md:flex-nowrap md:items-end md:gap-2">
-                <FormItem className="w-full md:w-28 md:shrink-0">
-                  <FormLabel className="text-xs">
-                    {t('itemUnitPriceLabel')}
-                  </FormLabel>
-                  <FormControl>
-                    <InputGroup>
-                      <InputGroupAddon align="inline-start">
-                        <InputGroupText className="font-medium text-foreground tabular-nums">
-                          {getCurrencyDisplaySymbol(entryCurrency)}
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <CurrencyAmountInput
-                        currency={entryCurrency}
-                        locale={locale}
-                        value={
-                          items[index]?.unitPrice ?? items[index]?.amount ?? ''
-                        }
-                        onValueChange={(v) => {
-                          const nextUnit = v as unknown as number
-                          form.setValue(
-                            `itemization.items.${index}.unitPrice`,
-                            nextUnit,
-                            { shouldDirty: true, shouldValidate: true },
-                          )
-                          syncLineAmount(
-                            index,
-                            Number(v) || 0,
-                            items[index]?.quantity ?? 1,
-                          )
-                        }}
-                        className="text-sm"
-                      />
-                    </InputGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                <FormField
+                  control={form.control}
+                  name={`itemization.items.${index}.unitPrice`}
+                  render={({ field: unitPriceField }) => (
+                    <FormItem className="w-full md:w-28 md:shrink-0">
+                      <FormLabel className="text-xs">
+                        {t('itemUnitPriceLabel')}
+                      </FormLabel>
+                      <FormControl>
+                        <InputGroup>
+                          <InputGroupAddon align="inline-start">
+                            <InputGroupText className="font-medium text-foreground tabular-nums">
+                              {getCurrencyDisplaySymbol(entryCurrency)}
+                            </InputGroupText>
+                          </InputGroupAddon>
+                          <CurrencyAmountInput
+                            currency={entryCurrency}
+                            locale={locale}
+                            value={
+                              unitPriceField.value ?? items[index]?.amount ?? ''
+                            }
+                            onValueChange={(v) => {
+                              const nextUnit = v as unknown as number
+                              unitPriceField.onChange(nextUnit)
+                              syncLineAmount(
+                                index,
+                                Number(v) || 0,
+                                items[index]?.quantity ?? 1,
+                              )
+                            }}
+                            className="text-sm"
+                          />
+                        </InputGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <span className="hidden text-sm text-muted-foreground md:mb-2 md:inline">
                   ×
                 </span>
 
-                <FormItem className="w-full md:w-16 md:shrink-0">
-                  <FormLabel className="text-xs">
-                    {t('itemQuantityLabel')}
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      inputMode="numeric"
-                      min={1}
-                      step={1}
-                      className="text-sm tabular-nums"
-                      value={items[index]?.quantity ?? 1}
-                      onChange={(e) => {
-                        const raw = e.target.value
-                        const nextQty = Math.max(
-                          1,
-                          Math.trunc(Number(raw)) || 1,
-                        )
-                        form.setValue(
-                          `itemization.items.${index}.quantity`,
-                          nextQty,
-                          { shouldDirty: true, shouldValidate: true },
-                        )
-                        syncLineAmount(
-                          index,
-                          Number(
-                            items[index]?.unitPrice ?? items[index]?.amount,
-                          ) || 0,
-                          nextQty,
-                        )
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                <FormField
+                  control={form.control}
+                  name={`itemization.items.${index}.quantity`}
+                  render={({ field: qtyField }) => (
+                    <FormItem className="w-full md:w-16 md:shrink-0">
+                      <FormLabel className="text-xs">
+                        {t('itemQuantityLabel')}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          inputMode="numeric"
+                          min={1}
+                          step={1}
+                          className="text-sm tabular-nums"
+                          value={qtyField.value ?? 1}
+                          onChange={(e) => {
+                            const raw = e.target.value
+                            const nextQty = Math.max(
+                              1,
+                              Math.trunc(Number(raw)) || 1,
+                            )
+                            qtyField.onChange(nextQty)
+                            syncLineAmount(
+                              index,
+                              Number(
+                                items[index]?.unitPrice ?? items[index]?.amount,
+                              ) || 0,
+                              nextQty,
+                            )
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
                 <div className="flex min-w-22 flex-col gap-1 md:mb-2">
                   <span className="text-xs text-muted-foreground">
@@ -362,53 +381,59 @@ export function ItemizedExpenseEditor({
               </Button>
             </div>
 
-            <div className="flex flex-col gap-1">
-              <span className="text-xs text-muted-foreground">
-                {t('assignTo')}
-              </span>
-              <div className="flex flex-wrap gap-x-4 gap-y-1">
-                {participants.map((participant) => {
-                  const assigned =
-                    items[index]?.assignedParticipants?.includes(
-                      participant.id,
-                    ) ?? false
-                  return (
-                    <label
-                      key={participant.id}
-                      className="flex items-center gap-2 text-sm"
-                    >
-                      <Checkbox
-                        checked={assigned}
-                        onCheckedChange={(checked) => {
-                          // Assigning an item is a split-affecting edit: gate it
-                          // behind the "Switch to itemised?" confirmation when the
-                          // items are still documentation (Requirement 12.2).
-                          onRequestAuthoritativeEdit(() => {
-                            const current =
-                              form.getValues(
-                                `itemization.items.${index}.assignedParticipants`,
-                              ) ?? []
-                            const next = checked
-                              ? [...current, participant.id]
-                              : current.filter((id) => id !== participant.id)
-                            form.setValue(
-                              `itemization.items.${index}.assignedParticipants`,
-                              next,
-                              { shouldDirty: true, shouldValidate: true },
-                            )
-                          })
-                        }}
-                      />
-                      <span
-                        className={cn(!assigned && 'text-muted-foreground')}
-                      >
-                        {participant.name}
-                      </span>
-                    </label>
-                  )
-                })}
-              </div>
-            </div>
+            <FormField
+              control={form.control}
+              name={`itemization.items.${index}.assignedParticipants`}
+              render={({ field: assignedField }) => (
+                <FormItem className="flex flex-col gap-1">
+                  <FormLabel className="text-xs font-normal text-muted-foreground">
+                    {t('assignTo')}
+                  </FormLabel>
+                  <FormControl>
+                    <div className="flex flex-wrap gap-x-4 gap-y-1">
+                      {participants.map((participant) => {
+                        const assigned = (assignedField.value ?? []).includes(
+                          participant.id,
+                        )
+                        return (
+                          <label
+                            key={participant.id}
+                            className="flex items-center gap-2 text-sm"
+                          >
+                            <Checkbox
+                              checked={assigned}
+                              onCheckedChange={(checked) => {
+                                // Assigning an item is a split-affecting edit: gate it
+                                // behind the "Switch to itemised?" confirmation when the
+                                // items are still documentation (Requirement 12.2).
+                                onRequestAuthoritativeEdit(() => {
+                                  const current = (assignedField.value ??
+                                    []) as string[]
+                                  const next = checked
+                                    ? [...current, participant.id]
+                                    : current.filter(
+                                        (id) => id !== participant.id,
+                                      )
+                                  assignedField.onChange(next)
+                                })
+                              }}
+                            />
+                            <span
+                              className={cn(
+                                !assigned && 'text-muted-foreground',
+                              )}
+                            >
+                              {participant.name}
+                            </span>
+                          </label>
+                        )
+                      })}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
         )
       })}
@@ -431,6 +456,25 @@ export function ItemizedExpenseEditor({
         <Plus className="mr-1 h-4 w-4" />
         {t('addItem')}
       </Button>
+
+      <FormField
+        control={form.control}
+        name="itemization.items"
+        render={() => (
+          <FormItem>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="itemization"
+        render={() => (
+          <FormItem>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
 
       {/* Overshoot guard (Requirement 17.2): items exceed the editable total.
           Offer a quick "set amount from items" fix. */}

@@ -82,6 +82,16 @@ describe('GET /groups/[groupId]/expenses/export/json', () => {
 
     expect(body.expenses).toHaveLength(1)
     expect(body.expenses[0]).toHaveProperty('linkedExpenseId', null)
+    expect(body.expenses[0].paidFor[0]).toEqual({
+      userId: 'rafael',
+      participantId: 'rafael',
+      shares: 2500,
+    })
+    expect(body.expenses[0].paidBy[0]).toEqual({
+      userId: 'rafael',
+      participantId: 'rafael',
+      amount: 7500,
+    })
   })
 
   it('selects and exports the itemization remainder model (R10.2)', async () => {

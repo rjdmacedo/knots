@@ -6,6 +6,7 @@ import {
   type NotificationPushSnapshot,
   type NotificationSnapshot,
 } from '@/lib/notifications/types'
+import { getAppBaseUrl } from '@/lib/passkey/config'
 import { prisma } from '@/lib/prisma'
 import { NotificationDeliveryStatus } from '@prisma/client'
 import { randomUUID } from 'node:crypto'
@@ -16,27 +17,34 @@ const MAX_ATTEMPTS = 5
 
 export type DeliveryOutcome = 'sent' | 'skipped' | 'retry' | 'failed'
 
+/** Mail clients turn a path-only href into `http:///path`, which Chrome blocks. */
+function absoluteAppUrl(url: string): string {
+  const normalized = url.trim().replace(/^https?:\/\/\/+/i, '/')
+  return new URL(normalized, getAppBaseUrl()).href
+}
+
 async function sendEmail(snapshot: NotificationEmailSnapshot) {
   const stringParam = (name: string) => String(snapshot.params[name] ?? '')
+  const url = absoluteAppUrl(snapshot.url)
 
   switch (snapshot.template) {
     case 'group-invitation':
       return emailService.sendInvitationEmail(
         snapshot.to,
         stringParam('groupName'),
-        snapshot.url,
+        url,
       )
     case 'added-to-group':
       return emailService.sendAddedToGroupEmail(
         snapshot.to,
         stringParam('groupName'),
-        snapshot.url,
+        url,
       )
     case 'friend-invite':
       return emailService.sendFriendInviteEmail(
         snapshot.to,
         stringParam('inviterName'),
-        snapshot.url,
+        url,
         snapshot.params.hasAccount === true,
       )
     case 'group-activity':
@@ -44,7 +52,7 @@ async function sendEmail(snapshot: NotificationEmailSnapshot) {
         snapshot.to,
         stringParam('actorName'),
         stringParam('groupName'),
-        snapshot.url,
+        url,
         stringParam('expenseTitle'),
         stringParam('activityType'),
       )

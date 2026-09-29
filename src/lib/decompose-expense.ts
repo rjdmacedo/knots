@@ -425,7 +425,7 @@ export async function decomposeExpense(
             {
               field: 'paidFor',
               oldValue: null,
-              newValue: JSON.stringify(memberEntries),
+              newValue: JSON.stringify(memberEntries.map((e) => e.userId)),
             },
           ],
         },

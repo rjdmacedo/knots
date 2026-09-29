@@ -7,6 +7,7 @@ import type {
   NotificationEmailTemplate,
   NotificationSnapshot,
 } from '@/lib/notifications/types'
+import { getAppBaseUrl } from '@/lib/passkey/config'
 import {
   buildAccountPushPayload,
   buildPushPayload,
@@ -246,7 +247,8 @@ export async function planGroupActivityNotifications(
     )
     const key = `user:${membership.userId}`
     const locale = membership.user.locale || 'en-US'
-    const url = `/groups/${input.groupId}/expenses`
+    const url = new URL(`/groups/${input.groupId}/expenses`, getAppBaseUrl())
+      .href
 
     if (
       channels.email &&

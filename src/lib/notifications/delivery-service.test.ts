@@ -21,6 +21,7 @@ jest.mock('@/lib/prisma', () => ({
   },
 }))
 
+import { getAppBaseUrl } from '@/lib/passkey/config'
 import { NotificationDeliveryStatus } from '@prisma/client'
 import { processNotificationDelivery } from './delivery-service'
 
@@ -60,6 +61,14 @@ describe('notification delivery worker', () => {
 
     await expect(processNotificationDelivery('delivery-1')).resolves.toBe(
       'sent',
+    )
+    expect(mockSendGroupActivityEmail).toHaveBeenCalledWith(
+      'user@example.com',
+      'Alice',
+      'Trip',
+      new URL('/groups/1/expenses', getAppBaseUrl()).href,
+      '',
+      '',
     )
     expect(mockUpdateMany).toHaveBeenLastCalledWith(
       expect.objectContaining({

@@ -72,10 +72,12 @@ export function ExpenseActivityList({ groupId, expenseId, group }: Props) {
 
   if (isError) {
     return (
-      <Card>
-        <CardContent className="flex flex-col items-center gap-4 pt-6">
-          <p className="text-sm text-muted-foreground">{tActivity('error')}</p>
-          <Button variant="outline" onClick={() => refetch()}>
+      <Card className="py-4 sm:py-6">
+        <CardContent className="flex flex-col items-center gap-3 sm:gap-4 px-4 sm:px-6">
+          <p className="text-xs sm:text-sm md:text-base text-muted-foreground">
+            {tActivity('error')}
+          </p>
+          <Button variant="outline" size="sm" onClick={() => refetch()}>
             {tActivity('retry')}
           </Button>
         </CardContent>
@@ -84,13 +86,17 @@ export function ExpenseActivityList({ groupId, expenseId, group }: Props) {
   }
 
   return (
-    <Card>
-      <CardContent className="pt-6">
-        <h2 className="mb-2 text-sm font-semibold">{t('activity')}</h2>
+    <Card className="py-4 sm:py-6">
+      <CardContent className="px-4 sm:px-6">
+        <h2 className="mb-1.5 sm:mb-2 text-sm sm:text-base md:text-lg font-semibold">
+          {t('activity')}
+        </h2>
         {isInitialLoading ? (
           <ActivitiesLoading />
         ) : isEmpty(activities) ? (
-          <p className="text-sm text-muted-foreground">{t('noActivity')}</p>
+          <p className="text-xs sm:text-sm md:text-base text-muted-foreground">
+            {t('noActivity')}
+          </p>
         ) : (
           <div className="-mx-2">
             {activities.map((activity) => {

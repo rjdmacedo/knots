@@ -89,17 +89,17 @@ export function ExpenseDetailCategoryPicker({
       aria-label={t('editCategory')}
       disabled={isPending}
       className={cn(
-        'flex size-14 shrink-0 items-center justify-center rounded-2xl bg-muted transition-colors',
+        'flex size-11 sm:size-14 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-muted transition-colors',
         'hover:bg-muted/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
         isPending && 'opacity-70',
       )}
     >
       {isPending ? (
-        <Loader2 className="size-7 animate-spin text-muted-foreground" />
+        <Loader2 className="size-5 sm:size-7 animate-spin text-muted-foreground" />
       ) : (
         <CategoryIcon
           category={category}
-          className="size-7 text-muted-foreground"
+          className="size-5 sm:size-7 text-muted-foreground"
         />
       )}
     </button>

@@ -128,7 +128,19 @@ function formatPaidFor(
       return value
     }
     return ids
-      .map((id) => resolveParticipantName(String(id), participants))
+      .map((entry) => {
+        const id =
+          typeof entry === 'object' && entry !== null
+            ? ((entry as { userId?: string; participant?: string; id?: string })
+                .userId ??
+              (entry as { userId?: string; participant?: string; id?: string })
+                .participant ??
+              (entry as { userId?: string; participant?: string; id?: string })
+                .id ??
+              String(entry))
+            : String(entry)
+        return resolveParticipantName(String(id), participants)
+      })
       .join(', ')
   } catch {
     return value
