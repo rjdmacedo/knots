@@ -334,14 +334,7 @@ describe('expenseFormSchema – itemization (v1.1)', () => {
         },
       ),
     )
-    // The item's own field-level min(1) assignment rule still applies, so an
-    // unassigned item is rejected even as documentation.
-    expect(result.success).toBe(false)
-    if (!result.success) {
-      expect(result.error.issues.map((i) => i.message)).toContain(
-        'itemNeedsAssignment',
-      )
-    }
+    expect(result.success).toBe(true)
   })
 
   it('accepts authoritative FX itemization where paidFor sums to originalAmount, not amount', () => {

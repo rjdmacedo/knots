@@ -122,7 +122,7 @@ export function ExpenseDetailReceiptUpload(props: Props) {
 
   if (firstDocument) {
     return (
-      <div className="size-20 shrink-0">
+      <div className="size-14 sm:size-20 shrink-0">
         <DocumentThumbnail
           document={firstDocument}
           documents={documents}
@@ -135,7 +135,7 @@ export function ExpenseDetailReceiptUpload(props: Props) {
   }
 
   return (
-    <div className="size-20 shrink-0">
+    <div className="size-14 sm:size-20 shrink-0">
       <FileInput onChange={handleFileChange} accept="image/jpeg,image/png" />
       <button
         type="button"
@@ -143,15 +143,15 @@ export function ExpenseDetailReceiptUpload(props: Props) {
         disabled={uploading}
         onClick={openFileDialog}
         className={cn(
-          'flex size-full items-center justify-center rounded-xl border border-dashed bg-muted/40 text-muted-foreground transition-colors',
+          'flex size-full items-center justify-center rounded-lg sm:rounded-xl border border-dashed bg-muted/40 text-muted-foreground transition-colors',
           'hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
           uploading && 'opacity-70',
         )}
       >
         {uploading ? (
-          <Loader2 className="size-6 animate-spin" />
+          <Loader2 className="size-5 sm:size-6 animate-spin" />
         ) : (
-          <Camera className="size-6" />
+          <Camera className="size-5 sm:size-6" />
         )}
       </button>
     </div>

@@ -66,14 +66,29 @@ export async function GET(
   const expenses = group.expenses.map((expense) => {
     const paidBy =
       expense.payers.length > 0
-        ? expense.payers.map((p) => ({ userId: p.userId, amount: p.amount }))
-        : [{ userId: expense.paidById, amount: expense.amount }]
+        ? expense.payers.map((p) => ({
+            userId: p.userId,
+            participantId: p.userId,
+            amount: p.amount,
+          }))
+        : [
+            {
+              userId: expense.paidById,
+              participantId: expense.paidById,
+              amount: expense.amount,
+            },
+          ]
 
-    const { payers, ...rest } = expense
+    const { payers, paidFor, ...rest } = expense
     return {
       ...rest,
       paidById: paidBy[0].userId,
       paidBy,
+      paidFor: paidFor.map((pf) => ({
+        participantId: pf.userId,
+        userId: pf.userId,
+        shares: pf.shares,
+      })),
     }
   })
 

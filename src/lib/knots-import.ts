@@ -30,17 +30,29 @@ const knotsExportExpenseSchema = z.object({
   paidById: z.string(),
   paidBy: z
     .array(
-      z.object({
-        userId: z.string(),
-        amount: z.number().int(),
-      }),
+      z
+        .object({
+          userId: z.string().optional(),
+          participantId: z.string().optional(),
+          amount: z.number().int(),
+        })
+        .transform((val) => ({
+          userId: val.userId ?? val.participantId ?? '',
+          amount: val.amount,
+        })),
     )
     .optional(),
   paidFor: z.array(
-    z.object({
-      userId: z.string(),
-      shares: z.number(),
-    }),
+    z
+      .object({
+        userId: z.string().optional(),
+        participantId: z.string().optional(),
+        shares: z.number(),
+      })
+      .transform((val) => ({
+        userId: val.userId ?? val.participantId ?? '',
+        shares: val.shares,
+      })),
   ),
   isReimbursement: z.boolean().default(false),
   splitMode: z.enum(['EVENLY', 'BY_SHARES', 'BY_PERCENTAGE', 'BY_AMOUNT']),

@@ -234,9 +234,35 @@ self.addEventListener('notificationclick', (event) => {
   event.waitUntil(handleNotificationClick(event))
 })
 
+/**
+ * Chrome rejects path-only URLs in `Clients.openWindow` / `WindowClient.navigate`
+ * and shows a Redirect Notice for `http:///path`. Resolve against this worker's
+ * origin, and repair an empty host the same way.
+ */
+function resolveNotificationUrl(url) {
+  const fallback = new URL(DEFAULT_URL, self.location.origin).href
+  try {
+    // `http:///groups/...` parses as host "groups". Treat that as a path.
+    const pathOnly = String(url)
+      .trim()
+      .replace(/^https?:\/\/\/+/i, '/')
+    const resolved = new URL(pathOnly, self.location.origin)
+    if (resolved.protocol !== 'http:' && resolved.protocol !== 'https:') {
+      return fallback
+    }
+    if (resolved.origin !== self.location.origin) {
+      return fallback
+    }
+    return resolved.href
+  } catch (e) {
+    return fallback
+  }
+}
+
 async function handleNotificationClick(event) {
-  const url =
-    (event.notification.data && event.notification.data.url) || DEFAULT_URL
+  const targetUrl = resolveNotificationUrl(
+    (event.notification.data && event.notification.data.url) || DEFAULT_URL,
+  )
 
   // Try to find an existing window/tab with the app open
   const clientList = await self.clients.matchAll({
@@ -250,12 +276,17 @@ async function handleNotificationClick(event) {
     if (client.url.startsWith(self.location.origin) && 'focus' in client) {
       await client.focus()
       if ('navigate' in client) {
-        await client.navigate(url)
+        try {
+          await client.navigate(targetUrl)
+          return
+        } catch (e) {
+          // This client could not navigate; open a window below.
+        }
       }
-      return
+      break
     }
   }
 
   // No existing window — open a new one
-  await self.clients.openWindow(url)
+  await self.clients.openWindow(targetUrl)
 }

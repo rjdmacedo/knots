@@ -219,9 +219,7 @@ export const expenseFormSchema = z
                 amount: z
                   .union([z.number(), z.string().transform(expressionToNumber)])
                   .refine((a) => a >= 0, 'itemAmountNonNegative'),
-                assignedParticipants: z
-                  .array(z.string())
-                  .min(1, 'itemNeedsAssignment'),
+                assignedParticipants: z.array(z.string()).default([]),
               })
               .transform((item) => {
                 const quantity = item.quantity ?? 1
@@ -391,7 +389,17 @@ export const expenseFormSchema = z
         expense.paidFor.map((pf) => pf.participant),
       )
       items.forEach((item, i) => {
-        for (const id of item.assignedParticipants) {
+        if (
+          !item.assignedParticipants ||
+          item.assignedParticipants.length === 0
+        ) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'itemNeedsAssignment',
+            path: ['itemization', 'items', i, 'assignedParticipants'],
+          })
+        }
+        for (const id of item.assignedParticipants ?? []) {
           if (!participantIds.has(id)) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,

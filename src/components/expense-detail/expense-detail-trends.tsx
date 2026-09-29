@@ -29,14 +29,14 @@ export function ExpenseDetailTrends({
   const maxAmount = Math.max(...months.map((month) => month.amount), 1)
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base font-semibold">
+    <Card className="py-4 sm:py-6 gap-3 sm:gap-4">
+      <CardHeader className="px-4 sm:px-6 pb-0">
+        <CardTitle className="text-sm sm:text-base md:text-lg font-semibold">
           {t('trendsTitle', { contextName, categoryName })}
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <div className="flex flex-col gap-3">
+      <CardContent className="flex flex-col gap-3 sm:gap-4 px-4 sm:px-6">
+        <div className="flex flex-col gap-2.5 sm:gap-3">
           {months.map((month) => {
             const label = new Date(month.year, month.month).toLocaleDateString(
               locale,
@@ -55,12 +55,12 @@ export function ExpenseDetailTrends({
             return (
               <div
                 key={`${month.year}-${month.month}`}
-                className="flex items-center gap-3"
+                className="flex items-center gap-2.5 sm:gap-3"
               >
-                <span className="w-10 shrink-0 text-sm text-muted-foreground">
+                <span className="w-9 sm:w-10 shrink-0 text-xs sm:text-sm text-muted-foreground">
                   {label}
                 </span>
-                <div className="relative h-7 min-w-0 flex-1 overflow-hidden rounded-md bg-muted">
+                <div className="relative h-6 sm:h-7 min-w-0 flex-1 overflow-hidden rounded-md bg-muted">
                   <div
                     className={cn(
                       'absolute inset-y-0 start-0 rounded-md bg-primary/25',
@@ -69,7 +69,7 @@ export function ExpenseDetailTrends({
                     style={{ width }}
                   />
                 </div>
-                <span className="w-24 shrink-0 text-end text-sm tabular-nums text-muted-foreground">
+                <span className="w-20 sm:w-24 shrink-0 text-end text-xs sm:text-sm md:text-base tabular-nums text-muted-foreground">
                   {formattedAmount}
                 </span>
               </div>
@@ -79,7 +79,7 @@ export function ExpenseDetailTrends({
 
         <Button
           variant="secondary"
-          className="w-full"
+          className="w-full text-xs sm:text-sm"
           nativeButton={false}
           render={<Link href={statsHref} />}
         >

@@ -108,7 +108,7 @@ import { Check, ChevronRight, Minus, Plus, Save } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, type FieldErrors } from 'react-hook-form'
 
 /**
  * Distributes 100% equally among a given number of participants and ensures the sum of percentages is exactly 100%.
@@ -719,6 +719,7 @@ export function ExpenseForm({
   containedScroll?: boolean
 }) {
   const t = useTranslations('ExpenseForm')
+  const tForm = useTranslations('Form')
   const tDocuments = useTranslations('ExpenseDocumentsInput')
   const tDuplicate = useTranslations('DuplicateExpense')
   const locale = useLocale() as Locale
@@ -1091,6 +1092,45 @@ export function ExpenseForm({
     }
 
     await proceedWithSubmit(values)
+  }
+
+  const onInvalid = (errors: FieldErrors<ExpenseFormValues>) => {
+    console.error('Expense form validation failed:', errors)
+
+    // Expand sections with errors so the user can see what needs fixing
+    if (errors.itemization) {
+      setItemsSectionOpen(true)
+      setItemsOrSplit('items')
+    }
+    if (errors.paidBy) {
+      setPaidByOpen(true)
+    }
+    if (errors.paidFor || errors.splitMode) {
+      if (!itemsAuthoritative) {
+        setItemsOrSplit('split')
+      }
+    }
+
+    const findFirstErrorMessage = (errObj: any): string | null => {
+      if (!errObj || typeof errObj !== 'object') return null
+      if (typeof errObj.message === 'string' && errObj.message) {
+        return errObj.message
+      }
+      for (const key of Object.keys(errObj)) {
+        const found = findFirstErrorMessage(errObj[key])
+        if (found) return found
+      }
+      return null
+    }
+
+    const rawErrorKey = findFirstErrorMessage(errors)
+    const displayMessage = rawErrorKey
+      ? tForm.has(rawErrorKey)
+        ? tForm(rawErrorKey)
+        : rawErrorKey
+      : 'Please check the form for errors.'
+
+    toast.error(displayMessage)
   }
 
   const proceedWithSubmit = async (values: ExpenseFormValues) => {
@@ -1803,7 +1843,7 @@ export function ExpenseForm({
       <div className="flex min-h-0 min-w-0 flex-1 flex-col @container">
         <form
           id="expense-form"
-          onSubmit={form.handleSubmit(submit)}
+          onSubmit={form.handleSubmit(submit, onInvalid)}
           className={cn(
             containedScroll
               ? 'min-h-0 min-w-0 flex-1 touch-pan-y overflow-x-hidden overflow-y-auto overscroll-x-none overscroll-contain scrollbar-none'

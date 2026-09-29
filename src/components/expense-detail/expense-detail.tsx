@@ -37,10 +37,23 @@ import {
 } from '@/lib/expense-dialog-events'
 import { invalidateActivityQueries } from '@/lib/invalidate-activity-queries'
 import { isConsolidatedPayment } from '@/lib/payments'
-import { formatCurrency, formatDate, getCurrencyFromGroup } from '@/lib/utils'
+import {
+  cn,
+  formatCurrency,
+  formatDate,
+  getCurrencyFromGroup,
+} from '@/lib/utils'
 import { trpc } from '@/trpc/client'
 import type { Category, SplitMode } from '@prisma/client'
-import { Camera, Copy, Info, Loader2, Pencil, Trash2 } from 'lucide-react'
+import {
+  Camera,
+  Copy,
+  Info,
+  Loader2,
+  Pencil,
+  Trash2,
+  TriangleAlert,
+} from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -555,11 +568,11 @@ export function ExpenseDetailContent({
     (expense.isReimbursement ? t('payment') : t('expense'))
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4 sm:gap-6">
       <div className="flex items-center justify-between gap-3">
         <Link
           href={backHref}
-          className="text-sm text-muted-foreground hover:text-foreground"
+          className="text-xs sm:text-sm text-muted-foreground hover:text-foreground"
         >
           ← {backLabel}
         </Link>
@@ -634,13 +647,13 @@ export function ExpenseDetailContent({
         </div>
       </div>
 
-      <Card>
-        <CardContent className="flex gap-4 pt-6">
+      <Card className="py-4 sm:py-6">
+        <CardContent className="flex items-start gap-3 sm:gap-4 px-4 sm:px-6">
           {expense.isReimbursement ? (
-            <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-muted">
+            <div className="flex size-11 sm:size-14 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl bg-muted">
               <CategoryIcon
                 category={expense.category}
-                className="size-7 text-muted-foreground"
+                className="size-5 sm:size-7 text-muted-foreground"
               />
             </div>
           ) : (
@@ -653,48 +666,54 @@ export function ExpenseDetailContent({
           )}
 
           <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div className="min-w-0">
+            <div className="flex items-start justify-between gap-3 sm:gap-4">
+              <div className="min-w-0 flex-1">
                 <h1 className={cnTitle(expense.isReimbursement)}>{title}</h1>
                 {!expense.isReimbursement ? (
-                  <p className="mt-1 text-3xl font-bold tabular-nums">
+                  <p className="mt-1 text-2xl sm:text-3xl md:text-4xl font-bold tabular-nums">
                     {formattedAmount}
                   </p>
                 ) : null}
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <Badge variant="outline">{contextBadge}</Badge>
+                <div className="mt-2 flex flex-wrap items-center gap-1.5 sm:gap-2">
+                  <Badge variant="outline" className="text-xs sm:text-sm">
+                    {contextBadge}
+                  </Badge>
                   {expense.isReimbursement ? (
-                    <Badge variant="secondary">{t('payment')}</Badge>
+                    <Badge variant="secondary" className="text-xs sm:text-sm">
+                      {t('payment')}
+                    </Badge>
                   ) : null}
                 </div>
-                <p className="mt-2 text-sm text-muted-foreground">
+                <p className="mt-2 text-xs sm:text-sm text-muted-foreground">
                   {addedByLabel}
                 </p>
                 {lastUpdatedLabel ? (
-                  <p className="mt-1 text-sm text-muted-foreground">
+                  <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
                     {lastUpdatedLabel}
                   </p>
                 ) : null}
               </div>
 
               {documentsEnabled ? (
-                <ExpenseDetailReceiptUpload
-                  {...receiptUpload}
-                  documents={expense.documents}
-                />
+                <div className="shrink-0 self-start">
+                  <ExpenseDetailReceiptUpload
+                    {...receiptUpload}
+                    documents={expense.documents}
+                  />
+                </div>
               ) : expense.documents[0] ? (
-                <div className="relative size-20 shrink-0 overflow-hidden rounded-xl border bg-muted">
+                <div className="relative size-14 sm:size-20 shrink-0 self-start overflow-hidden rounded-lg sm:rounded-xl border bg-muted">
                   <Image
                     src={expense.documents[0].url}
                     alt=""
                     fill
                     className="object-cover"
-                    sizes="80px"
+                    sizes="(min-width: 640px) 80px, 56px"
                   />
                 </div>
               ) : (
-                <div className="flex size-20 shrink-0 items-center justify-center rounded-xl border border-dashed bg-muted/40 text-muted-foreground">
-                  <Camera className="size-6" />
+                <div className="flex size-14 sm:size-20 shrink-0 self-start items-center justify-center rounded-lg sm:rounded-xl border border-dashed bg-muted/40 text-muted-foreground">
+                  <Camera className="size-5 sm:size-6" />
                 </div>
               )}
             </div>
@@ -703,16 +722,16 @@ export function ExpenseDetailContent({
       </Card>
 
       {hasConversion && formattedOriginalAmount ? (
-        <Card>
-          <CardContent className="flex flex-col gap-1 pt-6">
-            <p className="text-sm text-muted-foreground">
+        <Card className="py-4 sm:py-6">
+          <CardContent className="flex flex-col gap-1 px-4 sm:px-6">
+            <p className="text-xs sm:text-sm md:text-base text-muted-foreground">
               {tExpenses('conversionOriginal', {
                 amount: formattedOriginalAmount,
                 currency: expense.originalCurrency!,
               })}
             </p>
             {expense.conversionRate != null ? (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs sm:text-sm md:text-base text-muted-foreground">
                 {tExpenses('conversionRate', {
                   from: expense.originalCurrency!,
                   rate: expense.conversionRate.toNumber(),
@@ -720,7 +739,7 @@ export function ExpenseDetailContent({
                 })}
               </p>
             ) : null}
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs sm:text-sm md:text-base text-muted-foreground">
               {tExpenses('conversionConverted', {
                 amount: formattedAmount,
                 currency: currency.code,
@@ -734,8 +753,8 @@ export function ExpenseDetailContent({
       receiptUpload.variant === 'group' ? (
         <>
           {linkedDirectHalvesCount != null && linkedDirectHalvesCount > 0 ? (
-            <Alert>
-              <AlertDescription>
+            <Alert className="text-xs sm:text-sm">
+              <AlertDescription className="text-xs sm:text-sm">
                 {tExpenseForm(
                   'decompositionBanner.groupHalfIndependentEditWarning',
                 )}
@@ -743,8 +762,9 @@ export function ExpenseDetailContent({
             </Alert>
           ) : null}
           {expense.originalTotalAtDecomposition != null ? (
-            <Alert>
-              <AlertDescription>
+            <Alert variant="warning" className="text-xs sm:text-sm">
+              <TriangleAlert />
+              <AlertDescription className="text-xs sm:text-sm">
                 {tExpenseForm('decompositionBanner.groupHalfAuditNote', {
                   amount: formatCurrency(
                     currency,
@@ -761,9 +781,9 @@ export function ExpenseDetailContent({
       {expense.linkedExpenseId &&
       receiptUpload.variant === 'direct' &&
       linkedGroupHalf ? (
-        <Alert>
-          <Info className="size-4" />
-          <AlertDescription>
+        <Alert className="text-xs sm:text-sm">
+          <Info className="size-4 shrink-0" />
+          <AlertDescription className="text-xs sm:text-sm">
             {tExpenseForm(
               'decompositionBanner.directHalfIndependentEditWarning',
             )}{' '}
@@ -778,10 +798,10 @@ export function ExpenseDetailContent({
       ) : null}
 
       {!expense.isReimbursement ? (
-        <Card>
-          <CardContent className="flex flex-col gap-4 pt-6">
+        <Card className="py-4 sm:py-6">
+          <CardContent className="flex flex-col gap-3 sm:gap-4 px-4 sm:px-6">
             {expense.payers && expense.payers.length > 1 ? (
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2.5 sm:gap-3">
                 {expense.payers.map((payer, index) => {
                   const payerAmount = formatCurrency(
                     currency,
@@ -790,12 +810,26 @@ export function ExpenseDetailContent({
                   )
                   const isCurrentUser = profileId === payer.userId
                   return (
-                    <div key={payer.userId} className="flex items-center gap-3">
+                    <div
+                      key={payer.userId}
+                      className="flex items-center gap-2.5 sm:gap-3"
+                    >
                       <ParticipantAvatar
                         name={payer.user.name}
                         size={index === 0 ? 'lg' : 'md'}
+                        className={
+                          index === 0
+                            ? 'size-10 sm:size-12 text-sm sm:text-base'
+                            : 'size-8 sm:size-10 text-xs sm:text-sm'
+                        }
                       />
-                      <p className={index === 0 ? 'text-base' : 'text-sm'}>
+                      <p
+                        className={
+                          index === 0
+                            ? 'text-sm sm:text-base md:text-lg font-medium'
+                            : 'text-xs sm:text-sm md:text-base'
+                        }
+                      >
                         {isCurrentUser
                           ? t('youPaidAmountMultiple', {
                               amount: payerAmount,
@@ -810,9 +844,13 @@ export function ExpenseDetailContent({
                 })}
               </div>
             ) : (
-              <div className="flex items-center gap-3">
-                <ParticipantAvatar name={expense.paidBy.name} size="lg" />
-                <p className="text-base">
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                <ParticipantAvatar
+                  name={expense.paidBy.name}
+                  size="lg"
+                  className="size-10 sm:size-12 text-sm sm:text-base"
+                />
+                <p className="text-sm sm:text-base md:text-lg font-medium">
                   {profileId === expense.paidBy.id
                     ? t('youPaidAmount', { amount: formattedAmount })
                     : t('paidAmount', {
@@ -826,7 +864,7 @@ export function ExpenseDetailContent({
             {splitLines.length > 0 ? (
               <>
                 <Separator />
-                <div className="flex flex-col gap-3 border-s-2 border-muted ps-4">
+                <div className="flex flex-col gap-2.5 sm:gap-3 border-s-2 border-muted ps-3 sm:ps-4">
                   {splitLines.map((line) => {
                     const formattedShare = formatSplitAmount(
                       currency,
@@ -838,10 +876,14 @@ export function ExpenseDetailContent({
                     return (
                       <div
                         key={line.userId}
-                        className="flex items-center gap-3"
+                        className="flex items-center gap-2.5 sm:gap-3"
                       >
-                        <ParticipantAvatar name={line.name} size="sm" />
-                        <p className="text-sm text-muted-foreground">
+                        <ParticipantAvatar
+                          name={line.name}
+                          size="sm"
+                          className="size-7 sm:size-8 text-[11px] sm:text-xs"
+                        />
+                        <p className="text-xs sm:text-sm md:text-base text-muted-foreground">
                           {t(messageKey, {
                             name: line.name,
                             amount: formattedShare,
@@ -868,10 +910,12 @@ export function ExpenseDetailContent({
       ) : null}
 
       {expense.notes ? (
-        <Card>
-          <CardContent className="pt-6">
-            <h2 className="mb-2 text-sm font-semibold">{t('notes')}</h2>
-            <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+        <Card className="py-4 sm:py-6">
+          <CardContent className="px-4 sm:px-6">
+            <h2 className="mb-1.5 sm:mb-2 text-sm sm:text-base md:text-lg font-semibold">
+              {t('notes')}
+            </h2>
+            <p className="text-xs sm:text-sm md:text-base text-muted-foreground whitespace-pre-wrap">
               {expense.notes}
             </p>
           </CardContent>
@@ -887,13 +931,13 @@ export function ExpenseDetailContent({
       ) : null}
 
       {expense.isReimbursement ? (
-        <p className="rounded-xl bg-muted/50 p-4 text-center text-xs text-muted-foreground">
+        <p className="rounded-xl bg-muted/50 p-3 sm:p-4 text-center text-xs sm:text-sm text-muted-foreground">
           {isLocked ? t('consolidationDisclaimer') : t('paymentDisclaimer')}
         </p>
       ) : null}
 
       {isLocked ? (
-        <p className="text-center text-xs text-muted-foreground">
+        <p className="text-center text-xs sm:text-sm text-muted-foreground">
           {t('readOnlyNotice')}
         </p>
       ) : null}
@@ -902,17 +946,18 @@ export function ExpenseDetailContent({
 }
 
 function cnTitle(isReimbursement: boolean) {
-  return isReimbursement
-    ? 'truncate text-xl font-semibold italic'
-    : 'truncate text-xl font-semibold'
+  return cn(
+    'break-words text-lg sm:text-xl md:text-2xl font-semibold',
+    isReimbursement && 'italic',
+  )
 }
 
 function ExpenseDetailSkeleton() {
   return (
-    <div className="flex flex-col gap-6">
-      <Skeleton className="h-4 w-32" />
-      <Skeleton className="h-40 w-full rounded-xl" />
-      <Skeleton className="h-32 w-full rounded-xl" />
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <Skeleton className="h-4 w-28 sm:w-32" />
+      <Skeleton className="h-32 sm:h-40 w-full rounded-xl" />
+      <Skeleton className="h-28 sm:h-32 w-full rounded-xl" />
     </div>
   )
 }

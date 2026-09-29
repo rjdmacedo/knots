@@ -220,6 +220,38 @@ describe('formatFieldValue - Property-Based Tests', () => {
     )
   })
 
+  it('resolves paidFor with JSON array of objects containing userId or participant', () => {
+    const participants = [
+      { id: 'user-1', name: 'Alice' },
+      { id: 'user-2', name: 'Bob' },
+    ]
+    const valueUserId = JSON.stringify([
+      { userId: 'user-1', shares: 1 },
+      { userId: 'user-2', shares: 2 },
+    ])
+    const resultUserId = formatFieldValue('paidFor', valueUserId, {
+      currency: testCurrency,
+      locale: testLocale,
+      participants,
+      categories: [],
+      t: mockT,
+    })
+    expect(resultUserId).toBe('Alice, Bob')
+
+    const valueParticipant = JSON.stringify([
+      { participant: 'user-1', shares: 1 },
+      { participant: 'user-2', shares: 2 },
+    ])
+    const resultParticipant = formatFieldValue('paidFor', valueParticipant, {
+      currency: testCurrency,
+      locale: testLocale,
+      participants,
+      categories: [],
+      t: mockT,
+    })
+    expect(resultParticipant).toBe('Alice, Bob')
+  })
+
   it('Property 4f: category field resolves ID to grouping/name', () => {
     fc.assert(
       fc.property(
