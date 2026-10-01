@@ -1,3 +1,10 @@
+## [1.63.1](https://github.com/rjdmacedo/knots/compare/v1.63.0...v1.63.1) (2026-10-01)
+
+
+### Bug Fixes
+
+* show expense form errors and open notification links correctly ([cc62eaf](https://github.com/rjdmacedo/knots/commit/cc62eaf254ab601bb3a243808eadee4b2bb66ade))
+
 # [1.63.0](https://github.com/rjdmacedo/knots/compare/v1.62.0...v1.63.0) (2026-09-28)
 
 
